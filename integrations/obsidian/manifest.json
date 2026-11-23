@@ -1,9 +1,10 @@
 {
   "id": "feynjs",
   "name": "feynjs",
-  "version": "0.0.1",
+  "version": "0.9.0",
   "minAppVersion": "1.0.0",
   "description": "Feynman diagrams from a short text syntax: write a ```feynman code block and it is drawn in the note.",
-  "author": "feynjs",
-  "isDesktopOnly": false
+  "author": "Jason Oliver",
+  "isDesktopOnly": false,
+  "authorUrl": "https://github.com/hepjs/feynjs"
 }

@@ -30,8 +30,13 @@ jobs:
         run: |
           VERSION=$(node -p "require('./package.json').version")
           if npm view "feynjs@$VERSION" version >/dev/null 2>&1; then echo "feynjs@$VERSION is on npm already"; else npm publish --provenance --access public; fi
+      - name: Build the Obsidian plugin, zipped as a folder to drop into a vault's plugins
+        run: |
+          node integrations/obsidian/build.mjs
+          (cd integrations/obsidian/dist && zip -r ../../../feynjs-obsidian.zip feynjs)
       - uses: softprops/action-gh-release@v3
         with:
           files: |
             dist/feynjs.min.js
             dist/feynjs.mjs
+            feynjs-obsidian.zip
