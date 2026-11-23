@@ -77,13 +77,8 @@
   font-family: "NewComputerModern10", serif; font-style: italic; font-weight: 400;
   font-size: 2.4em; letter-spacing: 0.005em; color: var(--md-default-fg-color); margin-bottom: 0.6em;
 }
-/* under each page title, a brick line running out of a vertex dot and fading, as a diagram's line */
-.md-typeset h1::after {
-  content: ""; display: block; height: 8px; margin-top: 0.3em;
-  background:
-    radial-gradient(circle at 4px 50%, var(--feynjs-rule) 3.5px, transparent 4px),
-    linear-gradient(to right, var(--feynjs-rule), transparent) no-repeat 4px 50% / calc(100% - 4px) 2px;
-}
+/* a brick bar under each page title, as under each section heading but larger */
+.md-typeset h1::after { content: ""; display: block; width: 3.4rem; height: 4px; margin-top: 0.35em; background: var(--feynjs-rule); border-radius: 2px; }
 .md-typeset h2 { font-weight: 600; letter-spacing: -0.01em; margin-top: 2em; }
 /* a short brick rule under each section heading, as in the brand chart */
 .md-typeset h2::after { content: ""; display: block; width: 2.2rem; height: 3px; margin-top: 0.45em; background: var(--feynjs-rule); border-radius: 2px; }

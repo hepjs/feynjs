@@ -60,8 +60,9 @@ function assembleSvg(scene: Scene, title: string | undefined, ariaLabel: string,
   // (sized to the text around it, in em: its labels a little smaller than the text)
   const em = 0.62 / scene.theme.fontSize;
   const inline = inlineAt === undefined ? "" : ` style="vertical-align: ${fmt(-(b.bottom + pad - inlineAt) * em)}em"`;
-  // (a light grey grid behind the drawing, `background: grid`: lines every `grid` px, through
-  // the layout's own origin, so the points of a grid layout sit on its crossings)
+  // (a faint grid behind the drawing, `background: grid`: lines every `grid` px, through the
+  // layout's own origin, so the points of a grid layout sit on its crossings; in the drawing's
+  // own colour, thinned, so it stays faint on dark pages as on light)
   let gridLines = "";
   if (grid > 0) {
     const [x0, y0, x1, y1] = [b.left - pad, b.top - pad, b.right + pad, b.bottom + pad];
@@ -80,7 +81,7 @@ function assembleSvg(scene: Scene, title: string | undefined, ariaLabel: string,
       for (let x = origin.x + Math.ceil((x0 - origin.x) / grid) * grid; x <= x1; x += grid) path.push(`M${fmt(x)} ${fmt(y0)}V${fmt(y1)}`);
       for (let y = origin.y + Math.ceil((y0 - origin.y) / grid) * grid; y <= y1; y += grid) path.push(`M${fmt(x0)} ${fmt(y)}H${fmt(x1)}`);
     }
-    gridLines = `<path class="feynjs-grid" d="${path.join("")}" fill="none" stroke="#e3e3e3" stroke-width="0.6"/>`;
+    gridLines = `<path class="feynjs-grid" d="${path.join("")}" fill="none" stroke="currentColor" stroke-opacity="0.11" stroke-width="0.6"/>`;
   }
   const hatching = (scene.usesHatching
     ? `<defs><pattern id="${scene.idPrefix}-hatch" width="${fmt(scene.theme.vertex.hatchSpacing)}" height="${fmt(scene.theme.vertex.hatchSpacing)}" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0V${fmt(scene.theme.vertex.hatchSpacing)}" stroke="currentColor" stroke-width="0.9"/></pattern></defs>`

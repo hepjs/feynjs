@@ -531,12 +531,12 @@ test("final plane: on puts every final state on one plane, and the branches of a
   assert.ok(Math.abs((v("s").y - v("r").y) + (v("h").y - v("r").y)) < 1e-9, "S and H mirror about R");
 });
 
-test("background: grid draws a light grey grid behind the drawing (on by default with layout: grid)", () => {
+test("background: grid draws a faint grid behind the drawing (on by default with layout: grid)", () => {
   const source = "i1 [e-] -- a\ni2 [e+] -- a\na -- [photon] b\nb -- f1 [mu-]\nb -- f2 [mu+]";
   assert.doesNotMatch(render(source), /feynjs-grid/);
   assert.match(render(`background: grid\n${source}`), /feynjs-grid/);
   assert.match(render(`layout: grid\n${source}`), /feynjs-grid/);
-  assert.match(render(`colours: bw\nbackground: grid\n${source}`), /class="feynjs-grid"[^>]*stroke="#e3e3e3"/);
+  assert.match(render(`colours: bw\nbackground: grid\n${source}`), /class="feynjs-grid"[^>]*stroke="currentColor" stroke-opacity="0.11"/);
 });
 
 test("detector objects written as words: adjectives, the object, its contents", () => {

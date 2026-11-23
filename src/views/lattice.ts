@@ -42,17 +42,17 @@ export function drawLattice(d: Diagram, theme: Theme): string {
   const grid: string[] = [];
   for (let t = 0; t < nt; t++) grid.push(`M${pt(at(0, t))}L${pt(at(nx - 1, t))}`);
   for (let x = 0; x < nx; x++) grid.push(`M${pt(at(x, 0))}L${pt(at(x, nt - 1))}`);
-  parts.push(`<path class="feynjs-lattice-links" d="${grid.join("")}" fill="none" stroke="${GRID}" stroke-width="${fmt(stroke * 0.7)}"/>`);
+  parts.push(`<path class="feynjs-lattice-links" d="${grid.join("")}" fill="none" stroke="currentColor" stroke-opacity="${GRID}" stroke-width="${fmt(stroke * 0.7)}"/>`);
   const sites: string[] = [];
   for (let x = 0; x < nx; x++) for (let t = 0; t < nt; t++) { const p = at(x, t); sites.push(`<circle cx="${fmt(p.x)}" cy="${fmt(p.y)}" r="${fmt(stroke * 1.2)}"/>`); }
-  parts.push(`<g class="feynjs-lattice-sites" fill="${SITE}">${sites.join("")}</g>`);
+  parts.push(`<g class="feynjs-lattice-sites" fill="currentColor" fill-opacity="${SITE}">${sites.join("")}</g>`);
 
   // (joined round: short dashed links past every edge)
   if (/^periodic/i.test((dirs.boundary ?? "").trim())) {
     const stub = a * 0.45, dashes: string[] = [];
     for (let t = 0; t < nt; t++) dashes.push(`M${pt(at(-0.45, t))}L${pt(at(0, t))}M${pt(at(nx - 1, t))}L${pt(at(nx - 1 + 0.45, t))}`);
     for (let x = 0; x < nx; x++) dashes.push(`M${pt(at(x, -0.45))}L${pt(at(x, 0))}M${pt(at(x, nt - 1))}L${pt(at(x, nt - 1 + 0.45))}`);
-    parts.push(`<path d="${dashes.join("")}" fill="none" stroke="${GRID}" stroke-width="${fmt(stroke * 0.7)}" stroke-dasharray="2 2.5"/>`);
+    parts.push(`<path d="${dashes.join("")}" fill="none" stroke="currentColor" stroke-opacity="${GRID}" stroke-width="${fmt(stroke * 0.7)}" stroke-dasharray="2 2.5"/>`);
     grow(-stub - 2, 0); grow((nx - 1) * a + stub + 2, -(nt - 1) * a - stub - 2);
   }
 
@@ -128,8 +128,9 @@ export function drawLattice(d: Diagram, theme: Theme): string {
 
 const pt = (p: Pt) => `${fmt(p.x)} ${fmt(p.y)}`;
 
-/** The grid's links and sites: light greys, beneath what is marked on it. */
-const GRID = "#d5d8dd", SITE = "#b9bec6";
+/** The grid's links and sites, beneath what is marked on it: the drawing's own colour, thinned,
+ * so they stay quiet on dark pages as on light. */
+const GRID = 0.16, SITE = 0.28;
 
 /** A colour a little less vivid: a fifth of the way to a mid grey (a hex colour; any other as it is). */
 function muted(colour: string): string {
