@@ -17,26 +17,21 @@ nav = [
     { "Get started" = "get-started/index.md" },
     { "Where to use it" = "get-started/use.md" },
   ] },
-  { "Guide" = [
+  { "Features" = [
     { "Overview" = "guide/index.md" },
-    { "Writing diagrams" = [
-      { "Edges, as in TikZ-Feynman" = "guide/syntax.md" },
-      { "Processes, as in MadGraph" = "guide/processes.md" },
-    ] },
-    { "Drawing" = [
-      { "Lines and particles" = "guide/lines.md" },
-      { "Labels" = "guide/labels.md" },
-      { "Vertices and blobs" = "guide/vertices.md" },
-      { "Loops, boxes and hadrons" = "guide/loops-hadrons.md" },
-      { "Colour flow" = "guide/colour-flow.md" },
-      { "Detector objects" = "guide/objects.md" },
-      { "Panels and switches" = "guide/panels.md" },
-    ] },
-    { "Beyond drawing" = [
-      { "Layout" = "guide/layout.md" },
-      { "Styling and export" = "guide/styling.md" },
-      { "Checking diagrams" = "guide/tools.md" },
-    ] },
+    { "Edges, as in TikZ-Feynman" = "guide/syntax.md" },
+    { "Processes, as in MadGraph" = "guide/processes.md" },
+    { "Layout engines" = "guide/layout.md" },
+    { "Lines and particles" = "guide/lines.md" },
+    { "Labels and notes" = "guide/labels.md" },
+    { "Vertices, blobs and nuclei" = "guide/vertices.md" },
+    { "Loops, boxes and hadrons" = "guide/loops-hadrons.md" },
+    { "Colour flow" = "guide/colour-flow.md" },
+    { "Detector objects" = "guide/objects.md" },
+    { "Views" = "guide/views.md" },
+    { "Styling and export" = "guide/styling.md" },
+    { "Panels and switches" = "guide/panels.md" },
+    { "Checking diagrams" = "guide/tools.md" },
   ] },
   { "Examples" = [
     { "Overview" = "examples/index.md" },
@@ -57,7 +52,6 @@ nav = [
     { "Architecture" = "contributing/architecture.md" },
     { "Extending feynjs" = "contributing/extending.md" },
     { "Testing" = "contributing/testing.md" },
-    { "Feature demonstrations" = "contributing/demos.md" },
     { "The docs site" = "contributing/docs.md" },
   ] },
 ]

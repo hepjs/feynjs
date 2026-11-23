@@ -59,6 +59,42 @@ leg, on a leg long enough to show what is inside.
 Use the name on a leg (`f1 [J]`, which also labels it) or the style on a line
 (`a -- [large jet, label=H\to b\bar b] f1`).
 
+## Writing an object
+
+On a line, an object is written like a line style: adjectives, then the object, then what is drawn
+inside it, as counts. `[LRJ 2j 1e]` is a large-R jet holding two jets and an electron;
+`[DIS J]` is a displaced jet. Long and short names are the same: `[large R jet 2j 1e]` and
+`[LRJ(2j, 1e)]` draw the same thing. See the [reference](../reference/index.md#detector-objects)
+for every name.
+
+```feynman
+--- what a large-R jet holds
+i1 [p] -- pp [blob] -- i2 [p]
+pp -- [Z'] z
+z -- [LRJ 2j 1e] f1 [label={\text{LRJ 2j 1e}}]
+z -- [large R jet] f2 [label={\text{large R jet}}]
+--- displaced and dark
+i1 [p] -- pp [blob] -- i2 [p]
+pp -- [DIS J] f1 [label={\text{DIS J}}]
+pp -- [SVJ] f2 [label={\text{SVJ}}]
+pp -- [DIS track] f3 [label={\text{DIS track}}]
+pp -- [EMG] f4 [label={\text{EMG}}]
+```
+
+```text
+--- what a large-R jet holds
+i1 [p] -- pp [blob] -- i2 [p]
+pp -- [Z'] z
+z -- [LRJ 2j 1e] f1 [label={\text{LRJ 2j 1e}}]
+z -- [large R jet] f2 [label={\text{large R jet}}]
+--- displaced and dark
+i1 [p] -- pp [blob] -- i2 [p]
+pp -- [DIS J] f1 [label={\text{DIS J}}]
+pp -- [SVJ] f2 [label={\text{SVJ}}]
+pp -- [DIS track] f3 [label={\text{DIS track}}]
+pp -- [EMG] f4 [label={\text{EMG}}]
+```
+
 ## Boosted resonances
 
 ```feynman
@@ -73,6 +109,52 @@ i1 [p] -- pp [blob] -- i2 [p]
 pp -- [Z'] z
 z -- f1 [J]
 z -- f2 [J]
+```
+
+### Inside a large-R jet
+
+A large-R jet can hold what it is made of: a b-tagged subjet (with its secondary vertex) and a W
+that decays inside it. Write the particle that decays with what it decays to in parentheses: to
+two jets (`[LRJ 1b W(2j)]`, a hadronic top) or to a muon and a neutrino (`[LRJ 1b W(1mu 1nu)]`,
+a semileptonic one). `Z(...)`, `H(...)` and `t(...)` work the same way. The third panel is the
+[kinematic view](views.md) of a top pair, one top of each kind.
+
+```feynman
+--- LRJ 1b W(2j)
+i1 [p] -- pp [blob] -- i2 [p]
+pp -- [LRJ 1b W(2j)] f1 [J]
+pp -- f2 [q]
+--- LRJ 1b W(1mu 1nu)
+i1 [p] -- pp [blob] -- i2 [p]
+pp -- [LRJ 1b W(1mu 1nu)] f1 [J]
+pp -- f2 [q]
+--- both, in the event view
+view: kinematic
+in: i1 i2
+out: f1 f2
+i1 [g] -- a
+i2 [g] -- a
+a -- [g] c
+c -- [LRJ 1b W(2j)] f1 [label={t\to bq\bar q}]
+c -- [LRJ 1b W(1mu 1nu)] f2 [label={t\to b\mu\nu}]
+```
+
+```text
+--- LRJ 1b W(2j)
+i1 [p] -- pp [blob] -- i2 [p]
+pp -- [LRJ 1b W(2j)] f1 [J]
+pp -- f2 [q]
+--- LRJ 1b W(1mu 1nu)
+...
+--- both, in the event view
+view: kinematic
+in: i1 i2
+out: f1 f2
+i1 [g] -- a
+i2 [g] -- a
+a -- [g] c
+c -- [LRJ 1b W(2j)] f1 [label={t\to bq\bar q}]
+c -- [LRJ 1b W(1mu 1nu)] f2 [label={t\to b\mu\nu}]
 ```
 
 ## Dark showers

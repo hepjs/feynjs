@@ -82,8 +82,7 @@ Adding a particle or a theme setting means updating its page too. So does adding
 
 `zensical.toml` registers a custom fence, so a `feynman` block becomes `<div class="feynman">`.
 `docs/javascripts/feynjs-init.js` calls `feynjs.run` after every page load (including instant
-navigation). It also puts the site's name in the header in its brand colours and adds the
-diagram colour picker. `docs/stylesheets/feynjs.css` loads the label font and sets the diagram
+navigation). It also puts the site's name in the header in its brand colours. `docs/stylesheets/feynjs.css` loads the label font and sets the diagram
 colours for light and dark. `docs/stylesheets/theme.css` is the site's look, and
 `overrides/partials/content.html` puts each page's tags under its title instead of at the foot.
 

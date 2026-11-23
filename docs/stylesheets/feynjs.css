@@ -5,44 +5,20 @@
 div.feynman { text-align: center; margin: 1.2em 0; color: var(--md-default-fg-color, currentColor); }
 div.feynman:not(.feynjs-rendered) { visibility: hidden; white-space: pre; }
 div.feynman svg.feynjs { max-width: 100%; height: auto; }
-/* SUSY lines and their labels: red unless the reader picks another colour (the picker sets
-   data-feynjs-susy on <html>). Each colour has a shade for light pages and one for dark. */
+/* SUSY lines and their labels in red, with a shade for light pages and one for dark. */
 :root { --feynjs-susy-light: #c0392b; --feynjs-susy-dark: #e05a4c; }
-html[data-feynjs-susy="amber"] { --feynjs-susy-light: #c77700; --feynjs-susy-dark: #ffb300; }
-html[data-feynjs-susy="blue"] { --feynjs-susy-light: #0b80c3; --feynjs-susy-dark: #0b80c3; }
-html[data-feynjs-susy="accent"] { --feynjs-susy-light: var(--md-accent-fg-color); --feynjs-susy-dark: var(--md-accent-fg-color); }
-html[data-feynjs-susy="text"] { --feynjs-susy-light: currentColor; --feynjs-susy-dark: currentColor; }
 svg.feynjs .feynjs-susy { color: var(--feynjs-susy, var(--feynjs-susy-light)); }
 [data-md-color-scheme="slate"] svg.feynjs .feynjs-susy { color: var(--feynjs-susy, var(--feynjs-susy-dark)); }
 svg.feynjs .feynjs-bg { fill: var(--md-default-bg-color, #fff); }
 /* Hadron braces in brick, lifted on dark pages as the brand's red is. */
 [data-md-color-scheme="slate"] svg.feynjs .feynjs-brace { stroke: #e05a4c; }
 /* Blobs and hadron ellipses: a grey with a little blue, at low opacity, never darker than
-   their outline, with the hadron's name in a matching slate; the picker offers ATLAS blue,
-   grey and red instead. */
+   their outline, with the hadron's name in a matching slate. */
 svg.feynjs .feynjs-blob { fill: var(--feynjs-blob, rgba(100, 120, 150, 0.2)); }
 svg.feynjs .feynjs-blob-label { color: var(--feynjs-blob-text, #3d4f66); }
 [data-md-color-scheme="slate"] svg.feynjs .feynjs-blob { fill: var(--feynjs-blob, rgba(130, 150, 180, 0.32)); }
 [data-md-color-scheme="slate"] svg.feynjs .feynjs-blob-label { color: var(--feynjs-blob-text, #cbd5e1); }
-html[data-feynjs-blob="blue"] svg.feynjs .feynjs-blob { fill: var(--feynjs-blob, rgba(11, 128, 195, 0.15)); }
-html[data-feynjs-blob="blue"] svg.feynjs .feynjs-blob-label { color: var(--feynjs-blob-text, #06527e); }
-html[data-feynjs-blob="blue"] [data-md-color-scheme="slate"] svg.feynjs .feynjs-blob { fill: var(--feynjs-blob, rgba(11, 128, 195, 0.35)); }
-html[data-feynjs-blob="blue"] [data-md-color-scheme="slate"] svg.feynjs .feynjs-blob-label { color: var(--feynjs-blob-text, #a9d6f2); }
-html[data-feynjs-blob="grey"] svg.feynjs .feynjs-blob { fill: var(--feynjs-blob, rgba(128, 128, 128, 0.2)); }
-html[data-feynjs-blob="grey"] svg.feynjs .feynjs-blob-label { color: var(--feynjs-blob-text, currentColor); }
-html[data-feynjs-blob="grey"] [data-md-color-scheme="slate"] svg.feynjs .feynjs-blob { fill: var(--feynjs-blob, rgba(160, 160, 160, 0.3)); }
-html[data-feynjs-blob="grey"] [data-md-color-scheme="slate"] svg.feynjs .feynjs-blob-label { color: var(--feynjs-blob-text, currentColor); }
-html[data-feynjs-blob="red"] svg.feynjs .feynjs-blob { fill: var(--feynjs-blob, rgba(232, 32, 42, 0.15)); }
-html[data-feynjs-blob="red"] svg.feynjs .feynjs-blob-label { color: var(--feynjs-blob-text, #a3141c); }
-html[data-feynjs-blob="red"] [data-md-color-scheme="slate"] svg.feynjs .feynjs-blob { fill: var(--feynjs-blob, rgba(232, 32, 42, 0.35)); }
-html[data-feynjs-blob="red"] [data-md-color-scheme="slate"] svg.feynjs .feynjs-blob-label { color: var(--feynjs-blob-text, #ffc2c2); }
 pre.feynjs-error { text-align: left; color: #c0392b; border-left: 3px solid #c0392b; padding: .6em 1em; white-space: pre-wrap; }
-/* The colour picker: a small panel in the corner, out of the way of the page. */
-.feynjs-picker { position: fixed; right: .8rem; bottom: .8rem; z-index: 5; display: flex; flex-direction: column; gap: .3rem; padding: .45rem .6rem; border-radius: .4rem; font-size: .6rem; background: var(--md-default-bg-color); color: var(--md-default-fg-color--light); box-shadow: 0 .1rem .5rem rgba(0, 0, 0, .25); }
-.feynjs-picker div { display: flex; align-items: center; gap: .3rem; }
-.feynjs-picker span { min-width: 2.6rem; }
-.feynjs-picker button { width: 1rem; height: 1rem; border-radius: 50%; border: 2px solid transparent; padding: 0; cursor: pointer; }
-.feynjs-picker button[aria-pressed="true"] { border-color: var(--md-default-fg-color); }
 /* The download menu on each diagram, in the page's colours. */
 .feynjs-download-menu { background: var(--md-default-bg-color); color: var(--md-default-fg-color); font-family: var(--md-text-font-family); }
 .feynjs-download { color: var(--md-default-fg-color--light); }

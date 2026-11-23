@@ -87,7 +87,7 @@ A line `name: value` sets something for the whole diagram (or panel).
 | `scale: 1.5` | the whole diagram 1.5 times larger, as a zoom |
 | `size: small` | an optical size: `small`, `tiny`, `large` or any number (1 is normal); see [Styling](styling.md#size) |
 | `title: ...` | a title, shown as a tooltip and read by screen readers |
-| `layout: v1` | lay out with the older rule engine instead of the force engine ([Layout](layout.md)) |
+| `layout: v1` | lay out with the older rule engine instead of the force engine ([Layout engines](layout.md#the-rule-engine-v1)) |
 | `colour flow: on` | draw the colour lines beside quarks and gluons ([Colour flow](colour-flow.md)) |
 | `charge colour: on` | colour charged lines by the sign of their charge ([Styling](styling.md#colour-by-charge)) |
 | `reveal: 2` | draw the first two steps in time as usual and the rest faint and grey ([Step by step](#step-by-step)) |

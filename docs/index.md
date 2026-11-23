@@ -90,7 +90,7 @@ w2 -- q1 [d]
 w2 -- q2 [ubar]
 ```
 
-[Kinematic view](contributing/demos.md#kinematic-view)
+[Kinematic view](guide/views.md)
 
 </div>
 
@@ -115,7 +115,7 @@ w2 -- q1 [d]
 w2 -- q2 [ubar]
 ```
 
-[Grid layout](guide/layout.md)
+[Grid layout](guide/layout.md#the-grid)
 
 </div>
 
@@ -142,7 +142,7 @@ hadron: K^{*0} = d2 s
 
 </div>
 
-Feynman diagrams, welcome to the *web*{ .feynjs-accent }.
+A *web-native*{ .feynjs-accent } engine for Feynman diagrams.
 { .feynjs-punch }
 
 ***77 years after Feynman, they finally draw themselves. Name the particles and how they meet,
@@ -150,8 +150,62 @@ and feynjs lays them out as physics papers do.***
 { .feynjs-lead }
 
 [Get started](get-started/index.md){ .md-button .md-button--primary }
-[Read the guide](guide/index.md){ .md-button }
+[See the features](guide/index.md){ .md-button }
 [See examples](examples/index.md){ .md-button }
+
+## Core features
+
+<div class="grid cards" markdown>
+
+-   **[Two ways to write](guide/syntax.md)**
+
+    Line by line as in TikZ-Feynman, or as a process as in MadGraph: `p p > t t~`.
+
+-   **[Layout engines](guide/layout.md)**
+
+    Forces place every vertex for you. Snap the result to a grid, or pin vertices by hand.
+
+-   **[Lines and particles](guide/lines.md)**
+
+    Every TikZ-Feynman line style, and 105 particle names that set the style, arrow and label.
+
+-   **[Labels and notes](guide/labels.md)**
+
+    TeX labels kept clear of the lines, coupling labels, and notes that point into the diagram.
+
+-   **[Vertices, blobs and nuclei](guide/vertices.md)**
+
+    Dots, blobs and crosses, proton beams, and nuclei from hydrogen to lead.
+
+-   **[Loops and hadrons](guide/loops-hadrons.md)**
+
+    Loops, boxes and penguins, found for you; quark legs grouped into mesons and baryons.
+
+-   **[Colour flow](guide/colour-flow.md)**
+
+    't Hooft's double lines beside every quark and gluon, in red, green and blue.
+
+-   **[Detector objects](guide/objects.md)**
+
+    Final states as the detector sees them: jets, large-R jets, b-tags, missing energy.
+
+-   **[Views](guide/views.md)**
+
+    The same process as an event in the detector, or a lattice QCD grid with Wilson loops.
+
+-   **[Styling and export](guide/styling.md)**
+
+    Sizes, colours, dark mode and black and white; SVG, PNG and TikZ-Feynman code out.
+
+-   **[Panels](guide/panels.md)**
+
+    Diagrams side by side, lettered, or joined by +, = or a cut.
+
+-   **[Checking](guide/tools.md)**
+
+    Catch broken fermion flow, describe a diagram in words, score its layout.
+
+</div>
 
 ## Two ways to write a diagram
 

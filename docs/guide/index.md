@@ -51,7 +51,8 @@ feynjs reads two notations, and both give the same drawing.
 | [Loops, boxes and hadrons](loops-hadrons.md) | loops over a line, penguins, boxes, mesons and baryons, spectators |
 | [Detector objects](objects.md) | large-R jets, hadronic taus, semi-visible, emerging and displaced jets, lepton-jets, missing energy |
 | [Colour flow](colour-flow.md) | colour lines beside quarks and gluons, in double-line notation |
+| [Views](views.md) | the event as the detector sees it, along the beam and across it; a lattice for lattice QCD |
 | [Panels and switches](panels.md) | several diagrams side by side; diagram-wide switches |
-| [Layout](layout.md) | how positions are chosen, the two engines, steering by hand |
+| [Layout engines](layout.md) | the force layout, the grid, manual placement and v1; the final plane; steering by hand |
 | [Styling and export](styling.md) | the theme, dark mode, colours, standalone SVG and TikZ |
 | [Checking diagrams](tools.md) | `check`, `describe`, `measure` |

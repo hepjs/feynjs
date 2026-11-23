@@ -154,6 +154,16 @@ b -- [photon] g1 [gamma]
 c -- [photon] g2 [gamma]
 ```
 
+```text
+i1 [Pb] -- b1 [nucleus=Pb] -- o1 [Pb]
+i2 [Pb] -- b2 [nucleus=Pb] -- o2 [Pb]
+b1 -- [photon] a
+b2 -- [photon] d
+a -- [fermion] b -- [fermion] c -- [fermion] d -- [fermion] a
+b -- [photon] g1 [gamma]
+c -- [photon] g2 [gamma]
+```
+
 ## Hadrons with their quarks
 
 `bag=proton` draws a hadron with its valence quarks and the colour flux tubes that bind them, as

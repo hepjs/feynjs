@@ -51,7 +51,7 @@ Options for a vertex go in square brackets right after its name.
 | `f1 [\tilde\chi^0_1]` | an external leg with any TeX label |
 | `v [dot]` | a vertex drawn as a dot; see [Vertices and blobs](vertices.md) for the other shapes |
 | `v [dot, label=\kappa_\lambda]` | a coupling label beside the vertex |
-| `v at (2, 1)` | fix a vertex in place by hand (in propagator lengths, y up); see [Layout](layout.md) |
+| `v at (2, 1)` | fix a vertex in place by hand (in propagator lengths, y up); see [Placing points by hand](layout.md#placing-points-by-hand) |
 
 ## Lines
 
