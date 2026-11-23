@@ -134,6 +134,15 @@ if (typeof window !== "undefined" && typeof document !== "undefined") {
   const go = () => setTimeout(() => { if (drawOnLoad) run(); }, 0);
   if (document.readyState === "complete") go();
   else window.addEventListener("load", go, { once: true });
+  // Zensical and MkDocs Material swap pages in without reloading ("instant navigation") and say
+  // so through document$; drawing again on each is what makes the script tag alone enough there
+  // (a site's own document$ handler, subscribed earlier, still runs first)
+  const instant = () => {
+    const pages = (window as unknown as { document$?: { subscribe(next: () => void): unknown } }).document$;
+    if (pages && typeof pages.subscribe === "function") pages.subscribe(go);
+  };
+  if (document.readyState === "complete") instant();
+  else window.addEventListener("load", instant, { once: true });
 }
 
 /** A source's plain-English description, panel by panel. */

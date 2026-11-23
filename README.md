@@ -67,14 +67,22 @@ const svg = render("g g > {t} > H");
 From a shell: `npx feynjs render diagram.feyn > diagram.svg` (also `check`, `describe`,
 `explain`, `measure`, `tikz`).
 
-On a Zensical or MkDocs site, add the script to `extra_javascript`; ```` ```feynman ```` blocks
-are then drawn as they are:
+On a Zensical or MkDocs site, two settings in `zensical.toml` (or `mkdocs.yml`), and every
+```` ```feynman ```` block is drawn:
 
 ```toml
+[project]
 extra_javascript = ["https://cdn.jsdelivr.net/npm/feynjs@0.9/dist/feynjs.min.js"]
+
+[project.markdown_extensions]
+pymdownx.superfences.custom_fences = [
+  { name = "feynman", class = "feynman", format = "pymdownx.superfences.fence_div_format" },
+]
 ```
 
-In notes: an Obsidian plugin is in `integrations/obsidian/`.
+In Obsidian: download `feynjs-obsidian.zip` from the
+[latest release](https://github.com/hepjs/feynjs/releases/latest) and unzip it into your vault's
+`.obsidian/plugins/`.
 
 ## What it draws
 

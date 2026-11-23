@@ -41,29 +41,15 @@ The same source draws the same diagram everywhere. Pick the way that fits your p
 This site is built this way. A `feynman` code block in any page becomes a diagram, and its source
 stays readable in the markdown.
 
-**1. Copy the files** into your `docs/` folder. The library itself comes from jsDelivr (step 3).
-
-| File | From | What it does |
-|---|---|---|
-| `javascripts/feynjs-init.js` | below | draws the blocks on every page |
-| `stylesheets/feynjs.css` | this site's `docs/stylesheets/feynjs.css` | the label font and the colours for light and dark (optional) |
-| `fonts/NewCM10-Book.otf`, `fonts/NewCM10-BookItalic.otf` | this site's `docs/fonts/` | New Computer Modern, the face of the labels (optional) |
-
-**2. Draw the blocks** with a one-line `feynjs-init.js`. `document$` fires on the first load and
-again after each instant page change:
-
-```js
-document$.subscribe(() => feynjs.run({ querySelector: "div.feynman:not([data-processed])" }));
-```
-
-**3. Register the fence** and the files in your configuration:
+**1. Add two settings** to your configuration: the script, and a fence that keeps a `feynman`
+block as written. Without the fence, the highlighter turns the block into plain text and feynjs
+can't find it. If you already list `custom_fences` (for Mermaid, say), add the line to that list.
 
 === "zensical.toml"
 
     ```toml
     [project]
-    extra_css = ["stylesheets/feynjs.css"]
-    extra_javascript = ["https://cdn.jsdelivr.net/npm/feynjs@0.9/dist/feynjs.min.js", "javascripts/feynjs-init.js"]
+    extra_javascript = ["https://cdn.jsdelivr.net/npm/feynjs@0.9/dist/feynjs.min.js"]
 
     [project.markdown_extensions]
     pymdownx.superfences.custom_fences = [
@@ -74,11 +60,8 @@ document$.subscribe(() => feynjs.run({ querySelector: "div.feynman:not([data-pro
 === "mkdocs.yml"
 
     ```yaml
-    extra_css:
-      - stylesheets/feynjs.css
     extra_javascript:
       - https://cdn.jsdelivr.net/npm/feynjs@0.9/dist/feynjs.min.js
-      - javascripts/feynjs-init.js
     markdown_extensions:
       - pymdownx.superfences:
           custom_fences:
@@ -87,7 +70,9 @@ document$.subscribe(() => feynjs.run({ querySelector: "div.feynman:not([data-pro
               format: !!python/name:pymdownx.superfences.fence_div_format
     ```
 
-**4. Write diagrams** in any page:
+feynjs draws the blocks once a page has loaded, and again after each instant page change.
+
+**2. Write diagrams** in any page:
 
 ````markdown
 ```feynman
@@ -105,6 +90,17 @@ f1 [chi] -- b -- f2 [chibar]
 
 Diagrams draw in `currentColor`, so they follow the light and dark palettes without being drawn
 again.
+
+**Optional: the label font.** Labels use New Computer Modern when the page has it. Copy this
+site's `docs/stylesheets/feynjs.css` and `docs/fonts/NewCM10-Book.otf`,
+`docs/fonts/NewCM10-BookItalic.otf` into your `docs/`, and add `extra_css = ["stylesheets/feynjs.css"]`.
+
+**Optional: your own options.** To pass options to every diagram (a download button, say), call
+`run` yourself from a small script listed after feynjs; feynjs leaves what you have drawn alone:
+
+```js
+document$.subscribe(() => feynjs.run({ download: true }));
+```
 
 ## In a web page
 

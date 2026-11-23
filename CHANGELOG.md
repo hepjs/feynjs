@@ -3,6 +3,12 @@
 All notable changes, newest first. Versions follow [semantic versioning](https://semver.org): a
 layout that moves is a change, recorded here.
 
+## 0.9.1 — 2026-11-24
+
+- **Zensical and MkDocs:** diagrams are drawn again after each instant page change, so the script
+  and the `feynman` fence are all a site needs (no init script).
+- **Releases** carry the Obsidian plugin as `feynjs-obsidian.zip`.
+
 ## 0.9.0 — 2026-11-23
 
 The first public release.
