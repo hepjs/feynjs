@@ -7,11 +7,10 @@ The same source draws the same diagram everywhere. Pick the way that fits your p
 This site is built this way. A `feynman` code block in any page becomes a diagram, and its source
 stays readable in the markdown.
 
-**1. Copy the files** into your `docs/` folder:
+**1. Copy the files** into your `docs/` folder. The library itself comes from jsDelivr (step 3).
 
 | File | From | What it does |
 |---|---|---|
-| `javascripts/feynjs.min.js` | `dist/feynjs.min.js` | the library |
 | `javascripts/feynjs-init.js` | below | draws the blocks on every page |
 | `stylesheets/feynjs.css` | this site's `docs/stylesheets/feynjs.css` | the label font and the colours for light and dark (optional) |
 | `fonts/NewCM10-Book.otf`, `fonts/NewCM10-BookItalic.otf` | this site's `docs/fonts/` | New Computer Modern, the face of the labels (optional) |
@@ -30,7 +29,7 @@ document$.subscribe(() => feynjs.run({ querySelector: "div.feynman:not([data-pro
     ```toml
     [project]
     extra_css = ["stylesheets/feynjs.css"]
-    extra_javascript = ["javascripts/feynjs.min.js", "javascripts/feynjs-init.js"]
+    extra_javascript = ["https://cdn.jsdelivr.net/npm/feynjs@0.9/dist/feynjs.min.js", "javascripts/feynjs-init.js"]
 
     [project.markdown_extensions]
     pymdownx.superfences.custom_fences = [
@@ -44,7 +43,7 @@ document$.subscribe(() => feynjs.run({ querySelector: "div.feynman:not([data-pro
     extra_css:
       - stylesheets/feynjs.css
     extra_javascript:
-      - javascripts/feynjs.min.js
+      - https://cdn.jsdelivr.net/npm/feynjs@0.9/dist/feynjs.min.js
       - javascripts/feynjs-init.js
     markdown_extensions:
       - pymdownx.superfences:
@@ -79,7 +78,7 @@ Put the source in any element with the class `feynman` and call `feynjs.run()`:
 
 ```html
 <link rel="stylesheet" href="feynjs.css">   <!-- optional: the label font -->
-<script src="feynjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/feynjs@0.9/dist/feynjs.min.js"></script>
 
 <div class="feynman">
   i1 [g] -- a

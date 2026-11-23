@@ -5,7 +5,7 @@ You need Node (24 is used in development) and npm. The docs site also needs
 TeX installation with TikZ-Feynman.
 
 ```sh
-git clone <the feynjs repository> && cd feynjs
+git clone https://github.com/hepjs/feynjs.git && cd feynjs
 npm install
 npm test
 ```

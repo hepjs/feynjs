@@ -18,22 +18,25 @@ a web page, a JavaScript program or a shell script.
 
 === "Script tag"
 
-    Copy `dist/feynjs.min.js` next to your page. It defines one global, `feynjs`.
+    Load it from jsDelivr. It defines one global, `feynjs`.
 
     ```html
-    <script src="feynjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feynjs@0.9/dist/feynjs.min.js"></script>
     ```
+
+    `@0.9` follows the newest 0.9 release. To keep a copy of your own, take `dist/feynjs.min.js`
+    from the package and serve it next to your page.
 
 === "From source"
 
     ```sh
-    git clone <the feynjs repository> && cd feynjs
+    git clone https://github.com/hepjs/feynjs.git && cd feynjs
     npm install
     npm run build      # dist/feynjs.mjs (ES module) and dist/feynjs.min.js (script tag)
     ```
 
 !!! note "Early days"
-    feynjs is at version 0.0.1. The syntax described here is stable enough to write diagrams
+    feynjs is at version 0.9. The syntax described here is stable enough to write diagrams
     with, but details of the layout still change from release to release.
 
 feynjs has no runtime dependencies. It is built for ES2020, so it runs in any current browser and in Node.

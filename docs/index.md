@@ -394,7 +394,7 @@ neutralino2 > Z neutralino1
 === "Web page"
 
     ```html
-    <script src="feynjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feynjs@0.9/dist/feynjs.min.js"></script>
     <div class="feynman">
       i1 [e-] -- a -- i2 [e+]
       a -- [gamma] b

@@ -9,6 +9,12 @@ zensical serve    # live preview at http://127.0.0.1:8000
 zensical build    # the static site, into site/
 ```
 
+The site draws its diagrams with the released library from jsDelivr (`extra_javascript` in
+`zensical.toml`), so it shows what users of the release get. To preview a change to the library
+before it is released, point that line at `javascripts/feynjs.min.js`, the copy `npm run build`
+writes, and switch it back before committing. That copy is also published with the site, at
+`https://hepjs.github.io/feynjs/javascripts/feynjs.min.js`.
+
 ## Writing pages
 
 - **Markdown only.** Pages use markdown and the extensions configured in `zensical.toml`
