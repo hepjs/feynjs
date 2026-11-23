@@ -20,6 +20,9 @@ jobs:
       - run: npm run build
       - run: npm run test:unit
   layouts:
+    # (macOS runners are free on public repositories; while this one is private, npm test checks the
+    # layouts on the developer's Mac before pushing)
+    if: ${{ !github.event.repository.private }}
     runs-on: macos-14
     steps:
       - uses: actions/checkout@v4
