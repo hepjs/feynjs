@@ -1,3 +1,21 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/brand/logo/logo-ink-red-dark.svg">
+    <img src="docs/brand/logo/logo-ink-red.svg" alt="feynjs" width="420">
+  </picture>
+</p>
+
+<p align="center">
+  <a href="https://github.com/joliverHEP/feynjs/actions/workflows/ci.yml"><img src="https://github.com/joliverHEP/feynjs/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://www.npmjs.com/package/feynjs"><img src="https://img.shields.io/npm/v/feynjs?color=c0392b" alt="npm version"></a>
+  <a href="https://www.npmjs.com/package/feynjs"><img src="https://img.shields.io/npm/dm/feynjs" alt="npm downloads"></a>
+  <a href="https://www.jsdelivr.com/package/npm/feynjs"><img src="https://data.jsdelivr.com/v1/package/npm/feynjs/badge" alt="jsDelivr"></a>
+  <a href="https://joliverhep.github.io/feynjs/"><img src="https://img.shields.io/badge/docs-joliverhep.github.io%2Ffeynjs-c0392b" alt="docs"></a>
+  <a href="LICENSE.md"><img src="https://img.shields.io/badge/licence-MIT-blue" alt="MIT licence"></a>
+  <!-- DOI: once the first release is archived on Zenodo, add its badge here:
+  <a href="https://doi.org/10.5281/zenodo.XXXXXXX"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg" alt="DOI"></a> -->
+</p>
+
 # feynjs
 
 Feynman diagrams for the web, written as text and laid out automatically.
@@ -49,6 +67,13 @@ const svg = render("g g > {t} > H");
 From a shell: `npx feynjs render diagram.feyn > diagram.svg` (also `check`, `describe`,
 `explain`, `measure`, `tikz`).
 
+On a Zensical or MkDocs site, add the script to `extra_javascript`; ```` ```feynman ```` blocks
+are then drawn as they are:
+
+```toml
+extra_javascript = ["https://cdn.jsdelivr.net/npm/feynjs@0.9/dist/feynjs.min.js"]
+```
+
 In notes: an Obsidian plugin is in `integrations/obsidian/`.
 
 ## What it draws
@@ -86,7 +111,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for how the code is organised and how to 
 ## Cite
 
 If feynjs helps your work, please cite it: see [CITATION.cff](CITATION.cff). A paper describing it
-is in preparation (`paper/`).
+is in preparation.
 
 ## Licence and thanks
 

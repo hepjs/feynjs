@@ -90,12 +90,17 @@ let diagramCounter = 0;
 export function run(options: RunOptions = {}): void {
   const { querySelector, root = document, download, ...renderOptions } = options;
   if (renderOptions.tooltips) installTooltips();
-  // (a Markdown code block becomes a plain element first, in place of its <pre>)
-  if (!querySelector) root.querySelectorAll<HTMLElement>("pre > code.language-feynman").forEach((code) => {
+  // (a Markdown code block becomes a plain element first, in place of the block: plain Markdown
+  // writes <pre><code class="language-feynman">; highlighters such as MkDocs's and Zensical's
+  // put the class on a wrapper round the <pre>)
+  if (!querySelector) root.querySelectorAll<HTMLElement>("pre > code.language-feynman, .language-feynman > pre > code").forEach((code) => {
+    const pre = code.parentElement!, wrapper = pre.parentElement;
+    const block = wrapper && wrapper.classList.contains("language-feynman") && !wrapper.classList.contains("feynman") ? wrapper : pre;
+    if (!block.isConnected) return;
     const holder = document.createElement("div");
     holder.className = "feynman";
     holder.textContent = code.textContent ?? "";
-    code.parentElement!.replaceWith(holder);
+    block.replaceWith(holder);
   });
   const selector = querySelector ?? ".feynman:not([data-processed])";
   root.querySelectorAll<HTMLElement>(selector).forEach((element) => {
