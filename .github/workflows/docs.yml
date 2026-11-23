@@ -25,7 +25,7 @@ jobs:
           python-version: "3.12"
       - run: npm ci
       - run: npm run build
-      - run: pip install zensical
+      - run: pip install -r requirements-docs.txt
       - run: zensical build
       - uses: actions/upload-pages-artifact@v3
         with:

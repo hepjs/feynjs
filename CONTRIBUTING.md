@@ -36,7 +36,7 @@ source text ──parse──▶ Diagram ──layout──▶ positions ──r
 ```bash
 npm ci
 npm run typecheck && npm run build && npm test
-npm run docs          # the site, into site/ (needs `pip install zensical`)
+npm run docs          # the site, into site/ (needs `pip install -r requirements-docs.txt`)
 ```
 
 ## Conventions

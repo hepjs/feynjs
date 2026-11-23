@@ -103,7 +103,7 @@ again.
 ```bash
 npm ci
 npm run typecheck && npm run build && npm test
-npm run docs     # the docs site into site/ (needs `pip install zensical`)
+npm run docs     # the docs site into site/ (needs `pip install -r requirements-docs.txt`)
 ```
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for how the code is organised and how to change it.
