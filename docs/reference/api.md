@@ -1,4 +1,26 @@
+---
+tags:
+  - JavaScript
+  - render()
+  - run()
+  - TypeScript
+  - npm
+  - ES module
+  - toTikz
+---
+
 # JavaScript API
+
+***Every function feynjs exports, with its options: render() and run() to draw, check(), describe() and measure() to read, toTikz() to export.***
+
+```js
+import { render } from "feynjs";
+const svg = render("e- e+ > Z > mu- mu+");   // SVG markup, ready to put in a page
+```
+
+```feynman
+e- e+ > Z > mu- mu+
+```
 
 ```js
 import { render, run, check, describe, measure, toTikz, registerParticle } from "feynjs";

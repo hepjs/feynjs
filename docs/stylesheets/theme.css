@@ -170,7 +170,9 @@
   .md-typeset .feynjs-hero-tile:hover { transform: none; }
   svg.feynjs .feynjs-pulse { display: none; }
 }
-.md-typeset .feynjs-lead { font-size: 1.15em; color: var(--md-default-fg-color--light); max-width: 36em; }
+.md-typeset .feynjs-punch { font-size: 2.1em; font-weight: 600; line-height: 1.15; letter-spacing: -0.02em; color: var(--md-default-fg-color); margin: 0.8em 0 0.3em; }
+.md-typeset .feynjs-punch .feynjs-accent { font-style: normal; color: var(--feynjs-brick); }
+.md-typeset .feynjs-lead { font-size: 1.15em; color: var(--md-default-fg-color--light); max-width: 44em; }
 
 /* ---- admonitions and code take the brick accent ---------------------------------------- */
 .md-typeset .admonition, .md-typeset details { border-radius: 0.4rem; }

@@ -1,15 +1,18 @@
+---
+tags:
+  - TeX
+  - LaTeX
+  - Greek letters
+  - edge label
+  - momentum arrow
+  - coupling
+  - notes
+  - annotation
+---
+
 # Labels
 
-Every particle carries its own label, so most diagrams need none written. When you want your own,
-labels are written in a small subset of TeX and typeset in New Computer Modern, the face of TeX
-documents.
-
-## Particle labels
-
-A particle on a line or a leg labels it: `[W+]` writes W⁺, `[neutralino1]` writes χ̃⁰₁.
-`label=` replaces the label, on the side feynjs picks (outside the diagram). `label'=` puts it
-on the right of the line's direction, as TikZ-Feynman's `edge label'` does: below a line drawn
-left to right. `no label` leaves it off.
+***Write your own labels in a small subset of TeX, mark a coupling at a vertex, and point at parts of a diagram with notes. Every label is placed clear of the lines.***
 
 ```feynman
 i1 [e-] -- a -- i2 [e+]
@@ -22,6 +25,17 @@ i1 [e-] -- a -- i2 [e+]
 a -- [photon, momentum=q, label'=\gamma^*] b
 f1 [mu-] -- b -- f2 [mu+]
 ```
+
+Every particle carries its own label, so most diagrams need none written. When you want your own,
+labels are written in a small subset of TeX and typeset in New Computer Modern, the face of TeX
+documents.
+
+## Particle labels
+
+A particle on a line or a leg labels it: `[W+]` writes W⁺, `[neutralino1]` writes χ̃⁰₁.
+`label=` replaces the label, on the side feynjs picks (outside the diagram). `label'=` puts it
+on the right of the line's direction, as TikZ-Feynman's `edge label'` does: below a line drawn
+left to right. `no label` leaves it off.
 
 A label that holds a comma goes in braces, so the comma isn't read as the end of the option:
 `label={\gamma, Z^0}`.

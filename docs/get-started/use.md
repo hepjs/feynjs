@@ -1,4 +1,36 @@
+---
+tags:
+  - script tag
+  - Zensical
+  - MkDocs
+  - Markdown
+  - HTML
+  - React
+  - command line
+  - CLI
+---
+
 # Where to use it
+
+***Put diagrams in a Zensical or MkDocs site, a web page, a JavaScript program or a shell script. On a web page, one script tag is enough.***
+
+```feynman
+i1 [g] -- a
+i2 [g] -- b
+a -- [fermion] c -- [fermion] b -- [fermion, label=t] a
+c -- [H] f1
+```
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/feynjs@0.9/dist/feynjs.min.js"></script>
+
+<div class="feynman">
+  i1 [g] -- a
+  i2 [g] -- b
+  a -- [fermion] c -- [fermion] b -- [fermion, label=t] a
+  c -- [H] f1
+</div>
+```
 
 The same source draws the same diagram everywhere. Pick the way that fits your project.
 

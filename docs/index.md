@@ -2,6 +2,15 @@
 hide:
   - navigation
   - toc
+  - tags
+tags:
+  - Feynman diagram
+  - JavaScript
+  - SVG
+  - TikZ-Feynman
+  - MadGraph
+  - particle physics
+  - HEP
 ---
 
 # feynjs { .feynjs-hidden }
@@ -133,8 +142,11 @@ hadron: K^{*0} = d2 s
 
 </div>
 
-Feynman diagrams for the web. Name the particles and say how they meet; feynjs draws the
-diagram the way physics papers do.
+Feynman diagrams, welcome to the *web*{ .feynjs-accent }.
+{ .feynjs-punch }
+
+***77 years after Feynman, they finally draw themselves. Name the particles and how they meet,
+and feynjs lays them out as physics papers do.***
 { .feynjs-lead }
 
 [Get started](get-started/index.md){ .md-button .md-button--primary }

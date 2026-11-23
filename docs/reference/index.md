@@ -1,4 +1,31 @@
+---
+tags:
+  - cheat sheet
+  - quick reference
+  - line options
+  - vertex options
+  - switches
+  - TikZ-Feynman
+  - MadGraph
+---
+
 # Syntax at a glance
+
+***Every piece of the diagram syntax on one page: edges, processes, line and vertex options, detector objects, switches and labels.***
+
+```feynman
+i1 [e-] -- a -- i2 [e+]
+a [dot] -- [Z, momentum=q] b [dot]
+b -- f1 [mu-]
+b -- f2 [mu+]
+```
+
+```text
+i1 [e-] -- a -- i2 [e+]
+a [dot] -- [Z, momentum=q] b [dot]
+b -- f1 [mu-]
+b -- f2 [mu+]
+```
 
 The whole syntax on one page. The [guide](../guide/index.md) explains each part with examples.
 

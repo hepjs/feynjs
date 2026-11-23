@@ -1,4 +1,40 @@
+---
+tags:
+  - semi-Feynman
+  - jet
+  - large-R jet
+  - b-jet
+  - missing energy
+  - MET
+  - hadronic tau
+  - long-lived particles
+---
+
 # Detector objects
+
+***Draw each final state as the detector sees it: jets, large-R and b-tagged jets, hadronic taus, missing energy and the signatures of long-lived particles.***
+
+```feynman
+i1 [p] -- pp [blob] -- i2 [p]
+pp -- [Z'] z
+z -- [H] h
+z -- [W] w
+w -- f1 [J]
+h -- f2 [bjet]
+h -- f3 [bjet]
+pp -- f4 [j]
+```
+
+```text
+i1 [p] -- pp [blob] -- i2 [p]
+pp -- [Z'] z
+z -- [H] h
+z -- [W] w
+w -- f1 [J]
+h -- f2 [bjet]
+h -- f3 [bjet]
+pp -- f4 [j]
+```
 
 Searches are often drawn as *semi-Feynman* diagrams: the process as usual, but each final state
 drawn as what the detector sees. Name a leg after the object, and feynjs draws it at the end of the

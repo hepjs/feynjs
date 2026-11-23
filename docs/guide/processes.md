@@ -1,9 +1,33 @@
 ---
 hide:
   - toc
+tags:
+  - decay chain
+  - SUSY cascade
+  - production and decay
+  - MG5_aMC
+  - loop-induced
+  - VBF
+  - VBS
 ---
 
 # Processes, as in MadGraph
+
+***Write `p p > t tbar` and `t > b W+` as in MadGraph: decays, loops, production modes and particles that decay two ways, drawn as one diagram.***
+
+```feynman
+d dbar > g > t tbar
+t > b W+(> e+ nu)
+tbar > bbar W-(> e- nubar)
+```
+
+````markdown
+```feynman
+d dbar > g > t tbar
+t > b W+(> e+ nu)
+tbar > bbar W-(> e- nubar)
+```
+````
 
 Instead of writing every line, name the process: what comes in, what it goes through, what comes
 out. Then say how each particle decays. feynjs makes the vertices and lines and lays them out.
@@ -142,22 +166,6 @@ neutralino2 > Z neutralino1
 p p > gluino gluino
 gluino > q q neutralino2
 neutralino2 > Z neutralino1
-```
-````
-
-### Top pair, dileptonic
-
-```feynman
-d dbar > g > t tbar
-t > b W+(> e+ nu)
-tbar > bbar W-(> e- nubar)
-```
-
-````markdown
-```feynman
-d dbar > g > t tbar
-t > b W+(> e+ nu)
-tbar > bbar W-(> e- nubar)
 ```
 ````
 

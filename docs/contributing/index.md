@@ -1,4 +1,58 @@
+---
+tags:
+  - pull request
+  - bug report
+  - development
+  - conventions
+  - code style
+  - open source
+---
+
 # Contributing
+
+***How to help with feynjs: what to report, where to start in the code, the conventions to follow,
+and how a change goes in.***
+
+A diagram from a paper, written as source and drawn by feynjs. A report of one that draws badly
+needs the same two things, and the figure from the paper.
+
+```feynman
+% ATLAS-CONF-2011-076 Fig. 1, written with defaults only
+q1 [q] -- a -- [squark] c
+q2 [qbar] -- b -- [squark] d
+a -- [gluino] b
+c -- qt [q]
+c -- [plain, label=\tilde{N}_1] e
+e -- fd1 [f_d]
+e -- [photon, label=\gamma_d] g
+g -- l1 [l+]
+g -- l2 [l-]
+d -- [plain, label=\tilde{N}_1] f
+f -- [photon, label=\gamma_d] h
+h -- l3 [l+]
+h -- l4 [l-]
+f -- fd2 [f_d]
+d -- qb [q]
+```
+
+```text
+% ATLAS-CONF-2011-076 Fig. 1, written with defaults only
+q1 [q] -- a -- [squark] c
+q2 [qbar] -- b -- [squark] d
+a -- [gluino] b
+c -- qt [q]
+c -- [plain, label=\tilde{N}_1] e
+e -- fd1 [f_d]
+e -- [photon, label=\gamma_d] g
+g -- l1 [l+]
+g -- l2 [l-]
+d -- [plain, label=\tilde{N}_1] f
+f -- [photon, label=\gamma_d] h
+h -- l3 [l+]
+h -- l4 [l-]
+f -- fd2 [f_d]
+d -- qb [q]
+```
 
 feynjs is MIT-licensed and welcomes help from physicists and programmers alike. You don't need to
 know the layout code to make a difference: a diagram that draws badly, with a picture of how

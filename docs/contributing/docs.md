@@ -1,4 +1,44 @@
+---
+tags:
+  - documentation
+  - Zensical
+  - markdown
+  - feynman block
+  - writing pages
+  - preview
+  - logo
+---
+
 # The docs site
+
+***How this site is built with Zensical, how to write a page and its diagrams, and how a
+`feynman` block in the markdown becomes a drawing.***
+
+A page draws a diagram from a fenced block. This is what you write:
+
+````markdown
+```feynman
+in: i1 i2
+out: f1 f2
+i1 [e-] -- a
+i2 [gamma] -- a
+a -- [fermion] b
+b -- f1 [e-]
+b -- f2 [gamma]
+```
+````
+
+and this is what the page shows:
+
+```feynman
+in: i1 i2
+out: f1 f2
+i1 [e-] -- a
+i2 [gamma] -- a
+a -- [fermion] b
+b -- f1 [e-]
+b -- f2 [gamma]
+```
 
 This site is built with [Zensical](https://zensical.org) from the markdown in `docs/`, configured
 in `zensical.toml`.
@@ -25,16 +65,18 @@ writes, and switch it back before committing. That copy is also published with t
 - **Each example should work when copied.** Don't rely on anything the reader can't see.
 - **Write plainly.** Short sentences, the words physicists use, no marketing.
 
-## Generated pages
+## Pages kept by hand
 
-Some pages are written by scripts and should not be edited by hand:
+Three pages list what is in the code. For now they are kept by hand in this repository:
 
-| Page | Script | From |
-|---|---|---|
-| `examples/gallery.md` | `node scripts/gen-docs.mjs` | `examples/*.feyn` |
-| `reference/particles.md`, `reference/theme.md` | `node scripts/gen-reference.mjs` | the registry, `src/theme.ts` |
+| Page | Lists |
+|---|---|
+| `examples/gallery.md` | the diagrams in `examples/*.feyn` |
+| `reference/particles.md` | the particles in `src/particles/registry.ts` |
+| `reference/theme.md` | the settings in `src/theme.ts` |
 
-Run them after `npm run build`, since they read `dist/`.
+Adding a particle or a theme setting means updating its page too. So does adding an example to
+`examples/`.
 
 ## How diagrams get drawn
 
@@ -42,7 +84,11 @@ Run them after `npm run build`, since they read `dist/`.
 `docs/javascripts/feynjs-init.js` calls `feynjs.run` after every page load (including instant
 navigation). It also puts the site's name in the header in its brand colours and adds the
 diagram colour picker. `docs/stylesheets/feynjs.css` loads the label font and sets the diagram
-colours for light and dark. `docs/stylesheets/theme.css` is the site's look.
+colours for light and dark. `docs/stylesheets/theme.css` is the site's look, and
+`overrides/partials/content.html` puts each page's tags under its title instead of at the foot.
 
 ## The brand
 
+The logo files are in `docs/brand/logo/`: the mark, the wordmark and the lockups, each for light
+and dark backgrounds, with the favicon and the social card. The site uses `mark-red.svg` as its
+logo and `favicon.svg` as its favicon, both set in `zensical.toml`.

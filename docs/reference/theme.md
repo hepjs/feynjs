@@ -1,4 +1,45 @@
+---
+tags:
+  - options
+  - defaults
+  - line width
+  - stroke
+  - colours
+  - colors
+  - font
+  - size
+---
+
 # Theme settings
+
+***Every size, colour and layout weight feynjs uses, with its default, to change from JavaScript through the theme option of render() or run().***
+
+```feynman
+--- default
+p p > t tbar
+t > b W+
+tbar > bbar W-
+--- size: small
+size: small
+p p > t tbar
+t > b W+
+tbar > bbar W-
+```
+
+```text
+--- default
+p p > t tbar
+t > b W+
+tbar > bbar W-
+--- size: small
+size: small
+p p > t tbar
+t > b W+
+tbar > bbar W-
+```
+
+`size: small` in the source sets the theme's `size` for one diagram; from JavaScript it is
+`render(source, { theme: { size: 0.72 } })`.
 
 Every size, colour and layout weight feynjs uses, with its default. Pass any of them to
 `render` (or `run`) under `theme`; whatever you leave out keeps its default. Groups merge one level
@@ -10,7 +51,7 @@ feynjs.render(source, { theme: { line: { stroke: 2 }, susyColor: "#8e44ad" } });
 
 See [Styling and themes](../guide/styling.md) for how to use them, and the colours the site's stylesheet adds.
 
-*Generated from `src/theme.ts` by `node scripts/gen-reference.mjs`.*
+*Lists the settings in `src/theme.ts`.*
 
 ## Page and labels
 

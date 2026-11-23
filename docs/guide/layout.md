@@ -1,4 +1,34 @@
+---
+tags:
+  - force layout
+  - layout engine
+  - vertex placement
+  - positioning
+  - pin a vertex
+  - v1
+  - v2
+  - TikZ-Feynman
+---
+
 # Layout
+
+***How feynjs places every vertex, which of its two layout engines to use, and how to steer a diagram by ordering legs, bending lines or pinning vertices.***
+
+```feynman
+p p > stop stop~
+stop > t neutralino1
+stop~ > t~ neutralino1
+t > b W+
+t~ > b~ W-
+```
+
+```text
+p p > stop stop~
+stop > t neutralino1
+stop~ > t~ neutralino1
+t > b W+
+t~ > b~ W-
+```
 
 feynjs places every vertex itself. This page explains how it does that, and how to steer it when
 you want something different.

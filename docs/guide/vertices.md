@@ -1,4 +1,40 @@
+---
+tags:
+  - dot
+  - blob
+  - insertion
+  - counterterm
+  - effective vertex
+  - proton beam
+  - nucleus
+  - flux tube
+---
+
 # Vertices and blobs
+
+***Mark vertices with dots, blobs and crosses, draw proton beams and nuclei, and show a hadron's quarks bound by flux tubes.***
+
+```feynman
+i1 [p] -- pp [blob] -- i2 [p]
+pp -- [Z'] z [dot]
+z -- [W+] w1 [small blob]
+z -- [W-] w2 [small blob]
+w1 -- f1 [e+]
+w1 -- f2 [nu_e]
+w2 -- f3 [q]
+w2 -- f4 [qbar]
+```
+
+```text
+i1 [p] -- pp [blob] -- i2 [p]
+pp -- [Z'] z [dot]
+z -- [W+] w1 [small blob]
+z -- [W-] w2 [small blob]
+w1 -- f1 [e+]
+w1 -- f2 [nu_e]
+w2 -- f3 [q]
+w2 -- f4 [qbar]
+```
 
 Where lines meet, feynjs draws nothing by default, as most papers do. Mark a vertex with a shape
 in its options: `v [dot]`.

@@ -1,4 +1,30 @@
+---
+tags:
+  - CLI
+  - terminal
+  - shell
+  - npx
+  - SVG export
+  - tikz export
+  - batch
+  - CI
+---
+
 # Command line
+
+***Draw, check and export diagrams from a shell: one command turns a .feyn file into SVG, TikZ-Feynman code, a lint report or a plain-English description.***
+
+```sh
+feynjs render ggf.feyn > ggf.svg
+```
+
+```feynman
+g g > {t} > H
+```
+
+```text
+g g > {t} > H
+```
 
 ```sh
 feynjs <command> [file]

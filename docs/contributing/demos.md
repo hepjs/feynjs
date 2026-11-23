@@ -1,7 +1,76 @@
+---
+tags:
+  - examples
+  - new features
+  - kinematic view
+  - grid layout
+  - detector objects
+  - large-R jet
+  - showcase
+---
+
 # Feature demonstrations
 
-Live examples of the features added from November 2026, drawn by the current build. Each
-example shows the same diagram with a feature off and on, side by side.
+***Live examples of the features added from November 2026, drawn by the current build. Each shows
+one diagram with a feature off and on, side by side.***
+
+A top pair drawn as a diagram, then as the detector sees it, looking along the beam and across it
+(`view: kinematic`, see [Kinematic view](#kinematic-view)):
+
+```feynman
+--- diagram
+% the kinematic view of a top pair: the two tops back to back, their products near them
+in: i1 i2
+out: b1 l1 n1 q1 q2 b2
+i1 [g] -- a
+i2 [g] -- a
+a -- [g] c
+c -- [t] t1
+c -- [tbar] t2
+t1 -- [W+] w1
+t1 -- b1 [b]
+w1 -- l1 [e+]
+w1 -- n1 [nu_e]
+t2 -- [W-] w2
+t2 -- b2 [bbar]
+w2 -- q1 [d]
+w2 -- q2 [ubar]
+--- view: kinematic (transverse)
+view: kinematic
+in: i1 i2
+out: b1 l1 n1 q1 q2 b2
+i1 [g] -- a
+i2 [g] -- a
+a -- [g] c
+c -- [t] t1
+c -- [tbar] t2
+t1 -- [W+] w1
+t1 -- b1 [b]
+w1 -- l1 [e+]
+w1 -- n1 [nu_e]
+t2 -- [W-] w2
+t2 -- b2 [bbar]
+w2 -- q1 [d]
+w2 -- q2 [ubar]
+--- projection: longitudinal
+view: kinematic
+projection: longitudinal
+in: i1 i2
+out: b1 l1 n1 q1 q2 b2
+i1 [g] -- a
+i2 [g] -- a
+a -- [g] c
+c -- [t] t1
+c -- [tbar] t2
+t1 -- [W+] w1
+t1 -- b1 [b]
+w1 -- l1 [e+]
+w1 -- n1 [nu_e]
+t2 -- [W-] w2
+t2 -- b2 [bbar]
+w2 -- q1 [d]
+w2 -- q2 [ubar]
+```
 
 ## Colour schemes
 
@@ -478,61 +547,7 @@ l -- [scalar] h2
 
 `view: kinematic` draws the event as a detector sees it. `projection: transverse` looks along
 the beam; `projection: longitudinal` looks across it. Move a leg with `eta=`, `phi=`, `deta=`, `dphi=`.
-
-```feynman
---- diagram
-% the kinematic view of a top pair: the two tops back to back, their products near them
-in: i1 i2
-out: b1 l1 n1 q1 q2 b2
-i1 [g] -- a
-i2 [g] -- a
-a -- [g] c
-c -- [t] t1
-c -- [tbar] t2
-t1 -- [W+] w1
-t1 -- b1 [b]
-w1 -- l1 [e+]
-w1 -- n1 [nu_e]
-t2 -- [W-] w2
-t2 -- b2 [bbar]
-w2 -- q1 [d]
-w2 -- q2 [ubar]
---- view: kinematic (transverse)
-view: kinematic
-in: i1 i2
-out: b1 l1 n1 q1 q2 b2
-i1 [g] -- a
-i2 [g] -- a
-a -- [g] c
-c -- [t] t1
-c -- [tbar] t2
-t1 -- [W+] w1
-t1 -- b1 [b]
-w1 -- l1 [e+]
-w1 -- n1 [nu_e]
-t2 -- [W-] w2
-t2 -- b2 [bbar]
-w2 -- q1 [d]
-w2 -- q2 [ubar]
---- projection: longitudinal
-view: kinematic
-projection: longitudinal
-in: i1 i2
-out: b1 l1 n1 q1 q2 b2
-i1 [g] -- a
-i2 [g] -- a
-a -- [g] c
-c -- [t] t1
-c -- [tbar] t2
-t1 -- [W+] w1
-t1 -- b1 [b]
-w1 -- l1 [e+]
-w1 -- n1 [nu_e]
-t2 -- [W-] w2
-t2 -- b2 [bbar]
-w2 -- q1 [d]
-w2 -- q2 [ubar]
-```
+The top pair at the [top of this page](#feature-demonstrations) is drawn both ways.
 
 Labels are free text. A tag-and-probe picture of Z to two muons, one tagged and one probed,
 with the labels written as `label={\mu^-\,\text{tag}}` (braces keep the comma in `\,` part of

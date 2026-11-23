@@ -1,4 +1,44 @@
+---
+tags:
+  - loop
+  - box
+  - penguin
+  - self-energy
+  - meson
+  - baryon
+  - spectator
+  - B physics
+---
+
 # Loops, boxes and hadrons
+
+***Draw loops, boxes, penguins and vertex corrections, and group quark legs into mesons and baryons. You write the connections; feynjs finds the loops and hadrons.***
+
+```feynman
+in: d1 b
+out: d2 s mu1 mu2
+d1 [d] -- [fermion] d2 [d]
+s [\bar{s}] -- [fermion] l2 -- [fermion, label={\bar{u}, \bar{c}, \bar{t}}] l1 -- [fermion] b [\bar{b}]
+l1 -- [boson, label=W^-] x -- [boson] l2
+x -- [photon, label={\gamma, Z^0}] v
+v -- [fermion] mu1 [\mu^-]
+mu2 [\mu^+] -- [fermion] v
+hadron: B^0 = d1 b [brace]
+hadron: K^{*0} = d2 s [brace]
+```
+
+```text
+in: d1 b
+out: d2 s mu1 mu2
+d1 [d] -- [fermion] d2 [d]
+s [\bar{s}] -- [fermion] l2 -- [fermion, label={\bar{u}, \bar{c}, \bar{t}}] l1 -- [fermion] b [\bar{b}]
+l1 -- [boson, label=W^-] x -- [boson] l2
+x -- [photon, label={\gamma, Z^0}] v
+v -- [fermion] mu1 [\mu^-]
+mu2 [\mu^+] -- [fermion] v
+hadron: B^0 = d1 b [brace]
+hadron: K^{*0} = d2 s [brace]
+```
 
 feynjs recognises loops and hadrons from how the lines connect, and draws them as papers do.
 You only write the connections.
@@ -29,33 +69,7 @@ square with upright rungs when it hangs on a quark line.
 
 A boson that leaves a fermion line and rejoins it is drawn as an arc over the line: a vertex
 correction, a self-energy. A vertex on the boson sits at the top of the arc, so a photon or Z can
-leave from there, as in a **penguin**:
-
-```feynman
-in: d1 b
-out: d2 s mu1 mu2
-d1 [d] -- [fermion] d2 [d]
-s [\bar{s}] -- [fermion] l2 -- [fermion, label={\bar{u}, \bar{c}, \bar{t}}] l1 -- [fermion] b [\bar{b}]
-l1 -- [boson, label=W^-] x -- [boson] l2
-x -- [photon, label={\gamma, Z^0}] v
-v -- [fermion] mu1 [\mu^-]
-mu2 [\mu^+] -- [fermion] v
-hadron: B^0 = d1 b [brace]
-hadron: K^{*0} = d2 s [brace]
-```
-
-```text
-in: d1 b
-out: d2 s mu1 mu2
-d1 [d] -- [fermion] d2 [d]
-s [\bar{s}] -- [fermion] l2 -- [fermion, label={\bar{u}, \bar{c}, \bar{t}}] l1 -- [fermion] b [\bar{b}]
-l1 -- [boson, label=W^-] x -- [boson] l2
-x -- [photon, label={\gamma, Z^0}] v
-v -- [fermion] mu1 [\mu^-]
-mu2 [\mu^+] -- [fermion] v
-hadron: B^0 = d1 b [brace]
-hadron: K^{*0} = d2 s [brace]
-```
+leave from there, as in the **penguin** at the top of this page.
 
 ## Hadrons
 

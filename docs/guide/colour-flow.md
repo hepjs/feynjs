@@ -1,4 +1,31 @@
+---
+tags:
+  - color flow
+  - "'t Hooft double line"
+  - double-line notation
+  - QCD
+  - quark
+  - gluon
+  - colour charge
+---
+
 # Colour flow
+
+***Draw the colour lines beside every quark and gluon, in 't Hooft's double-line notation, to show how colour passes through a QCD diagram.***
+
+```feynman
+colour flow: on
+d dbar > g > t tbar
+t > b W+
+tbar > bbar W-
+```
+
+```text
+colour flow: on
+d dbar > g > t tbar
+t > b W+
+tbar > bbar W-
+```
 
 `colour flow: on` (or `color flow: on`) draws how colour runs through the diagram, in 't Hooft's
 double-line notation. Thin coloured lines run beside the QCD lines:
@@ -49,20 +76,7 @@ f1 [t] -- b -- f2 [tbar]
 
 The switch works with both notations and both layout engines. A W or a photon carries no colour,
 so colour passes it by. A blob ends the colour lines, since what happens inside it isn't drawn.
-
-```feynman
-colour flow: on
-d dbar > g > t tbar
-t > b W+
-tbar > bbar W-
-```
-
-```text
-colour flow: on
-d dbar > g > t tbar
-t > b W+
-tbar > bbar W-
-```
+The diagram at the top of this page is written as a process.
 
 ## Loops
 

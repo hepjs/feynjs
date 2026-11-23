@@ -1,7 +1,17 @@
+---
+tags:
+  - syntax
+  - chains
+  - vertices
+  - external legs
+  - line options
+  - momentum arrows
+  - LaTeX
+---
+
 # Edges, as in TikZ-Feynman
 
-The edge syntax writes a diagram line by line: name the points, join them, say what each line
-is. It follows TikZ-Feynman's `\diagram*` notation, so `a -- [photon] b` means what it means there.
+***Write any diagram edge by edge: chains of vertices, options for vertices and lines, which legs come in and go out, and the TikZ-Feynman keys.***
 
 ```feynman
 i1 [e-] -- a -- i2 [e+]
@@ -14,6 +24,9 @@ i1 [e-] -- a -- i2 [e+]
 a -- [gamma] b
 f1 [mu-] -- b -- f2 [mu+]
 ```
+
+The edge syntax writes a diagram line by line: name the points, join them, say what each line
+is. It follows TikZ-Feynman's `\diagram*` notation, so `a -- [photon] b` means what it means there.
 
 ## Chains
 

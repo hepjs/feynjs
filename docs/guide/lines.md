@@ -1,4 +1,44 @@
+---
+tags:
+  - line styles
+  - propagator
+  - fermion
+  - photon
+  - gluon
+  - scalar
+  - ghost
+  - TikZ-Feynman
+---
+
 # Lines and particles
+
+***Choose how each line is drawn: a TikZ-Feynman style such as fermion, photon or gluon, or a particle name that sets the style, arrow and label at once.***
+
+```feynman
+i1 [g] -- a
+i2 [g] -- b
+a -- [fermion] c -- [fermion] b -- [fermion, label=t] a
+c -- [H] h
+h -- [W+] w1
+h -- [W-] w2
+w1 -- f1 [e+]
+w1 -- f2 [nu_e]
+w2 -- f3 [mu-]
+w2 -- f4 [nubar]
+```
+
+```text
+i1 [g] -- a
+i2 [g] -- b
+a -- [fermion] c -- [fermion] b -- [fermion, label=t] a
+c -- [H] h
+h -- [W+] w1
+h -- [W-] w2
+w1 -- f1 [e+]
+w1 -- f2 [nu_e]
+w2 -- f3 [mu-]
+w2 -- f4 [nubar]
+```
 
 A line's look comes from its options: a **generic style** (`fermion`, `photon`, ...) or a
 **particle** (`e-`, `W+`, `gluino`, ...), which sets the style, the arrow and the label in one

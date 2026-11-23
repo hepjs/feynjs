@@ -1,4 +1,36 @@
+---
+tags:
+  - check
+  - lint
+  - validation
+  - fermion flow
+  - explain
+  - describe
+  - measure
+  - alt text
+---
+
 # Checking diagrams
+
+***Check a diagram's fermion flow and legs, read it back as plain English or JSON, and score its layout, from JavaScript or the command line.***
+
+```feynman
+i1 [e-] -- a -- i2 [e-]
+a -- [gamma] b
+f1 [mu-] -- b -- f2
+```
+
+```text
+i1 [e-] -- a -- i2 [e-]
+a -- [gamma] b
+f1 [mu-] -- b -- f2
+```
+
+```console
+$ feynjs check wrong.feyn
+error: fermion arrows do not flow through "a": 2 arrive and 0 leave  [fermion-flow]
+warning: external leg "f2" has no particle label  [unlabelled-leg]
+```
 
 A drawing can look right and still be wrong. feynjs reads a diagram as well as drawing it, and
 three tools report what it finds. Each takes the same source as `render`, and each runs
@@ -114,5 +146,4 @@ feynjs.measure(source);
 ```
 
 `measure` takes theme overrides as a second argument, so you can see how a setting changes the
-score. `node scripts/quality-report.mjs` in the repository ranks every example and corpus diagram
-by it (see [Testing](../contributing/testing.md)).
+score.

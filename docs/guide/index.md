@@ -1,17 +1,16 @@
+---
+tags:
+  - user guide
+  - manual
+  - how-to
+  - TikZ-Feynman
+  - MadGraph
+  - syntax
+---
+
 # Guide
 
-Everything feynjs can draw, one topic per page. Each page shows diagrams with the source that
-drew them, so you can copy any of them as a starting point.
-
-## Two ways to write
-
-feynjs reads two notations, and both give the same drawing.
-
-| | Edges, as in TikZ-Feynman | Processes, as in MadGraph |
-|---|---|---|
-| You write | every line: `a -- [gamma] b` | the process and decays: `p p > t tbar`, `t > b W+` |
-| Good for | loops, boxes, hadrons, couplings, exact control | production and decay, long cascades |
-| Read | [Edges](syntax.md) | [Processes](processes.md) |
+***Find the page for each topic: the two ways to write a diagram, then lines, labels, loops, colour flow, layout, styling and checks.***
 
 ```feynman
 p p > t tbar
@@ -26,6 +25,19 @@ t > b W+(> e+ nu)
 tbar > bbar W-(> q qbar)
 ```
 ````
+
+Everything feynjs can draw, one topic per page. Each page shows diagrams with the source that
+drew them, so you can copy any of them as a starting point.
+
+## Two ways to write
+
+feynjs reads two notations, and both give the same drawing.
+
+| | Edges, as in TikZ-Feynman | Processes, as in MadGraph |
+|---|---|---|
+| You write | every line: `a -- [gamma] b` | the process and decays: `p p > t tbar`, `t > b W+` |
+| Good for | loops, boxes, hadrons, couplings, exact control | production and decay, long cascades |
+| Read | [Edges](syntax.md) | [Processes](processes.md) |
 
 ## Topics
 

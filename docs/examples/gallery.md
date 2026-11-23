@@ -1,4 +1,18 @@
+---
+tags:
+  - examples
+  - s-channel
+  - t-channel
+  - loops
+  - penguin
+  - SUSY cascade
+  - di-Higgs
+  - meson decay
+---
+
 # Gallery
+
+***Every example that ships with feynjs, each with its source: scattering, loops, boxes, penguins, Higgs and top processes, SUSY cascades and meson decays.***
 
 Every diagram below is laid out automatically: the source gives only the particles and how they connect.
 

@@ -1,4 +1,32 @@
+---
+tags:
+  - theme
+  - colour
+  - color
+  - dark mode
+  - SVG export
+  - PNG
+  - TikZ export
+  - line width
+---
+
 # Styling and export
+
+***Change line widths, colours and sizes through the theme, colour lines by charge, follow a page's dark mode, and export diagrams as SVG, PNG or TikZ-Feynman code.***
+
+```feynman
+charge colour: on
+p p > t tbar
+t > b W+(> e+ nu)
+tbar > bbar W-(> mu- nubar)
+```
+
+```text
+charge colour: on
+p p > t tbar
+t > b W+(> e+ nu)
+tbar > bbar W-(> mu- nubar)
+```
 
 ## The theme
 
@@ -90,20 +118,7 @@ This site's diagram colour picker, in the corner of any page with diagrams, work
 positive in orange, negative in blue, a "±" charge in purple. Neutral lines keep their usual
 colour. A particle is known when it is named on the line, on its external leg, or by a quark's
 label (`[\bar{b}]`). The colours are `chargeColors` in the [theme](../reference/theme.md).
-
-```feynman
-charge colour: on
-p p > t tbar
-t > b W+(> e+ nu)
-tbar > bbar W-(> mu- nubar)
-```
-
-```text
-charge colour: on
-p p > t tbar
-t > b W+(> e+ nu)
-tbar > bbar W-(> mu- nubar)
-```
+The diagram at the top of this page uses it.
 
 ## Particle cards
 

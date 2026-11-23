@@ -1,10 +1,17 @@
+---
+tags:
+  - subfigures
+  - side by side
+  - captions
+  - sum of diagrams
+  - cut diagram
+  - reveal
+  - options
+---
+
 # Panels and switches
 
-## Several diagrams side by side
-
-A line of three or more dashes starts a new panel. Text after the dashes is that panel's
-caption. Without it, panels are lettered (a), (b), (c). Panels sit three to a row; the
-`panelsPerRow` option of `render` changes that.
+***Put several diagrams side by side, lettered or joined by +, = or a cut, and set switches for a whole diagram: arrows, dots, size, colour flow and more.***
 
 ```feynman
 --- (a) a photon
@@ -27,6 +34,12 @@ i1 [e-] -- a -- i2 [e+]
 a -- [Z] b
 f1 [mu-] -- b -- f2 [mu+]
 ```
+
+## Several diagrams side by side
+
+A line of three or more dashes starts a new panel. Text after the dashes is that panel's
+caption. Without it, panels are lettered (a), (b), (c). Panels sit three to a row; the
+`panelsPerRow` option of `render` changes that.
 
 Each panel is a diagram of its own: vertex names can repeat, and panels can use either syntax.
 

@@ -1,4 +1,38 @@
+---
+tags:
+  - top squark
+  - squark
+  - SUSY
+  - supersymmetry
+  - neutralino
+  - chargino
+  - RPV
+  - LHC
+---
+
 # Stop production, step by step
+
+***Stop pairs at the LHC and the ways a stop decays: to a top or a charm quark, through a chargino or the second neutralino, or without R-parity.***
+
+```feynman
+i1 [p] -- pp [blob] -- i2 [p]
+pp -- [stop] s1
+pp -- [stop, label'={\tilde{t}^*}] s2
+s1 -- a1 [t]
+s1 -- a2 [neutralino1]
+s2 -- b1 [neutralino1]
+s2 -- [anti fermion] b2 [\bar{t}]
+```
+
+```text
+i1 [p] -- pp [blob] -- i2 [p]
+pp -- [stop] s1
+pp -- [stop, label'={\tilde{t}^*}] s2
+s1 -- a1 [t]
+s1 -- a2 [neutralino1]
+s2 -- b1 [neutralino1]
+s2 -- [anti fermion] b2 [\bar{t}]
+```
 
 The stop ($\tilde t$) is the supersymmetric partner of the top quark. This page builds up how it is made at the LHC and every common way it decays, one diagram at a time. Each diagram is laid out automatically from a few lines of source; open any block to see it.
 
@@ -140,17 +174,7 @@ v -- [anti fermion] l [\ell^+]
 
 A real event has two stops, each decaying. Here are the full diagrams for the most searched-for cases.
 
-**Both stops to a top and a neutralino:**
-
-```feynman
-i1 [p] -- pp [blob] -- i2 [p]
-pp -- [stop] s1
-pp -- [stop, label'={\tilde{t}^*}] s2
-s1 -- a1 [t]
-s1 -- a2 [neutralino1]
-s2 -- b1 [neutralino1]
-s2 -- [anti fermion] b2 [\bar{t}]
-```
+**Both stops to a top and a neutralino:** the diagram at the top of this page.
 
 **Both stops through a chargino:**
 

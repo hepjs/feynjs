@@ -1,4 +1,31 @@
+---
+tags:
+  - templates
+  - sample diagrams
+  - VBF
+  - mono-X
+  - Higgs
+  - SUSY
+  - electroweakinos
+---
+
 # Examples
+
+***Find a diagram close to the one you need: the library's gallery, a stop walkthrough, and a few common processes below.***
+
+```feynman
+i1 [q] -- a -- f1 [q]
+i2 [q] -- b -- f3 [q]
+a -- [W] c -- [W] b
+c -- f2 [H]
+```
+
+```text
+i1 [q] -- a -- f1 [q]
+i2 [q] -- b -- f3 [q]
+a -- [W] c -- [W] b
+c -- f2 [H]
+```
 
 Every diagram on these pages is drawn in your browser from the source shown beneath it. Copy any
 of them as a starting point.
@@ -9,22 +36,6 @@ of them as a starting point.
 | [**Stop production, step by step**](stop.md) | A walkthrough: how stops are made at the LHC and every common way they decay, one diagram at a time. |
 
 ## A few to start from
-
-=== "Vector-boson fusion"
-
-    ```feynman
-    i1 [q] -- a -- f1 [q]
-    i2 [q] -- b -- f3 [q]
-    a -- [W] c -- [W] b
-    c -- f2 [H]
-    ```
-
-    ```text
-    i1 [q] -- a -- f1 [q]
-    i2 [q] -- b -- f3 [q]
-    a -- [W] c -- [W] b
-    c -- f2 [H]
-    ```
 
 === "Mono-X"
 

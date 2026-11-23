@@ -1,15 +1,38 @@
 ---
+tags:
+  - particle names
+  - MadGraph names
+  - SUSY
+  - Standard Model
+  - line styles
+  - labels
+  - registerParticle
+  - PDG
 hide:
   - toc
 ---
 
 # Particles
 
+***Every particle name feynjs knows, and how each is drawn: write a name on a line or a leg and it sets the line style, the arrow and the label.***
+
+```feynman
+p p > chargino+ neutralino2
+chargino+ > W+ neutralino1
+neutralino2 > H neutralino1
+```
+
+```text
+p p > chargino+ neutralino2
+chargino+ > W+ neutralino1
+neutralino2 > H neutralino1
+```
+
 Every name feynjs knows, 105 in all. Write a name on a line (`a -- [W+] b`) or on an
 external leg (`f1 [mu-]`) and it sets the line style, the label and, for supersymmetric particles, the
 colour. Add your own with [`registerParticle`](api.md#registerparticle).
 
-*Generated from the particle registry by `node scripts/gen-reference.mjs`.*
+*Lists the particle registry, `src/particles/registry.ts`.*
 
 ## Charged leptons
 

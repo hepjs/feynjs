@@ -1,15 +1,32 @@
+---
+tags:
+  - pipeline
+  - parser
+  - renderer
+  - layout engine
+  - force layout
+  - source code
+  - design
+---
+
 # Architecture
 
-```mermaid
-flowchart LR
-  src[source text] --> chains[expand processes] --> parse --> D[Diagram]
-  D --> L{engine}
-  L -->|v1| rules[rule layout]
-  L -->|v2| forces[force layout]
-  rules --> pos[positions]
-  forces --> pos
-  pos --> render --> svg[SVG]
-  D --> tools[check, describe, toTikz]
+***How feynjs turns source text into SVG: the parser, the two layout engines, the renderer and the
+tools, and which file does each step.***
+
+```text
+source text      p p > t tbar, a -- [photon] b
+   │  expand processes          src/parse/chains.ts
+   │  parse                     src/parse/parse.ts
+   ▼
+Diagram          vertices, edges, styles  ──▶  check, describe, toTikz   src/tools/
+   │  layout, v1 rules          src/engines/rules/
+   │       or v2 forces         src/engines/forces/
+   ▼
+positions        a point for every vertex
+   │  render                    src/render/
+   ▼
+SVG
 ```
 
 ## 1. Reading: `src/parse/`
@@ -38,8 +55,7 @@ flowchart LR
 | `hadrons.ts` | hadrons lined up; vacuum pairs between them |
 | `spacing.ts` | clearance: minimum angles, legs clear of other lines |
 
-Every rule and its setting is in [Layout rules](../reference/layout-rules.md), generated from the
-code by `node scripts/list-rules.mjs`.
+Every rule and its setting is in [Layout rules](../reference/layout-rules.md).
 
 ## 3. Layout v2: `src/engines/forces/`
 

@@ -1,4 +1,52 @@
+---
+tags:
+  - npm test
+  - unit tests
+  - regression
+  - layout baseline
+  - approve layouts
+  - validation
+  - typecheck
+---
+
 # Testing
+
+***How feynjs is tested: the unit tests, the approved layouts that fail a test when a diagram
+moves, and how to approve a layout change on purpose.***
+
+One of the layouts the test holds in place: the gluon-fusion triangle to HH from HDBS-2018-40
+(Fig. 1a), as `validation/atlas/HDBS-2018-40/fig_01a.feyn`.
+
+```feynman
+% HDBS-2018-40 fig_01a: ggF HH triangle diagram with the trilinear coupling lambda_HHH marked
+layout: v2
+in: i1 i2
+out: f1 f2
+i1 [g] -- t1
+i2 [g] -- t2
+t2 -- [fermion] t1 -- [fermion] t3 -- [fermion] t2
+k [dot, color=#ee325a, label=\lambda_{HHH}]
+t3 -- [H, label'=H] k
+k -- f1 [H]
+k -- f2 [H]
+```
+
+```text
+% HDBS-2018-40 fig_01a: ggF HH triangle diagram with the trilinear coupling lambda_HHH marked
+layout: v2
+in: i1 i2
+out: f1 f2
+i1 [g] -- t1
+i2 [g] -- t2
+t2 -- [fermion] t1 -- [fermion] t3 -- [fermion] t2
+k [dot, color=#ee325a, label=\lambda_{HHH}]
+t3 -- [H, label'=H] k
+k -- f1 [H]
+k -- f2 [H]
+```
+
+If a change moves any of its points by more than a twentieth of a line length, `npm test` fails
+and names it.
 
 ```bash
 npm run typecheck     # TypeScript, no output

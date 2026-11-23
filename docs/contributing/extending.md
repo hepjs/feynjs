@@ -1,4 +1,35 @@
+---
+tags:
+  - new particle
+  - registry
+  - line style
+  - vertex shape
+  - switch
+  - force
+  - customise
+---
+
 # Extending feynjs
+
+***Step-by-step recipes for the common changes: a new particle, line style, vertex shape, switch,
+layout step or force, and process syntax.***
+
+A particle is one line in the registry, `"sneutrino": susy("dash", "\\tilde\\nu")`. From then on
+`[sneutrino]` draws a dashed SUSY line labelled ν̃:
+
+```feynman
+i1 [e-] -- a -- i2 [e+]
+a -- [Z] b
+b -- f1 [sneutrino]
+b -- f2 [sneutrino]
+```
+
+```text
+i1 [e-] -- a -- i2 [e+]
+a -- [Z] b
+b -- f1 [sneutrino]
+b -- f2 [sneutrino]
+```
 
 The common changes, step by step. Each ends with `npm test && npm run typecheck` and, for anything
 visible, a look at the preview sheet ([Testing](testing.md)).
@@ -12,8 +43,7 @@ One line in `src/particles/registry.ts`, using the helpers there:
 "sneutrino": susy("dash", "\\tilde\\nu"),
 ```
 
-Then regenerate the [Particles](../reference/particles.md) page:
-`npm run build && node scripts/gen-reference.mjs`. A particle needed by one page only can be added
+Then add it to the [Particles](../reference/particles.md) page, which is kept by hand. A particle needed by one page only can be added
 at run time with [`registerParticle`](../reference/api.md#registerparticle) instead.
 
 ## Add a line style
@@ -40,7 +70,7 @@ add it to [Panels and switches](../guide/panels.md) and the [syntax reference](.
 ## Change the layout
 
 **v1:** add a named step in `src/engines/rules/` and call it from `layout.ts`. Put its numbers in
-`LayoutRules`, then run `node scripts/list-rules.mjs` to update the rules page.
+`LayoutRules`, and add the rule to the [Layout rules](../reference/layout-rules.md) page.
 
 **v2:** add a force in `src/engines/forces/forces.ts` and a weight in `ForceRules`. Prefer a few
 general forces to many special cases.

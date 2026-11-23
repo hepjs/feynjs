@@ -1,8 +1,34 @@
+---
+tags:
+  - v1
+  - "layout: v1"
+  - rule engine
+  - older layout
+  - layout settings
+  - branchAngle
+  - cascades
+---
+
 # Layout rules
 
+***The rules of the older v1 layout engine (layout: v1), grouped by what they do, with the theme setting that tunes each. The default force layout does not use them.***
+
+```feynman
+layout: v1
+e- e+ > Z H
+Z > mu- mu+
+H > b bbar
+```
+
+```text
+layout: v1
+e- e+ > Z H
+Z > mu- mu+
+H > b bbar
+```
+
 Every rule the layout applies, grouped by what it is for, with the setting that tunes it (all in `src/theme.ts`,
-under `layout`). The last section is the complete function inventory, generated from the source by
-`node scripts/list-rules.mjs`.
+under `layout`). The last section is the complete function inventory.
 
 ## A. Where things go in time (columns)
 
