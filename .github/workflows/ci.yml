@@ -1,4 +1,6 @@
-# Every push and pull request: type-check, test (including the approved layouts), build.
+# Every push and pull request: type-check, build and test. The approved layouts are checked on
+# Apple Silicon, where they were approved: the layout's arithmetic rounds a little differently on
+# other processors, enough to move a few diagrams slightly.
 name: CI
 on:
   push:
@@ -16,4 +18,15 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: npm run build
-      - run: npm test
+      - run: npm run test:unit
+  layouts:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.22.2
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm run test:layouts
