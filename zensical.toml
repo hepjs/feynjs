@@ -76,7 +76,7 @@ extra_javascript = [
 # fonts are local (docs/fonts, docs/stylesheets/theme.css), so the site works offline
 font = false
 # variant = "classic"
-custom_dir = "overrides"
+# custom_dir = "overrides"
 favicon = "brand/logo/favicon.svg"
 language = "en"
 features = [

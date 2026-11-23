@@ -66,6 +66,5 @@ TeX installation with TikZ-Feynman.
 | `docs/` | this site |
 | `bin/` | the command line |
 | `integrations/` | the Obsidian plugin |
-| `overrides/` | changes to the docs site's theme templates |
 
 TikZ-Feynman is GPL-licensed. Its numbers and conventions are a reference; don't copy its code.
