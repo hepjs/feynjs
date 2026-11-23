@@ -15,13 +15,13 @@
   ],
   "license": "MIT",
   "author": "Jason Oliver",
-  "homepage": "https://joliverhep.github.io/feynjs/",
+  "homepage": "https://hepjs.github.io/feynjs/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/joliverHEP/feynjs.git"
+    "url": "git+https://github.com/hepjs/feynjs.git"
   },
   "bugs": {
-    "url": "https://github.com/joliverHEP/feynjs/issues"
+    "url": "https://github.com/hepjs/feynjs/issues"
   },
   "type": "module",
   "main": "dist/feynjs.mjs",

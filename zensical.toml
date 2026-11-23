@@ -1,5 +1,5 @@
 [project]
-site_url = "https://joliverhep.github.io/feynjs/"
+site_url = "https://hepjs.github.io/feynjs/"
 site_name = "feynjs"
 site_description = "Feynman diagrams for the web, written as text and laid out automatically"
 # site_description = "Your project description"
@@ -7,8 +7,8 @@ site_description = "Feynman diagrams for the web, written as text and laid out a
 
 copyright = "Copyright &copy; 2026 Jason Oliver &middot; MIT licence"
 
-repo_url = "https://github.com/joliverHEP/feynjs"
-repo_name = "joliverHEP/feynjs"
+repo_url = "https://github.com/hepjs/feynjs"
+repo_name = "hepjs/feynjs"
 edit_uri = "edit/main/docs/"
 
 nav = [

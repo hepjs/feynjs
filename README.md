@@ -6,11 +6,11 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/joliverHEP/feynjs/actions/workflows/ci.yml"><img src="https://github.com/joliverHEP/feynjs/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/hepjs/feynjs/actions/workflows/ci.yml"><img src="https://github.com/hepjs/feynjs/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://www.npmjs.com/package/feynjs"><img src="https://img.shields.io/npm/v/feynjs?color=c0392b" alt="npm version"></a>
   <a href="https://www.npmjs.com/package/feynjs"><img src="https://img.shields.io/npm/dm/feynjs" alt="npm downloads"></a>
   <a href="https://www.jsdelivr.com/package/npm/feynjs"><img src="https://data.jsdelivr.com/v1/package/npm/feynjs/badge" alt="jsDelivr"></a>
-  <a href="https://joliverhep.github.io/feynjs/"><img src="https://img.shields.io/badge/docs-joliverhep.github.io%2Ffeynjs-c0392b" alt="docs"></a>
+  <a href="https://hepjs.github.io/feynjs/"><img src="https://img.shields.io/badge/docs-hepjs.github.io%2Ffeynjs-c0392b" alt="docs"></a>
   <a href="LICENSE.md"><img src="https://img.shields.io/badge/licence-MIT-blue" alt="MIT licence"></a>
   <!-- DOI: once the first release is archived on Zenodo, add its badge here:
   <a href="https://doi.org/10.5281/zenodo.XXXXXXX"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg" alt="DOI"></a> -->
@@ -46,7 +46,7 @@ H > {W+} > a a
 feynjs chooses the line styles, arrows, labels and positions, following the conventions of
 published diagrams, and draws dependency-free SVG that follows a page's light or dark theme.
 
-**Documentation and live examples: <https://joliverhep.github.io/feynjs/>**
+**Documentation and live examples: <https://hepjs.github.io/feynjs/>**
 
 ## Use it
 
