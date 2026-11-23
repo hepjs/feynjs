@@ -1,0 +1,24 @@
+% EXOT-2013-12 fig_01a: converted from TikZ, no coordinates kept
+in: p1 p2
+out: f1 f2 f3 f4
+pp [blob]
+p1 [particle={p}]
+p2 [particle={p}]
+mix [insertion]
+d [small blob, color=gray]
+e1 [small blob, color=gray]
+e2 [small blob, color=gray]
+f1 [particle={f}]
+f2 [particle={\bar{f}}]
+f3 [particle={f}]
+f4 [particle={\bar{f}}]
+p1 -- [proton] pp
+pp -- [proton] p2
+pp -- [scalar, label={\varPhi}] mix
+mix -- [scalar, label={\varPhi_{\mathrm{hs}}}, color=#ff0000] d
+d -- [double, label={\pi_{\mathrm{v}}}, color=#0000ff] e1
+d -- [double, label'={\pi_{\mathrm{v}}}, color=#0000ff] e2
+e1 -- [plain] f1
+e1 -- [plain] f2
+e2 -- [plain] f3
+e2 -- [plain] f4

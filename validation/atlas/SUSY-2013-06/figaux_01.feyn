@@ -1,0 +1,9 @@
+% SUSY-2013-06 figaux_01: q qbar -> RPV tau sneutrino (or Z') -> l' lbar, s-channel
+layout: v2
+in: i1 i2
+out: f1 f2
+i1 [q] -- [anti fermion] a
+i2 [\bar q] -- [fermion] a
+a [dot, color=blue] -- [scalar, color=red, label'=\tilde\nu_\tau(Z')] b [dot, color=blue]
+b -- [fermion] f1 [\ell']
+f2 [\bar\ell] -- [fermion] b

@@ -1,0 +1,9 @@
+in: i1 i2
+out: f1 f2 f3 f4
+i1 [q] -- a -- f1 [q]
+i2 [q] -- b -- f2 [q]
+a -- [W+] c
+b -- [W+] c
+c -- [Z] d
+d -- f3 [l+]
+d -- f4 [l-]

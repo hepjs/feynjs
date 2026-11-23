@@ -1,0 +1,12 @@
+% SUSY-2013-16 fig_01a: stop1 -> t neutralino1, t -> b W, W -> q qbar'
+layout: v2
+arrows: none
+in: i1
+out: fb fq fqp fn
+i1 [\tilde t_1] -- [stop, no label] a
+a -- [plain, label=t] t
+t -- fb [b]
+t -- [W] w
+w -- [plain] fq [q]
+w -- [plain] fqp [\bar q']
+a -- fn [neutralino1]

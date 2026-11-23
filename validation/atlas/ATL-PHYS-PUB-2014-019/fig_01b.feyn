@@ -1,0 +1,9 @@
+% ATL-PHYS-PUB-2014-019 fig_01b: gg -> HH via a quark box
+layout: v2
+in: g1 g2
+out: h1 h2
+g1 -- [gluon] a
+g2 -- [gluon] b
+a -- [fermion] b -- [fermion] c -- [fermion] d -- [fermion] a
+d -- [scalar] h1
+c -- [scalar] h2

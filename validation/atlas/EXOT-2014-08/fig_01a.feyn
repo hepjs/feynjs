@@ -1,0 +1,15 @@
+% EXOT-2014-08 fig_01a: heavy charged lepton pair, q qbar > Z/gamma* > L+ L-, L+ > l+ Z(> l+ l-), L- > (nu, l-) (W-, Z, H)
+layout: v2
+in: i1 i2
+out: lp1 lm1 lp2 x v
+i1 [q] -- [fermion] a
+a -- [fermion] i2 [\overline{q}]
+a -- [boson, label={Z/\gamma^*}] b
+c -- [fermion, label=L^+] b
+b -- [fermion, label=L^-] d
+c -- [boson, label=Z] z
+lp1 [l^+] -- [fermion] z
+z -- [fermion] lm1 [l^-]
+lp2 [l^+] -- [fermion] c
+d -- [fermion] x [{\nu, l^-, l^-}]
+d -- [boson] v [{W^-, Z, H}]

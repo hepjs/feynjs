@@ -1,0 +1,24 @@
+% SUSY-2019-14 fig_01: converted from TikZ, no coordinates kept
+in: p1 p2
+out: g1 l1 l2 g2 lm lp
+pp [blob]
+p1 [particle={p}]
+p2 [particle={p}]
+l1 [particle={\mathrm{LSP}}]
+l2 [particle={\mathrm{LSP}}]
+g1 [particle={\gamma}]
+g2 [particle={\gamma}]
+lm [particle={\ell^-}]
+lp [particle={\ell^+}]
+p1 -- [proton] pp
+p2 -- [proton] pp
+pp -- [scalar, label={H}] h
+pp -- [photon, label'={Z}] z
+h -- [susy fermion, label={\mathrm{NLSP}}] n1
+h -- [susy fermion, label'={\mathrm{NLSP}}] n2
+n1 -- [susy fermion] l1
+n2 -- [susy fermion] l2
+n1 -- [photon] g1
+n2 -- [photon] g2
+z -- [plain] lm
+z -- [plain] lp

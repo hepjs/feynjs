@@ -1,0 +1,9 @@
+% STDM-2012-07 fig_01f: W + photon, qg initial state, photon from quark fragmentation D_{q/gamma}(z,Q^2), W -> l nu
+layout: v2
+in: gi q
+out: g l nb
+gi [g] -- [gluon] b
+q [q] -- [fermion] a -- [fermion] b -- [fermion] d [dot, label={D_{q/\gamma}(z, Q^2)}]
+d -- [photon] g [gamma]
+a -- [scalar, label'=W] c
+nb [\bar\nu] -- [fermion] c -- [fermion] l [\mathit{l}]

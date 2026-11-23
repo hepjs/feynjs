@@ -1,0 +1,15 @@
+% HIGG-2013-25 fig_01c: converted from TikZ, no coordinates kept
+in: g b
+out: t H W
+g [particle={g}]
+t [particle={t}]
+H [particle={H}]
+b [particle={b}]
+W [particle={W}]
+g -- [gluon] a
+a -- [fermion] t
+c -- [plain] h
+h -- [plain] a
+h -- [scalar] H
+b -- [fermion] c
+c -- [photon] W

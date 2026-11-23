@@ -1,0 +1,13 @@
+% ATLAS-CONF-2010-079 fig_01a: gg > sbottom sbottom* via t-channel sbottom, each sbottom > b neutralino1
+layout: v2
+in: i1 i2
+out: f1 f2 f3 f4
+i1 [g] -- v1
+i2 [g] -- v2
+v1 -- [sbottom, charged scalar, label=\tilde b] d1
+v2 -- [sbottom, charged scalar, label=\tilde b] v1
+d2 -- [sbottom, charged scalar, label=\tilde{\bar b}] v2
+d1 -- f1 [b]
+d1 -- f2 [neutralino1]
+d2 -- f3 [neutralino1]
+f4 [bbar] -- d2

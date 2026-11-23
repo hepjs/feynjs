@@ -1,0 +1,13 @@
+% ATL-PHYS-PUB-2016-009 fig_01 (row 3, left pair, amplitude: gg -> g H(-> gamma gamma), the extra gluon from a three-gluon vertex)
+layout: v2
+in: g1 g2
+out: g3 a1 a2
+g1 -- [gluon] k
+k -- [gluon] g3
+k -- [gluon] t1
+g2 -- [gluon] t2
+t1 -- [fermion] t2 -- [fermion] t3 -- [fermion] t1
+t3 -- [charged scalar] u3
+u3 -- [fermion] u1 -- [fermion] u2 -- [fermion] u3
+u1 -- [photon] a1
+u2 -- [photon] a2

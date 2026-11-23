@@ -1,0 +1,6 @@
+% EXOT-2015-19 fig_01: converted from TikZ, no coordinates kept
+in: lq
+out: l q
+lq -- [charged scalar, label={LQ}] v [label=\sqrt{\beta}\lambda]
+v -- [fermion, label'={l}] l
+q -- [fermion, label'={q}] v

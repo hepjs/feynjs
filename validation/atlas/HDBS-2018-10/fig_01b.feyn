@@ -1,0 +1,9 @@
+% HDBS-2018-10 fig_01b: Drell-Yan production of a heavy resonance X decaying to V'V, effective vertices as hatched blobs
+layout: v2
+in: i1 i2
+out: f1 f2
+i1 [q] -- a [hatched blob]
+i2 [qbar'] -- a
+a -- [boson, label'=X] b [hatched blob]
+b -- [boson] f1 [V']
+b -- [boson] f2 [V]

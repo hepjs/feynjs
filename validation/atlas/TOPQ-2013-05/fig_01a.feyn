@@ -1,0 +1,8 @@
+% TOPQ-2013-05 fig_01a: ttW production, q' qbar -> W + g*, g* -> t tbar
+layout: v2
+in: i1 i2
+out: f1 f2 f3
+i2 [q'] -- [fermion] v1 -- [fermion, label=q] v2 -- [fermion] i1 [\bar q]
+v1 -- [boson] f3 [W]
+v2 -- [gluon] v3
+f1 [\bar t] -- [fermion] v3 -- [fermion] f2 [t]

@@ -1,0 +1,10 @@
+% EXOT-2013-13 fig_01a: WIMP pair via contact operator (EFT blob) with ISR gluon off the incoming quark
+layout: v2
+in: i1 i2
+out: g1 x1 x2
+i1 [q] -- [fermion] r
+r -- [fermion] o [blob]
+o -- [fermion] i2 [qbar]
+r -- [gluon] g1 [g]
+o -- [double] x1 [\chi]
+o -- [double] x2 [\bar\chi]

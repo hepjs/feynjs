@@ -1,0 +1,9 @@
+% STDM-2012-07 fig_01d: W + photon, s-channel W radiating the photon (WWgamma vertex), W -> l nu
+layout: v2
+in: qb q
+out: g nb l
+q [q] -- [fermion] a -- [fermion] qb [qbar]
+a -- [scalar, label'=W] b
+b -- [photon] g [gamma]
+b -- [scalar, label'=W] c
+nb [\bar\nu] -- [fermion] c -- [fermion] l [\mathit{l}]

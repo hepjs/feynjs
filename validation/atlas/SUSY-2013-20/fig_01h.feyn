@@ -1,0 +1,17 @@
+% SUSY-2013-20 fig_01h: gluino pair, gluino -> t stop, stop -> c neutralino1
+layout: v2
+arrows: none
+in: p1 p2
+out: t1 c1 n1 n2 c2 t2
+p1 [p] -- pp [blob]
+p2 [p] -- pp
+pp -- [gluino] g1
+pp -- [gluino] g2
+g1 -- t1 [t]
+g1 -- [stop] s1
+s1 -- c1 [c]
+s1 -- n1 [neutralino1]
+g2 -- [stop] s2
+s2 -- n2 [neutralino1]
+s2 -- c2 [c]
+g2 -- t2 [t]

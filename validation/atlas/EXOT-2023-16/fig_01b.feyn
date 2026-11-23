@@ -1,0 +1,20 @@
+% EXOT-2023-16 fig_01b: converted from TikZ, no coordinates kept
+in: u1 u2
+out: d1 l1 l2 d2
+u1 [particle={\mathrm{u}}]
+u2 [particle={\mathrm{u}}]
+d1 [particle={\mathrm{d}}]
+d2 [particle={\mathrm{d}}]
+o [dot]
+l1 [particle={\ell'^+}]
+l2 [particle={\ell^+}]
+u1 -- [fermion] a
+a -- [fermion] d1
+u2 -- [fermion] b
+b -- [fermion] d2
+a -- [boson, label'={W^+}] c
+b -- [boson, label={W^+}] e
+l1 -- [fermion] c
+l2 -- [fermion] e
+c -- [fermion, label={\nu^c_{\ell'}}] o
+e -- [fermion, label'={\nu_\ell}] o

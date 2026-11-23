@@ -1,0 +1,18 @@
+% HION-2016-05 figaux_13: central exclusive gg -> gamma gamma via a quark box, colour-neutral two-gluon exchange between the Pb
+layout: v2
+in: pb1 pb2
+out: pb3 g1 g2 pb4
+pb1 [\mathit{Pb}]
+pb2 [\mathit{Pb}]
+pb3 [\mathit{Pb}^{(*)}]
+pb4 [\mathit{Pb}^{(*)}]
+B1 [blob]
+B2 [blob]
+pb1 -- [fermion] B1 -- [fermion] pb3
+pb2 -- [fermion] B2 -- [fermion] pb4
+B1 -- [gluon, label=g] a
+B2 -- [gluon, label'=g] d
+a -- [fermion] b -- [fermion] c -- [fermion] d -- [fermion] a
+b -- [photon] g1 [gamma]
+c -- [photon] g2 [gamma]
+B1 -- [gluon] B2

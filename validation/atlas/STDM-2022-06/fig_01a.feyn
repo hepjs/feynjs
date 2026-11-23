@@ -1,0 +1,23 @@
+% STDM-2022-06 fig_01a: converted from TikZ, no coordinates kept
+in: i1 i2
+out: o1 n1 e1 n2 e2 o2
+i1 [particle={q}]
+i2 [particle={q}]
+o1 [particle={q}]
+o2 [particle={q}]
+n1 [particle={\nu}]
+e1 [particle={l^+}]
+n2 [particle={\bar{\nu}}]
+e2 [particle={l^-}]
+i1 -- [fermion] v1
+v1 -- [fermion] o1
+i2 -- [fermion] v2
+v2 -- [fermion] o2
+v1 -- [photon, label={W^+}] x
+v2 -- [photon, label={W^-}] x
+x -- [photon, label={W^+}] d1
+x -- [photon, label={W^-}] d2
+e1 -- [fermion] d1
+d1 -- [fermion] n1
+e2 -- [fermion] d2
+d2 -- [fermion] n2

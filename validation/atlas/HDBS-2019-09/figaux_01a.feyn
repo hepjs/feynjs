@@ -1,0 +1,14 @@
+% HDBS-2019-09 figaux_01a: ggF H via a quark triangle, H -> Za, Z -> l+l-, a -> gamma gamma
+layout: v2
+in: i1 i2
+out: f1 f2 f3 f4
+i1 [g] -- t1
+i2 [g] -- t2
+t3 -- [fermion] t1 -- [fermion] t2 -- [fermion] t3
+t3 -- [H] h
+h -- [Z] z
+h -- [scalar, label'=a] a
+z -- f1 [l+]
+z -- f2 [l-]
+a -- f3 [gamma]
+a -- f4 [gamma]

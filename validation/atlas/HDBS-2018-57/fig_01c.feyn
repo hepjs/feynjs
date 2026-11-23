@@ -1,0 +1,11 @@
+% HDBS-2018-57 fig_01c: t-channel q qbar -> two gamma*/Z(*) -> 4 mu
+layout: v2
+in: i1 i2
+out: f1 f2 f3 f4
+i1 [q] -- [fermion] a -- [fermion] b -- [fermion] i2 [qbar]
+a -- [boson, label=\gamma^*/Z^{(*)}] z1
+b -- [boson, label'=\gamma^*/Z^{(*)}] z2
+z1 -- f1 [mu-]
+z1 -- f2 [mu+]
+z2 -- f3 [mu-]
+z2 -- f4 [mu+]

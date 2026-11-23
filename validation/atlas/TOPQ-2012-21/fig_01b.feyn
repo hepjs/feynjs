@@ -1,0 +1,10 @@
+% TOPQ-2012-21 fig_01b: t-channel single top-antiquark production, d bbar -> u tbar, tbar -> W- bbar
+layout: v2
+in: i1 i2
+out: f1 f2 f3
+i1 [d] -- [fermion] v1 [dot] -- [fermion] f1 [u]
+v1 -- [boson, label=W^*] v2 [dot]
+v2 -- [fermion] i2 [\bar b]
+v3 [dot] -- [fermion, label=\bar t] v2
+f3 [\bar b] -- [fermion] v3
+v3 -- [boson] f2 [W^-]

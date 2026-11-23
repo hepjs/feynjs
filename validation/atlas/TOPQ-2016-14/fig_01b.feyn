@@ -1,0 +1,9 @@
+% TOPQ-2016-14 fig_01b: tZq production (4FS), Z radiated from the top quark
+layout: v2
+in: i1 i2
+out: f1 f2 f3 f4
+i1 [u] -- [fermion, color=blue] v1 [dot, color=red] -- [fermion, color=red] f1 [d]
+v1 -- [boson, label=W, color=green] v2 [dot, color=red]
+i2 -- [gluon, color=blue] vg [dot, color=red]
+f4 [\bar b] -- [fermion, color=magenta] vg -- [fermion, label=b, color=magenta] v2 -- [fermion, color=red] vt [dot, color=red] -- [fermion, color=red] f3 [t]
+vt -- [boson, color=red] f2 [Z]

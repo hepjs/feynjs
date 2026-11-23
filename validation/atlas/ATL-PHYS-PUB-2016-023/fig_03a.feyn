@@ -1,0 +1,9 @@
+% ATL-PHYS-PUB-2016-023 fig_03a: q qbar -> g* -> t tbar, a Higgs radiated from each top line
+layout: v2
+in: q1 q2
+out: t1 h1 h2 t2
+q2 [q] -- [fermion] v -- [fermion] q1 [q]
+v -- [gluon, label=g] w
+t1 [t] -- [anti fermion] a -- [anti fermion] w -- [anti fermion] b -- [anti fermion] t2 [t]
+a -- [ghost] h1 [H]
+b -- [ghost] h2 [H]

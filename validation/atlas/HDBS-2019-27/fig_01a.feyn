@@ -1,0 +1,17 @@
+% HDBS-2019-27 fig_01a: converted from TikZ, no coordinates kept
+in: g1 g2
+out: h1 h2
+g1 [particle={g}]
+g2 [particle={g}]
+b [dot, label={\kappa_t}, color=#34b2c2]
+c [dot, label={\kappa_t}, color=#34b2c2]
+h1 [particle={H}]
+h2 [particle={H}]
+g1 -- [gluon] a
+g2 -- [gluon] d
+a -- [fermion] b
+b -- [fermion] c
+c -- [fermion] d
+d -- [fermion] a
+b -- [scalar] h1
+c -- [scalar] h2

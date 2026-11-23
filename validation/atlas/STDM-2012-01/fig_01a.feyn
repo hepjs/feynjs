@@ -1,0 +1,9 @@
+% STDM-2012-01 fig_01a: q qbar -> Z/gamma* -> WW, s-channel through the WWZ/WW gamma TGC vertex
+layout: v2
+in: qb qi
+out: w1 w2
+qi [q] -- [fermion] a -- [fermion] qb [qbar]
+a -- [boson, label'={Z/\gamma}] t
+t [dot, color=red, label=\text{TGC vertex}]
+t -- [boson] w1 [W]
+t -- [boson] w2 [W]

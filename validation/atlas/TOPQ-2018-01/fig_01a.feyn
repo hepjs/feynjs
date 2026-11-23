@@ -1,0 +1,10 @@
+% TOPQ-2018-01 fig_01a: tZq (4FS) with resonant l+l- from a Z/gamma* radiated off the top quark
+layout: v2
+in: i1 i2
+out: f1 f2 f3 f4 f5
+i1 [u] -- [fermion] v1 [dot] -- [fermion] f1 [d]
+v1 -- [boson, label=W] v2 [dot]
+i2 -- [gluon] vg [dot]
+f5 [\bar b] -- [fermion] vg -- [fermion, label=b] v2 -- [fermion] vt [dot] -- [fermion] f4 [t]
+vt -- [boson, label=Z/\gamma^*] vz [dot]
+f2 [\ell^+] -- [fermion] vz -- [fermion] f3 [\ell^-]

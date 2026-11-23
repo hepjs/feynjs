@@ -1,0 +1,7 @@
+% STDM-2012-15 fig_01a: bg -> Zb, t-channel b quark exchange (5FNS)
+layout: v2
+in: bi gi
+out: z bo
+bi [b] -- [fermion] a -- [fermion] c -- [fermion] bo [b]
+a -- [boson] z [Z]
+gi [g] -- [gluon] c

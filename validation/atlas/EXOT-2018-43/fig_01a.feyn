@@ -1,0 +1,22 @@
+% EXOT-2018-43 fig_01a: converted from TikZ, no coordinates kept
+in: qb b
+out: qbp chi chb t
+qb [particle={\bar{q}}]
+qbp [particle={\bar{q}'}]
+b [particle={b}]
+t [particle={t}]
+chi [particle={\chi}]
+chb [particle={\bar{\chi}}]
+v1 [dot]
+v2 [dot]
+v3 [dot]
+v4 [dot]
+qbp -- [fermion] v1
+v1 -- [fermion] qb
+v1 -- [photon, label={W}] v2
+b -- [fermion] v2
+v2 -- [fermion] v3
+v3 -- [fermion] t
+v3 -- [scalar, label={a}] v4
+v4 -- [fermion] chi
+chb -- [fermion] v4

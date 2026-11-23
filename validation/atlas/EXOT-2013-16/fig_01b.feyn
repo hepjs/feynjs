@@ -1,0 +1,18 @@
+% EXOT-2013-16 fig_01b: converted from TikZ, no coordinates kept
+in: g1 g2
+out: t1 tb1 t2 tb2
+g1 [particle={g}]
+g2 [particle={g}]
+t1 [particle={t}]
+tb1 [particle={\bar{t}}]
+t2 [particle={t}]
+tb2 [particle={\bar{t}}]
+g1 -- [gluon] a
+a -- [gluon] g2
+a -- [gluon, label={g}] b
+b -- [scalar, label={\sigma}] c
+b -- [scalar, label'={\sigma}] d
+tb1 -- [fermion] c
+c -- [fermion] t1
+tb2 -- [fermion] d
+d -- [fermion] t2

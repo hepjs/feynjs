@@ -1,0 +1,16 @@
+% TOPQ-2018-22 fig_01a: converted from TikZ, no coordinates kept
+in: g q
+out: ph l n bq
+ph [particle={\gamma}]
+bq [particle={b}]
+l [particle={\ell^+}]
+n [particle={\nu}]
+g -- [gluon, label={g}] a
+q -- [fermion, label'={u/c}] a
+a -- [fermion, label={u/c}] f
+f -- [photon] ph
+f -- [fermion, label'={t}] c
+c -- [fermion] bq
+c -- [boson, label={W^+}] w
+l -- [fermion] w
+w -- [fermion] n

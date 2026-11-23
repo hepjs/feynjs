@@ -1,0 +1,8 @@
+% TOPQ-2017-13 fig_01 (3 of 3): colour flow at the g -> g g vertex (two colour orderings)
+layout: v2
+colour flow: on
+in: i1
+out: f1 f2
+i1 -- [gluon] v
+v -- [gluon] f1
+v -- [gluon] f2

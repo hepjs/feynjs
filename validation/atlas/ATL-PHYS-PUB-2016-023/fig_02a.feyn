@@ -1,0 +1,10 @@
+% ATL-PHYS-PUB-2016-023 fig_02a: gg -> g* -> t/b triangle radiating two Higgs bosons
+layout: v2
+in: g1 g2
+out: h1 h2
+g1 [g] -- [gluon] v
+g2 [g] -- [gluon] v
+v -- [gluon, label=g] w
+w -- [anti fermion, label=t/b] a -- [anti fermion, label=t/b] b -- [anti fermion, label=t/b] w
+a -- [ghost] h1 [H]
+b -- [ghost] h2 [H]

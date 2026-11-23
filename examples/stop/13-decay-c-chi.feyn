@@ -1,0 +1,6 @@
+% Flavour-changing decay: when nothing else is open, the stop can decay to a charm quark
+in: s
+out: c n
+s [stop] -- v
+v -- c [c]
+v -- n [neutralino1]

@@ -1,0 +1,21 @@
+% STDM-2017-21 figaux_01b: converted from TikZ, no coordinates kept
+in: p2i p1i
+out: p2o wm wp x2a x2 x2b
+p2i [particle={p_2}]
+p2o [particle={p_2}]
+p1i [particle={p_1}]
+v2 [dot]
+b [hatched blob]
+wm [particle={W^-}]
+x2 [particle={X}]
+p2i -- [fermion] v1
+v1 -- [fermion] p2o
+p1i -- [fermion] v2
+% (the proton breaks up: a fan of straight lines, as the paper draws it)
+v2 -- [plain] x2a
+v2 -- [plain] x2
+v2 -- [plain] x2b
+v1 -- [photon, label'={\gamma}] b
+v2 -- [photon, label={\gamma}] b
+b -- [photon] wm
+b -- [photon, label={W^+}] wp

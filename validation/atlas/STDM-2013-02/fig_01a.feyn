@@ -1,0 +1,11 @@
+% STDM-2013-02 fig_01a: electroweak Zjj, vector boson fusion W+W- -> Z, Z -> l+l-
+layout: v2
+in: q1 q2
+out: o1 lm lp o2
+q1 [q] -- [fermion] a -- [fermion] o1 [q']
+q2 [q] -- [fermion] b -- [fermion] o2 [q']
+a -- [boson, label=W^+] v
+b -- [boson, label=W^-] v
+v -- [boson, label=Z] z
+z -- [fermion] lm [{\mu^-, e^-}]
+lp [{\mu^+, e^+}] -- [fermion] z

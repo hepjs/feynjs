@@ -1,0 +1,16 @@
+% TOPQ-2014-13 fig_01: converted from TikZ, no coordinates kept
+in: uc g
+out: bq l nu
+uc [particle={u, c}]
+a [dot]
+g [particle={g}]
+bq [particle={b}]
+l [particle={\ell^+}]
+nu [particle={\nu}]
+uc -- [fermion] a
+g -- [gluon] a
+a -- [fermion, label={t}] b
+b -- [fermion] bq
+b -- [photon, label'={W}] w
+l -- [fermion] w
+w -- [fermion] nu

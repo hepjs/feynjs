@@ -1,0 +1,28 @@
+% ATLAS-CONF-2011-076 fig_01: converted from TikZ, no coordinates kept
+in: q1 q2
+out: qt fd1 l1 l2 l3 l4 fd2 qb
+qt [particle={\mathsf{q}}]
+qb [particle={\mathsf{q}}]
+fd1 [particle={\mathsf{f}_d}]
+fd2 [particle={\mathsf{f}_d}]
+l1 [particle={\ell^+}]
+l2 [particle={\ell^-}]
+l3 [particle={\ell^+}]
+l4 [particle={\ell^-}]
+q1 -- [fermion, label={\mathsf{q}}] a
+b -- [fermion, label={\mathsf{q}}] q2
+a -- [gluon, label={\tilde{\mathsf{g}}}] b
+a -- [charged scalar, label={\tilde{\mathsf{q}}}] c
+d -- [charged scalar, label={\tilde{\mathsf{q}}}] b
+c -- [plain, label={\tilde{\mathsf{N}}_1}] e
+d -- [plain, label={\tilde{\mathsf{N}}_1}] f
+c -- [fermion] qt
+qb -- [fermion] d
+e -- [fermion] fd1
+fd2 -- [fermion] f
+e -- [photon, label={\gamma_d}] g
+f -- [photon, label={\gamma_d}] h
+l1 -- [fermion] g
+g -- [fermion] l2
+l3 -- [fermion] h
+h -- [fermion] l4

@@ -1,0 +1,5 @@
+in: i1 i2
+out: f1 f2
+i1 [mu-] -- a -- f1 [e-]
+a -- [Z'] b
+i2 [e-] -- b -- f2 [mu-]

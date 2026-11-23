@@ -1,0 +1,10 @@
+% Bc+ -> J/psi Ds+: a spectator charm quark and a W emitted from the b line
+in: c1 b
+out: c2 cbar s c3
+c1 [c] -- [fermion] c2 [c]
+cbar [\bar{c}] -- [fermion] v -- [fermion] b [\bar{b}]
+v -- [boson, label=W] w
+s [\bar{s}] -- [fermion] w -- [fermion] c3 [c]
+meson: B_c^+ = c1 b
+meson: J/\psi = c2 cbar
+meson: D_s^+ = s c3

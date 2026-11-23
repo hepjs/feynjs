@@ -1,0 +1,17 @@
+% HION-2016-02 fig_01b: NLO Breit-Wheeler PbPb (gamma gamma) -> mu+ mu- gamma, FSR photon off the mu-
+layout: v2
+in: pb1 pb2
+out: pb3 m1 g1 m2 pb4
+pb1 [\mathrm{Pb}]
+pb2 [\mathrm{Pb}]
+pb3 [\mathrm{Pb}]
+pb4 [\mathrm{Pb}]
+B1 [hatched blob]
+B2 [hatched blob]
+pb1 -- [fermion] B1 -- [fermion] pb3
+pb2 -- [fermion] B2 -- [fermion] pb4
+B1 -- [photon, label'=k_2] a
+B2 -- [photon, label=k_1] b
+b -- [fermion] a -- [fermion] r -- [fermion] m1 [mu-]
+r -- [photon] g1 [gamma]
+m2 [mu+] -- [fermion] b

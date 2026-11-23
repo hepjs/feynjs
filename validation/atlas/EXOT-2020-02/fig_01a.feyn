@@ -1,0 +1,23 @@
+% EXOT-2020-02 fig_01a: converted from TikZ, no coordinates kept
+in: q qb
+out: nu1 l1 l2 l3 nu3 nu2
+q [particle={q}]
+qb [particle={\bar{q}'}]
+nu1 [particle={\nu}]
+l1 [particle={\ell^\pm}]
+l2 [particle={\ell^\mp}]
+l3 [particle={\ell'^\pm}]
+nu3 [particle={\nu}]
+q -- [plain] a
+a -- [plain] qb
+a -- [photon, label={W^*}] b
+b -- [plain, label={N^0}, color=#2896dc] c
+b -- [plain, label'={L^\pm}, color=#e61e5a] d
+c -- [scalar] nu1
+c -- [photon, label={Z}] e
+e -- [plain] l1
+e -- [plain] l2
+d -- [scalar, label={\nu}] nu2
+d -- [photon, label={W^\pm}] f
+f -- [plain] l3
+f -- [scalar] nu3

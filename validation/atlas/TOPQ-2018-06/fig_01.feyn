@@ -1,0 +1,8 @@
+% TOPQ-2018-06 fig_01: FCNC single top, u(c) g -> t, t -> W+ b, W+ -> e+ nu (mu+ nu)
+layout: v2
+in: i1 i2
+out: f1 f2 f3
+i1 [u(c)] -- [fermion, color=navy] v1 [small blob, color=red] -- [fermion, label=t, color=navy] v2 [dot] -- [fermion, color=navy] f3 [b]
+i2 [g] -- [gluon, color=navy] v1
+v2 -- [boson, label=W^+, color=navy] w [dot]
+f1 [e^+(\mu^+)] -- [fermion, color=navy] w -- [fermion, color=navy] f2 [\nu_e(\nu_\mu)]

@@ -1,0 +1,13 @@
+% EXOT-2014-19 fig_01: q qbar > G* > B_H bbar, B_H > b H, H > b bbar
+layout: v2
+in: i1 i2
+out: b1 b2 b3 b4
+i1 [q] -- [fermion] a
+a -- [fermion] i2 [\overline{q}]
+a -- [gluon, color=red, label=G^*] g
+g -- [B, color=red, label=B_{\mathrm{H}}] c
+b4 [\overline{b}] -- [fermion] g
+c -- [fermion] b1 [b]
+c -- [scalar, label=H] h
+h -- [fermion] b2 [b]
+b3 [\overline{b}] -- [fermion] h

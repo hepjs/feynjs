@@ -1,0 +1,11 @@
+% HIGG-2015-08 fig_01b: converted from TikZ, no coordinates kept
+in: g1 g2
+out: q1 h q2
+h [particle={\boldsymbol{h/H/A}}]
+g1 -- [gluon, label={\boldsymbol{g}}] a
+g2 -- [gluon, label={\boldsymbol{g}}] b
+q1 -- [fermion, label'={\boldsymbol{\bar{b}}}] a
+a -- [fermion] c
+c -- [fermion] b
+b -- [fermion, label'={\boldsymbol{b}}] q2
+c -- [charged scalar] h

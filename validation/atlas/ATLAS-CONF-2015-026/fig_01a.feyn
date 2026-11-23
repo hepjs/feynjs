@@ -1,0 +1,20 @@
+% ATLAS-CONF-2015-026 fig_01a: converted from TikZ, no coordinates kept
+in: p1 p2
+out: b1 s1 s2 b2
+pp [blob]
+p1 [particle={p}]
+p2 [particle={p}]
+d1 [dot, label={\lambda''_{323}}, color=blue]
+d2 [dot, label={\lambda''_{323}}, color=blue]
+b1 [particle={\bar{b}}]
+s1 [particle={\bar{s}}]
+s2 [particle={s}]
+b2 [particle={b}]
+p1 -- [proton] pp
+pp -- [proton] p2
+pp -- [susy, label={\tilde{t}}] d1
+pp -- [susy, label'={\tilde{t}^{*}}] d2
+d1 -- [plain] b1
+d1 -- [plain] s1
+d2 -- [plain] s2
+d2 -- [plain] b2

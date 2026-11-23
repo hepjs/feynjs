@@ -1,0 +1,24 @@
+% HIGG-2014-13 figaux_02: converted from TikZ, no coordinates kept
+in: i1 i2
+out: o1 q1 q2 l1 l2 o2
+i1 [particle={q}]
+i2 [particle={q}]
+o1 [particle={q'}]
+o2 [particle={q}]
+q1 [particle={q}]
+q2 [particle={\bar{q}'}]
+l1 [particle={\ell^+}]
+l2 [particle={\ell^-}]
+i1 -- [fermion] a
+a -- [fermion] o1
+i2 -- [fermion] b
+b -- [fermion] o2
+a -- [photon, label={W^\pm}] c
+b -- [photon, label'={Z}] c
+c -- [charged scalar, label'={H^\pm}] d
+d -- [photon, label'={W^\pm}] e
+d -- [photon, label={Z}] f
+e -- [fermion] q1
+q2 -- [fermion] e
+l1 -- [fermion] f
+f -- [fermion] l2

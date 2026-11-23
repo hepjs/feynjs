@@ -1,0 +1,14 @@
+% HDBS-2019-12 fig_01b: schematic pp -> Y -> ZX, Z -> l l, X -> boson + two particles (small grey blobs at the decays)
+layout: v2
+in: i1 i2
+out: f1 f2 f3 f4 f5
+i1 [p] -- pp [blob]
+i2 [p] -- pp
+pp -- [boson, overlay, label=Y] y
+y -- [boson, label=Z] z [small blob]
+y -- [boson, overlay, label'=X] x [small blob]
+z -- [plain] f1 [\ell]
+z -- [plain] f2 [\ell]
+x -- [boson] f3
+x -- [plain] f4
+x -- [plain] f5

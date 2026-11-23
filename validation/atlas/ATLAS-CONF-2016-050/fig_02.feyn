@@ -1,0 +1,18 @@
+% ATLAS-CONF-2016-050 fig_02: converted from TikZ, no coordinates kept
+in: g1 g2
+out: tb cb c t
+g1 [particle={g}]
+g2 [particle={g}]
+tb [particle={\bar{t}(\bar{b})}]
+t [particle={t(b)}]
+cb [particle={\bar{\chi}}]
+c [particle={\chi}]
+g1 -- [gluon] v1
+g2 -- [gluon] v2
+t -- [fermion] v2
+v2 -- [fermion] vm
+vm -- [fermion] v1
+v1 -- [fermion] tb
+vm -- [charged scalar, label={\phi/a}] vx
+cb -- [fermion] vx
+vx -- [fermion] c

@@ -1,0 +1,10 @@
+% ATL-PHYS-PUB-2016-023 fig_02b: gg -> t/b triangle -> H* -> HH through the trilinear coupling
+layout: v2
+in: g1 g2
+out: h1 h2
+g1 [g] -- [gluon] a
+g2 [g] -- [gluon] b
+b -- [fermion, label=t/b] a -- [fermion, label=t/b] c -- [fermion, label=t/b] b
+c -- [ghost, label=H] x [dot]
+x -- [ghost] h1 [H]
+x -- [ghost] h2 [H]

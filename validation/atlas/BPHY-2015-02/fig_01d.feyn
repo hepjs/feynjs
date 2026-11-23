@@ -1,0 +1,12 @@
+% BPHY-2015-02 fig_01d: double parton scattering, two gg -> J/psi g sub-processes (hatched circle = colour-singlet J/psi)
+layout: v2
+in: g1 g2 h1 h2
+out: g3 h3
+g1 -- [gluon] a1
+g2 -- [gluon] b1
+c1 -- [gluon] g3
+a1 -- [fermion] m1 [hatched blob] -- [fermion] c1 -- [fermion] b1 -- [fermion] a1
+h1 -- [gluon] a2
+h2 -- [gluon] b2
+c2 -- [gluon] h3
+a2 -- [fermion] m2 [hatched blob] -- [fermion] c2 -- [fermion] b2 -- [fermion] a2

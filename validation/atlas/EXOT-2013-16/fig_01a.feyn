@@ -1,0 +1,13 @@
+% EXOT-2013-16 fig_01a: vector-like top pair, g g > g > T Tbar, Tbar > tbar Z, T > t H
+layout: v2
+in: i1 i2
+out: z tb h t
+i1 [g] -- a
+i2 [g] -- a
+a -- [gluon, label=g] b
+c -- [fermion, label=\bar T] b
+b -- [fermion, label=T] d
+c -- [boson] z [Z]
+tb [tbar] -- [fermion] c
+d -- [boson] h [H]
+d -- [fermion] t [t]

@@ -1,0 +1,9 @@
+% STDM-2012-02 fig_01d: gg -> ZZ through a quark box
+layout: v2
+in: g1 g2
+out: z1 z2
+g1 [g] -- [gluon] a
+g2 [g] -- [gluon] d
+a -- [fermion] b -- [fermion] c -- [fermion] d -- [fermion] a
+b -- [boson] z1 [Z]
+c -- [boson] z2 [Z]

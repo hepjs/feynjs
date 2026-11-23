@@ -1,0 +1,8 @@
+% The same production at the parton level: two gluons fuse into a gluon that makes the pair
+in: g1 g2
+out: t1 t2
+g1 [g] -- a
+g2 [g] -- a
+a -- [gluon, label=g] b
+b -- t1 [stop]
+b -- [stop, no label] t2 [\tilde{t}^*]

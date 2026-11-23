@@ -1,0 +1,9 @@
+% STDM-2011-22 fig_01c: q qbar -> g* -> b bbar with the Z radiated from the b
+layout: v2
+in: qi qb
+out: bo z bb
+qi [q] -- [fermion] a -- [fermion] qb [qbar]
+a -- [gluon] c
+c -- [fermion] r -- [fermion] bo [b]
+r -- [boson] z [Z]
+bb [bbar] -- [fermion] c

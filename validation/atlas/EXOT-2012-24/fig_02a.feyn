@@ -1,0 +1,13 @@
+% EXOT-2012-24 fig_02a: heavy Majorana neutrino (LRSM), q qbar > W_R > l N, N > l W_R*(> q qbar)
+layout: v2
+in: i1 i2
+out: la lb qc qd
+i1 [q_a] -- [fermion] a
+a -- [fermion] i2 [\bar q_b]
+a -- [boson, color=blue, label=W_R^\pm] b
+b -- [fermion] la [l^\pm_\alpha]
+b -- [heavy, no arrow, color=red, label=N] c
+c -- [fermion] lb [l^\pm_\beta]
+c -- [boson, color=blue, label'=(W_R^\mp)^*] w
+w -- [fermion] qc [q_c]
+qd [\bar q_d] -- [fermion] w

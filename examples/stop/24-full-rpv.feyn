@@ -1,0 +1,13 @@
+% pp -> stop pair, each stop -> b s through R-parity violation
+% (the decay vertex breaks baryon number, so its quark lines are drawn without arrows)
+i1 [p] -- pp [blob] -- i2 [p]
+pp -- [stop] r1 [dot, label={\lambda''}]
+pp -- [stop, label={\tilde{t}^*}] r2 [dot, label={\lambda''}]
+a1 [particle={\bar{b}}]
+a2 [particle={\bar{s}}]
+b1 [particle={b}]
+b2 [particle={s}]
+r1 -- [plain] a1
+r1 -- [plain] a2
+r2 -- [plain] b1
+r2 -- [plain] b2

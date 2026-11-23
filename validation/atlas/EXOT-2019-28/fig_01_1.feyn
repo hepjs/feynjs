@@ -1,0 +1,18 @@
+% EXOT-2019-28 fig_01_1: converted from TikZ, no coordinates kept
+in: i1 i2
+out: o1 g1 g2 o2
+i1 [particle={p}]
+o1 [particle={p}]
+i2 [particle={p}]
+o2 [particle={p}]
+g1 [particle={\gamma}]
+g2 [particle={\gamma}]
+i1 -- [fermion] a
+a -- [fermion] o1
+i2 -- [fermion] b
+b -- [fermion] o2
+a -- [photon, label={\gamma}] c
+b -- [photon, label={\gamma}] c
+c -- [scalar, label={a}] d
+d -- [photon] g1
+d -- [photon] g2

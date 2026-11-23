@@ -1,0 +1,8 @@
+% HIGG-2012-28 fig_04: H -> gamma gamma through a W-boson triangle
+layout: v2
+in: h
+out: y1 y2
+h [H] -- [dotted] a
+a -- [boson] b -- [boson] c -- [boson, label=W] a
+b -- [photon] y1 [\gamma]
+c -- [photon] y2 [\gamma]

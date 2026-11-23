@@ -1,0 +1,6 @@
+% listing the outgoing legs in swapped order crosses the lines
+in: i1 i2
+out: f2 f1
+i1 [qbar'] -- a -- f1 [Z]
+i2 [q] -- b -- f2 [W]
+b -- [fermion, label=q'] a

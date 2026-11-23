@@ -1,0 +1,9 @@
+% STDM-2011-17 fig_01b: W/Z + photon, t-channel: photon radiated from the incoming quark, W(Z) -> l nu(l)
+layout: v2
+in: qb q
+out: nb l g
+q [q] -- [fermion] a -- [fermion] b -- [fermion] qb [qbar]
+a -- [photon] g [gamma]
+b -- [scalar, label'=W(Z)] w
+w -- [fermion] l [\mathit{l}]
+nb [\bar\nu(\bar l)] -- [fermion] w

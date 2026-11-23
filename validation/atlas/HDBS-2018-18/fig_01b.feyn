@@ -1,0 +1,13 @@
+% HDBS-2018-18 fig_01b: VBF HH production through two VVH couplings (kappa_V), t-channel V between them
+layout: v2
+in: i1 i2
+out: f1 h1 h2 f2
+i1 [q] -- [plain] a -- [plain] f1 [q]
+i2 [q] -- [plain] b -- [plain] f2 [q]
+k1 [dot, color=#f39c34, label=\kappa_V]
+k2 [dot, color=#f39c34, label=\kappa_V]
+a -- [boson] k1
+b -- [boson] k2
+k1 -- [boson] k2
+k1 -- [scalar] h1 [H]
+k2 -- [scalar] h2 [H]

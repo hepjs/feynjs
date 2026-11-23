@@ -1,0 +1,11 @@
+% STDM-2011-17 fig_02b: qg -> W q with the photon from quark fragmentation D_{q/gamma}(z,Q^2)
+layout: v2
+in: gl q
+out: g l nb
+gl [g] -- [gluon] b
+q [q] -- [fermion] a -- [fermion] b -- [fermion] f
+f [dot, label={D_{q/\gamma}(z, Q^2)}]
+f -- [photon] g [gamma]
+a -- [scalar, label=W] w
+w -- [fermion] l [\mathit{l}]
+nb [nubar] -- [fermion] w

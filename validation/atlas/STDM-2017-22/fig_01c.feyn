@@ -1,0 +1,13 @@
+% STDM-2017-22 fig_01c: converted from TikZ, no coordinates kept
+in: i1 i2
+out: v1 v2 v3
+v1 [particle={V_1}]
+v2 [particle={V_2}]
+v3 [particle={V_3}]
+i1 -- [fermion, label={q}] a
+a -- [fermion, label={\bar{q}'}] i2
+a -- [photon, label'={V^*}] b
+b -- [photon] v1
+b -- [scalar, label'={H}] c
+c -- [photon] v2
+c -- [photon] v3

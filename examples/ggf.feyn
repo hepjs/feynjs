@@ -1,0 +1,4 @@
+i1 [g] -- a
+i2 [g] -- b
+a -- [fermion] c -- [fermion] b -- [fermion, label=t] a
+c -- [H] f1

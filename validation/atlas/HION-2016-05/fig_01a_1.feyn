@@ -1,0 +1,11 @@
+% HION-2016-05 fig_01a (left): Delbrueck scattering, photon scatters off the nuclear Coulomb field (two X sources) via a fermion box
+layout: v2
+in: g1 c1
+out: g2 c2
+c1 [crossed dot]
+c2 [crossed dot]
+g1 -- [photon] a
+a -- [fermion] b -- [fermion] c -- [fermion] d -- [fermion] a
+b -- [photon] g2
+c1 -- [photon] d
+c2 -- [photon] c

@@ -1,0 +1,6 @@
+% R-parity violating decay to a b quark and a lepton (the stop then looks like a leptoquark)
+in: s
+out: b l
+s [stop] -- v [dot, label={\lambda'}]
+v -- b [b]
+v -- [anti fermion] l [\ell^+]

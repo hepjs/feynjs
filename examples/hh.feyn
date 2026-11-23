@@ -1,0 +1,6 @@
+i1 [g] -- a
+i2 [g] -- b
+a -- [fermion] c -- [fermion] b -- [fermion] a
+c [dot, label=\kappa_t, color=teal] -- [H] v [dot, label=\kappa_\lambda, color=pink]
+v -- f1 [H]
+v -- f2 [H]

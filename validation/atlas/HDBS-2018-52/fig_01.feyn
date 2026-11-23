@@ -1,0 +1,9 @@
+% HDBS-2018-52 fig_01: H(Z) -> M gamma, flavour-violating decay to q_i qbar_j forming a meson, photon from the antiquark
+layout: v2
+in: h
+out: qi qj y
+h [H(Z)] -- [scalar] v
+v -- [fermion] qi [q_i]
+qj [\bar q_j] -- [fermion] w -- [fermion, label=\bar q_j] v
+w -- [photon] y [\gamma]
+meson: \mathcal{M} = qi qj [cap]

@@ -1,0 +1,12 @@
+% HION-2016-05 fig_01b: equivalent photon approximation, two Pb82+ emit photons that fuse into X (right half; left half is a cartoon of the em fields)
+layout: v2
+in: pb1 pb2
+out: pb3 x pb4
+pb1 -- [fermion] a -- [fermion] pb3
+pb2 -- [fermion] b -- [fermion] pb4
+a [label=\mathrm{Pb}^{82+}]
+b [label=\mathrm{Pb}^{82+}]
+c [blob]
+a -- [photon, label'=\gamma] c
+b -- [photon, label=\gamma] c
+c -- [proton] x [X]

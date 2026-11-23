@@ -1,0 +1,7 @@
+% EXOT-2015-04 fig_01b: g g > G_KK > t tbar (s-channel, red double-wave KK graviton)
+layout: v2
+in: i1 i2
+out: f1 f2
+i1 [g] -- a -- i2 [g]
+a -- [G, color=red, label=G_{\mathrm{KK}}] b
+f1 [tbar] -- b -- f2 [t]

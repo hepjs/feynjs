@@ -1,0 +1,11 @@
+% STDM-2014-02 figaux_01b: converted from TikZ, no coordinates kept
+in: qb q
+out: w z
+q [particle={\boldsymbol{q}}]
+w [particle={\boldsymbol{W^\pm}}]
+z [particle={\boldsymbol{Z}}]
+q -- [fermion] b
+b -- [fermion, label={\boldsymbol{q'}}] a
+a -- [fermion, label={\boldsymbol{\bar{q}'}}] qb
+a -- [photon] z
+b -- [photon] w

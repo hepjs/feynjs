@@ -1,0 +1,20 @@
+% SUSY-2013-08 figaux_02b: natural GMSB stop pair; stop -> b chargino (-> f f' neutralino -> h G~), stop -> t neutralino (-> Z G~)
+layout: v2
+arrows: none
+in: p1 p2
+out: b f fp h G1 G2 Z t
+p1 [p] -- pp [blob]
+p2 [p] -- pp
+pp -- [stop] s1
+pp -- [stop] s2
+s1 -- b [b]
+s1 -- [chargino] c1
+c1 [dot, color=gray] -- f [f]
+c1 -- fp [f']
+c1 -- [neutralino1] n1
+n1 -- h [h]
+n1 -- G1 [gravitino]
+s2 -- [neutralino1] n2
+n2 -- G2 [gravitino]
+n2 -- Z [Z]
+s2 -- t [t]

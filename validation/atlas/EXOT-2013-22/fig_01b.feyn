@@ -1,0 +1,23 @@
+% EXOT-2013-22 fig_01b: FRVZ model, H > f_d2 f_d2, each f_d2 > HLSP s_d1, s_d1 > gamma_d gamma_d, gamma_d > l+ l-
+layout: v2
+in: h
+out: s1 l1 l2 l3 l4 s2 l5 l6 l7 l8
+h [H] -- [scalar] a
+a -- [plain, label=f_{d_2}] b
+a -- [plain, label'=f_{d_2}] c
+b -- [plain] s1 [\mathrm{HLSP}]
+b -- [scalar, label'=s_{d_1}] d1
+d1 -- [photon, label=\gamma_d] g1
+d1 -- [photon, label=\gamma_d] g2
+g1 -- [plain] l1 [l+]
+g1 -- [plain] l2 [l-]
+g2 -- [plain] l3 [l+]
+g2 -- [plain] l4 [l-]
+c -- [plain] s2 [\mathrm{HLSP}]
+c -- [scalar, label=s_{d_1}] d2
+d2 -- [photon, label=\gamma_d] g3
+d2 -- [photon, label'=\gamma_d] g4
+g3 -- [plain] l5 [l+]
+g3 -- [plain] l6 [l-]
+g4 -- [plain] l7 [l+]
+g4 -- [plain] l8 [l-]

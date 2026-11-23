@@ -1,0 +1,7 @@
+% TOPQ-2011-17 fig_01 (left): tW production, s-channel b-quark exchange, bg -> b -> tW-
+layout: v2
+in: i1 i2
+out: f1 f2
+i1 [b] -- [fermion] v1 -- [fermion, label=b] v2 -- [fermion] f1 [t]
+i2 [g] -- [gluon] v1
+v2 -- [boson] f2 [W^-]

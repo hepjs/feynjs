@@ -1,0 +1,16 @@
+% ATLAS-CONF-2011-076 Fig. 1, written with defaults only
+q1 [q] -- a -- [squark] c
+q2 [qbar] -- b -- [squark] d
+a -- [gluino] b
+c -- qt [q]
+c -- [plain, label=\tilde{N}_1] e
+e -- fd1 [f_d]
+e -- [photon, label=\gamma_d] g
+g -- l1 [l+]
+g -- l2 [l-]
+d -- [plain, label=\tilde{N}_1] f
+f -- [photon, label=\gamma_d] h
+h -- l3 [l+]
+h -- l4 [l-]
+f -- fd2 [f_d]
+d -- qb [q]

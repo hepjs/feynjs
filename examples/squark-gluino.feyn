@@ -1,0 +1,6 @@
+in: i1 i2
+out: f1 f2
+i1 [q] -- a -- f1 [squark]
+i2 [g] -- b
+a -- [gluino] b
+b -- f2 [gluino]

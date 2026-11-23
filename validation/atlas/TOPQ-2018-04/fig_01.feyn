@@ -1,0 +1,14 @@
+% TOPQ-2018-04 fig_01: converted from TikZ, no coordinates kept
+in: q1 q2
+out: t bb
+q1 [particle={q}]
+q2 [particle={\overline{q}'}]
+a [dot]
+b [dot]
+t [particle={t}]
+bb [particle={\overline{b}}]
+q1 -- [fermion, color=#0000ff] a
+a -- [fermion, color=#0000ff] q2
+a -- [boson, label={W}, color=#228b22] b
+b -- [fermion, color=#cd5c5c] t
+bb -- [fermion, color=#cd5c5c] b

@@ -1,0 +1,11 @@
+% HIGG-2013-16 fig_01a: VBF Higgs production, H -> chi0 chi0bar (invisible)
+layout: v2
+in: i1 i2
+out: f1 x1 x2 f2
+i1 [q] -- [fermion] a -- [fermion] f1 [q]
+f2 [\bar q] -- [fermion] b -- [fermion] i2 [\bar q]
+a -- [boson, label={W^\pm/Z}] h
+b -- [boson, label'={W^\pm/Z}] h
+h -- [scalar, label=H] c
+c -- [fermion, dotted] x1 [\chi^0]
+x2 [\bar\chi^0] -- [fermion, dotted] c

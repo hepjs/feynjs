@@ -1,0 +1,15 @@
+% BPHY-2015-02 fig_01a: converted from TikZ, no coordinates kept
+in: g1 g2
+out: b1a b1b b2b b2a
+g1 -- [gluon] v1
+g2 -- [gluon] v2
+b1a -- [fermion] v1
+v1 -- [fermion] m
+m -- [fermion] v2
+v2 -- [fermion] b2a
+m -- [gluon] gv
+b2b -- [fermion] gv
+gv -- [fermion] b1b
+% (the c cbar pairs end in hatched blocks, as the paper draws them)
+meson: = b1a b1b [hatched]
+meson: = b2b b2a [hatched]

@@ -1,0 +1,11 @@
+% EXOT-2015-23 fig_01a: mono-Higgs, q qbar > Z' > Z' h, Z' > chi chibar (h radiated off the Z')
+layout: v2
+arrows: none
+dots: all
+in: i1 i2
+out: h x1 x2
+i1 [qbar] -- a -- i2 [q]
+a -- [Z', label'=Z'] b
+b -- [scalar] h [h]
+b -- [Z', label'=Z'] c
+x1 [chibar] -- c -- x2 [chi]

@@ -1,0 +1,26 @@
+% EXOT-2021-17 fig_01c: converted from TikZ, no coordinates kept
+in: q1 q2
+out: qa qb l ga nu
+q1 [particle={q}]
+q2 [particle={q}]
+v1 [dot]
+v2 [dot]
+v3 [dot]
+v4 [dot]
+v5 [dot]
+qa [particle={q}]
+qb [particle={q}]
+ga [particle={\gamma}]
+l [particle={\ell}]
+nu [particle={\nu}]
+q1 -- [plain] v1
+v1 -- [plain] q2
+v1 -- [photon, label'={Z}] v2
+v2 -- [photon, label={W}] v3
+v2 -- [photon] v4
+v4 -- [photon, label={W}] v5
+v4 -- [photon] ga
+v3 -- [plain] qa
+v3 -- [plain] qb
+v5 -- [plain] l
+v5 -- [plain] nu

@@ -1,0 +1,11 @@
+% HDBS-2019-04 fig_02a: VBF HH production through the HHVV contact vertex kappa_2V
+layout: v2
+in: i1 i2
+out: f1 h1 h2 f2
+i1 [q] -- a -- f1 [q]
+i2 [q] -- b -- f2 [q]
+k [dot, color=#22c022, label=\kappa_{2V}]
+a -- [V, label'=V] k
+b -- [V, label'=V] k
+k -- h1 [H]
+k -- h2 [H]

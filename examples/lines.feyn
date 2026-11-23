@@ -1,0 +1,14 @@
+a1 -- [fermion, label=fermion] b1
+a2 -- [anti fermion, label=anti fermion] b2
+a3 -- [majorana, label=majorana] b3
+a4 -- [photon, label=photon] b4
+a5 -- [gluon, label=gluon] b5
+a6 -- [scalar, label=scalar] b6
+a7 -- [charged scalar, label=charged scalar] b7
+a8 -- [ghost, label=ghost] b8
+a9 -- [double, label=double] b9
+a10 -- [gluino] b10
+a11 -- [neutralino] b11
+a12 -- [squark] b12
+a13 -- [charged boson, label=W^+] b13
+a14 -- [heavy, label=T] b14

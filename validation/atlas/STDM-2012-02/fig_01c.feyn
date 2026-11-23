@@ -1,0 +1,9 @@
+% STDM-2012-02 fig_01c: q qbar -> Z/gamma* -> ZZ through a (forbidden in the SM) ZZZ/ZZ gamma neutral TGC vertex
+layout: v2
+in: qi qb
+out: z1 z2
+qi [q] -- [fermion] a -- [fermion] qb [qbar]
+a -- [boson, label'={Z/\gamma}] t
+t [dot, color=red]
+t -- [boson] z1 [Z]
+t -- [boson] z2 [Z]

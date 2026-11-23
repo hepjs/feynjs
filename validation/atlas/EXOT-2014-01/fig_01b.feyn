@@ -1,0 +1,12 @@
+% EXOT-2014-01 fig_01b: DM + heavy quark pair, g g > b bbar (t tbar) chi chibar via EFT contact vertex on the t-channel quark line
+layout: v2
+in: i1 i2
+out: f1 x1 x2 f2
+i1 [g] -- a
+i2 [g] -- b
+f2 [{\bar b, \bar t}] -- [fermion] b
+b -- [fermion] c [dot]
+c -- [fermion] a
+a -- [fermion] f1 [{b, t}]
+c -- [fermion] x1 [chi]
+x2 [chibar] -- [fermion] c

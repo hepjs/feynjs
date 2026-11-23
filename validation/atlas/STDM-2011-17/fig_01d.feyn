@@ -1,0 +1,10 @@
+% STDM-2011-17 fig_01d: W + photon via the WW gamma triple gauge coupling, W -> l nu
+layout: v2
+in: qb q
+out: g nb l
+q [q] -- [fermion] a -- [fermion] qb [qbar]
+a -- [scalar, label'=W] w
+w -- [photon] g [gamma]
+w -- [scalar, label'=W] v
+v -- [fermion] l [\mathit{l}]
+nb [nubar] -- [fermion] v

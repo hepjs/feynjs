@@ -1,0 +1,7 @@
+% STDM-2012-09 fig_01c: q qbar' -> WZ, u-channel quark exchange (crossed boson lines)
+layout: v2
+in: q qb
+out: w z
+q [q] -- [fermion] a -- [fermion] b -- [fermion] qb [\bar q']
+a -- [boson] z [Z]
+b -- [boson] w [W]

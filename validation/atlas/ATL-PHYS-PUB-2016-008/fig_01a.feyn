@@ -1,0 +1,8 @@
+% ATL-PHYS-PUB-2016-008 fig_01a: VBF Higgs production, t-channel V exchange
+layout: v2
+in: i1 i2
+out: f1 h f2
+i1 [q] -- [plain] a -- [plain] f1 [q]
+i2 [q'] -- [plain] b -- [plain] f2 [q']
+a -- [V] x -- [V] b
+x -- [charged scalar, label=H] h

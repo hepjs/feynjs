@@ -1,0 +1,12 @@
+% HDBS-2018-57 fig_01b: q qbar -> Z -> mu mu with a gamma*/Z* radiated off the mu+ line, giving 4 mu
+layout: v2
+in: i1 i2
+out: f1 f2 f3 f4
+i1 [q] -- a
+i2 [qbar] -- a
+a -- [Z] b
+b -- [fermion] f1 [\mu^-]
+f4 [\mu^+] -- [fermion] r -- [fermion] b
+r -- [boson, label'=\gamma^*/Z^*] c
+c -- [fermion] f2 [\mu^-]
+f3 [\mu^+] -- [fermion] c

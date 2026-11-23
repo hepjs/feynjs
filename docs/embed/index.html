@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>feynjs diagram</title>
+<!-- One Feynman diagram, drawn from the source carried in the link (after the #), for pages
+     that can embed a web page but not run code of their own: a Notion /embed block, say.
+     ?theme=dark draws it light on dark. -->
+<style>
+  @font-face { font-family: "NewComputerModern10"; src: url("../fonts/NewCM10-Book.otf") format("opentype"); font-style: normal; }
+  @font-face { font-family: "NewComputerModern10"; src: url("../fonts/NewCM10-BookItalic.otf") format("opentype"); font-style: italic; }
+  html, body { margin: 0; height: 100%; background: transparent; }
+  body { display: flex; align-items: center; justify-content: center; color: #1f2328; font-family: system-ui, sans-serif; }
+  body.dark { color: #e6e8eb; }
+  svg.feynjs { max-width: 100%; max-height: 100vh; height: auto; }
+  svg.feynjs .feynjs-bg { fill: #fff; }
+  body.dark svg.feynjs .feynjs-bg { fill: #191919; }
+  svg.feynjs .feynjs-blob { fill: rgba(100, 120, 150, 0.2); }
+  body.dark svg.feynjs .feynjs-blob { fill: rgba(130, 150, 180, 0.32); }
+  svg.feynjs .feynjs-jet-stop { stop-color: #3f90da; }
+  pre { color: #c0392b; white-space: pre-wrap; padding: 1em; }
+  body.dark svg.feynjs .feynjs-lifetime stop:last-child { stop-opacity: 0.8; }
+</style>
+</head>
+<body>
+<script src="../javascripts/feynjs.min.js"></script>
+<script>
+  // the source: base64url after "#z", deflated (as the docs' link maker writes it), or after "#" as plain text
+  async function source() {
+    const hash = location.hash.slice(1);
+    if (hash.startsWith("z")) {
+      const b64 = hash.slice(1).replace(/-/g, "+").replace(/_/g, "/");
+      const bytes = Uint8Array.from(atob(b64 + "===".slice((b64.length + 3) % 4)), (c) => c.charCodeAt(0));
+      const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream("deflate-raw"));
+      return await new Response(stream).text();
+    }
+    return decodeURIComponent(hash);
+  }
+  (async () => {
+    if (new URLSearchParams(location.search).get("theme") === "dark") document.body.classList.add("dark");
+    try {
+      document.body.innerHTML = feynjs.render(await source());
+    } catch (error) {
+      const pre = document.createElement("pre");
+      pre.textContent = String(error && error.message || error);
+      document.body.replaceChildren(pre);
+    }
+  })();
+</script>
+</body>
+</html>

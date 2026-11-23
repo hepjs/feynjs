@@ -1,0 +1,8 @@
+i1 [q] -- a -- i2 [qbar]
+a -- [gamma] b
+b -- [slepton] c
+b -- [slepton] d
+c -- f1 [l]
+c -- f2 [neutralino]
+d -- f3 [l]
+d -- f4 [neutralino]

@@ -1,0 +1,9 @@
+% STDM-2011-22 fig_01a: gb -> Zb, s-channel b quark
+layout: v2
+in: bi gi
+out: z bo
+bi [b] -- [fermion] a
+gi [g] -- [gluon] a
+a -- [fermion] c
+c -- [boson] z [Z]
+c -- [fermion] bo [b]

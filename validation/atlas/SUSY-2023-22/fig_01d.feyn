@@ -1,0 +1,18 @@
+% SUSY-2023-22 fig_01d: converted from TikZ, no coordinates kept
+in: g1 g2
+out: t1 n1 n2 t2
+x [blob]
+g1 [particle={g}]
+g2 [particle={g}]
+t1 [particle={t}]
+t2 [particle={\bar{t}}]
+n1 [particle={\nu}]
+n2 [particle={\bar{\nu}}]
+g1 -- [gluon] v1
+g2 -- [gluon] v2
+t2 -- [fermion] v2
+v2 -- [fermion] x
+x -- [fermion] v1
+v1 -- [fermion] t1
+x -- [fermion] n1
+n2 -- [fermion] x

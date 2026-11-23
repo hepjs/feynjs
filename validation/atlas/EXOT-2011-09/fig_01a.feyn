@@ -1,0 +1,13 @@
+% EXOT-2011-09 fig_01a: s-channel single vector-like quark, q qbar' > W*/Z* > q'' Q, Q > q W/Z(> l nu/l)
+layout: v2
+in: i1 i2
+out: q2 l nl q3
+i1 [q] -- [fermion] a
+a -- [fermion] i2 [q']
+a -- [boson, label=W^*/Z^*] b
+q2 [q''] -- [fermion] b
+b -- [B, color=red, label'=Q] c
+c -- [fermion] q3 [q]
+c -- [boson, label=W/Z] w
+w -- [plain] l [\ell]
+w -- [plain] nl [\nu/\ell]

@@ -1,0 +1,3 @@
+- [ ] `npm test` passes (if layouts moved on purpose: `npm run build && npm run approve-layouts`, and say which and why)
+- [ ] the docs describe any new syntax (`docs/guide/`, `docs/reference/`)
+- [ ] `CHANGELOG.md` has a line for it

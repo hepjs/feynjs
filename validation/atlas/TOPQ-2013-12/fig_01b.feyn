@@ -1,0 +1,10 @@
+% TOPQ-2013-12 fig_01b: t-channel single top (4FS), qg -> q't bbar, t -> W+ b, W+ -> l+ nu
+layout: v2
+in: i1 i2
+out: f1 f2 f3 f4 f5
+i1 [q] -- [fermion] v1 -- [fermion] f1 [q']
+v1 -- [boson, label=W^+] v2
+i2 [g] -- [gluon] vg
+f5 [\bar b] -- [fermion] vg -- [fermion, label=b] v2 -- [fermion, label=t] v3 -- [fermion] f4 [b]
+v3 -- [boson, label=W^+] w
+f2 [\ell^+] -- [fermion] w -- [fermion] f3 [\nu]

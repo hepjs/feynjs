@@ -1,0 +1,17 @@
+% SUSY-2014-05 fig_02b: chargino pair, chargino -> nu/l + slepton/sneutrino -> l/nu + neutralino1
+layout: v2
+arrows: none
+in: p1 p2
+out: a1 a2 n1 n2 b2 b1
+p1 [p] -- pp [blob]
+p2 [p] -- pp
+pp -- [chargino] c1
+pp -- [chargino, label=\tilde\chi^\mp_1] c2
+c1 -- a1 [\nu/\ell]
+c1 -- [slepton, label=\tilde\ell/\tilde\nu] l1
+l1 -- a2 [\ell/\nu]
+l1 -- n1 [neutralino1]
+c2 -- [slepton, label=\tilde\ell/\tilde\nu] l2
+l2 -- n2 [neutralino1]
+l2 -- b2 [\ell/\nu]
+c2 -- b1 [\nu/\ell]

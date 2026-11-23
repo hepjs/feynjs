@@ -1,0 +1,8 @@
+% ATL-PHYS-PUB-2013-011 fig_06: chargino1-neutralino2 production, chargino -> W neutralino1, neutralino2 -> Z neutralino1, leptonic W and Z
+layout: v2
+arrows: none
+p p > chargino neutralino2
+chargino > W neutralino1
+neutralino2 > Z neutralino1
+W > l nu
+Z > l l

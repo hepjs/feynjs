@@ -1,0 +1,14 @@
+% EXOT-2014-10 fig_01c: heavy quark pair, g g > Q Qbar via u-channel Q (crossed gluons), Q > q W, Qbar > qbar W
+layout: v2
+dots: all
+in: i1 i2
+out: q w1 w2 qb
+i1 [g] -- b
+i2 [g] -- a
+b -- [fermion] a
+a -- [fermion, label=Q] c
+d -- [fermion, label'=\bar Q] b
+c -- [fermion] q [q]
+c -- [boson] w1 [W]
+d -- [boson] w2 [W]
+qb [qbar] -- [fermion] d

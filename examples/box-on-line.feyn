@@ -1,0 +1,10 @@
+% B0 -> K*0 mu mu through a W box: two W rungs between the quark line and the lepton line
+in: d1 b
+out: d2 s mu1 mu2
+d1 [d] -- [fermion] d2 [d]
+s [\bar{s}] -- [fermion] l2 -- [fermion, label={\bar{u}, \bar{c}, \bar{t}}] l1 -- [fermion] b [\bar{b}]
+l1 -- [boson, label=W^+] n1
+l2 -- [boson, label=W^-] n2
+mu2 [\mu^+] -- [fermion] n1 -- [fermion, label=\nu_\mu] n2 -- [fermion] mu1 [\mu^-]
+hadron: B^0 = d1 b [brace]
+hadron: K^{*0} = d2 s [brace]

@@ -1,0 +1,6 @@
+in: i1 i2
+out: f2 f1
+i1 [g] -- a
+i2 [b] -- b -- [fermion, label=t] a
+b -- [boson] f1 [W-]
+a -- f2 [t]

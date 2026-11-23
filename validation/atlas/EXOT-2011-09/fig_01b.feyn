@@ -1,0 +1,13 @@
+% EXOT-2011-09 fig_01b: t-channel single vector-like quark, q q' > q'' Q via W/Z exchange, Q > q W/Z(> l nu/l)
+layout: v2
+in: i1 i2
+out: q2 l nl q3
+i1 [q] -- [fermion] a
+a -- [fermion] q2 [q'']
+a -- [boson, label=W^*/Z^*] b
+i2 [q'] -- [fermion] b
+b -- [B, color=red, label'=Q] c
+c -- [fermion] q3 [q]
+c -- [boson, label=W/Z] w
+w -- [plain] l [\ell]
+w -- [plain] nl [\nu/\ell]

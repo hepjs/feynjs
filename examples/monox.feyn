@@ -1,0 +1,5 @@
+i1 [q] -- g1 -- a -- i2 [qbar]
+g1 -- f0 [g]
+a [dot, label=g_q] -- [Z', label=Z'] b [dot, label=g_\chi]
+b -- f1 [chi]
+b -- f2 [chibar]

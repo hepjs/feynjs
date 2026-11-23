@@ -1,0 +1,15 @@
+% BPHY-2018-08 fig_01a: converted from TikZ, no coordinates kept
+in: bt bb
+out: dt db jt jb
+jb [particle={c}]
+db [particle={\bar{c}}]
+jt -- [fermion] w1
+w1 -- [fermion, label={\bar{b}}] bt
+bb -- [fermion, label={c}] sm
+sm -- [fermion] jb
+w1 -- [photon, label={W}] w2
+dt -- [fermion, label={\bar{s}}] w2
+w2 -- [fermion, label={c}] db
+hadron: B_c^+ = bt bb
+hadron: J/\psi = jt jb
+hadron: D_s^{(*)+} = dt db

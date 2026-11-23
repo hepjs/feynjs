@@ -1,0 +1,18 @@
+% STDM-2017-26 fig_01a: converted from TikZ, no coordinates kept
+in: q1 q2
+out: q3 v1 v2 q4
+q1 [particle={q}]
+q2 [particle={q''}]
+q3 [particle={q'}]
+q4 [particle={q'''}]
+v1 [particle={W/Z/\gamma}]
+v2 [particle={W/Z/\gamma}]
+q1 -- [fermion] a
+a -- [fermion] b
+b -- [fermion] q3
+q2 -- [fermion] c
+c -- [fermion] e
+e -- [fermion] q4
+a -- [photon] c
+b -- [photon] v1
+e -- [photon] v2

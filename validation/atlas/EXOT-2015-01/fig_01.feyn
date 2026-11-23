@@ -1,0 +1,11 @@
+% EXOT-2015-01 fig_01: q qbar > mu* mu via contact interaction (blob), mu* > mu q qbar via contact interaction (blob)
+layout: v2
+in: i1 i2
+out: mu1 mu2 q2 qb2
+i1 [q] -- [fermion] a [blob]
+a -- [fermion] i2 [qbar]
+a -- [fermion] mu1 [mu-]
+b [blob] -- [fermion, label=\mu^{*+}] a
+mu2 [mu+] -- [fermion] b
+b -- [fermion] q2 [q]
+qb2 [qbar] -- [fermion] b

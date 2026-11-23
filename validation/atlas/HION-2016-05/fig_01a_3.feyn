@@ -1,0 +1,9 @@
+% HION-2016-05 fig_01a (right): light-by-light scattering, two photons in, two out via a fermion box
+layout: v2
+in: g1 g4
+out: g2 g3
+g1 -- [photon] a
+a -- [fermion] b -- [fermion] c -- [fermion] d -- [fermion] a
+b -- [photon] g2
+g4 -- [photon] d
+c -- [photon] g3

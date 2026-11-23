@@ -1,0 +1,8 @@
+% Decay through the second neutralino: it gives a Z (or a Higgs) and the lightest neutralino
+in: s
+out: t z n
+s [stop] -- v
+v -- t [t]
+v -- [neutralino2] x
+x -- z [Z, label={Z/h}]
+x -- n [neutralino1]

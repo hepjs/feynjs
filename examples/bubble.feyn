@@ -1,0 +1,4 @@
+i1 -- [photon, momentum=q] a
+a -- [fermion] b
+b -- [fermion] a
+b -- [photon] f1

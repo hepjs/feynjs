@@ -1,0 +1,8 @@
+% EXOT-2015-19 fig_02_4: scalar LQ pair production, q qbar > g > LQ LQbar, unlabelled
+layout: v2
+in: i1 i2
+out: f1 f2
+i1 -- [fermion] a -- [fermion] i2
+a -- [gluon] b
+b -- [charged scalar] f1
+f2 -- [charged scalar] b

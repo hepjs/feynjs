@@ -1,0 +1,6 @@
+% a photon vertex with a photon loop around it
+in: i1 i2
+out: f1
+i1 [e-] -- a -- c -- d -- f1 [e-]
+a -- [photon, half left] d
+i2 [gamma] -- c

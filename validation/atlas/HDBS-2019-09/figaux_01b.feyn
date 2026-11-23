@@ -1,0 +1,15 @@
+% HDBS-2019-09 figaux_01b: VBF (WW fusion) H production, H -> Za, Z -> l+l-, a -> gamma gamma
+layout: v2
+in: i1 i2
+out: o1 f1 f2 f3 f4 o2
+i1 [q] -- a -- o1 [q']
+i2 [q] -- b -- o2 [q']
+a -- [W] v
+b -- [W] v
+v -- [H, label'=H] h
+h -- [Z] z
+h -- [scalar, label'=a] x
+z -- f1 [l+]
+z -- f2 [l-]
+x -- f3 [gamma]
+x -- f4 [gamma]

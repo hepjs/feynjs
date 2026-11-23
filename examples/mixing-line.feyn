@@ -1,0 +1,9 @@
+% a neutrino turns into a heavy neutral lepton and back: one line, two crosses, three styles
+in: w
+out: mu1 mu2 e nue
+w [W+] -- [boson] v1
+mu1 [mu+] -- [fermion] v1
+v1 -- [fermion, label'=\nu_\mu] x1 [insertion] -- [scalar, color=red, label=N] x2 [insertion] -- [fermion, label'=\nu_\mu] v2
+v2 -- [boson, label=W^{+*}] v3
+v2 -- [fermion] mu2 [mu-]
+e [e+] -- [fermion] v3 -- [fermion] nue [nu_e]

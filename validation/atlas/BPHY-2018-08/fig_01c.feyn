@@ -1,0 +1,12 @@
+% BPHY-2018-08 fig_01c: Bc+ -> J/psi Ds(*)+, annihilation diagram
+layout: v2
+in: b1 c1
+out: s1 c2 cb c3
+w1 -- [fermion] b1 [\bar b]
+c1 [c] -- [fermion] w1
+w1 -- [boson, label=W] w2
+s1 [\bar s] -- [fermion] w2 -- [fermion] c3 [c]
+cb [\bar c] -- [fermion] vc -- [fermion] c2 [c]
+meson: B_c^+ = b1 c1
+meson: D_s^{(*)+} = s1 c2
+meson: J/\psi = cb c3

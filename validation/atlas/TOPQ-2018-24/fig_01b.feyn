@@ -1,0 +1,27 @@
+% TOPQ-2018-24 fig_01b: converted from TikZ, no coordinates kept
+in: g1 g2
+out: l gam nu bb bq u dq
+g1 [particle={g}]
+g2 [particle={g}]
+bb [particle={\bar{b}}]
+l [particle={\ell^-}]
+gam [particle={\gamma}]
+nu [particle={\bar{\nu}}]
+bq [particle={b}]
+u [particle={u}]
+dq [particle={\bar{d}}]
+g1 -- [gluon] a
+g2 -- [gluon] a
+a -- [gluon, label={g}] b
+c -- [fermion, label'={\bar{t}}] b
+b -- [fermion, label'={t}] d
+c -- [photon, label={W^-}, color=red] e
+bb -- [fermion] c
+e -- [fermion] r
+r -- [plain] l
+r -- [photon, color=blue] gam
+nu -- [fermion] e
+d -- [fermion] bq
+d -- [photon, label'={W^+}, color=red] f
+f -- [fermion] u
+dq -- [fermion] f

@@ -1,0 +1,10 @@
+% ATL-PHYS-PUB-2016-023 fig_03c: gg -> t tbar via t-channel top exchange, H* from the exchanged top splitting to HH
+layout: v2
+in: g1 g2
+out: t1 h1 h2 t2
+g1 [g] -- [gluon] a
+g2 [g] -- [gluon] b
+t2 [t] -- [fermion] b -- [fermion] c -- [fermion, label=t] a -- [fermion] t1 [t]
+c -- [ghost] x [dot]
+x -- [ghost] h1 [H]
+x -- [ghost] h2 [H]

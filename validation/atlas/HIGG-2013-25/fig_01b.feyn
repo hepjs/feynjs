@@ -1,0 +1,9 @@
+% HIGG-2013-25 fig_01b: tHqb t-channel production, Higgs radiated off the exchanged W boson
+layout: v2
+in: q g
+out: qp h t bb
+q [q] -- [fermion] a -- [fermion] qp [q']
+a -- [boson] w -- [boson] c
+w -- [charged scalar] h [H]
+g [g] -- [gluon] d
+bb [b] -- [fermion] d -- [fermion] c -- [fermion] t [t]

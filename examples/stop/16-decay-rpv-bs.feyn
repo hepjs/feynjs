@@ -1,0 +1,9 @@
+% R-parity violating decay: with no neutralino at all, the stop decays straight to two quarks
+% (the vertex breaks baryon number, so its quark lines are drawn without arrows)
+in: s
+out: b q
+s [stop] -- v [dot, label={\lambda''}]
+b [particle={\bar{b}}]
+q [particle={\bar{s}}]
+v -- [plain] b
+v -- [plain] q

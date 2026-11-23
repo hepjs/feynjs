@@ -1,0 +1,21 @@
+% EXOT-2014-09 fig_01a: dark photons, q q > squark squark via t-channel gluino, squark > q chi1, chi1 > chi_d gamma_d(> l+ l-)
+layout: v2
+in: i1 i2
+out: qj1 xd1 lp1 lm1 lp2 lm2 xd2 qj2
+i1 [q] -- [fermion] a
+b -- [fermion] i2 [q]
+a -- [gluon, label=\tilde g] b
+a -- [charged scalar, label=\tilde q_i] c
+d -- [charged scalar, label'=\tilde q_i] b
+c -- [fermion] qj1 [q_j]
+c -- [fermion, label'=\tilde\chi^0_1] e
+e -- [fermion] xd1 [\tilde\chi_d]
+e -- [photon, label'=\gamma_d] g1
+lp1 [l+] -- [fermion] g1
+g1 -- [fermion] lm1 [l-]
+qj2 [q_j] -- [fermion] d
+f -- [fermion, label'=\tilde\chi^0_1] d
+xd2 [\tilde\chi_d] -- [fermion] f
+f -- [photon, label=\gamma_d] g2
+lp2 [l+] -- [fermion] g2
+g2 -- [fermion] lm2 [l-]

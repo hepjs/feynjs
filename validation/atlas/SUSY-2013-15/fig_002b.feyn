@@ -1,0 +1,19 @@
+% SUSY-2013-15 fig_002b: stop pair, three-body stop -> b W neutralino1, one W -> l nu, the other -> q q
+layout: v2
+arrows: none
+in: p1 p2
+out: b1 l nu n1 n2 q1 q2 b2
+p1 [p] -- pp [blob]
+p2 [p] -- pp
+pp -- [stop, label=\tilde t_1] s1 [dot, color=gray]
+pp -- [stop, label=\tilde t_1] s2 [dot, color=gray]
+s1 -- b1 [b]
+s1 -- [W] w1
+w1 -- l [\ell]
+w1 -- nu [\nu]
+s1 -- n1 [neutralino1]
+s2 -- n2 [neutralino1]
+s2 -- [W] w2
+w2 -- [plain] q1 [q]
+w2 -- [plain] q2 [q]
+s2 -- b2 [b]

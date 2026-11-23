@@ -1,0 +1,23 @@
+% SUSY-2018-36 fig_01a: converted from TikZ, no coordinates kept
+in: p1 p2
+out: l1 la lb bo l2
+pp [blob]
+p1 [particle={p}]
+p2 [particle={p}]
+d1 [dot, label={\epsilon_i}, color=blue]
+d2 [dot, label={\epsilon_i}, color=blue]
+l1 [particle={\ell^\pm}]
+la [particle={\ell^\pm}]
+lb [particle={\ell^\mp}]
+bo [particle={Z/H/W^\mp}]
+l2 [particle={\ell^\mp/\ell^\mp/\nu}]
+p1 -- [proton] pp
+pp -- [proton] p2
+pp -- [susy fermion, label={\tilde{\chi}^\pm_1}] d1
+pp -- [susy fermion, label'={\tilde{\chi}^\mp_1}] d2
+d1 -- [plain] l1
+d2 -- [plain] l2
+d1 -- [photon, label'={Z}] zv
+zv -- [plain] la
+zv -- [plain] lb
+d2 -- [photon] bo

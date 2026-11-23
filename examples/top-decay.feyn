@@ -1,0 +1,5 @@
+i1 [t] -- a
+a -- [boson, label=W^+] b
+a -- f1 [b]
+b -- f2 [l+]
+b -- f3 [nu]

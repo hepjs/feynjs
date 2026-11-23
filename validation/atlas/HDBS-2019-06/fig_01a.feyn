@@ -1,0 +1,13 @@
+% HDBS-2019-06 fig_01a: Drell-Yan H++ H-- pair production, each decaying to a same-sign W pair
+layout: v2
+in: i1 i2
+out: f1 f2 f3 f4
+i1 [q] -- a
+i2 [qbar] -- a
+a -- [boson, label=\gamma^*/Z^*] b
+b -- [scalar, label'=H^{- -}] hm
+b -- [scalar, label=H^{++}] hp
+hm -- f1 [W-]
+hm -- f2 [W-]
+hp -- f3 [W+]
+hp -- f4 [W+]

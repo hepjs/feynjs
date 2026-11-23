@@ -1,0 +1,17 @@
+% BPHY-2014-04 fig_01c: converted from TikZ, no coordinates kept
+in: a1 a2
+out: d1 d2 j2 j1
+a1 [particle={\bar{b}}]
+a2 [particle={c}]
+d1 [particle={\bar{s}}]
+j1 [particle={c}]
+v1 -- [fermion] a1
+a2 -- [fermion] v1
+v1 -- [photon] v2
+d1 -- [fermion] v2
+v2 -- [fermion] j1
+vc -- [fermion, label={c}] d2
+j2 -- [fermion, label={\bar{c}}] vc
+hadron: B_c^+ = a1 a2
+hadron: D_s^{(*)+} = d1 d2
+hadron: J/\psi = j2 j1

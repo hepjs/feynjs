@@ -1,0 +1,19 @@
+% HIGG-2013-04 fig_01: converted from TikZ, no coordinates kept
+in: g1 g2
+out: w1 w2 b1 b2
+l [empty dot]
+g1 [particle={g}]
+g2 [particle={g}]
+w1 [particle={W}]
+w2 [particle={W}]
+b1 [particle={b}]
+b2 [particle={b}]
+g1 -- [gluon] l
+g2 -- [gluon] l
+l -- [charged scalar, label'={H^0}] a
+a -- [photon] w1
+a -- [charged scalar, label'={H^{\pm}}] b
+b -- [photon] w2
+b -- [charged scalar, label'={h^0}] c
+b1 -- [fermion] c
+c -- [fermion] b2

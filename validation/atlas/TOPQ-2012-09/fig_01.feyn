@@ -1,0 +1,12 @@
+% TOPQ-2012-09 fig_01: converted from TikZ, no coordinates kept
+in: g b
+out: t w
+g [particle={g}]
+b [particle={b}]
+t [particle={t}]
+w [particle={W}]
+g -- [gluon] a
+b -- [fermion] a
+a -- [heavy, label={b^{*}}, color=blue] c
+c -- [fermion] t
+c -- [photon] w

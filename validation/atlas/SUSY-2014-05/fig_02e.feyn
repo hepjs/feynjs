@@ -1,0 +1,20 @@
+% SUSY-2014-05 fig_02e: VBF chargino pair via W W -> neutralino2 exchange, chargino -> nu/l slepton/sneutrino -> l/nu neutralino1
+layout: v2
+arrows: none
+in: q1 q2
+out: qo1 a1 a2 n1 n2 b2 b1 qo2
+q1 [q] -- v1 -- qo1 [q]
+q2 [q] -- v2 -- qo2 [q]
+v1 -- [W, label=W^\pm] c1
+v2 -- [W, label=W^\pm] c2
+c1 -- [neutralino2] c2
+c1 -- [chargino] x1
+c2 -- [chargino] x2
+x1 -- a1 [\nu/\ell^\pm]
+x1 -- [slepton, label=\tilde\ell^\pm/\tilde\nu] s1
+s1 -- a2 [\ell^\pm/\nu]
+s1 -- n1 [neutralino1]
+x2 -- [slepton, label=\tilde\ell^\pm/\tilde\nu] s2
+s2 -- n2 [neutralino1]
+s2 -- b2 [\ell^\pm/\nu]
+x2 -- b1 [\nu/\ell^\pm]

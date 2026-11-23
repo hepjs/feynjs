@@ -1,0 +1,5 @@
+i1 [g] -- a
+i2 [g] -- b
+a -- [fermion] c -- [fermion] d -- [fermion] b -- [fermion] a
+c -- f1 [H]
+d -- f2 [H]

@@ -1,0 +1,9 @@
+% STDM-2012-15 fig_01c: q qbar -> Z g*, Z from the quark line, g* -> b bbar
+layout: v2
+in: q qb
+out: z b bb
+q [q] -- [fermion] a -- [fermion] c -- [fermion] qb [qbar]
+a -- [boson] z [Z]
+c -- [gluon] d
+d -- [fermion] b [b]
+bb [bbar] -- [fermion] d

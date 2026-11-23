@@ -1,0 +1,16 @@
+% ATLAS-CONF-2019-043 fig_01a: converted from TikZ, no coordinates kept
+in: u g
+out: d z t bb
+v1 [dot, color=#f01e1e]
+v2 [dot, color=#f01e1e]
+v3 [dot, color=#f01e1e]
+vz [dot, color=#f01e1e]
+u -- [fermion, label={u}, color=#331999] v1
+v1 -- [fermion, label={d}, color=#f01e1e] d
+v1 -- [photon, label={W}, color=#009646] v2
+g -- [gluon, color=#331999] v3
+v3 -- [fermion, label={b}, color=#eb008c] v2
+bb -- [fermion, label={\bar{b}}, color=#eb008c] v3
+v2 -- [plain, color=#f01e1e] vz
+vz -- [fermion, label={t}, color=#f01e1e] t
+vz -- [photon, label={Z}, color=#f01e1e] z

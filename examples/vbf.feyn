@@ -1,0 +1,4 @@
+i1 [q] -- a -- f1 [q]
+i2 [q] -- b -- f3 [q]
+a -- [W] c -- [W] b
+c [dot, label=\kappa_V, color=green] -- f2 [H]

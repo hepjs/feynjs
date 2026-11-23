@@ -1,0 +1,10 @@
+% ATL-PHYS-PUB-2013-007 fig_06 (b): gg -> HH through a top/bottom box
+layout: v2
+in: g1 g2
+out: h1 h2
+dots: all
+g1 [g] -- [gluon] a
+g2 [g] -- [gluon] b
+a -- [fermion, label={t, b}] b -- [fermion, label={t, b}] c -- [fermion, label={t, b}] d -- [fermion, label={t, b}] a
+d -- h1 [h]
+c -- h2 [h]

@@ -1,0 +1,9 @@
+{
+  "id": "feynjs",
+  "name": "feynjs",
+  "version": "0.0.1",
+  "minAppVersion": "1.0.0",
+  "description": "Feynman diagrams from a short text syntax: write a ```feynman code block and it is drawn in the note.",
+  "author": "feynjs",
+  "isDesktopOnly": false
+}

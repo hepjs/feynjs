@@ -1,0 +1,10 @@
+% HDBS-2018-33 fig_01a: ggF HH triangle diagram, top/bottom loop, H* -> HH via the trilinear coupling
+layout: v2
+in: i1 i2
+out: f1 f2
+i1 [g] -- t1
+i2 [g] -- t2
+t2 -- [fermion, label=t/b] t1 -- [fermion] t3 -- [fermion] t2
+t3 -- [scalar] h
+h -- f1 [H]
+h -- f2 [H]

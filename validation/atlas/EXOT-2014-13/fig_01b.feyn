@@ -1,0 +1,9 @@
+% EXOT-2014-13 fig_01b: single excited b*, g b > b* > t W
+layout: v2
+in: i1 i2
+out: t w
+i1 [g] -- a [label=f_g]
+i2 [b] -- [fermion] a
+a -- [B, color=blue, label=b^*] c
+c -- [fermion] t [t]
+c -- [boson] w [W]

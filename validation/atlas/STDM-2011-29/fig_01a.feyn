@@ -1,0 +1,12 @@
+% STDM-2011-29 fig_01a: direct W + 2 jets, qg -> W+ q g with the incoming gluon splitting, W+ -> nu lbar
+layout: v2
+dots: all
+in: qi gi
+out: nu lb qo go
+qi [q] -- [fermion] a -- [fermion] b -- [fermion] qo [q]
+a -- [W+] w
+w -- [fermion] nu [nu]
+lb [\bar\ell] -- [fermion] w
+gi [g] -- [gluon] s
+s -- [gluon] b
+s -- [gluon] go [g]

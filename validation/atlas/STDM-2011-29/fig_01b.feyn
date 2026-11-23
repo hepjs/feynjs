@@ -1,0 +1,11 @@
+% STDM-2011-29 fig_01b: double parton scattering, q qbar -> W+ -> nu lbar (x) gg -> gg
+layout: v2
+in: qi qb g1 g2
+out: nu lb g3 g4
+qi [q] -- [fermion] a -- [fermion] qb [qbar]
+a [dot] -- [W+] w [dot]
+w -- [fermion] nu [nu]
+lb [\bar\ell] -- [fermion] w
+g1 -- [gluon] c [dot] -- [gluon] g3
+g2 -- [gluon] d [dot] -- [gluon] g4
+c -- [gluon] d

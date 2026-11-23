@@ -1,0 +1,19 @@
+% SUSY-2013-13 fig_01b: slepton pair, slepton -> l neutralino1, neutralino1 -> l l nu via RPV lambda
+layout: v2
+arrows: none
+in: p1 p2
+out: l1 a1 a2 a3 b1 b2 b3 l2
+p1 [p] -- pp [blob]
+p2 [p] -- pp
+pp -- [slepton] s1
+pp -- [slepton] s2
+s1 -- l1 [\ell]
+s1 -- [neutralino1] n1 [empty dot, color=blue, label=\lambda]
+n1 -- a1 [\ell]
+n1 -- a2 [\ell]
+n1 -- a3 [\nu]
+s2 -- [neutralino1] n2 [empty dot, color=blue, label=\lambda]
+n2 -- b1 [\nu]
+n2 -- b2 [\ell]
+n2 -- b3 [\ell]
+s2 -- l2 [\ell]

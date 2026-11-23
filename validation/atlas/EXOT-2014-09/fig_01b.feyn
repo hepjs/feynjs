@@ -1,0 +1,29 @@
+% EXOT-2014-09 fig_01b: dark photons, q q > squark squark via t-channel gluino, squark > q chi1, chi1 > chi_d s_d, s_d > gamma_d gamma_d, gamma_d > l+ l-
+layout: v2
+in: i1 i2
+out: qj1 xd1 lp1 lm1 lp2 lm2 lp3 lm3 lp4 lm4 xd2 qj2
+i1 [q] -- [fermion] a
+b -- [fermion] i2 [q]
+a -- [gluino, label=\tilde g] b
+a -- [squark, label=\tilde q_i] c
+d -- [squark, label'=\tilde q_i] b
+c -- [fermion] qj1 [q_j]
+c -- [neutralino, label'=\tilde\chi^0_1] e
+e -- [neutralino, no label] xd1 [\tilde\chi_d]
+e -- [charged scalar, label'=s_d] s1
+s1 -- [photon, label=\gamma_d] g1
+s1 -- [photon, label'=\gamma_d] g2
+lp1 [l+] -- [fermion] g1
+g1 -- [fermion] lm1 [l-]
+lp2 [l+] -- [fermion] g2
+g2 -- [fermion] lm2 [l-]
+qj2 [q_j] -- [fermion] d
+f -- [neutralino, label'=\tilde\chi^0_1] d
+f -- [neutralino, no label] xd2 [\tilde\chi_d]
+s2 -- [charged scalar, label'=s_d] f
+s2 -- [photon, label=\gamma_d] g3
+s2 -- [photon, label'=\gamma_d] g4
+lp3 [l+] -- [fermion] g3
+g3 -- [fermion] lm3 [l-]
+lp4 [l+] -- [fermion] g4
+g4 -- [fermion] lm4 [l-]

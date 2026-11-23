@@ -1,0 +1,30 @@
+% SUSY-2015-07 figaux_02: converted from TikZ, no coordinates kept
+in: p1 p2
+out: t1 t2 z n1 n2 w b t3
+pp [blob]
+p1 [particle={p}]
+p2 [particle={p}]
+d1 [small blob]
+d2 [small blob]
+t1 [particle={t}]
+t2 [particle={t}]
+z [particle={Z/h}]
+w [particle={W}]
+n1 [particle={\tilde{\chi}^0_1}]
+n2 [particle={\tilde{\chi}^0_1}]
+b [particle={b}]
+t3 [particle={t}]
+p1 -- [proton] pp
+p2 -- [proton] pp
+pp -- [susy gluon, label={\tilde{g}}] d1
+pp -- [susy gluon, label'={\tilde{g}}] d2
+d1 -- [plain] t1
+d1 -- [plain] t2
+d2 -- [plain] b
+d2 -- [plain] t3
+d1 -- [susy fermion, label'={\tilde{\chi}^0_2}] e1
+d2 -- [susy fermion, label={\tilde{\chi}^\pm_1}] e2
+e1 -- [photon] z
+e2 -- [photon] w
+e1 -- [susy fermion] n1
+e2 -- [susy fermion] n2

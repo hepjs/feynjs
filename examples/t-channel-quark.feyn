@@ -1,0 +1,7 @@
+% gg -> t tbar H: the top quark is exchanged between the two gluons and radiates the Higgs
+i1 [g] -- a
+i2 [g] -- b
+f1 [tbar] -- [fermion] b -- [fermion, label=t] m -- [fermion] a -- [fermion] f2 [t]
+m -- [H] h
+h -- f3 [b]
+h -- f4 [bbar]

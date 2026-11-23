@@ -1,0 +1,10 @@
+% STDM-2013-02 fig_01b: electroweak Zjj, Z bremsstrahlung off a quark in t-channel W exchange
+layout: v2
+in: q1 q2
+out: lm lp o1 o2
+q1 [q] -- [fermion] a -- [fermion] c -- [fermion] o1 [q']
+q2 [q] -- [fermion] b -- [fermion] o2 [q']
+a -- [boson, label=Z] z
+c -- [boson, label=W^\pm] b
+z -- [fermion] lm [{\mu^-, e^-}]
+lp [{\mu^+, e^+}] -- [fermion] z

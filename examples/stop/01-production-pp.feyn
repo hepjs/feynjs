@@ -1,0 +1,6 @@
+% Stop pair production at the LHC: two protons collide and make a stop and an anti-stop
+i1 [p] -- pp [blob] -- i2 [p]
+pp -- [stop] s1
+pp -- [stop, label={\tilde{t}^*}] s2
+s1 -- [hidden] e1
+s2 -- [hidden] e2

@@ -1,0 +1,24 @@
+% HIGG-2013-15 fig_01d: converted from TikZ, no coordinates kept
+in: i2 i1
+out: n2 l2 n1 l1 q2 q1
+i1 [particle={q}]
+i2 [particle={\overline{q}}]
+n2 [particle={\bar{\nu}}]
+l2 [particle={\ell_2^\pm}]
+n1 [particle={\bar{\nu}}]
+l1 [particle={\ell_1^\pm}]
+q2 [particle={\overline{q}}]
+q1 [particle={q}]
+i1 -- [fermion] a
+a -- [fermion] i2
+a -- [photon, label={W^\pm}] b
+b -- [photon, label={W^\pm}] c
+l2 -- [fermion] c
+c -- [fermion] n2
+b -- [scalar, label'={H^0}] d
+d -- [photon, label={W^\pm}] e
+l1 -- [fermion] e
+e -- [fermion] n1
+d -- [photon, label'={W^\mp}] f
+q2 -- [fermion] f
+f -- [fermion] q1

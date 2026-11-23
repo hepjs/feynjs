@@ -1,0 +1,10 @@
+% Four-body decay: lighter still, so the W is virtual too and gives two fermions
+in: s
+out: b f1 f2 n
+s [stop] -- v
+v -- [fermion, label={t^*}] u
+v -- n [neutralino1]
+u -- b [b]
+u -- [boson, label={W^*}] w
+w -- f1 [f]
+w -- [anti fermion] f2 [\bar{f}']

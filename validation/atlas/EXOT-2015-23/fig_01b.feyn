@@ -1,0 +1,11 @@
+% EXOT-2015-23 fig_01b: mono-Higgs 2HDM, q qbar > Z' > h A, A > chi chibar (A dotted)
+layout: v2
+arrows: none
+dots: all
+in: i1 i2
+out: h x1 x2
+i1 [qbar] -- a -- i2 [q]
+a -- [Z'] b
+b -- [scalar] h [h]
+b -- [dotted, label'=A] c
+x1 [chibar] -- c -- x2 [chi]

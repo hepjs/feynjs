@@ -1,0 +1,7 @@
+% EXOT-2013-16 fig_01c: same-sign top pair, u/c u/c > t t via t-channel flavour-changing Higgs exchange
+layout: v2
+in: i1 i2
+out: f1 f2
+i1 [{u, c}] -- [fermion] a -- [fermion] f1 [t]
+i2 [{u, c}] -- [fermion] b -- [fermion] f2 [t]
+a -- [H] b

@@ -1,0 +1,9 @@
+% EXOT-2013-01 figaux_01a: s-channel g g > G* > W+ W-
+layout: v2
+in: i1 i2
+out: f1 f2
+i1 [g] -- a
+i2 [g] -- a
+a -- [scalar, label=G^*] b
+b -- f1 [W+]
+b -- f2 [W-]

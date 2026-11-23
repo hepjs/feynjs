@@ -1,0 +1,7 @@
+% SUSY-2011-28 fig_01: d dbar -> e- mu+ through t-channel stop exchange with RPV couplings lambda'_131 and lambda'_231
+layout: v2
+in: i1 i2
+out: f1 f2
+i1 [d] -- a [label=\lambda'_{131}] -- f1 [e-]
+a -- [stop] b
+i2 [dbar] -- b [label=\lambda'_{231}] -- f2 [mu+]

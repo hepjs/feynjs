@@ -1,0 +1,21 @@
+% ATLAS-CONF-2010-079 fig_01b: gg > gluino gluino (t-channel gluino); gluino > b sbottom(> b neutralino1), gluino > t stop*(> b chargino-(> l- sneutrino*(> nu neutralino1)))
+layout: v2
+in: i1 i2
+out: f1 f2 f3 f4 f5 f6 f7 f8
+i1 [g] -- v1
+i2 [g] -- v2
+v1 -- [neutralino1, label'=\tilde g] v2
+v1 -- [neutralino1, label=\tilde g] a1
+v2 -- [neutralino1, label=\tilde g] b1
+f1 [b] -- [fermion] a1
+a1 -- [sbottom, charged scalar, label'=\tilde b] a2
+f2 [b] -- [fermion] a2
+a2 -- f3 [neutralino1]
+b1 -- f8 [t]
+b2 -- [stop, charged scalar, label=\bar{\tilde t}] b1
+b2 -- f7 [b]
+b3 -- [chargino-, label=\tilde\chi_1^-] b2
+b3 -- f6 [l-]
+b4 -- [sneutrino, charged scalar, label=\bar{\tilde\nu}^*] b3
+b4 -- f5 [nu]
+b4 -- f4 [neutralino1]

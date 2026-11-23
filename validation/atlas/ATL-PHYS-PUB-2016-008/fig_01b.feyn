@@ -1,0 +1,10 @@
+% ATL-PHYS-PUB-2016-008 fig_01b: VBF Higgs production, u-channel (crossed) V exchange
+layout: v2
+in: i1 i2
+out: f1 h f2
+i1 [q] -- [plain] b [dot]
+i2 [q'] -- [plain] a [dot]
+a -- [plain] f1 [q']
+b -- [plain] f2 [q]
+a -- [V] x [dot] -- [V] b
+x -- [scalar] h [H]

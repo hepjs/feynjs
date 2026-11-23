@@ -1,0 +1,17 @@
+% HDBS-2019-16 fig_01: q qbar' -> W -> WH, H -> WW, giving W W W -> q qbar' + 2 (l nu)
+layout: v2
+in: i1 i2
+out: f1 f2 f3 f4 f5 f6
+i1 [q] -- a
+i2 [qbar'] -- a
+a -- [boson, label=W^\pm] b
+b -- [H] h
+b -- [boson, label'=W^\pm] w3
+h -- [boson, label'=W^\mp] w1
+h -- [boson, label=W^\pm] w2
+w1 -- f1 [q]
+w1 -- f2 [qbar']
+w2 -- [fermion] f3 [\ell^\pm]
+f4 [\nu] -- [fermion] w2
+w3 -- [fermion] f5 [\ell^\pm]
+f6 [\nu] -- [fermion] w3

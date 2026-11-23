@@ -1,0 +1,10 @@
+% ATL-PHYS-PUB-2016-023 fig_03b: q qbar -> g* -> t tbar, an off-shell Higgs from one top line splitting to HH
+layout: v2
+in: q1 q2
+out: t1 h1 h2 t2
+q2 [q] -- [fermion] v -- [fermion] q1 [q]
+v -- [gluon, label=g] w
+t1 [t] -- [anti fermion] w -- [anti fermion] b -- [anti fermion] t2 [t]
+b -- [ghost] x [dot]
+x -- [ghost] h1 [H]
+x -- [ghost] h2 [H]

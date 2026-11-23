@@ -1,0 +1,71 @@
+/* The standard feynjs label face: New Computer Modern (GUST Font License). */
+@font-face { font-family: "NewComputerModern10"; src: url("../fonts/NewCM10-Book.otf") format("opentype"); font-style: normal; font-display: swap; }
+@font-face { font-family: "NewComputerModern10"; src: url("../fonts/NewCM10-BookItalic.otf") format("opentype"); font-style: italic; font-display: swap; }
+/* Diagrams draw with currentColor, so they follow the light/dark palette without re-rendering. */
+div.feynman { text-align: center; margin: 1.2em 0; color: var(--md-default-fg-color, currentColor); }
+div.feynman:not(.feynjs-rendered) { visibility: hidden; white-space: pre; }
+div.feynman svg.feynjs { max-width: 100%; height: auto; }
+/* SUSY lines and their labels: red unless the reader picks another colour (the picker sets
+   data-feynjs-susy on <html>). Each colour has a shade for light pages and one for dark. */
+:root { --feynjs-susy-light: #c0392b; --feynjs-susy-dark: #e05a4c; }
+html[data-feynjs-susy="amber"] { --feynjs-susy-light: #c77700; --feynjs-susy-dark: #ffb300; }
+html[data-feynjs-susy="blue"] { --feynjs-susy-light: #0b80c3; --feynjs-susy-dark: #0b80c3; }
+html[data-feynjs-susy="accent"] { --feynjs-susy-light: var(--md-accent-fg-color); --feynjs-susy-dark: var(--md-accent-fg-color); }
+html[data-feynjs-susy="text"] { --feynjs-susy-light: currentColor; --feynjs-susy-dark: currentColor; }
+svg.feynjs .feynjs-susy { color: var(--feynjs-susy, var(--feynjs-susy-light)); }
+[data-md-color-scheme="slate"] svg.feynjs .feynjs-susy { color: var(--feynjs-susy, var(--feynjs-susy-dark)); }
+svg.feynjs .feynjs-bg { fill: var(--md-default-bg-color, #fff); }
+/* Hadron braces in brick, lifted on dark pages as the brand's red is. */
+[data-md-color-scheme="slate"] svg.feynjs .feynjs-brace { stroke: #e05a4c; }
+/* Blobs and hadron ellipses: a grey with a little blue, at low opacity, never darker than
+   their outline, with the hadron's name in a matching slate; the picker offers ATLAS blue,
+   grey and red instead. */
+svg.feynjs .feynjs-blob { fill: var(--feynjs-blob, rgba(100, 120, 150, 0.2)); }
+svg.feynjs .feynjs-blob-label { color: var(--feynjs-blob-text, #3d4f66); }
+[data-md-color-scheme="slate"] svg.feynjs .feynjs-blob { fill: var(--feynjs-blob, rgba(130, 150, 180, 0.32)); }
+[data-md-color-scheme="slate"] svg.feynjs .feynjs-blob-label { color: var(--feynjs-blob-text, #cbd5e1); }
+html[data-feynjs-blob="blue"] svg.feynjs .feynjs-blob { fill: var(--feynjs-blob, rgba(11, 128, 195, 0.15)); }
+html[data-feynjs-blob="blue"] svg.feynjs .feynjs-blob-label { color: var(--feynjs-blob-text, #06527e); }
+html[data-feynjs-blob="blue"] [data-md-color-scheme="slate"] svg.feynjs .feynjs-blob { fill: var(--feynjs-blob, rgba(11, 128, 195, 0.35)); }
+html[data-feynjs-blob="blue"] [data-md-color-scheme="slate"] svg.feynjs .feynjs-blob-label { color: var(--feynjs-blob-text, #a9d6f2); }
+html[data-feynjs-blob="grey"] svg.feynjs .feynjs-blob { fill: var(--feynjs-blob, rgba(128, 128, 128, 0.2)); }
+html[data-feynjs-blob="grey"] svg.feynjs .feynjs-blob-label { color: var(--feynjs-blob-text, currentColor); }
+html[data-feynjs-blob="grey"] [data-md-color-scheme="slate"] svg.feynjs .feynjs-blob { fill: var(--feynjs-blob, rgba(160, 160, 160, 0.3)); }
+html[data-feynjs-blob="grey"] [data-md-color-scheme="slate"] svg.feynjs .feynjs-blob-label { color: var(--feynjs-blob-text, currentColor); }
+html[data-feynjs-blob="red"] svg.feynjs .feynjs-blob { fill: var(--feynjs-blob, rgba(232, 32, 42, 0.15)); }
+html[data-feynjs-blob="red"] svg.feynjs .feynjs-blob-label { color: var(--feynjs-blob-text, #a3141c); }
+html[data-feynjs-blob="red"] [data-md-color-scheme="slate"] svg.feynjs .feynjs-blob { fill: var(--feynjs-blob, rgba(232, 32, 42, 0.35)); }
+html[data-feynjs-blob="red"] [data-md-color-scheme="slate"] svg.feynjs .feynjs-blob-label { color: var(--feynjs-blob-text, #ffc2c2); }
+pre.feynjs-error { text-align: left; color: #c0392b; border-left: 3px solid #c0392b; padding: .6em 1em; white-space: pre-wrap; }
+/* The colour picker: a small panel in the corner, out of the way of the page. */
+.feynjs-picker { position: fixed; right: .8rem; bottom: .8rem; z-index: 5; display: flex; flex-direction: column; gap: .3rem; padding: .45rem .6rem; border-radius: .4rem; font-size: .6rem; background: var(--md-default-bg-color); color: var(--md-default-fg-color--light); box-shadow: 0 .1rem .5rem rgba(0, 0, 0, .25); }
+.feynjs-picker div { display: flex; align-items: center; gap: .3rem; }
+.feynjs-picker span { min-width: 2.6rem; }
+.feynjs-picker button { width: 1rem; height: 1rem; border-radius: 50%; border: 2px solid transparent; padding: 0; cursor: pointer; }
+.feynjs-picker button[aria-pressed="true"] { border-color: var(--md-default-fg-color); }
+/* The download menu on each diagram, in the page's colours. */
+.feynjs-download-menu { background: var(--md-default-bg-color); color: var(--md-default-fg-color); font-family: var(--md-text-font-family); }
+.feynjs-download { color: var(--md-default-fg-color--light); }
+/* Particle labels say what the particle is when the pointer rests on them. */
+svg.feynjs .feynjs-has-info { cursor: help; }
+/* The particle card: frosted glass, in the site's colours. (Set where the theme's own colours
+   are defined, the element carrying data-md-color-scheme, so the references resolve.) */
+[data-md-color-scheme] { --feynjs-tooltip-bg: rgba(255, 255, 255, .38); --feynjs-tooltip-fg: var(--md-default-fg-color); --feynjs-tooltip-font: var(--md-text-font-family); --feynjs-tooltip-accent: #c0392b; }
+[data-md-color-scheme="slate"] { --feynjs-tooltip-bg: rgba(38, 42, 52, .32); --feynjs-tooltip-border: rgba(255, 255, 255, .16); --feynjs-tooltip-rule: rgba(255, 255, 255, .1); --feynjs-tooltip-accent: #e05a4c; --feynjs-tooltip-tag: rgba(224, 90, 76, .16); }
+/* Small blobs (decay vertices) in a mid grey, a little lighter on dark pages. */
+[data-md-color-scheme="slate"] svg.feynjs .feynjs-smallblob { fill: #7d8590; }
+[data-md-color-scheme="slate"] svg.feynjs .feynjs-collision { fill: #7d8590; }
+
+/* Detector objects: the jet cone's blue, lifted on dark pages. */
+svg.feynjs .feynjs-jet-stop { stop-color: var(--feynjs-jet, #3f90da); }
+svg.feynjs .feynjs-jet-rim { stroke: var(--feynjs-jet, #3f90da); }
+[data-md-color-scheme="slate"] svg.feynjs .feynjs-jet-stop { stop-color: var(--feynjs-jet, #7cb7ee); }
+[data-md-color-scheme="slate"] svg.feynjs .feynjs-jet-rim { stroke: var(--feynjs-jet, #7cb7ee); }
+/* colours: bw keeps its black, white and one grey on any page. */
+svg.feynjs-bw .feynjs-jet-stop { stop-color: #a6a6a6 !important; }
+svg.feynjs-bw .feynjs-jet-rim { stroke: currentColor !important; }
+svg.feynjs-bw .feynjs-susy { color: inherit !important; }
+svg.feynjs-bw .feynjs-blob { fill: rgba(166, 166, 166, 0.2) !important; }
+svg.feynjs-bw .feynjs-blob-label { color: inherit !important; }
+/* A long-lived particle's band: stronger at its far end on dark pages, where 30% barely shows. */
+[data-md-color-scheme="slate"] svg.feynjs .feynjs-lifetime stop:last-child { stop-opacity: 0.8; }

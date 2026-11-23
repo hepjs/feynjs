@@ -1,0 +1,12 @@
+% TOPQ-2023-19 fig_01c: converted from TikZ, no coordinates kept
+in: q1 q2
+out: t tb
+q1 [particle={q}]
+q2 [particle={\bar{q}}]
+t [particle={t}]
+tb [particle={\bar{t}}]
+q1 -- [fermion] a
+a -- [fermion] q2
+a -- [gluon] b
+b -- [fermion] t
+tb -- [fermion] b

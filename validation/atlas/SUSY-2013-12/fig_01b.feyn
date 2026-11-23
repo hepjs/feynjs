@@ -1,0 +1,17 @@
+% SUSY-2013-12 fig_01b: chargino1 neutralino2 production, decays via stau/tau-sneutrino to taus and neutralino1
+layout: v2
+arrows: none
+in: p1 p2
+out: a1 a2 n1 n2 b2 b1
+p1 [p] -- pp [blob]
+p2 [p] -- pp
+pp -- [chargino] c
+pp -- [neutralino2] x
+c -- a1 [\nu_\tau/\tau]
+c -- [stau, label=\tilde\tau/\tilde\nu_\tau] s1
+s1 -- a2 [\tau/\nu_\tau]
+s1 -- n1 [neutralino1]
+x -- [stau, label=\tilde\tau/\tilde\nu_\tau] s2
+s2 -- n2 [neutralino1]
+s2 -- b2 [\tau/\nu_\tau]
+x -- b1 [\tau/\nu_\tau]

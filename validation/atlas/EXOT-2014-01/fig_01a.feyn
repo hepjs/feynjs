@@ -1,0 +1,10 @@
+% EXOT-2014-01 fig_01a: DM + single b-quark, g b > b chi chibar via EFT contact vertex
+layout: v2
+in: i1 i2
+out: f1 x1 x2
+i2 [b] -- [fermion] c [dot]
+c -- [fermion] a
+i1 [g] -- a
+a -- [fermion] f1 [b]
+c -- [fermion] x1 [chi]
+x2 [chibar] -- [fermion] c

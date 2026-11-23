@@ -1,0 +1,12 @@
+% pp -> stop pair, each stop -> b chargino -> b W neutralino
+i1 [p] -- pp [blob] -- i2 [p]
+pp -- [stop] s1
+pp -- [stop, label={\tilde{t}^*}] s2
+s1 -- a1 [b]
+s1 -- [chargino] x1
+x1 -- a2 [W]
+x1 -- a3 [neutralino1]
+s2 -- [chargino] x2
+s2 -- [anti fermion] b1 [\bar{b}]
+x2 -- b2 [neutralino1]
+x2 -- b3 [W]

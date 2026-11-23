@@ -1,0 +1,7 @@
+% TOPQ-2017-13 fig_01 (2 of 3): colour flow at the g -> q qbar vertex
+layout: v2
+colour flow: on
+in: i1
+out: f1 f2
+i1 -- [gluon] v
+f2 -- [fermion] v -- [fermion] f1

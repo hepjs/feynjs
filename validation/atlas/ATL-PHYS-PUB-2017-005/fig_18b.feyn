@@ -1,0 +1,10 @@
+% ATL-PHYS-PUB-2017-005 fig_18b: resonant gg -> H(*) -> VV through a quark triangle
+layout: v2
+in: g1 g2
+out: v1 v2
+g1 [g] -- [gluon] a
+g2 [g] -- [gluon] b
+b -- [fermion] a -- [fermion] c -- [fermion] b
+c -- [scalar, label=H^{(*)}] x
+x -- v1 [V]
+x -- v2 [V]

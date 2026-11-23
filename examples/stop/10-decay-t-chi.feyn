@@ -1,0 +1,6 @@
+% Two-body decay: the stop is heavier than top + neutralino, so it decays to an on-shell top
+in: s
+out: t n
+s [stop] -- v
+v -- t [t]
+v -- n [neutralino1]

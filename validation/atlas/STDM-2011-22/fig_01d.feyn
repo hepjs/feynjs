@@ -1,0 +1,9 @@
+% STDM-2011-22 fig_01d: q qbar -> Z g*, g* -> b bbar (Z from the quark line, t-channel quark)
+layout: v2
+in: qi qb
+out: z bo bb
+qi [q] -- [fermion] a -- [fermion] c -- [fermion] qb [qbar]
+a -- [boson] z [Z]
+c -- [gluon] d
+d -- [fermion] bo [b]
+bb [bbar] -- [fermion] d

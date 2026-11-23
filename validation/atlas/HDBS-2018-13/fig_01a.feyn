@@ -1,0 +1,14 @@
+% HDBS-2018-13 fig_01a: gluon fusion via a quark triangle to A, A -> ZH, Z -> l+l-, H -> b bbar
+layout: v2
+in: i1 i2
+out: f1 f2 f3 f4
+i1 [g] -- t1
+i2 [g] -- t2
+t2 -- [fermion] t1 -- [fermion] t3 -- [fermion] t2
+t3 -- [A, label'=A] a
+a -- [Z] z
+a -- [H] h
+z -- f1 [l-]
+z -- f2 [l+]
+h -- f3 [bbar]
+h -- f4 [b]

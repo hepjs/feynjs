@@ -1,0 +1,8 @@
+% HIGG-2012-28 fig_03: gluon fusion gg -> H through a top-quark triangle
+layout: v2
+in: g1 g2
+out: h
+g1 [g] -- [gluon] a
+g2 [g] -- [gluon] b
+a -- [plain] c -- [plain] b -- [plain, label=t] a
+c -- [dotted] h [H]

@@ -1,0 +1,12 @@
+% EXOT-2019-33 fig_01_1: converted from TikZ, no coordinates kept
+in: q1 q2
+out: m1 m2
+q1 [particle={q}]
+q2 [particle={\overline{q}}]
+m1 [particle={m}]
+m2 [particle={\overline{m}}]
+q1 -- [fermion] a
+a -- [fermion] q2
+a -- [photon, label={\gamma}] b
+b -- [fermion] m1
+m2 -- [fermion] b

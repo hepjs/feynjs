@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use feynjs in your work, please cite it as below."
+title: "feynjs: Feynman diagrams for the web, written as text and laid out automatically"
+version: 0.9.0
+date-released: 2026-11-23
+license: MIT
+repository-code: "https://github.com/joliverHEP/feynjs"
+url: "https://joliverhep.github.io/feynjs/"
+type: software
+authors:
+  - family-names: Oliver
+    given-names: Jason
+keywords:
+  - Feynman diagrams
+  - particle physics
+  - visualisation
+  - SVG

@@ -1,0 +1,21 @@
+% EXOT-2010-10 fig_08: q q > squark squark via t-channel gluino; squark > q chi2(> Z chi1), squark > q chargino(> W chi1)
+layout: v2
+in: i1 i2
+out: q1 n1 lm lp n2 l nu q2
+i1 [q] -- [fermion] a
+i2 [q] -- [fermion] b
+a -- [gluino] b
+a -- [squark] c
+b -- [squark] d
+c -- [fermion] q1 [q]
+c -- [neutralino2] e
+e -- [neutralino1] n1
+e -- [Z] z
+z -- [fermion] lm [l-]
+lp [l+] -- [fermion] z
+d -- [fermion] q2 [q]
+d -- [chargino, label=\tilde\chi^\pm_1] f
+f -- [neutralino1] n2
+f -- [W, label=W^\pm] w
+w -- [fermion] l [\ell^\pm]
+nu [\nu] -- [fermion] w

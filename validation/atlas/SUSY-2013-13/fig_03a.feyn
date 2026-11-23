@@ -1,0 +1,19 @@
+% SUSY-2013-13 fig_03a: GGM weak production, neutralino1 chargino1; chargino -> W neutralino1, each neutralino1 -> Z gravitino, Z -> l l
+layout: v2
+arrows: none
+in: p1 p2
+out: l1 l2 G1 G2 l3 l4 w
+p1 [p] -- pp [blob]
+p2 [p] -- pp
+pp -- [neutralino1] n1
+pp -- [chargino] c
+n1 -- [Z] z1
+z1 -- l1 [\ell]
+z1 -- l2 [\ell]
+n1 -- G1 [gravitino]
+c -- [neutralino1] n2
+n2 -- G2 [gravitino]
+n2 -- [Z] z2
+z2 -- l3 [\ell]
+z2 -- l4 [\ell]
+c -- w [W]

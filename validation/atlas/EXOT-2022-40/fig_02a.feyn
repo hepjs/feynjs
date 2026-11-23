@@ -1,0 +1,27 @@
+% EXOT-2022-40 fig_02a: converted from TikZ, no coordinates kept
+in: q g
+out: qp nub nu b q2 qb2 bb
+q [particle={q}]
+qp [particle={q'}]
+nub [particle={\bar{\nu}}]
+nu [particle={\nu}]
+b [particle={b}]
+q2 [particle={q}]
+qb2 [particle={\bar{q}'}]
+g [particle={g}]
+bb [particle={\bar{b}}]
+q -- [fermion] v1
+v1 -- [fermion] qp
+v1 -- [photon, label={W}] v2
+v4 -- [fermion, label={b}] v2
+v2 -- [fermion, label={T}, color=red] v3
+v3 -- [photon, label={Z}] vz
+nub -- [fermion] vz
+vz -- [fermion] nu
+v3 -- [fermion, label={t}] vt
+vt -- [fermion] b
+vt -- [photon, label'={W^+}] vw
+vw -- [fermion] q2
+qb2 -- [fermion] vw
+g -- [gluon] v4
+bb -- [fermion] v4

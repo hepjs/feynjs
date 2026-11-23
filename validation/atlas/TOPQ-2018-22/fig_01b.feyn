@@ -1,0 +1,14 @@
+% TOPQ-2018-22 fig_01b: tt production via s-channel gluon, tbar -> W- bbar (W- -> l nubar), FCNC decay t -> gamma u/c
+layout: v2
+in: i1 i2
+out: f1 f2 f3 f4 f5
+i1 [g] -- [gluon] a
+i2 [g] -- [gluon] a
+a -- [gluon, label=g] b
+c -- [fermion, label=\bar t] b
+b -- [fermion, label=t] d [dot, color=red]
+f3 [\bar b] -- [fermion] c
+c -- [boson, label=W^-] w
+f1 [\bar\nu] -- [fermion] w -- [fermion] f2 [\ell]
+d -- [photon] f4 [\gamma]
+d -- [fermion] f5 [u/c]

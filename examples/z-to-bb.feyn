@@ -1,0 +1,4 @@
+i1 [e-] -- a -- i2 [e+]
+a -- [Z] b
+f2 [bbar] -- b -- k -- f1 [b]
+k -- [gluon] f3 [g]

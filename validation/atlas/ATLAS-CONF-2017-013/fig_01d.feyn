@@ -1,0 +1,30 @@
+% ATLAS-CONF-2017-013 fig_01d: converted from TikZ, no coordinates kept
+in: p1 p2
+out: t1 a1 a2 a3 c1 c2 c3 b1
+pp [blob]
+p1 [particle={p}]
+p2 [particle={p}]
+t1 [particle={t}]
+b1 [particle={b}]
+r1 [dot, color=blue]
+r2 [dot, color=blue]
+a1 [particle={t}]
+a2 [particle={b}]
+a3 [particle={s}]
+c1 [particle={s}]
+c2 [particle={b}]
+c3 [particle={b}]
+p1 -- [proton] pp
+pp -- [proton] p2
+pp -- [susy, label={\tilde{t}}] d1
+pp -- [susy, label'={\tilde{t}}] d2
+d1 -- [plain] t1
+d2 -- [plain] b1
+d1 -- [susy fermion, label={\tilde{\chi}^0_{1,2}}] r1
+d2 -- [susy fermion, label={\tilde{\chi}^\mp_1}] r2
+r1 -- [plain] a1
+r1 -- [plain] a2
+r1 -- [plain, label={\lambda''_{323}}] a3
+r2 -- [plain, label={\lambda''_{323}}] c1
+r2 -- [plain] c2
+r2 -- [plain] c3

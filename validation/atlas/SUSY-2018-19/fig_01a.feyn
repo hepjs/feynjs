@@ -1,0 +1,18 @@
+% SUSY-2018-19 fig_01a: converted from TikZ, no coordinates kept
+in: p1 p2
+out: j n1 n2 pi
+pp [blob]
+p1 [particle={p}]
+p2 [particle={p}]
+j [particle={j}]
+n1 [particle={\tilde{\chi}^0_1}]
+d1 [small blob]
+n2 [particle={\tilde{\chi}^0_1}]
+pi [particle={\pi^\pm}]
+p1 -- [proton] pp
+p2 -- [proton] pp
+pp -- [plain] j
+pp -- [susy fermion] n1
+pp -- [susy fermion, label'={\tilde{\chi}^\pm_1}] d1
+d1 -- [susy fermion] n2
+d1 -- [scalar] pi

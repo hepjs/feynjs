@@ -1,0 +1,13 @@
+% EXOT-2014-07 figaux_01: heavy lepton pair, q qbar' > W+- > N0 L+-, N0 > W l, L+- > W nu
+layout: v2
+in: i1 i2
+out: w1 l w2 nu
+i1 [q] -- [plain] a
+i2 [q'] -- [plain] a
+a -- [boson, label=W^\pm] b
+b -- [plain, label'=N^0] n
+b -- [plain, label=L^\pm] c
+n -- [boson] w1 [W]
+n -- [plain] l [l]
+c -- [plain] nu [nu]
+c -- [boson] w2 [W]

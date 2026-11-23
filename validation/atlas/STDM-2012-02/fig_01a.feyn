@@ -1,0 +1,7 @@
+% STDM-2012-02 fig_01a: q qbar -> ZZ, t-channel quark exchange
+layout: v2
+in: qi qb
+out: z1 z2
+qi [q] -- [fermion] a -- [fermion] b -- [fermion] qb [qbar]
+a -- [boson] z1 [Z]
+b -- [boson] z2 [Z]

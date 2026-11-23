@@ -1,0 +1,6 @@
+in: i1 i2
+out: f3 f1 f2
+i1 [e-] -- a -- b -- f1 [e-]
+a -- f3 [gamma]
+b -- [gamma] c
+i2 [q] -- c -- f2 [q]

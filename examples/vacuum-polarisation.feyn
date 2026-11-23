@@ -1,0 +1,4 @@
+i1 [gamma] -- a
+a -- [fermion, half left] b
+b -- [fermion, half left] a
+b -- f1 [gamma]

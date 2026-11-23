@@ -1,0 +1,9 @@
+% SUSY-2012-14 fig_01: neutralino decaying to a muon and a virtual smuon, which goes to two quarks via RPV coupling lambda'_2ij
+layout: v2
+in: i1
+out: f1 f2 f3
+i1 [\tilde\chi^0] -- [plain] a
+a -- [anti fermion, label=\tilde\mu^*] b [label=\lambda'_{2ij}]
+f1 [\bar q_j] -- [fermion] b
+b -- [fermion] f2 [q_i]
+a -- [fermion] f3 [\mu]

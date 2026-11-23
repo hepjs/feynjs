@@ -1,0 +1,10 @@
+% ATL-PHYS-PUB-2016-009 fig_01 (row 2, left pair, conjugate: two-loop gg -> gamma gamma quark box with a gluon across the box, drawn mirrored)
+layout: v2
+in: a1 a2
+out: g1 g2
+a1 -- [photon] b1
+a2 -- [photon] b2
+b1 -- [fermion] b2 -- [fermion] c2 -- [fermion] b3 -- [fermion] b4 -- [fermion] c1 -- [fermion] b1
+c1 -- [gluon] c2
+b4 -- [gluon] g1
+b3 -- [gluon] g2

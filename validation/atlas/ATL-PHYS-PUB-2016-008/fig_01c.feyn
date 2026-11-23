@@ -1,0 +1,11 @@
+% ATL-PHYS-PUB-2016-008 fig_01c: s-channel V* -> V H, q q -> V -> V(-> q' q') H
+layout: v2
+in: i1 i2
+out: h f1 f2
+i1 [q] -- [plain] a
+i2 [q] -- [plain] a
+a -- [V] x [dot]
+x -- [V] b
+x -- [scalar] h [H]
+b -- [plain] f1 [q']
+b -- [plain] f2 [q']

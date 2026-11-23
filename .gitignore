@@ -1,0 +1,10 @@
+node_modules/
+dist/
+site/
+integrations/*/dist/
+docs/javascripts/feynjs.min.js
+.DS_Store
+# secrets: never committed
+.env
+.env.*
+.cache/

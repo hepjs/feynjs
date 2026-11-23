@@ -1,0 +1,9 @@
+% EXOT-2015-19 fig_02_3: scalar LQ pair production, g g > LQ LQbar via t-channel LQ exchange, unlabelled
+layout: v2
+in: i1 i2
+out: f1 f2
+i1 -- [gluon] a
+i2 -- [gluon] b
+a -- [charged scalar] f1
+b -- [charged scalar] a
+f2 -- [charged scalar] b

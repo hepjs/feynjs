@@ -1,0 +1,9 @@
+% STDM-2013-02 fig_01c: electroweak Zjj, non-resonant: two t-channel Z bosons joined by a lepton line
+layout: v2
+in: q1 q2
+out: o1 lm lp o2
+q1 [q] -- [fermion] a -- [fermion] o1 [q]
+q2 [q] -- [fermion] b -- [fermion] o2 [q]
+a -- [boson, label'=Z] c
+b -- [boson, label'=Z] d
+lp [{\mu^+, e^+}] -- [fermion] d -- [fermion] c -- [fermion] lm [{\mu^-, e^-}]

@@ -1,0 +1,19 @@
+% EXOT-2017-26 fig_01a: converted from TikZ, no coordinates kept
+in: w
+% (the paper has mu- below e+, leaving down and back; listed that way, a forward-only layout knots)
+out: mp mm ep ne
+mp [particle={\mu^+}]
+x1 [insertion]
+x2 [insertion]
+mm [particle={\mu^-}]
+ep [particle={e^+}]
+ne [particle={\nu_e}]
+w -- [photon, label={W^+}] v1
+mp -- [fermion] v1
+v1 -- [fermion, label'={\nu_\mu}] x1
+x1 -- [scalar, label={N}, color=red] x2
+x2 -- [fermion, label'={\nu_\mu}] v2
+v2 -- [photon, label={W^{+*}}] v3
+v2 -- [fermion] mm
+ep -- [fermion] v3
+v3 -- [fermion] ne

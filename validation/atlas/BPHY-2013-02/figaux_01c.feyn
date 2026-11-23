@@ -1,0 +1,20 @@
+% BPHY-2013-02 figaux_01c: converted from TikZ, no coordinates kept
+in: d1 bb
+out: d2 sb mu1 mu2
+d1 [particle={d}]
+d2 [particle={d}]
+bb [particle={\overline{b}}]
+sb [particle={\overline{s}}]
+mu1 [particle={\mu^-}]
+mu2 [particle={\mu^+}]
+d1 -- [fermion] d2
+sb -- [fermion] l2
+l2 -- [fermion, label={\overline{u}, \overline{c}, \overline{t}}] l1
+l1 -- [fermion] bb
+l1 -- [photon, quarter right, label={W^-}] lb
+lb -- [photon, quarter right] l2
+lb -- [photon, label={\gamma, Z^0}] v
+v -- [fermion] mu1
+mu2 -- [fermion] v
+hadron: B^0 = d1 bb [brace]
+hadron: K^{*0} = d2 sb [brace]

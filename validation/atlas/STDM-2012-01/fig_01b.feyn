@@ -1,0 +1,7 @@
+% STDM-2012-01 fig_01b: q qbar' -> WW, t-channel quark q'' exchange
+layout: v2
+in: qp qi
+out: w1 w2
+qi -- [fermion, label'=q] a -- [fermion, label'=q''] b -- [fermion, label'=q'] qp
+b -- [boson] w1 [W]
+a -- [boson] w2 [W]

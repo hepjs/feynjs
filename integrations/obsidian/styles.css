@@ -1,0 +1,15 @@
+/* feynjs diagrams in Obsidian: drawn in the note's text colour (currentColor), centred, never
+   wider than the note; the few filled parts in the theme's own colours. */
+.feynjs-obsidian { text-align: center; margin: 1em 0; color: var(--text-normal); }
+.feynjs-obsidian svg.feynjs { max-width: 100%; height: auto; }
+.feynjs-obsidian svg.feynjs .feynjs-bg { fill: var(--background-primary); }
+.feynjs-obsidian svg.feynjs .feynjs-blob { fill: rgba(100, 120, 150, 0.2); }
+.feynjs-obsidian svg.feynjs .feynjs-blob-label { color: var(--text-muted); }
+.theme-dark .feynjs-obsidian svg.feynjs .feynjs-blob { fill: rgba(130, 150, 180, 0.32); }
+.theme-dark .feynjs-obsidian svg.feynjs .feynjs-susy { color: #e05a4c; }
+.theme-dark .feynjs-obsidian svg.feynjs .feynjs-smallblob,
+.theme-dark .feynjs-obsidian svg.feynjs .feynjs-collision { fill: #7d8590; }
+.theme-dark .feynjs-obsidian svg.feynjs .feynjs-brace { stroke: #e05a4c; }
+.feynjs-obsidian svg.feynjs .feynjs-jet-stop { stop-color: #3f90da; }
+.feynjs-obsidian .feynjs-error { text-align: left; color: var(--text-error); border-left: 3px solid var(--text-error); padding: 0.6em 1em; white-space: pre-wrap; }
+.theme-dark .feynjs-obsidian svg.feynjs .feynjs-lifetime stop:last-child { stop-opacity: 0.8; }

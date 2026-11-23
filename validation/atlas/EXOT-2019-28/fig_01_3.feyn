@@ -1,0 +1,19 @@
+% EXOT-2019-28 fig_01_3: converted from TikZ, no coordinates kept
+in: i1 i2
+out: r2 g1 g2 s2
+i1 [particle={p}]
+a [dot]
+i2 [particle={p}]
+b [dot]
+g1 [particle={\gamma}]
+g2 [particle={\gamma}]
+i1 -- [fermion] a
+% (both protons break up: proton remnants, a gluon between two lines, as the paper draws them)
+a -- [proton remnant] r2 [p^*]
+i2 -- [fermion] b
+b -- [proton remnant] s2 [p^*]
+a -- [photon, label={\gamma}] c
+b -- [photon, label={\gamma}] c
+c -- [scalar, label={a}] d
+d -- [photon] g1
+d -- [photon] g2

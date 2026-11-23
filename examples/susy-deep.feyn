@@ -1,0 +1,17 @@
+i1 [p] -- pp [blob] -- i2 [p]
+pp -- [gluino] d1
+pp -- [gluino] d2
+d1 -- f1 [q]
+d1 -- f2 [q]
+d1 -- [chargino] e1
+e1 -- f3 [W]
+e1 -- [neutralino2] g1
+g1 -- f4 [Z]
+g1 -- f5 [neutralino1]
+d2 -- [chargino] e2
+e2 -- [neutralino2] g2
+e2 -- f6 [W]
+g2 -- f7 [neutralino1]
+g2 -- f8 [Z]
+d2 -- f9 [q]
+d2 -- f10 [q]

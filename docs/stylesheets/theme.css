@@ -1,0 +1,180 @@
+/*
+ * The feynjs theme: black, brick red and white, after the logo. A night header with a brick rule,
+ * page titles in New Computer Modern italic (the face of the word and of every diagram label),
+ * text in Inter, brick links and accents. Light and dark schemes share the same parts.
+ */
+
+/* Inter for text (SIL Open Font License; see docs/fonts/Inter-LICENSE.txt) */
+@font-face { font-family: "Inter"; src: url("../fonts/Inter-Regular.otf") format("opentype"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "Inter"; src: url("../fonts/Inter-Italic.otf") format("opentype"); font-weight: 400; font-style: italic; font-display: swap; }
+@font-face { font-family: "Inter"; src: url("../fonts/Inter-Medium.otf") format("opentype"); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: "Inter"; src: url("../fonts/Inter-SemiBold.otf") format("opentype"); font-weight: 600; font-style: normal; font-display: swap; }
+
+:root {
+  --feynjs-ink: #1b1f24;
+  --feynjs-night: #1e2129;
+  --feynjs-paper: #ffffff;
+  --feynjs-light: #e6e8eb;
+  --feynjs-brick: #c0392b;
+  --feynjs-brick-light: #e05a4c;
+  --feynjs-grey: #8a919c;
+  --md-text-font: "Inter";
+  --md-text-font-family: "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
+  --md-code-font-family: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+
+/* ---- the two schemes ---------------------------------------------------------------- */
+[data-md-color-scheme="default"] {
+  --md-primary-fg-color: var(--feynjs-night);
+  --md-primary-fg-color--light: #2a2e38;
+  --md-primary-fg-color--dark: #14161b;
+  --md-primary-bg-color: #ffffff;
+  --md-primary-bg-color--light: rgba(255, 255, 255, 0.72);
+  --md-accent-fg-color: var(--feynjs-brick);
+  --md-accent-fg-color--transparent: rgba(192, 57, 43, 0.1);
+  --md-default-fg-color: var(--feynjs-ink);
+  --md-default-bg-color: var(--feynjs-paper);
+  --md-typeset-color: #262a31;
+  --md-typeset-a-color: var(--feynjs-brick);
+  --md-code-bg-color: #f5f6f8;
+  --md-footer-bg-color: var(--feynjs-night);
+  --md-footer-bg-color--dark: #16181d;
+  --feynjs-rule: var(--feynjs-brick);
+}
+[data-md-color-scheme="slate"] {
+  --md-hue: 222;
+  --md-primary-fg-color: #121419;
+  --md-primary-fg-color--light: #1e2129;
+  --md-primary-fg-color--dark: #0c0d11;
+  --md-primary-bg-color: var(--feynjs-light);
+  --md-accent-fg-color: var(--feynjs-brick-light);
+  --md-accent-fg-color--transparent: rgba(224, 90, 76, 0.12);
+  --md-default-bg-color: #17191e;
+  --md-default-fg-color: var(--feynjs-light);
+  --md-typeset-color: #d8dbe0;
+  --md-typeset-a-color: var(--feynjs-brick-light);
+  --md-code-bg-color: #1f2229;
+  --md-footer-bg-color: #121419;
+  --md-footer-bg-color--dark: #0c0d11;
+  --feynjs-rule: var(--feynjs-brick-light);
+}
+
+/* ---- header: night, the mark, the name in the diagram face, a brick rule under it --------- */
+.md-header { box-shadow: none; border-bottom: 3px solid var(--feynjs-brick); }
+.md-header__button.md-logo img, .md-header__button.md-logo svg { height: 1.7rem; width: auto; border-radius: 0.3rem; }
+.md-header__title { font-family: "NewComputerModern10", serif; font-style: italic; font-size: 1.15rem; letter-spacing: 0.01em; }
+.md-header__topic:first-child { font-weight: 400; }
+/* the name in two colours: feyn in ink, js in brick (the spans are added by feynjs-init.js) */
+.md-header .feynjs-feyn { color: var(--feynjs-ink); }
+[data-md-color-scheme="slate"] .md-header .feynjs-feyn { color: var(--feynjs-light); }
+.md-header .feynjs-js { color: var(--feynjs-brick); }
+[data-md-color-scheme="slate"] .md-header .feynjs-js { color: var(--feynjs-brick-light); }
+.md-tabs { border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+
+/* ---- type ----------------------------------------------------------------------------- */
+.md-typeset { font-size: 0.78rem; line-height: 1.7; }
+.md-typeset h1 {
+  font-family: "NewComputerModern10", serif; font-style: italic; font-weight: 400;
+  font-size: 2.4em; letter-spacing: 0.005em; color: var(--md-default-fg-color); margin-bottom: 0.6em;
+}
+.md-typeset h2 { font-weight: 600; letter-spacing: -0.01em; margin-top: 2em; }
+/* a short brick rule under each section heading, as in the brand chart */
+.md-typeset h2::after { content: ""; display: block; width: 2.2rem; height: 3px; margin-top: 0.45em; background: var(--feynjs-rule); border-radius: 2px; }
+.md-typeset h3 { font-weight: 600; }
+.md-typeset a { text-decoration: none; border-bottom: 1px solid transparent; transition: border-color 0.15s; }
+.md-typeset a:hover { border-bottom-color: currentColor; }
+.md-typeset code { border-radius: 0.25rem; }
+
+/* ---- navigation ------------------------------------------------------------------------ */
+.md-nav__link--active, .md-nav__item .md-nav__link--active { color: var(--md-accent-fg-color); font-weight: 500; }
+.md-nav__title { font-weight: 600; }
+
+/* ---- buttons --------------------------------------------------------------------------- */
+.md-typeset .md-button { border-radius: 0.4rem; font-weight: 500; border-width: 1.5px; padding: 0.55em 1.5em; }
+.md-typeset .md-button--primary { background: var(--feynjs-brick); border-color: var(--feynjs-brick); color: #fff; }
+.md-typeset .md-button--primary:hover { background: #a93226; border-color: #a93226; color: #fff; }
+.md-typeset .md-button:not(.md-button--primary):hover { color: var(--md-accent-fg-color); border-color: var(--md-accent-fg-color); background: transparent; }
+
+/* ---- the home page's opening: the logo, the line, the buttons -------------------------- */
+/* (the page title stays for search and screen readers; the logo stands in for it on screen) */
+.md-typeset h1.feynjs-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; margin: 0; }
+.md-typeset .feynjs-hero { display: block; margin: 1.5rem 0 0.5rem; max-width: 100%; }
+/* the hero: the name beside six features, the SUSY collision's blob pulsing; each fades in
+   (still for reduced motion). A soft paper stage in light mode, the diagrams in their own
+   colours; a night stage in dark mode */
+.md-typeset .feynjs-hero-stage {
+  position: relative; overflow: hidden; display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 2.4rem;
+  margin: 1rem 0 1.6rem; padding: 2.4rem 3rem; border-radius: 16px; color: #1f2328;
+  background: linear-gradient(155deg, #fbfbfc 0%, #f3f4f6 55%, #eef0f3 100%);
+  box-shadow: 0 18px 48px rgba(20, 24, 32, 0.10), inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+}
+.md-typeset .feynjs-hero-stage > * { position: relative; z-index: 1; }
+.md-typeset .feynjs-hero-stage > .feynjs-hero-logo { flex: 0 1 340px; animation: feynjs-rise 1.1s ease-out both; }
+.md-typeset .feynjs-hero-stage .feynjs-hero { margin: 0; }
+.md-typeset .feynjs-hero-stage .feynjs-hero--dark { display: none; }
+.md-typeset .feynjs-hero-stage svg.feynjs { width: 100%; max-width: 560px; height: auto; }
+/* six features beside the name, one tile each, rising in turn; the whole tile is its link */
+.md-typeset .feynjs-hero-showcase { flex: 1 1 480px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.7rem; }
+.md-typeset .feynjs-hero-tile {
+  position: relative; display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: 0.3rem;
+  padding: 0.6rem 0.5rem 0.45rem; border-radius: 12px; background: rgba(255, 255, 255, 0.75);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.07), 0 1px 2px rgba(20, 24, 32, 0.06), 0 4px 12px rgba(20, 24, 32, 0.07); animation: feynjs-rise 0.7s ease-out both;
+  transition: box-shadow 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+.md-typeset .feynjs-hero-tile:hover { background: #fff; box-shadow: inset 0 0 0 1px rgba(184, 58, 42, 0.45), 0 2px 4px rgba(20, 24, 32, 0.06), 0 10px 24px rgba(20, 24, 32, 0.12); transform: translateY(-2px); }
+.md-typeset .feynjs-hero-tile:nth-child(2) { animation-delay: 0.08s; }
+.md-typeset .feynjs-hero-tile:nth-child(3) { animation-delay: 0.16s; }
+.md-typeset .feynjs-hero-tile:nth-child(4) { animation-delay: 0.24s; }
+.md-typeset .feynjs-hero-tile:nth-child(5) { animation-delay: 0.32s; }
+.md-typeset .feynjs-hero-tile:nth-child(6) { animation-delay: 0.4s; }
+.md-typeset .feynjs-hero-tile > div.feynman { margin: 0; flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; }
+.md-typeset .feynjs-hero-stage .feynjs-hero-tile svg.feynjs { max-height: 120px; }
+.md-typeset .feynjs-hero-tile > p { margin: 0; font-size: 0.62rem; letter-spacing: 0.06em; text-transform: uppercase; }
+.md-typeset .feynjs-hero-tile > p a { color: #4a4f57; }
+.md-typeset .feynjs-hero-tile > p a::after { content: ""; position: absolute; inset: 0; border-radius: 12px; z-index: 2; }
+.md-typeset .feynjs-hero-tile:hover > p a { color: var(--md-accent-fg-color, #b83a2a); }
+/* dark mode: the night stage, its vignette, light lines, the logo in white and red */
+[data-md-color-scheme="slate"] .md-typeset .feynjs-hero-stage {
+  color: #e6e8eb; --feynjs-blob: rgba(130, 150, 180, 0.22); --feynjs-blob-text: #e6e8eb;
+  background:
+    radial-gradient(circle at 74% 50%, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0) 38%),
+    linear-gradient(155deg, #16181d 0%, #23272e 55%, #1a1d23 100%);
+  box-shadow: 0 24px 60px rgba(12, 13, 17, 0.35), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+[data-md-color-scheme="slate"] .md-typeset .feynjs-hero-stage::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 0;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0) 55%, rgba(0, 0, 0, 0.45) 100%);
+}
+[data-md-color-scheme="slate"] .md-typeset .feynjs-hero-stage .feynjs-hero--light { display: none; }
+[data-md-color-scheme="slate"] .md-typeset .feynjs-hero-stage .feynjs-hero--dark { display: block; filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.45)); }
+[data-md-color-scheme="slate"] .md-typeset .feynjs-hero-stage svg.feynjs .feynjs-susy { color: #e05a4c; }
+/* (the collision filled dark, so its light rim reads as a ring against it and the stage) */
+[data-md-color-scheme="slate"] .md-typeset .feynjs-hero-stage svg.feynjs .feynjs-collision { fill: #3b414b; }
+[data-md-color-scheme="slate"] .md-typeset .feynjs-hero-stage svg.feynjs .feynjs-pulse { stroke: #ff7a6b; }
+[data-md-color-scheme="slate"] .md-typeset .feynjs-hero-stage svg.feynjs .feynjs-ip { fill: #e6e8eb; }
+[data-md-color-scheme="slate"] .md-typeset .feynjs-hero-stage svg.feynjs .feynjs-grid { opacity: 0.22; }
+[data-md-color-scheme="slate"] .md-typeset .feynjs-hero-tile { background: rgba(255, 255, 255, 0.035); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07), 0 2px 4px rgba(0, 0, 0, 0.3), 0 6px 16px rgba(0, 0, 0, 0.35); }
+[data-md-color-scheme="slate"] .md-typeset .feynjs-hero-tile:hover { background: rgba(255, 255, 255, 0.07); box-shadow: inset 0 0 0 1px rgba(255, 122, 107, 0.5), 0 3px 6px rgba(0, 0, 0, 0.35), 0 12px 28px rgba(0, 0, 0, 0.45); }
+[data-md-color-scheme="slate"] .md-typeset .feynjs-hero-tile > div.feynman { color: #e6e8eb; }
+[data-md-color-scheme="slate"] .md-typeset .feynjs-hero-tile > p a { color: #c9ccd1; }
+[data-md-color-scheme="slate"] .md-typeset .feynjs-hero-tile:hover > p a { color: #ff7a6b; }
+@media screen and (max-width: 1100px) {
+  .md-typeset .feynjs-hero-showcase { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media screen and (max-width: 560px) {
+  .md-typeset .feynjs-hero-showcase { grid-template-columns: minmax(0, 1fr); }
+}
+@keyframes feynjs-rise { from { opacity: 0; transform: translateY(14px) scale(0.985); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .md-typeset .feynjs-hero-stage > *, .md-typeset .feynjs-hero-tile { animation: none !important; transition: none; }
+  .md-typeset .feynjs-hero-tile:hover { transform: none; }
+  svg.feynjs .feynjs-pulse { display: none; }
+}
+.md-typeset .feynjs-lead { font-size: 1.15em; color: var(--md-default-fg-color--light); max-width: 36em; }
+
+/* ---- admonitions and code take the brick accent ---------------------------------------- */
+.md-typeset .admonition, .md-typeset details { border-radius: 0.4rem; }
+.md-typeset .highlight .hll { background: var(--md-accent-fg-color--transparent); }
+
+/* ---- footer ---------------------------------------------------------------------------- */
+.md-footer { border-top: 3px solid var(--feynjs-brick); }

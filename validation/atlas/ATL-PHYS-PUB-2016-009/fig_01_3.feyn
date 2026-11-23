@@ -1,0 +1,12 @@
+% ATL-PHYS-PUB-2016-009 fig_01 (row 1, right pair, amplitude: qg -> q H(-> gamma gamma), t-channel gluon into a quark triangle)
+layout: v2
+in: q1 g2
+out: q2 a1 a2
+q1 -- [fermion] v -- [fermion] q2
+v -- [gluon] t1
+g2 -- [gluon] t2
+t1 -- [fermion] t2 -- [fermion] t3 -- [fermion] t1
+t3 -- [charged scalar] u3
+u3 -- [fermion] u1 -- [fermion] u2 -- [fermion] u3
+u1 -- [photon] a1
+u2 -- [photon] a2

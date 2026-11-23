@@ -1,0 +1,17 @@
+% STDM-2018-33 fig_01a: converted from TikZ, no coordinates kept
+in: qb q
+out: l nu g1 g2
+qb [particle={\overline{q}'}]
+q [particle={q}]
+l [particle={\ell}]
+nu [particle={\overline{\nu}}]
+g1 [particle={\gamma}]
+g2 [particle={\gamma}]
+q -- [fermion] a
+a -- [fermion] qb
+a -- [photon, label'={W}] b
+b -- [photon, label'={W}] c
+c -- [fermion] l
+nu -- [fermion] c
+b -- [photon] g1
+b -- [photon] g2

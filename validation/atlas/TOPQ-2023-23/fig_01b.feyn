@@ -1,0 +1,21 @@
+% TOPQ-2023-23 fig_01b: converted from TikZ, no coordinates kept
+in: g uc
+out: b mu nu mu2 tau
+g [particle={\mathrm{g}}]
+uc [particle={\mathrm{u,\ c}}]
+x [hatched blob]
+b [particle={b}]
+mu [particle={\mu^+}]
+nu [particle={\nu_\mu}]
+mu2 [particle={\mu^+}]
+tau [particle={\tau^-}]
+g -- [gluon] a
+uc -- [fermion] a
+a -- [fermion, label={\mathrm{u{,}c}}] x
+x -- [fermion, label'={t}] vt
+vt -- [fermion] b
+vt -- [photon, label={W^+}] vw
+mu -- [fermion] vw
+vw -- [fermion] nu
+mu2 -- [fermion] x
+x -- [fermion] tau

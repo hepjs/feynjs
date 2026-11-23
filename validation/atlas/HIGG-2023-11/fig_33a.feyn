@@ -1,0 +1,11 @@
+% HIGG-2023-11 fig_33a: converted from TikZ, no coordinates kept
+in: i
+out: o
+i [particle={\textsf{\textit{H}}}]
+o [particle={\textsf{\textit{H}}}]
+a [dot, label={\kappa_\lambda}, color=#ec345c]
+b [dot, label={\kappa_\lambda}, color=#ec345c]
+i -- [scalar, color=#ec345c] a
+b -- [scalar, color=#ec345c] o
+a -- [scalar, half left, color=#ec345c] b
+b -- [scalar, half left, color=#ec345c] a

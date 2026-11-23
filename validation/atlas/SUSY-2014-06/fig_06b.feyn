@@ -1,0 +1,17 @@
+% SUSY-2014-06 fig_06b: gluino pair, gluino -> t stop, stop -> b chargino1
+layout: v2
+arrows: none
+in: p1 p2
+out: a1 a2 n1 n2 b2 b1
+p1 [p] -- pp [blob]
+p2 [p] -- pp
+pp -- [gluino] g1
+pp -- [gluino] g2
+g1 -- a1 [t]
+g1 -- [stop] s1
+s1 -- a2 [b]
+s1 -- n1 [chargino]
+g2 -- [stop] s2
+s2 -- n2 [chargino]
+s2 -- b2 [b]
+g2 -- b1 [t]

@@ -1,0 +1,10 @@
+% HION-2016-05 fig_01a (middle): photon splitting, one photon in, one Coulomb-field photon (X), two photons out via a fermion box
+layout: v2
+in: g1 c1
+out: g2 g3
+c1 [crossed dot]
+g1 -- [photon] a
+a -- [fermion] b -- [fermion] c -- [fermion] d -- [fermion] a
+b -- [photon] g2
+c1 -- [photon] d
+c -- [photon] g3

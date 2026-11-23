@@ -1,0 +1,7 @@
+in: i1 i2
+out: f1 f2
+i1 [e-] -- a
+i2 [gamma] -- a
+a -- [fermion] b
+b -- f1 [e-]
+b -- f2 [gamma]

@@ -1,0 +1,5 @@
+% ATL-PHYS-PUB-2013-011 fig_02: stop pair production, each stop -> t neutralino1
+layout: v2
+arrows: none
+p p > stop stop
+stop > t neutralino1

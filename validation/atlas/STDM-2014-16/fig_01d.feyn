@@ -1,0 +1,11 @@
+% STDM-2014-16 fig_01d: converted from TikZ, no coordinates kept
+in: g1 g2
+out: z1 z2
+g1 -- [gluon] a
+g2 -- [gluon] d
+a -- [fermion] b
+b -- [fermion] c
+c -- [fermion] d
+d -- [fermion] a
+b -- [photon] z1
+c -- [photon] z2

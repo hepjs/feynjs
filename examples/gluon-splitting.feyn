@@ -1,0 +1,4 @@
+i1 [q] -- a -- f1 [q]
+a -- [gluon, label=g] b
+b -- f2 [b]
+b -- f3 [bbar]

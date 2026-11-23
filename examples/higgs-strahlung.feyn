@@ -1,0 +1,8 @@
+i1 [q] -- a -- i2 [qbar']
+a -- [W*] b
+b -- [W] c
+b -- [H] d
+c -- f1 [l]
+c -- f2 [nubar]
+d -- f3 [b]
+d -- f4 [bbar]

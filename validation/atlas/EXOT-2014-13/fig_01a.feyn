@@ -1,0 +1,10 @@
+% EXOT-2014-13 fig_01a: single vector-like B with a light quark, q b > q B via t-channel Z, B > t W
+layout: v2
+in: i1 i2
+out: f1 t w
+i1 [q] -- [fermion] a -- [fermion] f1 [q]
+a -- [scalar, label=Z] b
+i2 [b] -- [fermion] b [label=\lambda]
+b -- [B, color=red] c
+c -- [fermion] t [t]
+c -- [boson] w [W]

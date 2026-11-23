@@ -1,0 +1,14 @@
+% TOPQ-2014-14 fig_02c: gg -> t tbar + b bbar (or c cbar) from gluon splitting, t -> W+ b, W+ -> q qbar, tbar -> W- bbar, W- -> l- nubar; parton-jet assignment jet1..jet4
+layout: v2
+in: i1 i2
+out: f1 f2 f3 f4 f5 f6 f7 f8
+i1 [g] -- [gluon] a
+i2 [g] -- [gluon] s
+s -- [gluon] b
+s -- [gluon] k
+f3 [\bar b_\ell, cone] -- [fermion] vb -- [fermion, label=\bar t] a -- [fermion] b -- [fermion, label=t] vt -- [fermion] f6 [b_h, cone]
+vb -- [boson, label=W^-] w
+f2 [\bar\nu] -- [fermion] w -- [fermion] f1 [\ell^-]
+vt -- [boson, label=W^+] wp
+f5 [\bar q_2, cone] -- [fermion] wp -- [fermion] f4 [q_1, cone]
+f8 [{\bar b, \bar c}] -- [fermion] k -- [fermion] f7 [{b, c}, cone]

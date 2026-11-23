@@ -1,0 +1,23 @@
+% SUSY-2013-20 fig_01e: gluino pair, two steps via sleptons: gluino -> q q chargino1 / q q neutralino2, then -> l/nu slepton -> l/nu neutralino1
+layout: v2
+arrows: none
+in: p1 p2
+out: q1 q2 a1 a2 n1 n2 b2 b1 q3 q4
+p1 [p] -- pp [blob]
+p2 [p] -- pp
+pp -- [gluino] g1 [dot, color=gray]
+pp -- [gluino] g2 [dot, color=gray]
+g1 -- q1 [q]
+g1 -- q2 [q]
+g1 -- [chargino] c1
+c1 -- a1 [\nu/\ell]
+c1 -- [slepton, label=\tilde\ell/\tilde\nu] l1
+l1 -- a2 [\ell/\nu]
+l1 -- n1 [neutralino1]
+g2 -- [neutralino2] x2
+x2 -- [slepton, label=\tilde\ell/\tilde\nu] l2
+l2 -- n2 [neutralino1]
+l2 -- b2 [\ell/\nu]
+x2 -- b1 [\ell/\nu]
+g2 -- q3 [q]
+g2 -- q4 [q]

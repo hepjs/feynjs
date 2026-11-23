@@ -1,0 +1,6 @@
+i1 [p] -- a [dot] -- f1 [p*]
+i2 [p] -- b -- f3 [p]
+a -- [gamma] c -- [gamma] b
+c -- [scalar, label=a] d
+d -- f2 [gamma]
+d -- f4 [gamma]

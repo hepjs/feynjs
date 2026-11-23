@@ -1,0 +1,20 @@
+% HDBS-2018-13 fig_01b: converted from TikZ, no coordinates kept
+in: g1 g2
+out: bb lm lp bb2 b2 bq
+lm [particle={\ell^-}]
+lp [particle={\ell^+}]
+bb2 [particle={\bar{b}}]
+b2 [particle={b}]
+g1 -- [gluon, label'={g}] a
+g2 -- [gluon, label={g}] b
+bb -- [fermion, label={\bar{b}}] a
+a -- [fermion] c
+c -- [fermion] b
+b -- [fermion, label'={b}] bq
+c -- [scalar, label'={A}] d
+d -- [photon, label={Z}] z
+d -- [scalar, label'={H}] h
+z -- [fermion] lm
+lp -- [fermion] z
+bb2 -- [fermion] h
+h -- [fermion] b2

@@ -1,0 +1,9 @@
+% STDM-2012-07 fig_01e: W + photon, photon from gluon fragmentation D_{g/gamma}(z,Q^2), W -> l nu
+layout: v2
+in: qb q
+out: g l nb
+q [q] -- [fermion] a -- [fermion] b -- [fermion] qb [qbar]
+b -- [gluon] d [dot, label={D_{g/\gamma}(z, Q^2)}]
+d -- [photon] g [gamma]
+a -- [scalar, label'=W] c
+nb [\bar\nu] -- [fermion] c -- [fermion] l [\mathit{l}]

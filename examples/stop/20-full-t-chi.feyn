@@ -1,0 +1,8 @@
+% pp -> stop pair, each stop -> t neutralino
+i1 [p] -- pp [blob] -- i2 [p]
+pp -- [stop] s1
+pp -- [stop, label={\tilde{t}^*}] s2
+s1 -- a1 [t]
+s1 -- a2 [neutralino1]
+s2 -- b1 [neutralino1]
+s2 -- [anti fermion] b2 [\bar{t}]

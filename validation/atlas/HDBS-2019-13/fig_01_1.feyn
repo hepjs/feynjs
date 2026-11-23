@@ -1,0 +1,13 @@
+% HDBS-2019-13 fig_01 (a): q qbar -> Z* -> ZH, Z -> l+l-, H -> gamma gamma_d (dark photon)
+layout: v2
+in: i1 i2
+out: f1 f2 f3 f4
+i1 [qbar] -- a
+i2 [q] -- a
+a -- [Z*, label'=Z^*] b
+b -- [Z] z
+b -- [H, label'=H] h
+z -- f1 [l-]
+z -- f2 [l+]
+h -- f3 [gamma]
+h -- [photon] f4 [\gamma_d]

@@ -1,0 +1,11 @@
+i1 [e-] -- a -- i2 [e+]
+a -- [gamma] b
+f1 [mu-] -- b -- f2 [mu+]
+--- (b) with a Z
+i1 [e-] -- a -- i2 [e+]
+a -- [Z] b
+f1 [mu-] -- b -- f2 [mu+]
+--- (c) with a Higgs
+i1 [e-] -- a -- i2 [e+]
+a -- [H] b
+f1 [b] -- b -- f2 [bbar]

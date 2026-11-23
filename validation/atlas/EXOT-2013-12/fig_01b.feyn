@@ -1,0 +1,22 @@
+% EXOT-2013-12 fig_01b: Hidden Valley Z' benchmark, p p > Z' > hidden blob > 3 pi_v+- (long-lived) and 2 pi_v0, each > f fbar
+layout: v2
+in: p1 p2
+out: a1 a2 b1 b2 c1 c2 d1 d2 e1 e2
+p1 [p] -- pp [blob, color=gray]
+p2 [p] -- pp
+pp -- [boson, color=red, label=Z'] hv [blob, color=gray]
+hv -- [double, color=blue, label=\pi_{\mathrm{v}}^\pm] va [small blob, color=gray]
+hv -- [scalar, color=red, label=\pi_{\mathrm{v}}^0] vb [small blob, color=gray]
+hv -- [double, color=blue, label=\pi_{\mathrm{v}}^\pm] vc [small blob, color=gray]
+hv -- [scalar, color=red, label'=\pi_{\mathrm{v}}^0] vd [small blob, color=gray]
+hv -- [double, color=blue, label'=\pi_{\mathrm{v}}^\pm] ve [small blob, color=gray]
+va -- [plain] a1 [f]
+va -- [plain] a2 [\bar f]
+vb -- [plain] b1 [f]
+vb -- [plain] b2 [\bar f]
+vc -- [plain] c1 [f]
+vc -- [plain] c2 [\bar f]
+vd -- [plain] d1 [f]
+vd -- [plain] d2 [\bar f]
+ve -- [plain] e1 [f]
+ve -- [plain] e2 [\bar f]

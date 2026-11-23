@@ -1,0 +1,10 @@
+% ATLAS-CONF-2011-052 fig_01b: converted from TikZ, no coordinates kept
+in: i1 i2
+out: o1 ho o2
+i1 -- [plain] v1
+v1 -- [plain] o1
+i2 -- [plain] v2
+v2 -- [plain] o2
+v1 -- [photon, label={W^{\pm}/Z^{0}}] h
+h -- [photon] v2
+h -- [ghost, label={H^{0}}] ho

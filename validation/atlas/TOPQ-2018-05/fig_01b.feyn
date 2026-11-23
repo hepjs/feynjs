@@ -1,0 +1,11 @@
+% TOPQ-2018-05 fig_01b: four-top production, gg -> g -> gg, each gluon -> t tbar
+layout: v2
+in: i1 i2
+out: f1 f2 f3 f4
+i1 [g] -- [gluon] a
+i2 [g] -- [gluon] a
+a -- [gluon] b
+b -- [gluon] c
+b -- [gluon] d
+f2 [\bar t] -- [fermion, color=blue] c -- [fermion, color=blue] f1 [t]
+f4 [\bar t] -- [fermion, color=blue] d -- [fermion, color=blue] f3 [t]

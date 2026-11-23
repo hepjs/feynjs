@@ -1,0 +1,12 @@
+% TOPQ-2018-10 fig_01b: converted from TikZ, no coordinates kept
+in: o1 i2
+out: i1 o2
+o1 [particle={\bar{d}}]
+i1 [particle={\bar{u}}]
+i2 [particle={b}]
+o2 [particle={t}]
+i1 -- [fermion] a
+a -- [fermion] o1
+i2 -- [fermion] b
+b -- [fermion] o2
+a -- [photon, label={W^+}] b

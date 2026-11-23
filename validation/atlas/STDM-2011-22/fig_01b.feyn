@@ -1,0 +1,7 @@
+% STDM-2011-22 fig_01b: gb -> Zb, t-channel b quark exchange
+layout: v2
+in: bi gi
+out: z bo
+bi [b] -- [fermion] a -- [fermion] c -- [fermion] bo [b]
+a -- [boson] z [Z]
+gi [g] -- [gluon] c

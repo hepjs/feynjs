@@ -1,0 +1,8 @@
+% Three-body decay: too light for an on-shell top, so the top is virtual (t*) and gives b W
+in: s
+out: b w n
+s [stop] -- v
+v -- [fermion, label={t^*}] u
+v -- n [neutralino1]
+u -- b [b]
+u -- w [W]

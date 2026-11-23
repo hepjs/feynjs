@@ -1,0 +1,25 @@
+% ATL-PHYS-PUB-2021-020 fig_01: converted from TikZ, no coordinates kept
+in: H
+out: f1 fb1 h1 h2 f2 fb2
+H [particle={\mathrm{H}}]
+h1 [particle={\mathrm{HLSP}}]
+h2 [particle={\mathrm{HLSP}}]
+m1 [slashed dot, label=\varepsilon]
+m2 [slashed dot, label=\varepsilon]
+f1 [particle={f}]
+fb1 [particle={\bar{f}}]
+f2 [particle={f}]
+fb2 [particle={\bar{f}}]
+H -- [scalar] v
+v -- [plain, label={f_d}] u1
+v -- [plain, label'={f_d}] u2
+u1 -- [plain] h1
+u2 -- [plain] h2
+u1 -- [photon, label={\gamma_d}] m1
+m1 -- [photon, label={\gamma}] w1
+u2 -- [photon, label'={\gamma_d}] m2
+m2 -- [photon, label'={\gamma}] w2
+w1 -- [fermion] f1
+fb1 -- [fermion] w1
+w2 -- [fermion] f2
+fb2 -- [fermion] w2

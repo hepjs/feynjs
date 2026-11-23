@@ -1,0 +1,9 @@
+% STDM-2012-07 fig_01a: W/Z + photon, u-channel: photon from the quark line, W(Z) -> l nu (l l, nu nu)
+layout: v2
+in: qb q
+out: g l nb
+q [q] -- [fermion] a -- [fermion] b -- [fermion] qb [qbar]
+b -- [photon] g [gamma]
+a -- [scalar, label=W(Z)] w
+w -- [fermion] l [{l(l,\nu)}]
+nb [{\bar\nu(\bar l,\bar\nu)}] -- [fermion] w

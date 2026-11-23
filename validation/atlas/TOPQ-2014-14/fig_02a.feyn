@@ -1,0 +1,11 @@
+% TOPQ-2014-14 fig_02a: gg -> t tbar with t -> Hq (H -> b bbar), tbar -> W- bbar (W- -> l- nubar); parton-jet assignment jet1..jet4
+layout: v2
+in: i1 i2
+out: f1 f2 f3 f4 f5 f6
+i1 [g] -- [gluon] a
+i2 [g] -- [gluon] b
+f3 [\bar b_\ell, cone] -- [fermion] vb -- [fermion, label=\bar t] a -- [fermion] b -- [fermion, label=t] vt -- [fermion] f6 [q_h, cone]
+vb -- [boson, label=W^-] w
+f2 [\bar\nu] -- [fermion] w -- [fermion] f1 [\ell^-]
+vt -- [scalar, label=H] h
+f5 [\bar b_2, cone] -- [fermion] h -- [fermion] f4 [b_1, cone]

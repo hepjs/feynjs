@@ -1,0 +1,8 @@
+% ...or by exchanging a stop between the two gluons (t-channel)
+in: g1 g2
+out: t1 t2
+g1 [g] -- a
+g2 [g] -- b
+a -- [stop] b
+a -- t1 [stop]
+b -- [stop, no label] t2 [\tilde{t}^*]

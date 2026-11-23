@@ -1,0 +1,15 @@
+% BPHY-2015-02 fig_01c: gg -> J/psi J/psi at LO, colour-octet c cbar pairs (hatched circles in the original)
+layout: v2
+in: g1 g2
+out: a1 a2 b1 b2
+g1 -- [gluon] v1
+g2 -- [gluon] v2
+v1 -- [gluon] v2
+v1 -- [gluon] p1
+v2 -- [gluon] p2
+p1 -- [fermion] a1
+a2 -- [fermion] p1
+p2 -- [fermion] b1
+b2 -- [fermion] p2
+meson: = a1 a2 [hatched]
+meson: = b1 b2 [hatched]

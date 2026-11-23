@@ -1,0 +1,10 @@
+% ATL-PHYS-PUB-2016-009 fig_01 (row 3, right pair, conjugate: qg -> q gamma gamma through a quark box fed by a gluon from the quark line, drawn mirrored)
+layout: v2
+in: q2 a1 a2
+out: q1 g1
+q1 -- [fermion] v -- [fermion] q2
+v -- [gluon] b4
+a1 -- [photon] b1
+a2 -- [photon] b2
+b1 -- [fermion] b2 -- [fermion] b3 -- [fermion] b4 -- [fermion] b1
+b3 -- [gluon] g1

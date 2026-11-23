@@ -1,0 +1,12 @@
+% TOPQ-2017-16 fig_01a: converted from TikZ, no coordinates kept
+in: q b
+out: qp t
+q [particle={q}]
+qp [particle={q'}]
+b [particle={b}]
+t [particle={t}]
+q -- [fermion] v1
+v1 -- [fermion] qp
+v1 -- [photon, label={W}] v2
+b -- [fermion] v2
+v2 -- [fermion, color=#00e63c] t

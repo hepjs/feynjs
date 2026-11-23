@@ -1,0 +1,11 @@
+% HDBS-2018-40 fig_01a: ggF HH triangle diagram with the trilinear coupling lambda_HHH marked
+layout: v2
+in: i1 i2
+out: f1 f2
+i1 [g] -- t1
+i2 [g] -- t2
+t2 -- [fermion] t1 -- [fermion] t3 -- [fermion] t2
+k [dot, color=#ee325a, label=\lambda_{HHH}]
+t3 -- [H, label'=H] k
+k -- f1 [H]
+k -- f2 [H]

@@ -1,0 +1,18 @@
+% EXOT-2018-52 fig_01a: converted from TikZ, no coordinates kept
+in: q g
+out: qp hz t bb
+q [particle={q}]
+qp [particle={q'}]
+hz [particle={H/Z}]
+t [particle={t}]
+g [particle={g}]
+bb [particle={\bar{b}/\bar{t}}]
+q -- [fermion] v1
+v1 -- [fermion] qp
+v1 -- [photon, label'={W/Z}] v2
+v4 -- [fermion, label={b/t}] v2
+v2 -- [fermion, label={T}, color=red] v3
+v3 -- [photon] hz
+v3 -- [fermion] t
+g -- [gluon] v4
+bb -- [fermion] v4

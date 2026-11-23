@@ -1,0 +1,18 @@
+% EXOT-2021-32 fig_03c: converted from TikZ, no coordinates kept
+in: g1 g2
+out: uc al w bb
+g1 [particle={g}]
+g2 [particle={g}]
+uc [particle={u/c}]
+bb [particle={\bar{b}}]
+al [\mathit{a}]
+w [particle={W}]
+g1 -- [gluon] a
+a -- [gluon] g2
+a -- [gluon, label'={g}] b
+b -- [fermion, label'={t}] t1
+t1 -- [fermion] uc
+bb -- [fermion] t2
+t2 -- [fermion, label={\bar{t}}] b
+t1 -- [scalar] al
+t2 -- [photon] w

@@ -1,0 +1,21 @@
+% STDM-2019-17 fig_01e: converted from TikZ, no coordinates kept
+in: qb qp
+out: lm lp ga lq nu
+qb [particle={\bar{q}}]
+qp [particle={q'}]
+lm [particle={\ell^-}]
+lp [particle={\ell^+}]
+ga [particle={\gamma}]
+lq [particle={\ell'}]
+nu [particle={\bar{\nu}}]
+qp -- [fermion] v2
+v2 -- [fermion] v1
+v1 -- [fermion] qb
+v1 -- [photon, label={Z/\gamma^*}] vz
+v2 -- [photon, label={W}] vw
+lp -- [fermion] vz
+vz -- [fermion] lm
+nu -- [fermion] vw
+vw -- [fermion] vf
+vf -- [fermion] lq
+vf -- [photon] ga

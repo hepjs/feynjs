@@ -1,0 +1,13 @@
+% HDBS-2018-19 fig_01 (a): HVT W' produced via Drell-Yan, W' -> WZ -> l nu l l
+layout: v2
+in: i1 i2
+out: f1 f2 f3 f4
+i1 [qbar] -- [color=#232f9c] a
+i2 [q] -- [color=#232f9c] a
+a -- [W', label'=W', color=#5aa02c] b
+b -- [Z, color=#5aa02c] z
+b -- [W, label'=W, color=#5aa02c] w
+z -- [color=#232f9c] f1 [l+]
+z -- [color=#232f9c] f2 [l-]
+w -- [anti fermion, color=#232f9c] f3 [\ell^\pm]
+w -- [color=#232f9c] f4 [nu]

@@ -1,0 +1,17 @@
+% HDBS-2018-47 fig_01: q qbar -> Z* -> ZH, Z -> l l, H -> aa -> (b bbar)(b bbar)
+layout: v2
+in: i1 i2
+out: f1 f2 f3 f4 f5 f6
+i1 [q] -- a
+i2 [qbar] -- a
+a -- [Z*] b
+b -- [Z] z
+b -- [H] h
+z -- [plain] f1 [l^\pm]
+z -- [plain] f2 [l^\mp]
+h -- [scalar, label=a] a1
+h -- [scalar, label'=a] a2
+a1 -- [fermion] f3 [b]
+f4 [\bar b] -- [fermion] a1
+a2 -- f5 [b]
+a2 -- f6 [bbar]

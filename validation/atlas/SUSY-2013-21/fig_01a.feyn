@@ -1,0 +1,20 @@
+% SUSY-2013-21 fig_01a: stop pair plus ISR gluon, loop-induced stop -> c neutralino1 through a b / chargino / W triangle
+layout: v2
+arrows: none
+in: p1 p2
+out: c1 n1 n2 c2 g
+p1 [p] -- pp [blob]
+p2 [p] -- pp
+pp -- g [g]
+pp -- [stop] s1
+pp -- [stop] s2
+s1 -- [plain, label=b] v1
+v1 -- c1 [c]
+v1 -- [W] w1
+s1 -- [chargino] w1
+w1 -- n1 [neutralino1]
+s2 -- [chargino, label=\tilde\chi^\mp_1] w2
+w2 -- n2 [neutralino1]
+s2 -- [plain, label'=b] v2
+v2 -- [W] w2
+v2 -- c2 [c]

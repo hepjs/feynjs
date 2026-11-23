@@ -1,0 +1,18 @@
+% HIGG-2013-27 fig_01a: converted from TikZ, no coordinates kept
+in: g1 g2
+out: t1 b1 b2 t2
+g1 [particle={g}]
+g2 [particle={g}]
+t1 [particle={t}]
+t2 [particle={\bar{t}}]
+b1 [particle={b}]
+b2 [particle={\bar{b}}]
+g1 -- [gluon] v1
+g2 -- [gluon] v2
+t2 -- [fermion] v2
+v2 -- [fermion] h
+h -- [fermion] v1
+v1 -- [fermion] t1
+h -- [charged scalar, label={H}] d
+d -- [fermion] b1
+b2 -- [fermion] d

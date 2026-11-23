@@ -1,0 +1,11 @@
+% HIGG-2013-16 fig_01b: Z(-> nu nubar) + 2 jets background, q qbar -> Z with gluon radiation off each quark
+layout: v2
+in: i1 i2
+out: g1 n1 n2 g2
+i1 [q] -- [fermion] a -- [fermion, label=q] c
+c -- [fermion, label=\bar q] b -- [fermion] i2 [\bar q]
+a -- [gluon] g1 [g]
+b -- [gluon] g2 [g]
+c -- [boson, label=Z] z
+z -- [fermion] n1 [\nu]
+n2 [\bar\nu] -- [fermion] z

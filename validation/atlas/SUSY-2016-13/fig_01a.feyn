@@ -1,0 +1,36 @@
+% SUSY-2016-13 fig_01a: converted from TikZ, no coordinates kept
+in: p1 p2
+out: q1 q2 w1 z1 n1 n2 z2 w2 q3 q4
+pp [blob]
+p1 [particle={p}]
+p2 [particle={p}]
+d1 [small blob]
+d2 [small blob]
+q1 [particle={q}]
+q2 [particle={q}]
+q3 [particle={q}]
+q4 [particle={q}]
+w1 [particle={W}]
+w2 [particle={W}]
+z1 [particle={Z}]
+z2 [particle={Z}]
+n1 [particle={\tilde{\chi}^0_1}]
+n2 [particle={\tilde{\chi}^0_1}]
+p1 -- [proton] pp
+pp -- [proton] p2
+pp -- [susy gluon, label={\tilde{g}}] d1
+pp -- [susy gluon, label'={\tilde{g}}] d2
+d1 -- [plain] q1
+d1 -- [plain] q2
+d2 -- [plain] q3
+d2 -- [plain] q4
+d1 -- [susy fermion, label'={\tilde{\chi}^\pm_1}] e1
+d2 -- [susy fermion, label={\tilde{\chi}^\pm_1}] e2
+e1 -- [photon] w1
+e2 -- [photon] w2
+e1 -- [susy fermion, label'={\tilde{\chi}^0_2}] g1
+e2 -- [susy fermion, label={\tilde{\chi}^0_2}] g2
+g1 -- [photon] z1
+g2 -- [photon] z2
+g1 -- [susy fermion] n1
+g2 -- [susy fermion] n2

@@ -1,0 +1,10 @@
+% ATL-PHYS-PUB-2016-009 fig_01 (row 3, left pair, conjugate: gg -> g gamma gamma through a quark pentagon, drawn mirrored)
+layout: v2
+in: g3 a1 a2
+out: g1 g2
+g3 -- [gluon] p1
+a1 -- [photon] p2
+a2 -- [photon] p3
+p1 -- [fermion] p2 -- [fermion] p3 -- [fermion] p4 -- [fermion] p5 -- [fermion] p1
+p5 -- [gluon] g1
+p4 -- [gluon] g2

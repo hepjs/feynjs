@@ -1,0 +1,16 @@
+% HDBS-2023-15 fig_11a: converted from TikZ, no coordinates kept
+in: h
+out: l1 l2 l3 l4
+h [particle={H}]
+v [dot]
+l1 [particle={\ell}]
+l2 [particle={\ell}]
+l3 [particle={\ell}]
+l4 [particle={\ell}]
+h -- [scalar] v
+v -- [photon, label={Z}] z1
+v -- [photon, label'={Z_d}] z2
+l2 -- [fermion] z1
+z1 -- [fermion] l1
+l4 -- [fermion] z2
+z2 -- [fermion] l3

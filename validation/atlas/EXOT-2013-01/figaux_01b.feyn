@@ -1,0 +1,9 @@
+% EXOT-2013-01 figaux_01b: s-channel q qbar' > W' > W Z
+layout: v2
+in: i1 i2
+out: f1 f2
+i1 [q] -- [fermion] a
+a -- [fermion] i2 [qbar']
+a -- [scalar, label=W'] b
+b -- f1 [W]
+b -- f2 [Z]

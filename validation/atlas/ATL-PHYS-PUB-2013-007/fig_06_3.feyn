@@ -1,0 +1,11 @@
+% ATL-PHYS-PUB-2013-007 fig_06 (c): gg -> h* -> hh through a top/bottom triangle and the Higgs self-coupling
+layout: v2
+in: g1 g2
+out: h1 h2
+dots: all
+g1 [g] -- [gluon] a
+g2 [g] -- [gluon] b
+a -- [fermion, label={t, b}] b -- [fermion, label={t, b}] c -- [fermion, label={t, b}] a
+c -- [h] x
+x -- h1 [h]
+x -- h2 [h]

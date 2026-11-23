@@ -1,0 +1,15 @@
+% ATL-PHYS-PUB-2016-023 fig_02c: converted from TikZ, no coordinates kept
+in: g1 g2
+out: h1 h2
+g1 [particle={g}]
+g2 [particle={g}]
+h1 [particle={H}]
+h2 [particle={H}]
+g1 -- [gluon] a
+g2 -- [gluon] e
+a -- [fermion, label={t/b}] b
+b -- [fermion, label={t/b}] c
+c -- [fermion, label={t/b}] e
+e -- [fermion, label={t/b}] a
+b -- [ghost] h1
+c -- [ghost] h2

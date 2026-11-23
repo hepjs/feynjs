@@ -1,0 +1,9 @@
+% ATL-PHYS-PUB-2016-009 fig_01 (row 1, left pair, conjugate: gamma gamma <- quark box <- gg, drawn mirrored)
+layout: v2
+in: a1 a2
+out: g1 g2
+a1 -- [photon] b1
+a2 -- [photon] b2
+b1 -- [fermion] b2 -- [fermion] b3 -- [fermion] b4 -- [fermion] b1
+b4 -- [gluon] g1
+b3 -- [gluon] g2

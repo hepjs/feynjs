@@ -1,0 +1,12 @@
+% SUSY-2013-16 fig_01b: stop1 -> b chargino1, chargino1 -> W(*) neutralino1, W -> q qbar'
+layout: v2
+arrows: none
+in: i1
+out: fb fq fqp fn
+i1 [\tilde t_1] -- [stop, no label] a
+a -- fb [b]
+a -- [chargino] c
+c -- [W, label=W^{(*)}] w
+w -- [plain] fq [q]
+w -- [plain] fqp [\bar q']
+c -- fn [neutralino1]

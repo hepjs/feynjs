@@ -1,0 +1,11 @@
+% HDBS-2018-10 fig_01c: vector-boson fusion V'V -> X -> V'V, effective vertices as hatched blobs
+layout: v2
+in: i1 i2
+out: f1 f2 f3 f4
+i1 [q] -- [fermion] a -- [fermion] f1 [q/q'']
+i2 [q'] -- [fermion] b -- [fermion] f4 [q'/q''']
+a -- [boson, label=V'] c [hatched blob]
+b -- [boson, label'=V] c
+c -- [boson, label'=X] d [hatched blob]
+d -- [boson] f2 [V']
+d -- [boson] f3 [V]

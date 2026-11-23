@@ -1,0 +1,7 @@
+% TOPQ-2016-06 fig_01c: tW production, bg -> tW- via t-channel top
+layout: v2
+in: i1 i2
+out: f1 f2
+i2 [b] -- [fermion] v1 [dot] -- [fermion, label=t] v2 [dot] -- [fermion] f1 [t]
+i1 [g] -- [gluon] v2
+v1 -- [boson] f2 [W^-]

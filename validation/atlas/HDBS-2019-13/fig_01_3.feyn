@@ -1,0 +1,13 @@
+% HDBS-2019-13 fig_01 (c): gg -> quark box -> ZH, Z -> l+l-, H -> gamma gamma_d (dark photon)
+layout: v2
+in: i1 i2
+out: f1 f2 f3 f4
+i1 [g] -- t1
+i2 [g] -- t2
+t2 -- [fermion] t1 -- [fermion] t3 -- [fermion] t4 -- [fermion] t2
+t3 -- [Z, label'=Z] z
+t4 -- [H] h
+z -- f1 [l-]
+z -- f2 [l+]
+h -- f3 [gamma]
+h -- [photon] f4 [\gamma_d]

@@ -1,0 +1,21 @@
+% SUSY-2013-15 fig_002a: stop pair, stop -> t neutralino1, t -> b W, one W -> l nu, the other -> q q
+layout: v2
+arrows: none
+in: p1 p2
+out: b1 l nu n1 n2 q1 q2 b2
+p1 [p] -- pp [blob]
+p2 [p] -- pp
+pp -- [stop, label=\tilde t_1] s1
+pp -- [stop, label=\tilde t_1] s2
+s1 -- [plain, label=t] t1
+t1 -- b1 [b]
+t1 -- [W] w1
+w1 -- l [\ell]
+w1 -- nu [\nu]
+s1 -- n1 [neutralino1]
+s2 -- n2 [neutralino1]
+s2 -- [plain, label=t] t2
+t2 -- [W] w2
+w2 -- [plain] q1 [q]
+w2 -- [plain] q2 [q]
+t2 -- b2 [b]

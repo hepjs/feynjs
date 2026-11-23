@@ -1,0 +1,13 @@
+% BPHY-2015-02 fig_01b: gg -> J/psi J/psi g at NLO, colour-singlet J/psi (hatched circles in the original)
+layout: v2
+in: g1 g2
+out: a1 a2 c1 c2 g3
+g1 -- [gluon] v1
+a1 -- [fermion] v1 -- [fermion] m -- [fermion] v2 -- [fermion] c2
+c1 -- [fermion] gv -- [fermion] a2
+m -- [gluon] gv
+v2 -- [gluon] t
+g2 -- [gluon] t
+t -- [gluon] g3
+meson: J/\psi = a1 a2
+meson: J/\psi = c1 c2

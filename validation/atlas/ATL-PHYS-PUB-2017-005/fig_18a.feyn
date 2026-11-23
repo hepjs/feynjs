@@ -1,0 +1,15 @@
+% ATL-PHYS-PUB-2017-005 fig_18a: converted from TikZ, no coordinates kept
+in: g1 g2
+out: v1 v2
+g1 [particle={g}]
+g2 [particle={g}]
+v1 [particle={V}]
+v2 [particle={V}]
+g1 -- [gluon] a
+g2 -- [gluon] d
+a -- [fermion] b
+b -- [fermion] c
+c -- [fermion] d
+d -- [fermion] a
+b -- [photon] v1
+c -- [photon] v2

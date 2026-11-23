@@ -1,0 +1,8 @@
+% ATL-PHYS-PUB-2016-009 fig_01 (row 1, right pair, conjugate: tree-level qg -> q gamma gamma, two photons radiated from the quark line, drawn mirrored)
+layout: v2
+in: q1 a1 a2
+out: q2 g1
+q1 -- [fermion] p1 -- [fermion] p2 -- [fermion] p3 -- [fermion] q2
+p1 -- [photon] a1
+p2 -- [photon] a2
+p3 -- [gluon] g1

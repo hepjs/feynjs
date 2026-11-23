@@ -1,0 +1,19 @@
+% HDBS-2019-12 fig_01a: converted from TikZ, no coordinates kept
+in: p1 p2
+out: l1 l2 b j1 j2
+pp [blob]
+p1 [particle={p}]
+p2 [particle={p}]
+dz [small blob]
+dx [small blob]
+l1 [particle={\ell}]
+l2 [particle={\ell}]
+p1 -- [proton] pp
+pp -- [proton] p2
+pp -- [photon, label={Z}] dz
+pp -- [photon, label'={X}] dx
+dz -- [plain] l1
+dz -- [plain] l2
+dx -- [photon] b
+dx -- [plain] j1
+dx -- [plain] j2

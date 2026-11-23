@@ -1,0 +1,13 @@
+% HDBS-2018-11 fig_01: q qbar(') -> V' -> V H, with H -> b bbar and V -> q qbar(')
+layout: v2
+in: i1 i2
+out: f1 f2 f3 f4
+i1 [q] -- a
+i2 [\bar{q}^{(\prime)}] -- [anti fermion] a
+a -- [boson, label=V'] b
+b -- [H] h
+b -- [boson, label=V] v
+h -- f1 [bbar]
+h -- f2 [b]
+v -- [anti fermion] f3 [\bar{q}^{(\prime)}]
+v -- f4 [q]

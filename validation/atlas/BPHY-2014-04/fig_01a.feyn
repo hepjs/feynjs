@@ -1,0 +1,12 @@
+% BPHY-2014-04 fig_01a: Bc+ -> J/psi Ds(*)+, colour-favoured spectator diagram
+layout: v2
+in: b1 c1
+out: s1 c2 cb c3
+w1 -- [fermion] b1 [\bar b]
+cb [\bar c] -- [fermion] w1
+w1 -- [boson] w2
+s1 [\bar s] -- [fermion] w2 -- [fermion] c2 [c]
+c1 [c] -- [fermion] c3 [c]
+meson: B_c^+ = b1 c1
+meson: D_s^{(*)+} = s1 c2
+meson: J/\psi = cb c3

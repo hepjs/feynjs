@@ -1,0 +1,17 @@
+% HION-2019-08 fig_01a: SM light-by-light scattering in Pb+Pb UPC, gamma gamma -> gamma gamma via a fermion box
+layout: v2
+in: pb1 pb2
+out: pb3 g1 g2 pb4
+pb1 [\mathrm{Pb}]
+pb2 [\mathrm{Pb}]
+pb3 [\mathrm{Pb(*)}]
+pb4 [\mathrm{Pb(*)}]
+B1 [hatched blob]
+B2 [hatched blob]
+pb1 -- [fermion] B1 -- [fermion] pb3
+pb2 -- [fermion] B2 -- [fermion] pb4
+B1 -- [gamma] a
+B2 -- [gamma] d
+a -- [fermion] b -- [fermion] c -- [fermion] d -- [fermion] a
+b -- [photon] g1 [gamma]
+c -- [photon] g2 [gamma]

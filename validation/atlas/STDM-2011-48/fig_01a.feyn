@@ -1,0 +1,15 @@
+% STDM-2011-48 fig_01a: gg -> g* -> t tbar, dilepton decay
+layout: v2
+in: g1 g2
+out: bo lp nu lm nb bb
+g1 -- [gluon] a
+g2 -- [gluon] a
+a -- [gluon] c
+c -- [fermion, label=t] t -- [fermion] bo [b]
+bb [bbar] -- [fermion] tb -- [fermion, label=\bar t] c
+t -- [W+] w1
+tb -- [W-] w2
+w1 -- [fermion] nu [\nu_l]
+lp [l^+] -- [fermion] w1
+w2 -- [fermion] lm [l^-]
+nb [\bar\nu_l] -- [fermion] w2

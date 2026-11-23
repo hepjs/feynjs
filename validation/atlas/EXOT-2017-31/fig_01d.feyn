@@ -1,0 +1,12 @@
+% EXOT-2017-31 fig_01d: converted from TikZ, no coordinates kept
+in: g1 g2
+out: v1 v2
+g1 [particle={g}]
+g2 [particle={g}]
+v1 [particle={V}]
+v2 [particle={V}]
+g1 -- [gluon] a
+a -- [gluon] g2
+a -- [photon, label'={G_{KK}}] b
+b -- [photon] v1
+b -- [photon] v2

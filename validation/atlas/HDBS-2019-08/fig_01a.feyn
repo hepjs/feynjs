@@ -1,0 +1,17 @@
+% HDBS-2019-08 fig_01a: gg -> R via a quark triangle, R -> SH, S -> invisible, H -> ZZ -> 4l
+layout: v2
+in: i1 i2
+out: f1 f2 f3 f4 f5 f6
+i1 [g] -- t1
+i2 [g] -- t2
+t2 -- [fermion] t1 -- [fermion] t3 -- [fermion] t2
+t3 -- [scalar, label=R] r
+r -- [S] s
+r -- [H, label'=H] h
+f1 [\text{inv}] -- [fermion] s -- [fermion] f2 [\text{inv}]
+h -- [Z] z1
+h -- [Z] z2
+z1 -- f3 [l+]
+z1 -- f4 [l-]
+z2 -- f5 [l+]
+z2 -- f6 [l-]

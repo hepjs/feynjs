@@ -1,0 +1,22 @@
+% TOPQ-2019-30 fig_01b: converted from TikZ, no coordinates kept
+in: i1 i2
+out: t1 t2 q2 w
+i1 [particle={q}]
+a [dot, color=#ff00ff]
+b [dot, color=#ff00ff]
+c [dot, color=#ff00ff]
+t1 [particle={t}]
+t2 [particle={\bar{t}}]
+i2 [particle={g}]
+e [dot, color=#0000ff]
+q2 [particle={q'}]
+w [particle={W^{\pm}}]
+i1 -- [fermion] a
+a -- [fermion] b
+b -- [fermion] e
+e -- [fermion] q2
+a -- [gluon, label={g}] c
+t2 -- [fermion] c
+c -- [fermion] t1
+i2 -- [gluon] b
+e -- [photon] w

@@ -1,0 +1,9 @@
+% STDM-2011-17 fig_01c: W/Z + photon, final-state radiation from the charged lepton of the W(Z) decay
+layout: v2
+in: qb q
+out: g l nb
+q [q] -- [fermion] a -- [fermion] qb [qbar]
+a -- [scalar, label'=W(Z)] w
+w -- [fermion] r -- [fermion] l [\mathit{l}]
+r -- [photon] g [gamma]
+nb [\bar\nu(\bar l)] -- [fermion] w

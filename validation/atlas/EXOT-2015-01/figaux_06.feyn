@@ -1,0 +1,8 @@
+% EXOT-2015-01 figaux_06: q qbar > mu- mu*+ through a contact-interaction blob
+layout: v2
+in: i1 i2
+out: mu1 mus
+i1 [q] -- [fermion] a [blob]
+a -- [fermion] i2 [qbar]
+a -- [fermion] mu1 [mu-]
+mus [\mu^{*+}] -- [fermion] a

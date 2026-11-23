@@ -1,0 +1,13 @@
+% HDBS-2018-57 fig_01d: gg -> quark box -> two gamma*/Z(*) -> 4 mu
+layout: v2
+in: i1 i2
+out: f1 f2 f3 f4
+i1 [g] -- t1
+i2 [g] -- t2
+t3 -- [fermion, label'=q] t1 -- [fermion, label'=q] t2 -- [fermion, label'=q] t4 -- [fermion, label'=q] t3
+t3 -- [boson, label=\gamma^*/Z^{(*)}] z1
+t4 -- [boson, label'=\gamma^*/Z^{(*)}] z2
+z1 -- f1 [mu-]
+z1 -- f2 [mu+]
+z2 -- f3 [mu-]
+z2 -- f4 [mu+]

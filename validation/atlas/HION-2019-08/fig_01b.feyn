@@ -1,0 +1,20 @@
+% HION-2019-08 fig_01b: converted from TikZ, no coordinates kept
+in: i1 i2
+out: o1 g1 g2 o2
+i1 [particle={Pb}]
+i2 [particle={Pb}]
+o1 [particle={Pb(*)}]
+o2 [particle={Pb(*)}]
+c [small blob, color=gray]
+d [small blob, color=gray]
+g1 [particle={\gamma}]
+g2 [particle={\gamma}]
+i1 -- [fermion] b1
+b1 -- [fermion] o1
+i2 -- [fermion] b2
+b2 -- [fermion] o2
+b1 -- [photon, label'={\gamma}] c
+b2 -- [photon, label={\gamma}] c
+c -- [ghost, label={\textsf{a}}] d
+d -- [photon] g1
+d -- [photon] g2

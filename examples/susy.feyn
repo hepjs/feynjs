@@ -1,0 +1,13 @@
+i1 [p] -- pp [blob] -- i2 [p]
+pp -- [gluino] d1
+pp -- [gluino] d2
+d1 -- f1 [q]
+d1 -- f2 [q]
+d1 -- [neutralino2] e1
+e1 -- f3 [Z]
+e1 -- f4 [neutralino1]
+d2 -- [neutralino2] e2
+e2 -- f5 [neutralino1]
+e2 -- f6 [Z]
+d2 -- f7 [q]
+d2 -- f8 [q]

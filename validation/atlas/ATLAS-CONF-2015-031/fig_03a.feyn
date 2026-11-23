@@ -1,0 +1,21 @@
+% ATLAS-CONF-2015-031 fig_03a: converted from TikZ, no coordinates kept
+in: g1 g2
+out: l1 l2 l3 l4
+g1 [particle={g}]
+g2 [particle={g}]
+l1 [particle={\ell^+}]
+l2 [particle={\ell^-}]
+l3 [particle={\ell^+}]
+l4 [particle={\ell^-}]
+g1 -- [gluon] a
+g2 -- [gluon] b
+a -- [fermion] c
+c -- [fermion] b
+b -- [fermion] a
+c -- [charged scalar, label'={H^{(*)}}] v
+v -- [boson, label={Z^{(*)}}] e
+v -- [boson, label={Z^{(*)}}] f
+l1 -- [fermion] e
+e -- [fermion] l2
+l3 -- [fermion] f
+f -- [fermion] l4

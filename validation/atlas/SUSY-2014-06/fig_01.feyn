@@ -1,0 +1,18 @@
+% SUSY-2014-06 fig_01: left-handed squark pair via t-channel gluino, one-step decays via neutralino2 (Z/h) and chargino (W)
+layout: v2
+arrows: none
+in: p1 p2
+out: q1 z n1 n2 w q2
+p1 [p] -- b1 [blob]
+p2 [p] -- b2 [blob]
+b1 -- [gluino] b2
+b1 -- [squark, label'=\tilde q_L] s1
+b2 -- [squark, label'=\tilde q_L] s2
+s1 -- q1 [q]
+s1 -- [neutralino2] x1
+x1 -- [boson] z [Z/h]
+x1 -- n1 [neutralino1]
+s2 -- [chargino, label=\tilde\chi^\pm] x2
+x2 -- n2 [neutralino1]
+x2 -- [boson] w [W^\pm]
+s2 -- q2 [q]

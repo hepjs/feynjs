@@ -1,0 +1,47 @@
+{
+  "name": "feynjs",
+  "version": "0.9.0",
+  "description": "Feynman diagrams for the web: written as text, laid out automatically, drawn as SVG.",
+  "keywords": ["feynman", "feynman-diagram", "physics", "particle-physics", "hep", "svg", "diagram", "tikz-feynman", "madgraph"],
+  "license": "MIT",
+  "author": "Jason Oliver",
+  "homepage": "https://joliverhep.github.io/feynjs/",
+  "repository": { "type": "git", "url": "git+https://github.com/joliverHEP/feynjs.git" },
+  "bugs": { "url": "https://github.com/joliverHEP/feynjs/issues" },
+  "type": "module",
+  "main": "dist/feynjs.mjs",
+  "module": "dist/feynjs.mjs",
+  "browser": "dist/feynjs.min.js",
+  "unpkg": "dist/feynjs.min.js",
+  "jsdelivr": "dist/feynjs.min.js",
+  "exports": {
+    ".": "./dist/feynjs.mjs",
+    "./dist/*": "./dist/*"
+  },
+  "files": [
+    "dist",
+    "bin",
+    "LICENSE.md",
+    "THIRD-PARTY.md"
+  ],
+  "bin": {
+    "feynjs": "bin/feynjs.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node --test test/*.test.ts",
+    "typecheck": "tsc --noEmit",
+    "approve-layouts": "node scripts/approve-layouts.mjs",
+    "docs": "npm run build && zensical build",
+    "prepublishOnly": "npm run typecheck && npm test && npm run build"
+  },
+  "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
+    "@types/node": "^26.6.6",
+    "esbuild": "^0.25.0",
+    "typescript": "^5.6.0"
+  }
+}

@@ -1,0 +1,19 @@
+% HDBS-2018-40 figaux_01a: converted from TikZ, no coordinates kept
+in: q1 q2
+out: q3 h1 h2 q4
+q1 [particle={q}]
+q2 [particle={q}]
+q3 [particle={q}]
+q4 [particle={q}]
+l [dot, color=#ee325a]
+h1 [particle={H}]
+h2 [particle={H}]
+q1 -- [fermion] a
+a -- [fermion] q3
+q2 -- [fermion] b
+b -- [fermion] q4
+a -- [boson, label'={V}] c
+b -- [boson, label={V}] c
+c -- [scalar, label'={H}] l
+l -- [scalar, label={\lambda_{HHH}}] h1
+l -- [scalar] h2

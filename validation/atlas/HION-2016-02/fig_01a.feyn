@@ -1,0 +1,20 @@
+% HION-2016-02 fig_01a: converted from TikZ, no coordinates kept
+in: pb1 pb2
+out: pb3 m1 m2 pb4
+pb1 [particle={\mathrm{Pb}}]
+pb2 [particle={\mathrm{Pb}}]
+B1 [hatched blob]
+B2 [hatched blob]
+pb3 [particle={\mathrm{Pb}}]
+pb4 [particle={\mathrm{Pb}}]
+m1 [particle={\mu^-}]
+m2 [particle={\mu^+}]
+pb1 -- [fermion] B1
+B1 -- [fermion] pb3
+pb2 -- [fermion] B2
+B2 -- [fermion] pb4
+B1 -- [photon, label'={k_2}] a
+B2 -- [photon, label={k_1}] b
+b -- [fermion] a
+a -- [fermion] m1
+m2 -- [fermion] b

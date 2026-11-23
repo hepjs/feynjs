@@ -1,0 +1,19 @@
+% EXOT-2018-32 fig_01a: converted from TikZ, no coordinates kept
+in: i1 i2
+out: n l q1 q2
+i1 [particle={\overline{q}}]
+i2 [particle={q}]
+n [particle={\nu_e/\nu_\mu}]
+l [particle={e/\mu}]
+q1 [particle={\overline{q}}]
+q2 [particle={q}]
+i1 -- [plain] a
+a -- [plain] i2
+a -- [photon, label={Z^{0*}}] b
+b -- [double, label={\rho_T^0}] c
+c -- [photon, label={W_L^\pm}] e
+c -- [double, label={\pi_T^0}] f
+e -- [plain] n
+e -- [plain] l
+f -- [plain] q1
+f -- [plain] q2

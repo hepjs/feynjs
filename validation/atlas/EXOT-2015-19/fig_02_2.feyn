@@ -1,0 +1,8 @@
+% EXOT-2015-19 fig_02_2: scalar LQ pair production, g g > LQ LQbar (four-point seagull vertex), unlabelled
+layout: v2
+in: i1 i2
+out: f1 f2
+i1 -- [gluon] a
+i2 -- [gluon] a
+a -- [charged scalar] f1
+f2 -- [charged scalar] a

@@ -1,0 +1,16 @@
+% HION-2016-02 fig_01c: dissociative PbPb (gamma gamma) -> mu+ mu-, lower photon from a proton in Pb that breaks up
+layout: v2
+in: pb1 pb2
+out: pb3 m1 m2 pb4
+pb1 [\mathrm{Pb}]
+pb2 [\mathrm{p\ (in\ Pb)}]
+pb3 [\mathrm{Pb}]
+pb4 [\mathrm{Pb}^{\star}+\mathrm{X}]
+B1 [hatched blob]
+B2 [hatched blob]
+pb1 -- [fermion] B1 -- [fermion] pb3
+pb2 -- [fermion] B2 -- [proton] pb4
+B1 -- [photon, label'=k_2] a
+B2 -- [photon, label=k_1] b
+b -- [fermion] a -- [fermion] m1 [mu-]
+m2 [mu+] -- [fermion] b

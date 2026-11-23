@@ -1,0 +1,18 @@
+% HIGG-2012-09 fig_01: gg -> g -> t tbar, t -> b H+ (H+ -> tau nu), tbar -> bbar W- (W- -> f fbar')
+layout: v2
+in: g1 g2
+out: b1 nu ta f1 f2 bb
+dots: all
+g1 [g] -- [gluon] a
+g2 [g] -- [gluon] a
+a -- [gluon, label=g] c
+c -- [fermion, label=t] tv
+tb -- [fermion, label=\bar t] c
+tv -- [fermion] b1 [b]
+tv -- [scalar, label'=H^+] h
+h -- [fermion] nu [\nu_\tau]
+ta [\tau^+] -- [fermion] h
+tb -- [boson, label=W^-] w
+w -- [fermion] f1 [f]
+f2 [\bar f'] -- [fermion] w
+bb [\bar b] -- [fermion] tb
