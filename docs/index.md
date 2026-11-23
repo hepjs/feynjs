@@ -142,11 +142,11 @@ hadron: K^{*0} = d2 s
 
 </div>
 
-A *web-native*{ .feynjs-accent } engine for Feynman diagrams.
+Feynman diagrams, meet *Markdown*{ .feynjs-accent }. *Oh, and the web.*{ .feynjs-aside }
 { .feynjs-punch }
 
-***77 years after Feynman, they finally draw themselves. Name the particles and how they meet,
-and feynjs lays them out as physics papers do.***
+***A web-native engine for Feynman diagrams, in the syntax of TikZ-Feynman and MadGraph. Write a
+`feynman` block in your Markdown, from Zensical sites to Obsidian notes.***
 { .feynjs-lead }
 
 [Get started](get-started/index.md){ .md-button .md-button--primary }
@@ -155,29 +155,55 @@ and feynjs lays them out as physics papers do.***
 
 ## Core features
 
+### Start
+
 <div class="grid cards" markdown>
 
--   **[Two ways to write](guide/syntax.md)**
+-   **[Write edges, as in TikZ-Feynman](guide/syntax.md)**
 
-    Line by line as in TikZ-Feynman, or as a process as in MadGraph: `p p > t t~`.
+    Every line written out: you choose each vertex and what joins them.
+
+-   **[Write processes, as in MadGraph](guide/processes.md)**
+
+    Name the process, `p p > t t~`, with its decays, loops and production modes.
+
+-   **[Where to use it](get-started/use.md)**
+
+    One script tag on any web page; Zensical and MkDocs sites, Obsidian notes, JavaScript and the command line.
+
+</div>
+
+### Engines
+
+<div class="grid cards" markdown>
 
 -   **[Layout engines](guide/layout.md)**
 
     Forces place every vertex for you. Snap the result to a grid, or pin vertices by hand.
 
+-   **[Views](guide/views.md)**
+
+    The same process as an event in the detector, or a lattice QCD grid with Wilson loops.
+
+</div>
+
+### Diagram components
+
+<div class="grid cards" markdown>
+
 -   **[Lines and particles](guide/lines.md)**
 
     Every TikZ-Feynman line style, and 105 particle names that set the style, arrow and label.
-
--   **[Labels and notes](guide/labels.md)**
-
-    TeX labels kept clear of the lines, coupling labels, and notes that point into the diagram.
 
 -   **[Vertices, blobs and nuclei](guide/vertices.md)**
 
     Dots, blobs and crosses, proton beams, and nuclei from hydrogen to lead.
 
--   **[Loops and hadrons](guide/loops-hadrons.md)**
+-   **[Labels and notes](guide/labels.md)**
+
+    TeX labels kept clear of the lines, coupling labels, and notes that point into the diagram.
+
+-   **[Loops, boxes and hadrons](guide/loops-hadrons.md)**
 
     Loops, boxes and penguins, found for you; quark legs grouped into mesons and baryons.
 
@@ -189,21 +215,41 @@ and feynjs lays them out as physics papers do.***
 
     Final states as the detector sees them: jets, large-R jets, b-tags, missing energy.
 
--   **[Views](guide/views.md)**
+-   **[Panels and switches](guide/panels.md)**
 
-    The same process as an event in the detector, or a lattice QCD grid with Wilson loops.
+    Diagrams side by side, lettered, or joined by +, = or a cut; switches for a whole diagram.
+
+</div>
+
+### Styling and output
+
+<div class="grid cards" markdown>
 
 -   **[Styling and export](guide/styling.md)**
 
     Sizes, colours, dark mode and black and white; SVG, PNG and TikZ-Feynman code out.
 
--   **[Panels](guide/panels.md)**
-
-    Diagrams side by side, lettered, or joined by +, = or a cut.
-
--   **[Checking](guide/tools.md)**
+-   **[Checking diagrams](guide/tools.md)**
 
     Catch broken fermion flow, describe a diagram in words, score its layout.
+
+</div>
+
+### Examples
+
+<div class="grid cards" markdown>
+
+-   **[Every line type](examples/lines.md)**
+
+    Each line feynjs draws, with the source to copy.
+
+-   **[Standard Model vertices](examples/sm-vertices.md)**
+
+    Every vertex of the Standard Model, with its coupling.
+
+-   **[Standard Model processes](examples/sm-processes.md)**
+
+    Textbook and collider processes: QED, QCD, electroweak, Higgs and flavour.
 
 </div>
 

@@ -14,29 +14,38 @@ edit_uri = "edit/main/docs/"
 nav = [
   { "Home" = "index.md" },
   { "Get started" = [
-    { "Get started" = "get-started/index.md" },
+    { "Install and first diagram" = "get-started/index.md" },
+    { "Write edges, as in TikZ-Feynman" = "guide/syntax.md" },
+    { "Write processes, as in MadGraph" = "guide/processes.md" },
     { "Where to use it" = "get-started/use.md" },
   ] },
   { "Features" = [
     { "Overview" = "guide/index.md" },
-    { "Edges, as in TikZ-Feynman" = "guide/syntax.md" },
-    { "Processes, as in MadGraph" = "guide/processes.md" },
-    { "Layout engines" = "guide/layout.md" },
-    { "Lines and particles" = "guide/lines.md" },
-    { "Labels and notes" = "guide/labels.md" },
-    { "Vertices, blobs and nuclei" = "guide/vertices.md" },
-    { "Loops, boxes and hadrons" = "guide/loops-hadrons.md" },
-    { "Colour flow" = "guide/colour-flow.md" },
-    { "Detector objects" = "guide/objects.md" },
-    { "Views" = "guide/views.md" },
-    { "Styling and export" = "guide/styling.md" },
-    { "Panels and switches" = "guide/panels.md" },
-    { "Checking diagrams" = "guide/tools.md" },
+    { "Engines" = [
+      { "Layout engines" = "guide/layout.md" },
+      { "Views" = "guide/views.md" },
+    ] },
+    { "Diagram components" = [
+      { "Lines and particles" = "guide/lines.md" },
+      { "Vertices, blobs and nuclei" = "guide/vertices.md" },
+      { "Labels and notes" = "guide/labels.md" },
+      { "Loops, boxes and hadrons" = "guide/loops-hadrons.md" },
+      { "Colour flow" = "guide/colour-flow.md" },
+      { "Detector objects" = "guide/objects.md" },
+      { "Panels and switches" = "guide/panels.md" },
+    ] },
+    { "Styling and output" = [
+      { "Styling and export" = "guide/styling.md" },
+      { "Checking diagrams" = "guide/tools.md" },
+    ] },
   ] },
   { "Examples" = [
     { "Overview" = "examples/index.md" },
-    { "Gallery" = "examples/gallery.md" },
+    { "Every line type" = "examples/lines.md" },
+    { "Standard Model vertices" = "examples/sm-vertices.md" },
+    { "Standard Model processes" = "examples/sm-processes.md" },
     { "Stop production" = "examples/stop.md" },
+    { "Gallery" = "examples/gallery.md" },
   ] },
   { "Reference" = [
     { "Syntax at a glance" = "reference/index.md" },
@@ -81,9 +90,9 @@ features = [
   "content.tabs.link",
   "content.tooltips",
   # "header.autohide",
-  # "navigation.expand",
+  "navigation.expand",
   "navigation.footer",
-  "navigation.indexes",
+  # "navigation.indexes",
   "navigation.instant",
   "navigation.instant.prefetch",
   # "navigation.instant.progress",
@@ -109,13 +118,6 @@ logo = "brand/logo/mark-red.svg"
 # code = "Jetbrains Mono"
 
 [[project.theme.palette]]
-media = "(prefers-color-scheme)"
-primary = "custom"
-accent = "custom"
-toggle.icon = "lucide/sun-moon"
-toggle.name = "Switch to light mode"
-
-[[project.theme.palette]]
 media = "(prefers-color-scheme: light)"
 scheme = "default"
 primary = "custom"
@@ -129,7 +131,7 @@ scheme = "slate"
 primary = "custom"
 accent = "custom"
 toggle.icon = "lucide/moon"
-toggle.name = "Switch to system preference"
+toggle.name = "Switch to light mode"
 
 # [[project.extra.social]]
 # icon = "fontawesome/brands/github"

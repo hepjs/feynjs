@@ -6,13 +6,15 @@ tags:
   - Markdown
   - HTML
   - React
+  - Obsidian
+  - notes
   - command line
   - CLI
 ---
 
 # Where to use it
 
-***Put diagrams in a Zensical or MkDocs site, a web page, a JavaScript program or a shell script. On a web page, one script tag is enough.***
+***Put diagrams on a web page, in a Zensical or MkDocs site, in Obsidian notes, in a JavaScript program or a shell script. On a web page, one script tag is enough.***
 
 ```feynman
 i1 [g] -- a
@@ -140,6 +142,33 @@ document.querySelectorAll("pre > code.language-feynman").forEach((code) => {
   code.parentElement.replaceWith(figure);
 });
 ```
+
+## In Obsidian
+
+The feynjs plugin draws a `feynman` code block in any note, in Obsidian's text colour, so it
+follows light and dark themes. Everything it needs is inside the plugin, so it works offline.
+
+**1. Get the plugin.** Download `feynjs-obsidian.zip` from the
+[latest release](https://github.com/hepjs/feynjs/releases/latest) and unzip it. It holds one
+folder, `feynjs`.
+
+**2. Put it in your vault.** Move the `feynjs` folder into your vault's plugin folder,
+`<vault>/.obsidian/plugins/`. The folder `.obsidian` is hidden: on a Mac press
+++cmd+shift+period++ in Finder to show it.
+
+**3. Turn it on.** In Obsidian, open *Settings → Community plugins*, turn off *Restricted mode* if
+asked, then switch on **feynjs**.
+
+**4. Write a diagram** in any note:
+
+````markdown
+```feynman
+e+ e- > mu+ mu-
+```
+````
+
+To build the plugin from a checkout instead, run `node integrations/obsidian/build.mjs` and copy
+`integrations/obsidian/dist/feynjs` into the plugin folder.
 
 ## From JavaScript
 
