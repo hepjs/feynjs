@@ -18,8 +18,8 @@ the TikZ export. A new feature comes with a test beside the others.
 source (no images), with `validation/manifest.jsonl` naming the paper and figure of each. With
 `examples/`, they are the layouts feynjs is held to.
 
-`validation/layout-baseline.json` records each of them as laid out at the last approval, as a
-fingerprint of its points. `test/v2-baseline.test.ts` fails if any moves, listing which. When a
+`validation/layout-baseline.json` records each of them as laid out at the last approval: where
+each of its points lies. `test/layout-baseline.test.ts` fails if any moves, listing which. When a
 change to the layout is meant, look at the diagrams it moved (against their papers, one at a
 time), then approve the new layouts:
 
