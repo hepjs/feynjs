@@ -2,7 +2,7 @@ cff-version: 1.2.0
 message: "If you use feynjs in your work, please cite it as below."
 title: "feynjs: Feynman diagrams for the web, written as text and laid out automatically"
 version: 0.9.1
-date-released: 2026-11-23
+date-released: 2026-11-24
 license: MIT
 repository-code: "https://github.com/hepjs/feynjs"
 url: "https://hepjs.github.io/feynjs/"
