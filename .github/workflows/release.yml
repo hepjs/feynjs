@@ -1,5 +1,7 @@
-# A version tag (v0.9.0): test, build, publish to npm (and so to jsDelivr and unpkg), and make a
-# GitHub release with the built files. Needs the repository secret NPM_TOKEN (an npm automation token).
+# A version tag (v0.9.1): test, build, publish to npm (and so to jsDelivr and unpkg), and make a
+# GitHub release with the built files. npm trusts this workflow by "trusted publishing" (set up
+# once on npmjs.com for the package), so no npm token is stored here. A version already on npm
+# (the first, published by hand) is not published again.
 # (on Apple Silicon, where the approved layouts were approved: see ci.yml)
 name: Release
 on:
@@ -18,13 +20,16 @@ jobs:
           node-version: 22.22.2
           registry-url: https://registry.npmjs.org
           cache: npm
+      # (trusted publishing needs npm 11.5.1 or later)
+      - run: npm install -g npm@^11.5.1
       - run: npm ci
       - run: npm run typecheck
       - run: npm run build
       - run: npm test
-      - run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Publish to npm (unless this version is there already)
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          if npm view "feynjs@$VERSION" version >/dev/null 2>&1; then echo "feynjs@$VERSION is on npm already"; else npm publish --provenance --access public; fi
       - uses: softprops/action-gh-release@v2
         with:
           files: |
