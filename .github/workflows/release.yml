@@ -20,16 +20,16 @@ jobs:
           node-version: 22.22.2
           registry-url: https://registry.npmjs.org
           cache: npm
-      # (trusted publishing needs npm 11.5.1 or later)
-      - run: npm install -g npm@^11.5.1
       - run: npm ci
       - run: npm run typecheck
       - run: npm run build
       - run: npm test
+      # (trusted publishing needs npm 11.5.1 or later: run through npx for this step alone, as
+      # upgrading the runner's own npm in place fails)
       - name: Publish to npm (unless this version is there already)
         run: |
           VERSION=$(node -p "require('./package.json').version")
-          if npm view "feynjs@$VERSION" version >/dev/null 2>&1; then echo "feynjs@$VERSION is on npm already"; else npm publish --provenance --access public; fi
+          if npm view "feynjs@$VERSION" version >/dev/null 2>&1; then echo "feynjs@$VERSION is on npm already"; else npx -y npm@^11.5.1 publish --provenance --access public; fi
       - name: Build the Obsidian plugin, zipped as a folder to drop into a vault's plugins
         run: |
           node integrations/obsidian/build.mjs

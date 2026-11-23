@@ -3,13 +3,16 @@
 All notable changes, newest first. Versions follow [semantic versioning](https://semver.org): a
 layout that moves is a change, recorded here.
 
+## 0.9.2 — 2026-11-24
+
+- **Dark pages:** the grid behind a grid layout, and the lattice view's grid and sites, are drawn in
+  the diagram's own colour, thinned, so they stay faint on dark pages as on light.
+- **Releases** carry the Obsidian plugin as `feynjs-obsidian.zip`.
+
 ## 0.9.1 — 2026-11-24
 
 - **Zensical and MkDocs:** diagrams are drawn again after each instant page change, so the script
   and the `feynman` fence are all a site needs (no init script).
-- **Dark pages:** the grid behind a grid layout, and the lattice view's grid and sites, are drawn in
-  the diagram's own colour, thinned, so they stay faint on dark pages as on light.
-- **Releases** carry the Obsidian plugin as `feynjs-obsidian.zip`.
 
 ## 0.9.0 — 2026-11-23
 
