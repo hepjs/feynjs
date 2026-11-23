@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/joliverHEP/feynjs/main/docs/brand/logo/logo-ink-red-dark.svg">
-    <img src="https://raw.githubusercontent.com/joliverHEP/feynjs/main/docs/brand/logo/logo-ink-red.svg" alt="feynjs" width="420">
+    <source media="(prefers-color-scheme: dark)" srcset="docs/brand/logo/logo-ink-red-dark.svg">
+    <img src="docs/brand/logo/logo-ink-red.svg" alt="feynjs" width="420">
   </picture>
 </p>
 
