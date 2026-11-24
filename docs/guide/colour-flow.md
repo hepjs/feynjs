@@ -11,8 +11,6 @@ tags:
 
 # Colour flow
 
-***Draw the colour lines beside every quark and gluon, in 't Hooft's double-line notation, to show how colour passes through a QCD diagram.***
-
 ```feynman
 colour flow: on
 d dbar > g > t tbar

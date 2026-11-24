@@ -12,8 +12,6 @@ tags:
 
 # Detector objects
 
-***Draw each final state as the detector sees it: jets, large-R and b-tagged jets, hadronic taus, missing energy and the signatures of long-lived particles.***
-
 ```feynman
 i1 [p] -- pp [blob] -- i2 [p]
 pp -- [Z'] z

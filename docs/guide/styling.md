@@ -12,8 +12,6 @@ tags:
 
 # Styling and export
 
-***Change line widths, colours and sizes through the theme, colour lines by charge, follow a page's dark mode, and export diagrams as SVG, PNG or TikZ-Feynman code.***
-
 ```feynman
 charge colour: on
 p p > t tbar

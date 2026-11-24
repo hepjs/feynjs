@@ -12,9 +12,6 @@ tags:
 
 # Views
 
-***Draw the same source as the detector sees the event, along the beam or across it, or draw
-space-time as a lattice with Wilson loops and plaquettes.***
-
 ```feynman
 --- diagram
 p p > t tbar

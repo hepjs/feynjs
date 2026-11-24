@@ -12,8 +12,6 @@ tags:
 
 # Checking diagrams
 
-***Check a diagram's fermion flow and legs, read it back as plain English or JSON, and score its layout, from JavaScript or the command line.***
-
 ```feynman
 i1 [e-] -- a -- i2 [e-]
 a -- [gamma] b

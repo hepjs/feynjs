@@ -12,8 +12,6 @@ tags:
 
 # Vertices and blobs
 
-***Mark vertices with dots, blobs and crosses, draw proton beams and nuclei, and show a hadron's quarks bound by flux tubes.***
-
 ```feynman
 i1 [p] -- pp [blob] -- i2 [p]
 pp -- [Z'] z [dot]

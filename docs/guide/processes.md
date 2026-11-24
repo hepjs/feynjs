@@ -13,8 +13,6 @@ tags:
 
 # Processes, as in MadGraph
 
-***Write `p p > t tbar` and `t > b W+` as in MadGraph: decays, loops, production modes and particles that decay two ways, drawn as one diagram.***
-
 ```feynman
 d dbar > g > t tbar
 t > b W+(> e+ nu)

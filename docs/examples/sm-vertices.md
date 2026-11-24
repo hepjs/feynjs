@@ -12,8 +12,6 @@ tags:
 
 # Standard Model vertices
 
-***Every interaction vertex of the Standard Model, each drawn on its own with its coupling beside it: QED, QCD, the weak force, the Higgs and the Yukawas.***
-
 ```feynman
 --- QED
 v [dot, label=eQ_f]

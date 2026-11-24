@@ -11,9 +11,6 @@ tags:
 
 # Development setup
 
-***What to install to work on feynjs from a checkout, the commands that build, test and preview it,
-and what each folder of the repository holds.***
-
 ```sh
 git clone https://github.com/hepjs/feynjs.git && cd feynjs
 npm install

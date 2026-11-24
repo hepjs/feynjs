@@ -10,9 +10,6 @@ tags:
 
 # Upgrading
 
-***How to move to a new release of feynjs: from npm, from the jsDelivr link or in Obsidian. Then
-what changed in each release.***
-
 | Where you use feynjs | To upgrade |
 |---|---|
 | npm | `npm install feynjs@latest` |

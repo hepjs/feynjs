@@ -11,8 +11,6 @@ tags:
 
 # JavaScript API
 
-***Every function feynjs exports, with its options: render() and run() to draw, check(), describe() and measure() to read, toTikz() to export.***
-
 ```js
 import { render } from "feynjs";
 const svg = render("e- e+ > Z > mu- mu+");   // SVG markup, ready to put in a page

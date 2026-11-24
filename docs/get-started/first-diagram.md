@@ -10,8 +10,6 @@ tags:
 
 # Your first diagram
 
-***Write your first diagram in three lines of text, read what each line means, and change it.***
-
 ```feynman
 i1 [e-] -- a -- i2 [e+]
 a -- [gamma] b

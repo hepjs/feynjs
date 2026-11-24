@@ -11,8 +11,6 @@ tags:
 
 # Syntax at a glance
 
-***Every piece of the diagram syntax on one page: edges, processes, line and vertex options, detector objects, switches and labels.***
-
 ```feynman
 i1 [e-] -- a -- i2 [e+]
 a [dot] -- [Z, momentum=q] b [dot]

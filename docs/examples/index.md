@@ -11,8 +11,6 @@ tags:
 
 # Examples
 
-***Find a diagram close to the one you need: the library's gallery, a stop walkthrough, and a few common processes below.***
-
 ```feynman
 i1 [q] -- a -- f1 [q]
 i2 [q] -- b -- f3 [q]

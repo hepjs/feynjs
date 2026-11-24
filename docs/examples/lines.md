@@ -12,8 +12,6 @@ tags:
 
 # Every line type
 
-***Every line feynjs draws, from fermions and gluons to gauginos and leptoquarks, and every option that changes one, each with the source to copy.***
-
 ```feynman
 i1 [q] -- a -- i2 [qbar]
 a -- [gluon] b

@@ -12,8 +12,6 @@ tags:
 
 # Lines and particles
 
-***Choose how each line is drawn: a TikZ-Feynman style such as fermion, photon or gluon, or a particle name that sets the style, arrow and label at once.***
-
 ```feynman
 i1 [g] -- a
 i2 [g] -- b
@@ -64,89 +62,93 @@ Named as in TikZ-Feynman. After a style or particle, these modify it:
 `a -- [ellipsis] f` draws three dots where a leg would be ("and more"). The graviton `G` is a
 double wave.
 
-**fermion** &nbsp; `a -- [fermion] b`
+<div class="grid cards feynjs-swatches" markdown>
 
-```feynman
-a -- [fermion] b
-```
+-   **fermion** `a -- [fermion] b`
 
-**anti fermion** &nbsp; `a -- [anti fermion] b`
+    ```feynman
+    a -- [fermion] b
+    ```
 
-```feynman
-a -- [anti fermion] b
-```
+-   **anti fermion** `a -- [anti fermion] b`
 
-**majorana** &nbsp; `a -- [majorana] b`
+    ```feynman
+    a -- [anti fermion] b
+    ```
 
-```feynman
-a -- [majorana] b
-```
+-   **majorana** `a -- [majorana] b`
 
-**plain** &nbsp; `a -- [plain] b`
+    ```feynman
+    a -- [majorana] b
+    ```
 
-```feynman
-a -- [plain] b
-```
+-   **plain** `a -- [plain] b`
 
-**photon / boson** &nbsp; `a -- [photon] b`
+    ```feynman
+    a -- [plain] b
+    ```
 
-```feynman
-a -- [photon] b
-```
+-   **photon / boson** `a -- [photon] b`
 
-**charged boson** &nbsp; `a -- [charged boson] b`
+    ```feynman
+    a -- [photon] b
+    ```
 
-```feynman
-a -- [charged boson] b
-```
+-   **charged boson** `a -- [charged boson] b`
 
-**gluon** &nbsp; `a -- [gluon] b`
+    ```feynman
+    a -- [charged boson] b
+    ```
 
-```feynman
-a -- [gluon] b
-```
+-   **gluon** `a -- [gluon] b`
 
-**scalar (dashed)** &nbsp; `a -- [scalar] b`
+    ```feynman
+    a -- [gluon] b
+    ```
 
-```feynman
-a -- [scalar] b
-```
+-   **scalar (dashed)** `a -- [scalar] b`
 
-**charged scalar** &nbsp; `a -- [charged scalar] b`
+    ```feynman
+    a -- [scalar] b
+    ```
 
-```feynman
-a -- [charged scalar] b
-```
+-   **charged scalar** `a -- [charged scalar] b`
 
-**ghost (dotted)** &nbsp; `a -- [ghost] b`
+    ```feynman
+    a -- [charged scalar] b
+    ```
 
-```feynman
-a -- [ghost] b
-```
+-   **ghost (dotted)** `a -- [ghost] b`
 
-**double** &nbsp; `a -- [double] b`
+    ```feynman
+    a -- [ghost] b
+    ```
 
-```feynman
-a -- [double] b
-```
+-   **double** `a -- [double] b`
 
-**double photon (graviton)** &nbsp; `a -- [photon, double] b`
+    ```feynman
+    a -- [double] b
+    ```
 
-```feynman
-a -- [photon, double] b
-```
+-   **double photon (graviton)** `a -- [photon, double] b`
 
-**heavy** &nbsp; `a -- [heavy] b`
+    ```feynman
+    a -- [photon, double] b
+    ```
 
-```feynman
-a -- [heavy] b
-```
+-   **heavy** `a -- [heavy] b`
 
-**proton** &nbsp; `a -- [proton] b`
+    ```feynman
+    a -- [heavy] b
+    ```
 
-```feynman
-a -- [proton] b
-```
+-   **proton** `a -- [proton] b`
+
+    ```feynman
+    a -- [proton] b
+    ```
+
+</div>
 
 ## Particles
 
@@ -157,74 +159,79 @@ A particle name sets the line style, the label and the colour. A few common ones
 Supersymmetric particles are drawn a little bolder and in the SUSY colour (brick red by default,
 `susyColor` in the [theme](styling.md)); their labels take the same colour.
 
-**W, Z, photon** &nbsp; `a -- [W+] b`
+<div class="grid cards feynjs-swatches" markdown>
 
-```feynman
-a -- [W+] b
-```
+-   **W, Z, photon** `a -- [W+] b`
 
-**Higgs** &nbsp; `a -- [H] b`
+    ```feynman
+    a -- [W+] b
+    ```
 
-```feynman
-a -- [H] b
-```
+-   **Higgs** `a -- [H] b`
 
-**gluon** &nbsp; `a -- [g] b`
+    ```feynman
+    a -- [H] b
+    ```
 
-```feynman
-a -- [g] b
-```
+-   **gluon** `a -- [g] b`
 
-**top quark** &nbsp; `a -- [t] b`
+    ```feynman
+    a -- [g] b
+    ```
 
-```feynman
-a -- [t] b
-```
+-   **top quark** `a -- [t] b`
 
-**gluino** &nbsp; `a -- [gluino] b`
+    ```feynman
+    a -- [t] b
+    ```
 
-```feynman
-a -- [gluino] b
-```
+-   **gluino** `a -- [gluino] b`
 
-**squark, slepton** &nbsp; `a -- [squark] b`
+    ```feynman
+    a -- [gluino] b
+    ```
 
-```feynman
-a -- [squark] b
-```
+-   **squark, slepton** `a -- [squark] b`
 
-**neutralino, chargino** &nbsp; `a -- [neutralino] b`
+    ```feynman
+    a -- [squark] b
+    ```
 
-```feynman
-a -- [neutralino] b
-```
+-   **neutralino, chargino** `a -- [neutralino] b`
 
-**gravitino** &nbsp; `a -- [gravitino] b`
+    ```feynman
+    a -- [neutralino] b
+    ```
 
-```feynman
-a -- [gravitino] b
-```
+-   **gravitino** `a -- [gravitino] b`
 
-**heavy neutral lepton (Majorana)** &nbsp; `a -- [N] b`
+    ```feynman
+    a -- [gravitino] b
+    ```
 
-```feynman
-a -- [N] b
-```
+-   **heavy neutral lepton (Majorana)** `a -- [N] b`
 
-**vector-like quark** &nbsp; `a -- [T] b`
+    ```feynman
+    a -- [N] b
+    ```
 
-```feynman
-a -- [T] b
-```
+-   **vector-like quark** `a -- [T] b`
 
-**leptoquark** &nbsp; `a -- [LQ] b`
+    ```feynman
+    a -- [T] b
+    ```
 
-```feynman
-a -- [LQ] b
-```
+-   **leptoquark** `a -- [LQ] b`
 
-**Z'** &nbsp; `a -- [Z'] b`
+    ```feynman
+    a -- [LQ] b
+    ```
 
-```feynman
-a -- [Z'] b
-```
+-   **Z'** `a -- [Z'] b`
+
+    ```feynman
+    a -- [Z'] b
+    ```
+
+</div>
+

@@ -11,9 +11,6 @@ tags:
 
 # Testing
 
-***How feynjs is tested: the unit tests, the approved layouts that fail a test when a diagram
-moves, and how to approve a layout change on purpose.***
-
 One of the layouts the test holds in place: the gluon-fusion triangle to HH from HDBS-2018-40
 (Fig. 1a), as `validation/atlas/HDBS-2018-40/fig_01a.feyn`.
 

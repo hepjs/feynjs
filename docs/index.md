@@ -145,431 +145,81 @@ hadron: K^{*0} = d2 s
 Feynman diagrams, meet *Markdown*{ .feynjs-accent }. *Oh, and the web.*{ .feynjs-aside }
 { .feynjs-punch }
 
-***A web-native engine for Feynman diagrams, in the syntax of TikZ-Feynman and MadGraph. Write a
-`feynman` block in your Markdown, from Zensical sites to Obsidian notes.***
-{ .feynjs-lead }
-
 [Get started](get-started/index.md){ .md-button .md-button--primary }
-[See the components](guide/index.md){ .md-button }
+[Try the playground](playground.md){ .md-button }
 [See examples](examples/index.md){ .md-button }
-
-## Core features
-
-### Get started
-
-<div class="grid cards" markdown>
-
--   **[Choose your setup](get-started/index.md)**
-
-    A `feynman` block in a Zensical or MkDocs site, or in an Obsidian note.
-
--   **[Your first diagram](get-started/first-diagram.md)**
-
-    What each line of a diagram means, from one example.
-
--   **[Upgrading](get-started/upgrading.md)**
-
-    Moving to a new release, and what changed in each.
-
-</div>
-
-### Components
-
-<div class="grid cards" markdown>
-
--   **[Write edges, as in TikZ-Feynman](guide/syntax.md)**
-
-    Every line written out: you choose each vertex and what joins them.
-
--   **[Write processes, as in MadGraph](guide/processes.md)**
-
-    Name the process, `p p > t t~`, with its decays, loops and production modes.
-
--   **[Lines and particles](guide/lines.md)**
-
-    Every TikZ-Feynman line style, and 105 particle names that set the style, arrow and label.
-
--   **[Vertices, blobs and nuclei](guide/vertices.md)**
-
-    Dots, blobs and crosses, proton beams, and nuclei from hydrogen to lead.
-
--   **[Labels and notes](guide/labels.md)**
-
-    TeX labels kept clear of the lines, coupling labels, and notes that point into the diagram.
-
--   **[Loops, boxes and hadrons](guide/loops-hadrons.md)**
-
-    Loops, boxes and penguins, found for you; quark legs grouped into mesons and baryons.
-
--   **[Colour flow](guide/colour-flow.md)**
-
-    't Hooft's double lines beside every quark and gluon, in red, green and blue.
-
--   **[Detector objects](guide/objects.md)**
-
-    Final states as the detector sees them: jets, large-R jets, b-tags, missing energy.
-
--   **[Panels and switches](guide/panels.md)**
-
-    Diagrams side by side, lettered, or joined by +, = or a cut; switches for a whole diagram.
-
-</div>
-
-### Layout & Styling
-
-<div class="grid cards" markdown>
-
--   **[Layout engines](guide/layout.md)**
-
-    Forces place every vertex for you. Snap the result to a grid, or pin vertices by hand.
-
--   **[Views](guide/views.md)**
-
-    The same process as an event in the detector, or a lattice QCD grid with Wilson loops.
-
--   **[Styling and export](guide/styling.md)**
-
-    Sizes, colours, dark mode and black and white; SVG, PNG and TikZ-Feynman code out.
-
-</div>
-
-### Usage
-
-<div class="grid cards" markdown>
-
--   **[Use feynjs from code](developers/index.md)**
-
-    A script tag on any page, `render()` from npm, or the `feynjs` command.
-
--   **[Checking diagrams](guide/tools.md)**
-
-    Catch broken fermion flow, describe a diagram in words, score its layout.
-
-</div>
-
-### Compatibility
-
-<div class="grid cards" markdown>
-
--   **[TikZ-Feynman](compatibility/tikz-feynman.md)**
-
-    The keys feynjs takes, side by side, and TikZ-Feynman code out.
-
--   **[MadGraph](compatibility/madgraph.md)**
-
-    MadGraph's process syntax and particle names, and what feynjs doesn't take.
-
-</div>
-
-### Examples
-
-<div class="grid cards" markdown>
-
--   **[Every line type](examples/lines.md)**
-
-    Each line feynjs draws, with the source to copy.
-
--   **[Standard Model vertices](examples/sm-vertices.md)**
-
-    Every vertex of the Standard Model, with its coupling.
-
--   **[Standard Model processes](examples/sm-processes.md)**
-
-    Textbook and collider processes: QED, QCD, electroweak, Higgs and flavour.
-
-</div>
 
 ## Two ways to write a diagram
 
-Draw it line by line, as in TikZ-Feynman, or name the process, as in MadGraph. The two give the
-same diagram; use whichever suits it.
+<div class="grid cards" markdown>
 
-```feynman
-i1 [e-] -- a -- i2 [e+]
-a -- [gamma] b
-f1 [mu-] -- b -- f2 [mu+]
-```
+-   **[Edges, as in TikZ-Feynman](guide/syntax.md)**: every line written out.
 
-=== "Edges, as in TikZ-Feynman"
-
-    Every line, written out: you choose each vertex and what joins them.
-
-    ````markdown
     ```feynman
     i1 [e-] -- a -- i2 [e+]
     a -- [gamma] b
     f1 [mu-] -- b -- f2 [mu+]
     ```
-    ````
 
-    [Writing edges](guide/syntax.md){ .md-button }
-
-=== "A process, as in MadGraph"
-
-    What goes in, what it passes through, what comes out: feynjs makes the lines.
-
-    ````markdown
-    ```feynman
-    e- e+ > gamma > mu- mu+
-    ```
-    ````
-
-    [Writing processes](guide/processes.md){ .md-button }
-
-The process syntax comes into its own for cascades. A gluino pair, each gluino decaying through a
-neutralino to a Z, is three lines:
-
-```feynman
-p p > gluino gluino
-gluino > q q neutralino2
-neutralino2 > Z neutralino1
-```
-
-````markdown
-```feynman
-p p > gluino gluino
-gluino > q q neutralino2
-neutralino2 > Z neutralino1
-```
-````
-
-## Why feynjs
-
-**Write physics, not coordinates.**
-:   There are no positions to place and no styles to pick. Time runs left to right; s-channel,
-    t-channel, loops, boxes, cascades and hadrons come out as they are drawn in published papers.
-
-**It knows the particles.**
-:   `[e+]`, `[W]`, `[gluino]` set the line, the arrow direction, the label and the colour.
-    Nearly a hundred names are built in, and you can [add your own](reference/api.md#registerparticle).
-
-**Syntax you already know.**
-:   Write edges as in TikZ-Feynman, `a -- [photon] b`, or processes and decays as in MadGraph,
-    `p p > t tbar` and `t > b W+`. Use whichever suits the diagram.
-
-**Plain SVG.**
-:   No dependencies and no math engine: labels are typeset in New Computer Modern, the TeX face.
-    Diagrams follow the page's light or dark theme, and export as
-    [standalone SVG or TikZ](guide/styling.md#exporting).
-
-**Tools as well as pictures.**
-:   [`check`](guide/tools.md) lints a diagram, `describe` reads off its process, `measure`
-    scores its layout, and the same commands run [from a shell](reference/cli.md).
-
-## A short tour
-
-=== "Gluon fusion"
-
-    ```feynman
-    i1 [g] -- a
-    i2 [g] -- b
-    a -- [fermion] c -- [fermion] b -- [fermion, label=t] a
-    c -- [H] f1
-    ```
-
-    ````markdown
-    ```feynman
-    i1 [g] -- a
-    i2 [g] -- b
-    a -- [fermion] c -- [fermion] b -- [fermion, label=t] a
-    c -- [H] f1
-    ```
-    ````
-
-=== "Higgs-strahlung"
-
-    ```feynman
-    i1 [q] -- a -- i2 [qbar']
-    a -- [W*] b
-    b -- [W] c
-    b -- [H] d
-    c -- f1 [l]
-    c -- f2 [nubar]
-    d -- f3 [b]
-    d -- f4 [bbar]
-    ```
-
-    ````markdown
-    ```feynman
-    i1 [q] -- a -- i2 [qbar']
-    a -- [W*] b
-    b -- [W] c
-    b -- [H] d
-    c -- f1 [l]
-    c -- f2 [nubar]
-    d -- f3 [b]
-    d -- f4 [bbar]
-    ```
-    ````
-
-=== "Top pair"
-
-    ```feynman
-    d dbar > g > t tbar
-    t > b W+(> e+ nu)
-    tbar > bbar W-(> e- nubar)
-    ```
-
-    ````markdown
-    ```feynman
-    d dbar > g > t tbar
-    t > b W+(> e+ nu)
-    tbar > bbar W-(> e- nubar)
-    ```
-    ````
-
-=== "SUSY, as edges"
-
-    ```feynman
-    i1 [p] -- pp [blob] -- i2 [p]
-    pp -- [gluino] d1
-    pp -- [gluino] d2
-    d1 -- f1 [q]
-    d1 -- f2 [q]
-    d1 -- f3 [neutralino]
-    d2 -- f4 [neutralino]
-    d2 -- f5 [q]
-    d2 -- f6 [q]
-    ```
-
-    ````markdown
-    ```feynman
-    i1 [p] -- pp [blob] -- i2 [p]
-    pp -- [gluino] d1
-    pp -- [gluino] d2
-    d1 -- f1 [q]
-    d1 -- f2 [q]
-    d1 -- f3 [neutralino]
-    d2 -- f4 [neutralino]
-    d2 -- f5 [q]
-    d2 -- f6 [q]
-    ```
-    ````
-
-=== "Di-Higgs couplings"
-
-    ```feynman
-    i1 [g] -- a
-    i2 [g] -- b
-    a -- [fermion] c -- [fermion] b -- [fermion] a
-    c [dot, label=\kappa_t, color=teal] -- [H] v [dot, label=\kappa_\lambda, color=pink]
-    v -- f1 [H]
-    v -- f2 [H]
-    ```
-
-    ````markdown
-    ```feynman
-    i1 [g] -- a
-    i2 [g] -- b
-    a -- [fermion] c -- [fermion] b -- [fermion] a
-    c [dot, label=\kappa_t, color=teal] -- [H] v [dot, label=\kappa_\lambda, color=pink]
-    v -- f1 [H]
-    v -- f2 [H]
-    ```
-    ````
-
-=== "Colour flow"
-
-    ```feynman
-    colour flow: on
-    i1 [g] -- a -- i2 [g]
-    a -- [gluon] b
-    f1 [t] -- b -- f2 [tbar]
-    ```
-
-    ````markdown
-    ```feynman
-    colour flow: on
-    i1 [g] -- a -- i2 [g]
-    a -- [gluon] b
-    f1 [t] -- b -- f2 [tbar]
-    ```
-    ````
-
-=== "Meson decay"
-
-    ```feynman
-    in: c1 b
-    out: c2 cbar s c3
-    c1 [c] -- [fermion] c2 [c]
-    cbar [\bar{c}] -- [fermion] v -- [fermion] b [\bar{b}]
-    v -- [boson, label=W] w
-    s [\bar{s}] -- [fermion] w -- [fermion] c3 [c]
-    meson: B_c^+ = c1 b
-    meson: J/\psi = c2 cbar
-    meson: D_s^+ = s c3
-    ```
-
-    ````markdown
-    ```feynman
-    in: c1 b
-    out: c2 cbar s c3
-    c1 [c] -- [fermion] c2 [c]
-    cbar [\bar{c}] -- [fermion] v -- [fermion] b [\bar{b}]
-    v -- [boson, label=W] w
-    s [\bar{s}] -- [fermion] w -- [fermion] c3 [c]
-    meson: B_c^+ = c1 b
-    meson: J/\psi = c2 cbar
-    meson: D_s^+ = s c3
-    ```
-    ````
-
-## Use it anywhere
-
-=== "Docs site"
-
-    In a Zensical or MkDocs site, a `feynman` code block becomes a diagram.
-    [Set it up](get-started/zensical.md) once, then write:
-
-    ````markdown
-    ```feynman
+    ```text
     i1 [e-] -- a -- i2 [e+]
-    a -- [Z] b
-    f1 [nu] -- b -- f2 [nubar]
-    ```
-    ````
-
-=== "Web page"
-
-    ```html
-    <script src="https://cdn.jsdelivr.net/npm/feynjs@0.9/dist/feynjs.min.js"></script>
-    <div class="feynman">
-      i1 [e-] -- a -- i2 [e+]
-      a -- [gamma] b
-      f1 [mu-] -- b -- f2 [mu+]
-    </div>
-    <script>feynjs.run()</script>
+    a -- [gamma] b
+    f1 [mu-] -- b -- f2 [mu+]
     ```
 
-=== "JavaScript"
+-   **[A process, as in MadGraph](guide/processes.md)**: feynjs makes the lines.
 
-    ```js
-    import { render } from "feynjs";
-
-    const svg = render(`
-      i1 [e-] -- a -- i2 [e+]
-      a -- [gamma] b
-      f1 [mu-] -- b -- f2 [mu+]
-    `);
+    ```feynman
+    p p > gluino gluino
+    gluino > q q neutralino2
+    neutralino2 > Z neutralino1
     ```
 
-=== "Command line"
-
-    ```sh
-    feynjs render diagram.feyn > diagram.svg
-    feynjs tikz diagram.feyn > diagram.tex
-    feynjs check diagram.feyn
+    ```text
+    p p > gluino gluino
+    gluino > q q neutralino2
+    neutralino2 > Z neutralino1
     ```
 
-## Where next
+</div>
 
-- **New here?** [Get started](get-started/index.md): set up a Zensical site or Obsidian, then [draw a first diagram](get-started/first-diagram.md).
-- **Writing diagrams?** [Components](guide/index.md) covers each part of a diagram, one page per
-  topic, and [Layout & Styling](guide/layout.md) where it goes and how it looks.
-- **Looking something up?** [Syntax at a glance](reference/index.md) has the syntax on one page,
-  and [All particles](reference/particles.md) every particle name.
-- **Writing code?** [Usage](developers/index.md) covers the script tag, the API and the command
-  line.
-- **Coming from TikZ-Feynman or MadGraph?** [Compatibility](compatibility/tikz-feynman.md) shows
-  what carries over.
-- **Want to help?** [Contributing](contributing/index.md) explains how the library is built and how to change it.
+No coordinates and no styles to pick: the particles set each line, and the layout draws it as
+papers do. Write either in a `feynman` block in your Markdown.
+
+## Everything it does
+
+<div class="grid cards feynjs-features" markdown>
+
+-   **Write**
+
+    - [Lines and particles](guide/lines.md): every TikZ-Feynman style, 105 particle names
+    - [Vertices, blobs and nuclei](guide/vertices.md), [labels and notes](guide/labels.md)
+    - [Loops, boxes and hadrons](guide/loops-hadrons.md), found for you
+    - [Colour flow](guide/colour-flow.md) and [detector objects](guide/objects.md)
+    - [Panels](guide/panels.md): diagrams side by side, joined by +, = or a cut
+
+-   **Lay out and style**
+
+    - [Layout engines](guide/layout.md): forces, a grid, or points pinned by hand
+    - [`debug: on`](guide/layout.md#why-a-line-is-where-it-is): why each line lies where it does
+    - [Views](guide/views.md): the event in the detector, or a lattice
+    - [Styling and export](guide/styling.md): sizes, dark mode, black and white; SVG, PNG, TikZ
+    - [Theme settings](reference/theme.md): every length, angle and colour
+
+-   **Use it in**
+
+    - [Zensical or MkDocs](get-started/zensical.md): a `feynman` block in your Markdown
+    - [Obsidian](get-started/obsidian.md): the same block, in your notes
+    - [Any web page](developers/index.md): one script tag
+    - [LaTeX](compatibility/latex.md): papers, on Overleaf and arXiv too
+    - [JavaScript](reference/api.md) and the [command line](reference/cli.md)
+
+-   **Tools**
+
+    - [The playground](playground.md): type, drag and draw, then take the diagram away
+    - [TikZ-Feynman](compatibility/tikz-feynman.md): its keys in, its code out
+    - [MadGraph](compatibility/madgraph.md): draw every diagram a process generates
+    - [Checking diagrams](guide/tools.md): lint, describe in words, score a layout
+    - [Data in and out](developers/interchange.md): every part named, for programs and AI
+
+</div>

@@ -198,7 +198,15 @@
 .md-typeset .pg-top .pg-seg button { border: 0; border-radius: 0; background: var(--md-default-bg-color); color: var(--md-default-fg-color--light); }
 .md-typeset .pg-top .pg-seg button + button { border-left: 1px solid var(--md-default-fg-color--lighter); }
 .md-typeset .pg-top .pg-seg button.pg-active { background: var(--feynjs-rule); color: #fff; }
-.md-typeset .pg-body { display: flex; height: min(64vh, 32rem); min-height: 20rem; }
+/* The editor beside the drawing, so typing and its drawing are seen together; the palette on the right.
+   On a narrow screen, the drawing first and the editor under it. */
+.md-typeset .pg-body { display: grid; grid-template-columns: minmax(13rem, 30%) minmax(0, 1fr) 4.6rem; height: min(70vh, 34rem); min-height: 22rem; }
+.md-typeset .pg-editor { display: flex; flex-direction: column; min-width: 0; border-right: 1px solid var(--md-default-fg-color--lightest); background: var(--md-code-bg-color); }
+@media (max-width: 60em) {
+  .md-typeset .pg-body { grid-template-columns: minmax(0, 1fr) 4.6rem; grid-template-rows: minmax(16rem, 1fr) auto; height: auto; }
+  .md-typeset .pg-editor { grid-column: 1 / -1; grid-row: 2; border-right: 0; border-top: 1px solid var(--md-default-fg-color--lightest); }
+  .md-typeset .pg-editor .pg-source { min-height: 10rem; }
+}
 .md-typeset .pg-stage { position: relative; flex: 1; min-width: 0; display: flex; align-items: center; justify-content: center; padding: 1.4rem 1rem; overflow: hidden; }
 .md-typeset .pg-drawing { color: var(--md-default-fg-color); max-width: 100%; max-height: 100%; display: flex; }
 .md-typeset .pg-drawing svg { overflow: visible; }
@@ -223,13 +231,16 @@
 .md-typeset svg.pg-tool-draw .pg-handle { cursor: crosshair; fill: var(--feynjs-rule); fill-opacity: 0.1; stroke: var(--feynjs-rule); stroke-opacity: 0.5; }
 .md-typeset svg.pg-tool-erase [data-edge].pg-on { color: var(--md-default-fg-color--lighter); cursor: not-allowed; }
 .md-typeset svg.pg-tool-erase .pg-handle { cursor: not-allowed; }
-.md-typeset .pg-source { display: block; width: 100%; min-height: 10rem; resize: vertical; box-sizing: border-box; margin-top: 0.6rem; padding: 0.6rem 0.8rem; font-family: var(--md-code-font-family); font-size: 0.7rem; line-height: 1.55; tab-size: 2; color: var(--md-code-fg-color); background: var(--md-code-bg-color); border: 1px solid var(--md-default-fg-color--lightest); border-radius: 0.5rem; }
-.md-typeset .pg-source:focus { outline: 2px solid var(--feynjs-rule); outline-offset: -1px; }
-.md-typeset .pg-status { min-height: 1.2em; margin: 0.3rem 0; font-size: 0.66rem; color: var(--md-default-fg-color--light); }
+.md-typeset .pg-source { display: block; flex: 1; width: 100%; min-height: 0; resize: none; box-sizing: border-box; margin: 0; padding: 0.6rem 0.75rem; font-family: var(--md-code-font-family); font-size: 0.66rem; line-height: 1.55; tab-size: 2; white-space: pre; overflow: auto; color: var(--md-code-fg-color); background: transparent; border: 0; border-radius: 0; }
+.md-typeset .pg-source:focus { outline: 2px solid var(--feynjs-rule); outline-offset: -2px; }
+.md-typeset .pg-status { flex: none; max-height: 40%; overflow: auto; padding: 0.3rem 0.75rem; font-size: 0.6rem; color: var(--md-default-fg-color--light); border-top: 1px solid var(--md-default-fg-color--lightest); }
+.md-typeset .pg-status:empty { display: none; }
 .md-typeset .pg-status.pg-error { color: var(--feynjs-rule); white-space: pre-wrap; font-family: var(--md-code-font-family); }
 .md-typeset .pg-model pre, .md-typeset .pg-tikz pre { max-height: 18rem; overflow: auto; margin: 0; }
 .md-typeset details.pg-tikz[hidden] { display: none; }
-.md-typeset .pg-top .pg-example { max-width: 8.5rem; }
+.md-typeset .pg-top .pg-example { max-width: 9rem; }
+.md-typeset .pg-top button.pg-why.pg-active { background: var(--feynjs-rule); border-color: var(--feynjs-rule); color: #fff; }
+.md-typeset .pg-model { margin-top: 0.6rem; }
 .md-typeset .pg-top .pg-styling { max-width: 7.5rem; }
 /* (the playground page: the pane right under the tabs) */
 .md-content__inner:has([data-feynjs-playground]) { margin-top: 0.4rem; padding-top: 0; }
@@ -245,8 +256,6 @@
 .md-typeset .pg-choice em { font-style: normal; font-family: var(--md-text-font-family); font-size: 0.56rem; color: var(--md-default-fg-color--light); }
 .md-typeset .pg-choice.pg-picked { background: var(--feynjs-rule); color: #fff; }
 .md-typeset .pg-choice.pg-picked em { color: rgba(255, 255, 255, 0.8); }
-.md-typeset .pg-examples { display: inline-flex; flex-wrap: wrap; gap: 0.25rem; }
-.md-typeset .pg-top .pg-example { max-width: 7.5rem; }
 .md-typeset .pg-filler { position: absolute; z-index: 11; width: 15rem; padding: 0.5rem; border: 1px solid var(--md-default-fg-color--lighter); border-radius: 0.5rem; background: var(--md-default-bg-color); box-shadow: 0 0.4rem 1.2rem rgba(0, 0, 0, 0.2); font-size: 0.62rem; }
 .md-typeset .pg-filler[hidden] { display: none; }
 .md-typeset .pg-filler-title { font-weight: 600; margin-bottom: 0.35rem; }
@@ -258,3 +267,14 @@
 .md-typeset .pg-filler-own input { flex: 1; min-width: 0; font: inherit; font-family: var(--md-code-font-family); padding: 0.2rem 0.35rem; border: 1px solid var(--md-default-fg-color--lighter); border-radius: 0.3rem; background: var(--md-default-bg-color); color: var(--md-default-fg-color); }
 .md-typeset .pg-filler-own button { flex-direction: row; }
 .md-typeset .pg-drawing [data-object="large"] { cursor: pointer; }
+
+/* Swatches: one small card per line style or particle, packed several to a row. */
+.md-typeset .grid.cards.feynjs-swatches { grid-template-columns: repeat(auto-fill, minmax(10.5rem, 1fr)); gap: 0.4rem; }
+.md-typeset .grid.cards.feynjs-swatches > ul > li { padding: 0.45rem 0.6rem 0.2rem; font-size: 0.68rem; line-height: 1.4; }
+.md-typeset .grid.cards.feynjs-swatches > ul > li code { font-size: 0.62rem; }
+.md-typeset .grid.cards.feynjs-swatches div.feynman { margin: 0.2em 0 0; }
+.md-typeset .grid.cards.feynjs-swatches div.feynman svg.feynjs { max-height: 3.2rem; }
+
+/* The home page's four feature cards, two by two (one column on a narrow screen). */
+.md-typeset .grid.cards.feynjs-features { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 45em) { .md-typeset .grid.cards.feynjs-features { grid-template-columns: minmax(0, 1fr); } }

@@ -10,9 +10,6 @@ tags:
 
 # MadGraph
 
-***feynjs reads MadGraph's process syntax and its Standard Model particle names. Write each decay
-on a line of its own instead of after a comma, and one diagram is drawn.***
-
 ```text title="MadGraph"
 import model sm
 generate p p > t t~, (t > b w+, w+ > e+ ve), (t~ > b~ w-, w- > j j)

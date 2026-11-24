@@ -11,8 +11,6 @@ tags:
 
 # Edges, as in TikZ-Feynman
 
-***Write any diagram edge by edge: chains of vertices, options for vertices and lines, and which legs come in and go out.***
-
 ```feynman
 i1 [e-] -- a -- i2 [e+]
 a -- [gamma] b

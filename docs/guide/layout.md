@@ -13,9 +13,6 @@ tags:
 
 # Layout engines
 
-***feynjs places every vertex itself. Choose how with one line: the force layout, a grid, your own
-positions or the older rules. Then steer a diagram by hand.***
-
 ```feynman
 --- layout: default
 in: q1 q2

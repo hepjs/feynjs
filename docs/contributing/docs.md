@@ -11,9 +11,6 @@ tags:
 
 # The docs site
 
-***How this site is built with Zensical, how to write a page and its diagrams, and how a
-`feynman` block in the markdown becomes a drawing.***
-
 A page draws a diagram from a fenced block. This is what you write:
 
 ````markdown

@@ -12,8 +12,6 @@ tags:
 
 # Theme settings
 
-***Every size, colour and layout weight feynjs uses, with its default, to change from JavaScript through the theme option of render() or run().***
-
 ```feynman
 --- default
 p p > t tbar

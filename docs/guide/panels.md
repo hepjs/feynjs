@@ -11,8 +11,6 @@ tags:
 
 # Panels and switches
 
-***Put several diagrams side by side, lettered or joined by +, = or a cut, and set switches for a whole diagram: arrows, dots, size, colour flow and more.***
-
 ```feynman
 --- (a) a photon
 i1 [e-] -- a -- i2 [e+]

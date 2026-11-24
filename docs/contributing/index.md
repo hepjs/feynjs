@@ -10,9 +10,6 @@ tags:
 
 # Contributing
 
-***How to help with feynjs: what to report, where to start in the code, the conventions to follow,
-and how a change goes in.***
-
 A diagram from a paper, written as source and drawn by feynjs. A report of one that draws badly
 needs the same two things, and the figure from the paper.
 

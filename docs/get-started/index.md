@@ -10,8 +10,6 @@ tags:
 
 # Get started
 
-***Pick where you write: a Zensical docs site or Obsidian notes. Each takes a few minutes to set up.***
-
 <div class="grid cards" markdown>
 
 -   **[Zensical](zensical.md)**

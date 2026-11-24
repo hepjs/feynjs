@@ -10,9 +10,6 @@ tags:
 
 # Components
 
-***What a diagram is made of, one page each: the two ways to write it, then lines, vertices,
-labels, loops, colour flow, detector objects and panels.***
-
 ```feynman
 p p > t tbar
 t > b W+(> e+ nu)

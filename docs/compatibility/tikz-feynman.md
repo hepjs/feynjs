@@ -10,9 +10,6 @@ tags:
 
 # TikZ-Feynman
 
-***feynjs reads the inside of a TikZ-Feynman diagram almost as written: the same lines, keys and
-labels. Drop the LaTeX wrapper, turn options into lines, and it is drawn.***
-
 <div class="grid" markdown>
 
 ```latex title="TikZ-Feynman"

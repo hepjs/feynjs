@@ -10,9 +10,6 @@ tags:
 
 # Licence
 
-***feynjs is free software under the MIT licence. Use it, change it and ship it, in open or closed
-work, as long as the copyright notice goes with it.***
-
 feynjs is under the [MIT licence](https://github.com/hepjs/feynjs/blob/main/LICENSE.md),
 copyright 2026 Jason Oliver.
 

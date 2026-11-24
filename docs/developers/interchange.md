@@ -11,9 +11,6 @@ tags:
 
 # Hand-over format
 
-***How another program hands feynjs a diagram: as feynjs source in a versioned format, or as
-plain data. MadGraph's plugin uses it; a diagram generator of your own can too.***
-
 ```feynman
 % feynjs-interchange 1
 in: i1 i2

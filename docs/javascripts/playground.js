@@ -105,26 +105,26 @@
             <button type="button" data-tool="erase" title="Click a point or a line to remove it">Erase</button>
           </span>
           <span class="pg-sep"></span>
-          <span class="pg-examples">${Object.entries(GROUPS).map(([group, list]) => `<select class="pg-example" aria-label="${group} examples"><option value="">${group}</option>${Object.keys(list).map((k) => `<option>${k}</option>`).join("")}</select>`).join("")}</span>
-          <button type="button" data-do="surprise" title="A random example">Surprise me</button>
+          <select class="pg-example" aria-label="Examples"><option value="">Examples…</option>${Object.entries(GROUPS).map(([group, list]) => `<optgroup label="${group}">${Object.keys(list).map((k) => `<option>${k}</option>`).join("")}</optgroup>`).join("")}</select>
+          <button type="button" data-do="surprise" title="A random example">Random</button>
           <span class="pg-sep"></span>
-          <label title="Layout engine">Engine <select data-switch="layout"><option value="">default</option><option value="grid">grid</option><option value="manual">manual</option><option value="v1">v1</option></select></label>
+          <select data-switch="layout" title="Layout engine" aria-label="Layout engine"><option value="">Layout: forces</option><option value="grid">Layout: grid</option><option value="manual">Layout: manual</option><option value="v1">Layout: v1</option></select>
           <span class="pg-seg pg-gridkind" hidden><button type="button" data-grid="">Square</button><button type="button" data-grid="iso">Iso</button></span>
-          <label>Styling <select class="pg-styling">${STYLINGS.map((s, i) => `<option value="${i}">${s.name}</option>`).join("")}</select></label>
-          <label>Size <select data-switch="size"><option value="">normal</option><option value="small">small</option><option value="large">large</option></select></label>
+          <select class="pg-styling" title="Styling" aria-label="Styling">${STYLINGS.map((s, i) => `<option value="${i}">${i ? s.name[0].toUpperCase() + s.name.slice(1) : "Plain"}</option>`).join("")}</select>
+          <select data-switch="size" title="Size" aria-label="Size"><option value="">Size: normal</option><option value="small">Size: small</option><option value="large">Size: large</option></select>
+          <button type="button" data-do="why" class="pg-why" title="debug: on, why each line lies where it does: each line marked with the family of rules that shapes it">Why?</button>
           <span class="pg-actions">
-            <button type="button" data-do="undo" title="Undo (⌘Z outside the editor)">Undo</button><button type="button" data-do="redo" title="Redo (⇧⌘Z)">Redo</button>
+            <span class="pg-seg"><button type="button" data-do="undo" title="Undo (⌘Z outside the editor)">Undo</button><button type="button" data-do="redo" title="Redo (⇧⌘Z)">Redo</button></span>
             <span class="pg-sep"></span>
-            <button type="button" data-do="share" title="Copy a link that holds the source">Share</button><button type="button" data-do="svg">SVG</button><button type="button" data-do="png">PNG</button><button type="button" data-do="tikz">TikZ</button>
+            <span class="pg-seg"><button type="button" data-do="share" title="Copy a link that holds the source">Share</button><button type="button" data-do="svg" title="Download an SVG">SVG</button><button type="button" data-do="png" title="Download a PNG">PNG</button><button type="button" data-do="tikz" title="TikZ-Feynman code">TikZ</button></span>
           </span>
         </div>
         <div class="pg-body">
+          <div class="pg-editor"><textarea class="pg-source" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="feynjs source"></textarea><div class="pg-status"></div></div>
           <div class="pg-stage"><div class="pg-drawing" aria-live="polite"></div><div class="pg-hover"></div><div class="pg-hint"></div></div>
           <div class="pg-palette" aria-label="Line to draw with">${PALETTE.map((p, i) => `<button type="button" class="pg-chip${i === 0 ? " pg-active" : ""}" draggable="true" data-style="${p}" title="${p}: click to draw with it, or drop it on a line"><span class="pg-chip-line"></span><span class="pg-chip-name">${p}</span></button>`).join("")}</div>
         </div>
       </div>
-      <textarea class="pg-source" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="feynjs source"></textarea>
-      <div class="pg-status"></div>
       <details class="pg-model"><summary>What a program (or an AI) sees: the diagram as data</summary><pre><code></code></pre></details>
       <details class="pg-tikz" hidden><summary>TikZ-Feynman code</summary><pre><code></code></pre></details>`;
     const $ = (sel) => root.querySelector(sel);
@@ -162,6 +162,7 @@
       root.querySelector('[data-switch="size"]').value = readSwitch(src, "size");
       const styling = STYLINGS.findIndex((s, i) => i > 0 && Object.entries(s.lines).every(([k, v]) => readSwitch(src, k) === v));
       $(".pg-styling").value = String(Math.max(0, styling));
+      $(".pg-why").classList.toggle("pg-active", readSwitch(src, "debug") === "on");
       const grid = readSwitch(src, "layout") === "grid";
       $(".pg-gridkind").hidden = !grid;
       root.querySelectorAll("[data-grid]").forEach((b) => b.classList.toggle("pg-active", (readSwitch(src, "grid").startsWith("iso") ? "iso" : "") === b.dataset.grid));
@@ -550,6 +551,7 @@
       const what = e.target.dataset?.do;
       if (!what) return;
       if (what === "undo") undo();
+      else if (what === "why") change(writeSwitch(source.value, "debug", readSwitch(source.value, "debug") === "on" ? "" : "on"));
       else if (what === "redo") redo();
       else if (what === "surprise") {
         const names = Object.keys(EXAMPLES).filter((k) => EXAMPLES[k] !== source.value);

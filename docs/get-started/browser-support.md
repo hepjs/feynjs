@@ -10,9 +10,6 @@ tags:
 
 # Browser support
 
-***feynjs runs in any current browser and in Node 20 or later. It draws plain SVG in the page's
-text colour, so diagrams follow light and dark themes.***
-
 | | Needs |
 |---|---|
 | Browsers | any current Chrome, Edge, Firefox or Safari: the script is built for ES2020 |

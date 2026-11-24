@@ -12,8 +12,6 @@ tags:
 
 # Standard Model processes
 
-***The processes physicists draw most: QED scattering, top pairs, W and Z production, Higgs production and decay, and flavour physics, each with its source.***
-
 ```feynman
 --- (a) gluon fusion
 ggF > H

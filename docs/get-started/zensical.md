@@ -11,9 +11,6 @@ tags:
 
 # Zensical setup
 
-***Two settings in `zensical.toml` (or `mkdocs.yml`), and every `feynman` code block in your
-Markdown is drawn as a diagram. This site is built this way.***
-
 1.  **Load the script.** Add feynjs to the page scripts, in the `[project]` table:
 
     === "zensical.toml"

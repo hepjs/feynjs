@@ -12,8 +12,6 @@ tags:
 
 # Loops, boxes and hadrons
 
-***Draw loops, boxes, penguins and vertex corrections, and group quark legs into mesons and baryons. You write the connections; feynjs finds the loops and hadrons.***
-
 ```feynman
 in: d1 b
 out: d2 s mu1 mu2

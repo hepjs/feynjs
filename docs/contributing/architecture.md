@@ -11,9 +11,6 @@ tags:
 
 # Architecture
 
-***How feynjs turns source text into SVG: the parser, the two layout engines, the renderer and the
-tools, and which file does each step.***
-
 ```text
 source text      p p > t tbar, a -- [photon] b
    │  expand processes          src/parse/chains.ts

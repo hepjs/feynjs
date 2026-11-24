@@ -12,8 +12,6 @@ tags:
 
 # Command line
 
-***Draw, check and export diagrams from a shell: one command turns a .feyn file into SVG, TikZ-Feynman code, a lint report or a plain-English description.***
-
 ```sh
 feynjs render ggf.feyn > ggf.svg
 ```
@@ -42,6 +40,7 @@ output. Installed with the package (`npx feynjs ...`), or run from a checkout as
 | `describe` | the [description](../guide/tools.md#describe) as JSON | 1 on a mistake |
 | `explain` | the diagram in plain English | 1 on a mistake |
 | `measure` | the [layout score](../guide/tools.md#measure) as JSON | 1 on a mistake |
+| `cache [dir]` | each `*-feynjs-*.feyn` a LaTeX document left in `dir` (default `.`) drawn as TikZ-Feynman code beside it, skipping those already drawn: see [LaTeX](../compatibility/latex.md) | 1 on a mistake |
 
 ```sh
 feynjs render ggf.feyn > ggf.svg
@@ -50,4 +49,4 @@ echo 'e- e+ > Z > mu- mu+' | feynjs describe
 for f in diagrams/*.feyn; do feynjs check "$f" || echo "in $f"; done
 ```
 
-Files with diagram source conventionally end in `.feyn`.
+Files with diagram source conventionally end in `.feyn`; a `.json` file is read as a [diagram given as data](../developers/interchange.md). `--unit cm` sets the length of a propagator in the TikZ code, and `--picture` writes a bare `tikzpicture` without a document round it.

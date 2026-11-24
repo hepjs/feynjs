@@ -14,8 +14,6 @@ hide:
 
 # All particles
 
-***Every particle name feynjs knows, and how each is drawn: write a name on a line or a leg and it sets the line style, the arrow and the label.***
-
 ```feynman
 p p > chargino+ neutralino2
 chargino+ > W+ neutralino1

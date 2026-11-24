@@ -11,8 +11,6 @@ tags:
 
 # Layout rules
 
-***The rules of the older v1 layout engine (layout: v1), grouped by what they do, with the theme setting that tunes each. The default force layout does not use them.***
-
 ```feynman
 layout: v1
 e- e+ > Z H

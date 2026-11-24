@@ -11,9 +11,6 @@ tags:
 
 # Extending feynjs
 
-***Step-by-step recipes for the common changes: a new particle, line style, vertex shape, switch,
-layout step or force, and process syntax.***
-
 A particle is one line in the registry, `"sneutrino": susy("dash", "\\tilde\\nu")`. From then on
 `[sneutrino]` draws a dashed SUSY line labelled ν̃:
 

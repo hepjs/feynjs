@@ -12,8 +12,6 @@ tags:
 
 # Stop production, step by step
 
-***Stop pairs at the LHC and the ways a stop decays: to a top or a charm quark, through a chargino or the second neutralino, or without R-parity.***
-
 ```feynman
 i1 [p] -- pp [blob] -- i2 [p]
 pp -- [stop] s1

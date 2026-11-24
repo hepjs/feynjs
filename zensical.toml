@@ -61,6 +61,7 @@ nav = [
   { "Compatibility" = [
     { "TikZ-Feynman" = "compatibility/tikz-feynman.md" },
     { "MadGraph" = "compatibility/madgraph.md" },
+    { "LaTeX" = "compatibility/latex.md" },
   ] },
   { "Contributing" = [
     { "How to contribute" = "contributing/index.md" },

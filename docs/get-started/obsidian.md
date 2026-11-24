@@ -10,9 +10,6 @@ tags:
 
 # Obsidian setup
 
-***The feynjs plugin draws a `feynman` code block in any note. It follows light and dark themes,
-and everything it needs is inside the plugin, so it works offline.***
-
 1.  **Get the plugin.** Download `feynjs-obsidian.zip` from the
     [latest release](https://github.com/hepjs/feynjs/releases/latest) and unzip it. It holds one
     folder, `feynjs`.

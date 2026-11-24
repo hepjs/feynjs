@@ -12,8 +12,6 @@ tags:
 
 # Labels
 
-***Write your own labels in a small subset of TeX, mark a coupling at a vertex, and point at parts of a diagram with notes. Every label is placed clear of the lines.***
-
 ```feynman
 i1 [e-] -- a -- i2 [e+]
 a -- [photon, momentum=q, label'=\gamma^*] b
