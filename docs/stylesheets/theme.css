@@ -388,18 +388,18 @@
 .md-typeset .feynjs-row--morph div.feynman svg.feynjs { width: 100%; height: auto; max-height: none; }
 .md-typeset .feynjs-row--morph .feynjs-on-grid .feynjs-grid { animation: feynjs-step-in 0.5s ease-out both; }
 
-/* The banner's water: rings the script drops in, from the js and, smaller, anywhere; each thins and
-   fades as it spreads. (With the script, the fixed rings of the stylesheet stand down.) */
+/* The banner's rings: the script starts one from the js every few seconds; each grows at an even
+   pace, the same fine line all the way, and fades. (With the script, the fixed rings stand down.) */
 .md-typeset .feynjs-water { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
 .md-typeset .feynjs-splash-mark { z-index: 1; }
 .md-typeset .feynjs-splash.feynjs-water-on .feynjs-splash-ripples span { display: none; }
 .md-typeset .feynjs-water-ring {
-  position: absolute; width: 0.5rem; height: 0.5rem; border-radius: 50%; transform: translate(-50%, -50%);
-  border: 2px solid var(--feynjs-brick, #c0392b); opacity: 0;
-  animation-name: feynjs-water; animation-timing-function: cubic-bezier(0.12, 0.6, 0.3, 1); animation-fill-mode: forwards;
+  position: absolute; width: 0.6rem; height: 0.6rem; border-radius: 50%; transform: translate(-50%, -50%);
+  border: 1.25px solid var(--feynjs-brick, #c0392b); opacity: 0;
+  animation-name: feynjs-water; animation-timing-function: linear; animation-fill-mode: forwards;
 }
 @keyframes feynjs-water {
-  0% { width: 0.5rem; height: 0.5rem; opacity: var(--o); border-width: 2.2px; }
-  100% { width: var(--to); height: var(--to); opacity: 0; border-width: 0.4px; }
+  0% { width: 0.6rem; height: 0.6rem; opacity: 0.5; }
+  100% { width: var(--to); height: var(--to); opacity: 0; }
 }
 [data-md-color-scheme="slate"] .md-typeset .feynjs-water-ring { border-color: #e05a4c; }

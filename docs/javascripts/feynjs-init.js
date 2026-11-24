@@ -80,8 +80,10 @@
   };
   // the two-engines row: the same diagram moves between the force layout and the grid. Each frame
   // is drawn by feynjs, every point pinned (at (x, y)) part way between where the two engines put
-  // it, so the lines re-fit their waves and arrows as they go. It plays back and forth while the
-  // row is in view, a label over it saying which engine is showing.
+  // it, so the lines re-fit their waves and arrows as they go. The points move in time order, left
+  // to right, each a little after the one before, and snap into place with a small overshoot; the
+  // grid draws in as they arrive and fades as they leave. It plays back and forth while the row is
+  // in view, a label over it saying which engine is showing.
   var twoEngines = function () {
     document.querySelectorAll(".feynjs-row--morph div.feynman[data-source]:not([data-morph])").forEach(function (box) {
       box.setAttribute("data-morph", "");
@@ -98,19 +100,30 @@
       var x0 = Math.min(boxes[0][0], boxes[1][0]), y0 = Math.min(boxes[0][1], boxes[1][1]);
       var x1 = Math.max(boxes[0][0] + boxes[0][2], boxes[1][0] + boxes[1][2]), y1 = Math.max(boxes[0][1] + boxes[0][3], boxes[1][1] + boxes[1][3]);
       var frame = x0.toFixed(2) + " " + y0.toFixed(2) + " " + (x1 - x0).toFixed(2) + " " + (y1 - y0).toFixed(2);
-      var show = function (svg, grid) {
+      // (the grid the grid engine draws behind its diagram, to draw in part way)
+      var gridLines = (/<path class="feynjs-grid"[^>]*\/>/.exec(ends[1]) || [""])[0];
+      var show = function (svg, grid, gridShown) {
         // (the same frame and no size of its own: the box sizes it, the same every frame)
-        box.innerHTML = svg.replace(/<svg ([^>]*?)viewBox="[^"]+"([^>]*?) width="[^"]*" height="[^"]*"/, '<svg $1viewBox="' + frame + '"$2');
+        var drawn = svg.replace(/<svg ([^>]*?)viewBox="[^"]+"([^>]*?) width="[^"]*" height="[^"]*"/, '<svg $1viewBox="' + frame + '"$2');
+        if (gridShown && gridLines) drawn = drawn.replace(/(<g class="feynjs-edges")/, gridLines.replace("<path ", '<path opacity="' + gridShown.toFixed(3) + '" ') + "$1");
+        box.innerHTML = drawn;
         box.classList.toggle("feynjs-on-grid", !!grid);
       };
-      var between = function (t) {
+      // (each point's turn: by how far along it lies, left to right, the collision first)
+      var xs = at[0].map(function (v) { return v.at[0]; });
+      var left = Math.min.apply(null, xs), across = (Math.max.apply(null, xs) - left) || 1;
+      var SWEEP = 0.55, EACH = 0.9, LENGTH = SWEEP + EACH;
+      var turn = at[0].map(function (v) { return (SWEEP * (v.at[0] - left)) / across; });
+      // (a snap: past the mark a little, then back)
+      var snap = function (u) { var c = 1.4; return 1 + (c + 1) * Math.pow(u - 1, 3) + c * Math.pow(u - 1, 2); };
+      var between = function (seconds, from) {
         var pins = at[0].map(function (v, k) {
-          var w = at[1][k];
-          return v.id + " at (" + (v.at[0] + (w.at[0] - v.at[0]) * t).toFixed(3) + ", " + (v.at[1] + (w.at[1] - v.at[1]) * t).toFixed(3) + ")";
+          var a = at[from][k].at, b = at[1 - from][k].at;
+          var u = Math.max(0, Math.min(1, (seconds - turn[k]) / EACH)), e = u === 0 ? 0 : snap(u);
+          return v.id + " at (" + (a[0] + (b[0] - a[0]) * e).toFixed(3) + ", " + (a[1] + (b[1] - a[1]) * e).toFixed(3) + ")";
         });
         return feynjs.render("layout: manual\n" + source + "\n" + pins.join("\n"), { idPrefix: "morph" });
       };
-      var ease = function (t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
       var state = 0, running = null, timer = null;
       var label = document.createElement("div");
       label.className = "feynjs-engine-label";
@@ -123,11 +136,13 @@
         if (to === state || running) return;
         mark(to);
         if (still) { state = to; show(ends[to], to === 1); if (then) then(); return; }
-        var from = state, start = performance.now(), length = 1400;
+        var from = state, start = performance.now();
         running = true;
         var step = function (now) {
-          var t = Math.min(1, (now - start) / length), k = ease(t);
-          if (t < 1) { show(between(from === 0 ? k : 1 - k), false); requestAnimationFrame(step); }
+          var seconds = (now - start) / 1000, t = Math.min(1, seconds / LENGTH);
+          // (the grid draws in over the second half on the way there, fades over the first half back)
+          var gridShown = to === 1 ? Math.max(0, (t - 0.45) / 0.55) : Math.max(0, 1 - t / 0.5);
+          if (t < 1) { show(between(seconds, from), false, gridShown); requestAnimationFrame(step); }
           else { state = to; running = null; show(ends[to], to === 1); if (then) then(); }
         };
         requestAnimationFrame(step);
@@ -142,10 +157,9 @@
       }
     });
   };
-  // the home page's banner, like water: from the js, a drop every few seconds, each a train of three
-  // rings that thin and fade as they spread; now and then a smaller drop lands somewhere else in
-  // the banner. Paused while the banner is out of view or the page is hidden; still for readers
-  // who ask for less motion.
+  // the home page's banner: rings from the js, one every few seconds, growing slowly and evenly
+  // outward and fading, so a few are always on their way, evenly spaced. Paused while the banner is
+  // out of view or the page is hidden; still for readers who ask for less motion.
   var water = function () {
     document.querySelectorAll(".feynjs-splash:not([data-water])").forEach(function (splash) {
       splash.setAttribute("data-water", "");
@@ -156,32 +170,20 @@
       layer.className = "feynjs-water";
       layer.setAttribute("aria-hidden", "true");
       splash.insertBefore(layer, splash.firstChild);
-      var ring = function (x, y, to, opacity, seconds, delay) {
+      var EVERY = 1.8, SECONDS = 9;
+      var ring = function () {
+        var b = splash.getBoundingClientRect(), s = source.getBoundingClientRect();
         var r = document.createElement("span");
         r.className = "feynjs-water-ring";
-        r.style.left = x + "px"; r.style.top = y + "px";
-        r.style.setProperty("--to", to + "px"); r.style.setProperty("--o", opacity);
-        r.style.animationDuration = seconds + "s"; r.style.animationDelay = delay + "s";
+        r.style.left = (s.left - b.left) + "px"; r.style.top = (s.top - b.top) + "px";
+        r.style.setProperty("--to", (Math.max(b.width, b.height) * 2.2) + "px");
+        r.style.animationDuration = SECONDS + "s";
         r.addEventListener("animationend", function () { r.remove(); });
         layer.appendChild(r);
       };
-      var where = function () {
-        var b = splash.getBoundingClientRect(), s = source.getBoundingClientRect();
-        return { x: s.left - b.left, y: s.top - b.top, w: b.width, h: b.height };
-      };
-      // (a drop: a train of rings, close together, each fainter than the one before)
-      var drop = function (x, y, to, opacity, seconds, rings) {
-        for (var k = 0; k < rings; k++) ring(x, y, to * (1 - k * 0.06), opacity * Math.pow(0.6, k), seconds, k * 0.22);
-      };
-      var big = null, small = null, on = false;
-      var bigDrop = function () { var p = where(); drop(p.x, p.y, Math.max(p.w, p.h) * 1.7, 0.62, 5.6, 3); };
-      var smallDrop = function () {
-        var p = where();
-        drop(p.w * (0.06 + Math.random() * 0.88), p.h * (0.08 + Math.random() * 0.84), 140 + Math.random() * 180, 0.34, 2.6 + Math.random(), 2);
-        small = setTimeout(smallDrop, 1100 + Math.random() * 1500);
-      };
-      var start = function () { if (on) return; on = true; bigDrop(); big = setInterval(bigDrop, 2600); small = setTimeout(smallDrop, 900); };
-      var stop = function () { on = false; clearInterval(big); clearTimeout(small); };
+      var timer = null;
+      var start = function () { if (timer) return; ring(); timer = setInterval(ring, EVERY * 1000); };
+      var stop = function () { clearInterval(timer); timer = null; };
       splash.classList.add("feynjs-water-on");
       if ("IntersectionObserver" in window) {
         new IntersectionObserver(function (seen) { if (seen[0].isIntersecting && !document.hidden) start(); else stop(); }, { threshold: 0.1 }).observe(splash);

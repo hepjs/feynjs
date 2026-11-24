@@ -35,8 +35,8 @@ A JavaScript display engine for *Feynman diagrams*{ .feynjs-accent }
 
 ## Write it, see it { #write-it-see-it .feynjs-tour-title }
 
-If you have written TikZ-Feynman, you can already write feynjs. Every diagram here is drawn live, by
-your browser, from the text beside it.
+Every diagram here is drawn live, by your browser, from the text beside it. Written in syntax
+inspired by MadGraph and TikZ-Feynman.
 { .feynjs-tour-lead }
 
 <div class="feynjs-row" markdown>
@@ -190,11 +190,11 @@ t~ > b~ W-(> d u~)
 
 ### More than lines
 
-The final states a detector sees, drawn as it sees them: large-R jets with what they hold, semi-visible and emerging jets, missing energy. A pulse draws the eye where it should go.
+The final states a detector sees, drawn as it sees them: large-R jets with what they hold, semi-visible and emerging jets, missing energy.
 
 ````markdown
 ```feynman
-i1 [p] -- pp [blob, pulse] -- i2 [p]
+i1 [p] -- pp [blob] -- i2 [p]
 pp -- [LRJ 1b W(2j)] j1 [J]
 pp -- [Z'] z
 z -- [SVJ] f1 [\text{SVJ}]
@@ -206,11 +206,45 @@ z -- [EMG] f2 [\text{EJ}]
 <div class="feynjs-row-diagram" markdown>
 
 ```feynman
-i1 [p] -- pp [blob, pulse] -- i2 [p]
+i1 [p] -- pp [blob] -- i2 [p]
 pp -- [LRJ 1b W(2j)] j1 [J]
 pp -- [Z'] z
 z -- [SVJ] f1 [\text{SVJ}]
 z -- [EMG] f2 [\text{EJ}]
+```
+
+</div>
+</div>
+
+<div class="feynjs-row" markdown>
+<div class="feynjs-row-text" markdown>
+
+### Draw the eye
+
+Add `pulse` to a point, or a line, and a glow beats round it and along every line that meets there:
+here, the Higgs self-coupling in Higgs pair production.
+
+````markdown
+```feynman
+i1 [g] -- a
+i2 [g] -- b
+a -- [fermion] c -- [fermion] b -- [fermion, label=t] a
+c -- [H] v [pulse, label=\lambda_{HHH}]
+v -- f1 [H]
+v -- f2 [H]
+```
+````
+
+</div>
+<div class="feynjs-row-diagram" markdown>
+
+```feynman
+i1 [g] -- a
+i2 [g] -- b
+a -- [fermion] c -- [fermion] b -- [fermion, label=t] a
+c -- [H] v [pulse, label=\lambda_{HHH}]
+v -- f1 [H]
+v -- f2 [H]
 ```
 
 </div>
