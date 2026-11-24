@@ -1,5 +1,6 @@
 ---
 hide:
+  - navigation
   - toc
 tags:
   - live editor
@@ -10,10 +11,7 @@ tags:
   - AI
 ---
 
-# Playground
-
-***Write a diagram below and see it drawn above as you type. Point at any part to see its name and
-the line that made it; drag a point to move it.***
+# Playground { .feynjs-hidden }
 
 <div data-feynjs-playground></div>
 

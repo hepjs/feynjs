@@ -70,26 +70,31 @@
 
   function build(root) {
     root.innerHTML = `
-      <div class="pg-tools" role="toolbar" aria-label="Tools">
-        <span class="pg-seg" data-group="tool">
-          <button type="button" data-tool="move" class="pg-active" title="Drag points to move them">Move</button>
-          <button type="button" data-tool="draw" title="Click empty space for a point; drag from a point to draw a line">Draw</button>
-          <button type="button" data-tool="erase" title="Click a point or a line to remove it">Erase</button>
-        </span>
-        <span class="pg-palette" aria-label="Line to draw with">${PALETTE.map((p, i) => `<button type="button" class="pg-chip${i === 0 ? " pg-active" : ""}" draggable="true" data-style="${p}" title="${p}: click to draw with it, or drop it on a line"><span class="pg-chip-line"></span><span class="pg-chip-name">${p}</span></button>`).join("")}</span>
-      </div>
-      <div class="pg-stage"><div class="pg-drawing" aria-live="polite"></div><div class="pg-hover"></div><div class="pg-hint"></div></div>
-      <div class="pg-bar">
-        <label>Example <select class="pg-example"><option value="">choose…</option>${Object.keys(EXAMPLES).map((k) => `<option>${k}</option>`).join("")}</select></label>
-        <button type="button" data-do="surprise" title="A random example">Surprise me</button>
-        <label>Engine <select data-switch="layout"><option value="">default</option><option value="grid">grid</option><option value="manual">manual</option><option value="v1">v1</option></select></label>
-        <span class="pg-seg pg-gridkind" hidden><button type="button" data-grid="">Square</button><button type="button" data-grid="iso">Iso</button></span>
-        <label>Styling <select class="pg-styling">${STYLINGS.map((s, i) => `<option value="${i}">${s.name}</option>`).join("")}</select></label>
-        <label>Size <select data-switch="size"><option value="">normal</option><option value="small">small</option><option value="large">large</option></select></label>
-        <span class="pg-actions">
-          <button type="button" data-do="undo" title="Undo (⌘Z outside the editor)">Undo</button><button type="button" data-do="redo" title="Redo">Redo</button>
-          <button type="button" data-do="share">Share link</button><button type="button" data-do="svg">SVG</button><button type="button" data-do="png">PNG</button><button type="button" data-do="tikz">TikZ</button>
-        </span>
+      <div class="pg-pane">
+        <div class="pg-top" role="toolbar" aria-label="Playground controls">
+          <span class="pg-seg" data-group="tool">
+            <button type="button" data-tool="move" class="pg-active" title="Drag points to move them">Move</button>
+            <button type="button" data-tool="draw" title="Click empty space for a point; drag from a point to draw a line">Draw</button>
+            <button type="button" data-tool="erase" title="Click a point or a line to remove it">Erase</button>
+          </span>
+          <span class="pg-sep"></span>
+          <select class="pg-example" aria-label="Example"><option value="">Examples…</option>${Object.keys(EXAMPLES).map((k) => `<option>${k}</option>`).join("")}</select>
+          <button type="button" data-do="surprise" title="A random example">Surprise me</button>
+          <span class="pg-sep"></span>
+          <label title="Layout engine">Engine <select data-switch="layout"><option value="">default</option><option value="grid">grid</option><option value="manual">manual</option><option value="v1">v1</option></select></label>
+          <span class="pg-seg pg-gridkind" hidden><button type="button" data-grid="">Square</button><button type="button" data-grid="iso">Iso</button></span>
+          <label>Styling <select class="pg-styling">${STYLINGS.map((s, i) => `<option value="${i}">${s.name}</option>`).join("")}</select></label>
+          <label>Size <select data-switch="size"><option value="">normal</option><option value="small">small</option><option value="large">large</option></select></label>
+          <span class="pg-actions">
+            <button type="button" data-do="undo" title="Undo (⌘Z outside the editor)">Undo</button><button type="button" data-do="redo" title="Redo (⇧⌘Z)">Redo</button>
+            <span class="pg-sep"></span>
+            <button type="button" data-do="share" title="Copy a link that holds the source">Share</button><button type="button" data-do="svg">SVG</button><button type="button" data-do="png">PNG</button><button type="button" data-do="tikz">TikZ</button>
+          </span>
+        </div>
+        <div class="pg-body">
+          <div class="pg-stage"><div class="pg-drawing" aria-live="polite"></div><div class="pg-hover"></div><div class="pg-hint"></div></div>
+          <div class="pg-palette" aria-label="Line to draw with">${PALETTE.map((p, i) => `<button type="button" class="pg-chip${i === 0 ? " pg-active" : ""}" draggable="true" data-style="${p}" title="${p}: click to draw with it, or drop it on a line"><span class="pg-chip-line"></span><span class="pg-chip-name">${p}</span></button>`).join("")}</div>
+        </div>
       </div>
       <textarea class="pg-source" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="feynjs source"></textarea>
       <div class="pg-status"></div>
@@ -143,6 +148,7 @@
       } else {
         try {
           drawing.innerHTML = feynjs.render(src, { idPrefix: "pg" });
+          fit();
           say("");
           const meta = drawing.querySelector("metadata.feynjs-model");
           model = meta ? JSON.parse(meta.textContent) : null;
@@ -154,6 +160,19 @@
       showHint();
     }
     const later = () => { clearTimeout(timer); timer = setTimeout(draw, 120); };
+    // (the drawing as large as the pane allows, up to a little over twice its own size; its own
+    // size kept, so a resize only rescales it)
+    function fit() {
+      const svg = drawing.querySelector("svg"), stage = drawing.parentElement;
+      if (!svg || svg.classList.contains("pg-board")) return;
+      if (!svg.dataset.w) { svg.dataset.w = svg.getAttribute("width"); svg.dataset.h = svg.getAttribute("height"); }
+      const w = parseFloat(svg.dataset.w), h = parseFloat(svg.dataset.h);
+      if (!w || !h) return;
+      const k = Math.min((stage.clientWidth - 40) / w, (stage.clientHeight - 56) / h, 2.2);
+      if (k > 0) { svg.setAttribute("width", (w * k).toFixed(1)); svg.setAttribute("height", (h * k).toFixed(1)); }
+    }
+    let lastStage = 0;
+    new ResizeObserver(() => { const size = drawing.parentElement.clientWidth * 10000 + drawing.parentElement.clientHeight; if (size !== lastStage) { lastStage = size; fit(); } }).observe(drawing.parentElement);
     function showHint() {
       hint.textContent = tool === "draw" ? `Drawing ${brush}: click empty space for a point · drag from a point to another, or out into space`
         : tool === "erase" ? "Click a point or a line to remove it" : "Drag a point to move it · click a part to find its source line";
@@ -333,7 +352,7 @@
     });
     const save = (blob, name) => { const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000); };
     const standalone = () => feynjs.render(source.value, { idPrefix: "pgx", standalone: true });
-    root.querySelector(".pg-bar").addEventListener("click", async (e) => {
+    root.querySelector(".pg-top").addEventListener("click", async (e) => {
       const what = e.target.dataset?.do;
       if (!what) return;
       if (what === "undo") undo();
