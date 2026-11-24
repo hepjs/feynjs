@@ -50,7 +50,8 @@
     "test": "node --test test/*.test.ts",
     "typecheck": "tsc --noEmit",
     "approve-layouts": "node scripts/approve-layouts.mjs",
-    "docs": "npm run build && zensical build",
+    "docs": "npm run build && node scripts/forces-reference.mjs && zensical build",
+    "docs:reference": "node scripts/forces-reference.mjs",
     "prepublishOnly": "npm run typecheck && npm test && npm run build",
     "test:unit": "node --test test/feynjs.test.ts",
     "test:layouts": "node --test test/layout-baseline.test.ts"

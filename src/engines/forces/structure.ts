@@ -1,5 +1,6 @@
 import type { Diagram } from "../../model.ts";
 import { particleOfEdge } from "../../particles/identify.ts";
+import { PROPERTIES } from "../../particles/properties.ts";
 
 /**
  * What layout v2 knows about a diagram before any geometry: who is joined to whom, which
@@ -119,6 +120,37 @@ export interface Line {
   dashed?: boolean;
   /** the bend the author gave the line, if any (positive bulges left of travel from a to b) */
   bend?: number;
+  /**
+   * a fermion's mass, as the layout treats it: `light` (every lepton and quark but the top: all
+   * drawn alike), `massive` (the top: heavy enough to decay to a fermion and a W or Z), or
+   * undefined where the particle is not known (an unnamed line): treated as light
+   */
+  mass?: "light" | "massive";
+  /** true for a particle marked off-shell, `W*`, `(W_R)^*`, `\\gamma^*` (not `W^{(*)}`, perhaps off-shell) */
+  offShell?: boolean;
+}
+
+/** Fermions with no mass in the table that are light all the same: a quark, a lepton, written generically. */
+const GENERIC_LIGHT = new Set(["q", "qbar", "q'", "qbar'", "l", "l-", "l+", "f", "fbar", "f'", "j"]);
+
+/**
+ * How heavy a fermion is, for the layout, from its particle key or its label (`t`, `\bar t`,
+ * `t^*`, `\ell`, `\nu_\mu`): `massive` from 50 GeV up (the top), else `light` (every other
+ * lepton and quark); undefined for a particle the table does not know. A superpartner (`\tilde`)
+ * is not an ordinary fermion: undefined.
+ */
+export function massOf(name: string | undefined): "light" | "massive" | undefined {
+  if (!name || /\\tilde|\\widetilde/.test(name)) return undefined;
+  const key = name.trim().replace(/\\(?:bar|overline)\s*\{([^}]*)\}/, "$1bar").replace(/\\(?:bar|overline)\s*([A-Za-z]+)/, "$1bar")
+    .replace(/\^\s*(\{[^}]*\}|\S)/g, "").replace(/_\s*(\{[^}]*\}|\\?[A-Za-z]+|\S)/g, "").replace(/\\ell/, "l").replace(/\\([A-Za-z]+)/g, "$1").replace(/[{}$\s]/g, "").replace(/~$/, "bar");
+  const known = PROPERTIES[key] ?? PROPERTIES[key.replace(/bar$/, "")];
+  if (!known) return GENERIC_LIGHT.has(key) || GENERIC_LIGHT.has(key.replace(/bar$/, "")) ? "light" : undefined;
+  if (known.spin !== "1/2") return undefined;
+  const m = /([\d.]+)\s*(eV|keV|MeV|GeV|TeV)/.exec(known.mass ?? "");
+  // (a hypothetical fermion, a heavy neutral lepton or a top partner, is massive)
+  if (!m) return known.note?.includes("hypothetical") ? "massive" : "light";
+  const gev = Number(m[1]) * { eV: 1e-9, keV: 1e-6, MeV: 1e-3, GeV: 1, TeV: 1e3 }[m[2] as "GeV"];
+  return gev >= 50 ? "massive" : "light";
 }
 
 /** Read the points, lines and time order of a diagram. */
@@ -135,6 +167,8 @@ export function readStructure(d: Diagram, sizes?: Sizes, vertexPad = 0.08): Stru
   }
   const external = ids.map((_, i) => linesAt[i].length === 1);
   for (const line of lines) line.leg = external[line.a] || external[line.b];
+  d.edges.forEach((e, l) => { const name = `${e.particle ?? ""} ${e.label ?? ""}`; if (name.includes("*") && !name.includes("(*)")) lines[l].offShell = true; });
+  d.edges.forEach((e, l) => { if (lines[l].fermion) lines[l].mass = massOf(lines[l].leg ? particleOfEdge(d, e) ?? e.label : e.particle ?? e.label); });
   const field = ids.map((id, i) => external[i] && d.vertices.get(id)!.shape === "crossed");
   const first = orderInTime(d, ids, lines, linesAt, external, new Map(), field);
   const hadrons = d.hadrons.map((h) => ({

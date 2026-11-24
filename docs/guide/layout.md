@@ -827,8 +827,10 @@ feynjs.render(source, { theme: { forces: { lineLength: 1.2 } } });
 ## Why a line is where it is
 
 `debug: on` shows how the layout came out the way it did. Behind the drawing is a faint grid,
-half a line apart. Each point carries its name, and each line a number. Under the drawing, line by
-line, is the line's length and direction and the rules that hold it there.
+half a line apart. Each point carries its name, and each line a mark: the family of rules that
+shapes it most, a letter on a disc of the family's colour (D for decays, M for mass, I for the
+incoming lines). A diagram is shaped by a handful of families, not one rule for each line. Under the
+drawing, each family that marks a line is said once, with what it does and the lines it holds.
 
 ```text
 debug: on
@@ -856,19 +858,23 @@ c -- f2 [l+]
 c -- f3 [nu]
 ```
 
-The reasons are measured, not written by hand. The diagram is settled again with each rule of the
-force layout left out in turn. A rule is a reason for a line when leaving it out changes that line,
-and the number in brackets is by how much: how far the line moves, in line lengths. The rules a
-line depends on most come first. After them come the steps that run once the forces have settled,
+The reasons are measured, not written by hand. The force layout's rules come in seven families:
+spacing, time, incoming, decays, mass, hadrons and loops (each family's settings are listed in the
+[theme reference](../reference/theme.md#layout-v2-forces-forces)). The diagram is settled again with
+each family left out in turn. A family is a reason for a line when leaving it out changes that
+line, and the number in brackets is by how much: how far the line moves, in line lengths. The
+families a line depends on most come first. After them come the steps that run once the forces have settled,
 when they moved the line: legs turned over to follow the `out:` list, a top's b turned outside, two
 halves made an exact mirror image, final states lined up.
 
-Hover over a line's number to see its reasons beside the drawing. Every SVG carries them too, in
-the `data-why` attribute of each number's group.
+Spacing and time act on every line, so a line is marked with one of them only when no other family
+holds it. Hover over a mark to see its line's length and direction and every family that holds it,
+with how much. Every SVG carries the same in each mark's `data-why` attribute, and the family in
+`data-family`.
 
 Use it to find which rule to [steer](#steering-it) or [tune](../reference/theme.md). A diagram with
-`debug: on` takes longer to draw, about a twentieth of a second for each rule it uses, so take it
-out once the layout is right. The [rule engine (v1)](#the-rule-engine-v1) is not measured: its
+`debug: on` takes longer to draw, a tenth of a second or so, so take it out once the layout is
+right. The [rule engine (v1)](#the-rule-engine-v1) is not measured: its
 lines are numbered and their lengths and directions given, without reasons.
 
 ## Measuring a layout

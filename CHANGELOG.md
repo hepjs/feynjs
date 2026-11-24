@@ -54,10 +54,19 @@ layout that moves is a change, recorded here.
 - **Mirror-image diagrams are drawn exactly so:** two alike chains either side of a t-channel
   exchange (squarks either side of a gluino) mirror each other point for point, at least a line
   apart. 23 approved layouts moved in all.
-- **`debug: on`:** a faint grid behind the drawing, each point's name, each line numbered, and
-  under the drawing why each line lies where it does: the rules without which it would move most,
-  measured by settling the diagram again without each, and the steps after the forces that moved
-  it. Each line's reasons are also its number's tooltip and `data-why` attribute.
+- **`debug: on`:** a faint grid behind the drawing, each point's name, and each line marked with
+  the family of rules that shapes it most (a letter on a disc of the family's colour), measured by
+  settling the diagram again without each family; under the drawing, each family once, with the
+  lines it holds, and the steps after the forces. A mark's tooltip and `data-why` give its line's
+  every family, with how much.
+- **The force layout's rules in seven families** (spacing, time, incoming, decays, mass, hadrons,
+  loops), each force and setting in one; the theme reference lists the settings family by family,
+  written from the code.
+- **Particles by kind and mass, never by name:** a W and a Z are drawn alike, and every fermion
+  alike but by its mass. A massive fermion (the top, or a new heavy one: N, T, B, Q) gives off its
+  light partner short and to the outside, as a top gives off its b, when the boson it decays to is
+  real; a light one (every lepton, every other quark) never does. 6 approved layouts moved: heavy
+  neutral leptons and vector-like quarks.
 - **Dark pages:** the background grid is a lighter grey (docs site and Obsidian), where the text
   colour thinned had come out near black.
 

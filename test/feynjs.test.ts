@@ -446,14 +446,43 @@ test("optical size: a smaller diagram is smaller, with relatively heavier lines"
   assert.ok(stroke(half) / stroke(normal) > width(half) / width(normal));
 });
 
+test("every force and every force setting belongs to exactly one family", async () => {
+  const { FAMILIES } = await import("../src/engines/forces/families.ts");
+  const { allForces } = await import("../src/engines/forces/forces.ts");
+  const { readStructure } = await import("../src/engines/forces/structure.ts");
+  const settings = FAMILIES.flatMap((f) => f.settings);
+  assert.deepEqual([...settings].sort(), Object.keys(defaultTheme.forces).sort());
+  const d = parse("i1 [e-] -- a -- i2 [e+]\na -- [Z] b\nf1 [mu-] -- b -- f2 [mu+]");
+  layoutDiagram(d, defaultTheme);
+  const forces = allForces(readStructure(d), defaultTheme.forces).map((f) => f.name);
+  assert.deepEqual(FAMILIES.flatMap((f) => f.forces).sort(), [...forces].sort());
+});
+
+test("fermions are drawn by mass, not by name: a heavy neutral lepton's lepton leaves as a top's b does", () => {
+  const top = render("in: i1 i2\nout: b1 l nu\ni1 [g] -- a\ni2 [g] -- a\na -- [plain, label=t] t1\nt1 -- b1 [b]\nt1 -- [W] w\nw -- l [l+]\nw -- nu [nu]", { theme: { engine: "v2" } });
+  const heavy = render("in: i1 i2\nout: b1 l nu\ni1 [g] -- a\ni2 [g] -- a\na -- [plain, label=N] t1\nt1 -- b1 [l-]\nt1 -- [W] w\nw -- l [l+]\nw -- nu [nu]", { theme: { engine: "v2" } });
+  const light = render("in: i1 i2\nout: b1 l nu\ni1 [g] -- a\ni2 [g] -- a\na -- [plain, label=\\nu] t1\nt1 -- b1 [l-]\nt1 -- [W] w\nw -- l [l+]\nw -- nu [nu]", { theme: { engine: "v2" } });
+  const points = (svg: string) => JSON.parse(svg.match(/<metadata class="feynjs-model">([\s\S]*?)<\/metadata>/)![1].replace(/&quot;/g, '"')).vertices.map((v: { x: number; y: number }) => [v.x, v.y]);
+  // (the top and the heavy N alike: the same shape; a light neutrino's line otherwise)
+  assert.deepEqual(points(heavy), points(top));
+  assert.notDeepEqual(points(light), points(top));
+});
+
 test("debug: on draws a grid, every point's name, and why each line lies where it does", () => {
   const src = readFileSync("validation/atlas/SUSY-2013-15/fig_002a.feyn", "utf8");
   const svg = render(`debug: on\n${src}`), plain = render(src);
   assert.ok(svg.includes('class="feynjs-grid"') && !plain.includes('class="feynjs-grid"'), "a grid behind the drawing");
-  // (every line numbered, its reasons measured: the stop's top is held by its length, among others)
+  // (every line numbered, its reasons measured: the stop's top is held by spacing, among others)
   const why = [...svg.matchAll(/data-why="([^"]*)"/g)].map((m) => m[1]);
   assert.equal(why.length, 16);
-  assert.match(why.find((w) => w.includes("s1–t1"))!, /lines at -?\d+°; held by .*its length \(\d\.\d\d\)/);
+  assert.match(why.find((w) => w.includes("s1–t1"))!, /lines at -?\d+°; held by .*spacing \(\d\.\d\d\)/);
+  // (each line marked with the one family that shapes it most: a handful of reasons, not one a
+  // line; the stop's top and the top's b by mass, the W's by decays)
+  const family = (edge: string) => new RegExp(`data-edge="${edge}" data-family="([a-z]*)"`).exec(svg)![1];
+  assert.equal(family("s1--t1"), "mass");
+  assert.equal(family("t1--b1"), "mass");
+  assert.equal(family("w1--l"), "decays");
+  assert.ok(new Set([...svg.matchAll(/data-family="([a-z]*)"/g)].map((m) => m[1])).size <= 4);
   // (a step after the forces is named with the lines it moved: the neutralinos lined up)
   assert.match(why.find((w) => w.includes("s1–n1"))!, /then final states lined up/);
   assert.ok(svg.includes(">t1</text>"), "the points' names");

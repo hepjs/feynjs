@@ -107,10 +107,10 @@ export function lineLength(s: Structure, rules: ForceRules): Force {
         : s.markRadius[line.a] + s.markRadius[line.b];
       // (the fermion a decay gives off beside a boson that decays on, the b of t -> b W, is short)
       const givenOff = line.leg && line.fermion && !line.heavy && givesOffFermion(s, start);
-      // (and the quark a SUSY particle gives off that decays on, the stop's top, is a short line,
+      // (and the fermion a SUSY particle gives off that decays on, the stop's top, is a short line,
       // held firmly: its decay goes beside the neutralino, not far out along it)
-      // (a quark only: a gaugino's W or Z, a dark scalar, keep their lengths)
-      const fromSusy = !line.leg && !line.heavy && line.fermion && isQuark(s.lineLabel[s.lines.indexOf(line)]) && s.linesAt[start].some((l) => s.lines[l].heavy && s.time[s.lines[l].a === start ? s.lines[l].b : s.lines[l].a] < s.time[start])
+      // (a massive fermion only: a gaugino's W or Z, a dark scalar, keep their lengths)
+      const fromSusy = !line.leg && !line.heavy && line.fermion && line.mass === "massive" && s.linesAt[start].some((l) => s.lines[l].heavy && s.time[s.lines[l].a === start ? s.lines[l].b : s.lines[l].a] < s.time[start])
         && s.linesAt[start].some((l) => l !== s.lines.indexOf(line) && s.lines[l].heavy && s.time[s.lines[l].a === start ? s.lines[l].b : s.lines[l].a] > s.time[start]);
       const want = (line.leg ? rules.legLength * (intoLoop ? rules.loopLeg : 1) * (givenOff ? rules.givenOffLength : 1) : rules.lineLength * (fromSusy ? rules.susyProductLength : 1)) * (halves ? 0.5 : 1) * stage * (intoBlob ? rules.blobBeamLength : 1) * (between(line) ? 0.5 : intoRun(line) ? 0.7 : 1) + rim;
       // (an outgoing leg gives way first: when the final states end level, the leg with less
@@ -251,15 +251,6 @@ export function timeFlow(s: Structure, rules: ForceRules): Force {
   };
 }
 
-/** A quark's name, by its key or its label: u, d, s, c, b, t or q, with or without its bar (not B or T). */
-function isQuark(name: string | undefined): boolean {
-  if (!name) return false;
-  // (\bar{t}, \bar t, tbar, t~, b_1, q_h: the letter under the bar, sub- and superscripts and primes off)
-  const bare = name.replace(/\\bar\s*\{([^}]*)\}/, "$1").replace(/\\bar\s*/, "").replace(/[_^].*$/, "").replace(/(bar|~)$/i, "").replace(/['\d]+$/, "").trim();
-  // (lower case: B and T are the heavy vector-like quarks, not a b and a t)
-  return /^[udscbtq]$/.test(bare);
-}
-
 /**
  * A decay into one outgoing fermion and one boson that decays on (t -> b W, then W -> l nu):
  * the boson carries the decay on, and the fermion is given off to the side, as papers draw the
@@ -275,12 +266,15 @@ export function givesOffFermion(s: Structure, at: number): boolean {
   const made = s.linesAt[at].filter((l) => s.time[other(l, at)] > s.time[at]);
   if (made.length !== 2) return false;
   if (made.some((l) => s.lines[l].fermion && s.lineLabel[l] !== undefined && s.lineLabel[l] === s.lineLabel[into[0]])) return false;
-  // (quarks only, a top to a b: a lepton's decay, nu -> mu W*, keeps its own diagonal run)
-  // (a leg's name may be on its line or on its end, f6 [q_h])
-  const legName = (l: number) => { const j = other(l, at); return s.lineLabel[l] ?? s.particle[j] ?? s.label[j]; };
-  if (!isQuark(s.lineLabel[into[0]]) || !made.some((l) => s.lines[l].fermion && isQuark(legName(l)))) return false;
+  // (a massive fermion only, the top or a new heavy one (N, T): a light fermion's line, nu -> mu W*,
+  // gives off a virtual boson and keeps its own run; whichever fermion it gives off, b or lepton)
+  if (s.lines[into[0]].mass !== "massive") return false;
   const fermion = made.find((l) => s.lines[l].leg && s.lines[l].fermion && !s.lines[l].heavy);
   const boson = made.find((l) => !s.lines[l].leg && !s.lines[l].fermion && !s.lines[l].heavy && !s.external[other(l, at)]);
+  // (the boson real, the fermion heavier than it: it carries the decay on. An off-shell boson
+  // from a real fermion, N -> l W*, leaves the fermion to carry on instead; where the fermion is
+  // off-shell too, t* -> b W*, the whole chain is virtual and drawn as a top's)
+  if (boson !== undefined && s.lines[boson].offShell && !s.lines[into[0]].offShell) return false;
   return fermion !== undefined && boson !== undefined;
 }
 
@@ -518,12 +512,12 @@ export function clearance(s: Structure, rules: ForceRules): Force {
         const parentHeavy = at.some((l) => s.time[other(l, v)] < s.time[v] && s.lines[l].heavy);
         // (nor where a product ends in a hadron: its quarks go where the hadron is)
         const twoBody = outLegs.length === 2 && ends.length === 3 && !parentHeavy && !outLegs.some((j) => inHadron.has(j));
-        // (a SUSY particle's decay into its partner and a quark that decays on, the stop's top and
+        // (a SUSY particle's decay into its partner and a fermion that decays on, the stop's top and
         // neutralino, opens wide: the top's own decay then clears the neutralino with a short top,
         // where a narrow fork makes room only with a long one)
         const products = at.filter((l) => s.time[other(l, v)] > s.time[v]);
         const susyFork = !twoBody && parentHeavy && products.length === 2 && products.some((l) => s.lines[l].heavy)
-          && products.some((l) => !s.lines[l].heavy && s.lines[l].fermion && isQuark(s.lineLabel[l]) && !s.external[other(l, v)]);
+          && products.some((l) => !s.lines[l].heavy && s.lines[l].fermion && s.lines[l].mass === "massive" && !s.external[other(l, v)]);
         const susyOpening = (rules.susyOpening * Math.PI) / 180;
         // (a particle made at rest, a resonance from the incoming particles, decays back to
         // back: papers draw a wide X, three quarters again as wide)

@@ -161,7 +161,14 @@ Usable as `color=name` on a line or vertex. The default set is the Petroff acces
 
 ## Layout v2 forces: `forces`
 
-The weights the force layout balances (the default engine; frozen, see Testing). Lengths are in propagator lengths.
+The weights the force layout balances (the default engine). Lengths are in propagator lengths.
+They come in seven families, by what they look at; no rule looks at a particle's name. A W and a
+Z are drawn alike, and every fermion alike but by its mass: the top (and any new heavy fermion) is
+massive, every lepton and every other quark light. `debug: on` shows which families hold each line.
+
+### Spacing
+
+Lines their length, shorter deeper in a cascade; angles even at each point; everything clear of everything else.
 
 | Setting | Default | What it controls |
 |---|---|---|
@@ -169,60 +176,111 @@ The weights the force layout balances (the default engine; frozen, see Testing).
 | `forces.legLength` | `1` | natural length of an external leg |
 | `forces.length` | `20` | how strongly lines keep their natural length |
 | `forces.legGive` | `1` | how stiff an outgoing leg's length is, as a share of a propagator's: legs give way first |
-| `forces.alignFinalStates` | `1` | end the final states of a decay level: outgoing legs grow to reach the furthest (1 on, 0 off) |
-| `forces.alignStretch` | `2.6` | the most an outgoing leg grows to reach that plane, as a multiple of its length |
-| `forces.alignSteepest` | `60` | legs of a branch's last decay leaving steeper than this, degrees from level, keep their length |
-| `forces.alignLevel` | `20` | legs of an earlier decay reach the plane only if they leave within this many degrees of level |
-| `forces.alignGap` | `0.35` | a growing leg stops this far (in line lengths) from another leg's end |
+| `forces.stageShrink` | `0.7` | how much shorter each generation of decay is drawn than the one before |
+| `forces.smallestStage` | `0.45` | the shortest a deep decay's lines get, relative to the first stage |
+| `forces.smallestLegStage` | `0.7` | the shortest a deep decay's outgoing legs get, relative to the first stage |
 | `forces.evenAngles` | `1` | how strongly the lines at a vertex split the turn evenly |
+| `forces.passThroughEvenness` | `0.3` | how much of the even split is kept where a fermion line passes straight through |
+| `forces.clearance` | `20` | how strongly points not joined by a line keep apart |
+| `forces.margin` | `0.3` | the clear space every drawn element keeps from elements and lines it is not joined to |
+| `forces.vertexPad` | `0.08` | how far a vertex dot reaches from its point |
+| `forces.minAngle` | `25` | the least angle between two lines leaving one vertex, degrees |
+
+### Time
+
+Time runs left to right: lines lean the way it runs, and nothing runs back.
+
+| Setting | Default | What it controls |
+|---|---|---|
 | `forces.timeFlow` | `2` | how strongly lines point the way time runs, left to right, in a short diagram |
 | `forces.shortDiagram` | `3` | the most steps in time (incoming legs to outgoing) a diagram has and still counts as short |
 | `forces.flowFade` | `1` | how the time-flow pull shrinks for each step beyond a short diagram |
 | `forces.longFlow` | `0.3` | the weakest the time-flow pull gets, in the longest diagrams |
 | `forces.timeOrder` | `50` | penalty for a line running backwards in time |
 | `forces.maxLean` | `43` | the furthest a line between two moments may lean from the way time runs, degrees |
-| `forces.clearance` | `20` | how strongly points not joined by a line keep apart |
-| `forces.margin` | `0.3` | the clear space every drawn element keeps from elements and lines it is not joined to |
-| `forces.vertexPad` | `0.08` | how far a vertex dot reaches from its point |
-| `forces.minAngle` | `25` | the least angle between two lines leaving one vertex, degrees |
-| `forces.uprightExchange` | `0.6` | how strongly a line exchanged between two simultaneous vertices stands upright (0: off) |
-| `forces.mirror` | `2` | how strongly same-shaped branches from one vertex mirror each other |
-| `forces.passThroughEvenness` | `0.3` | how much of the even split is kept where a fermion line passes straight through |
+| `forces.offShellFlow` | `0.4` | how much of the time-flow pull an intermediate (likely off-shell) boson feels |
+| `forces.emittedFlow` | `0.4` | how much of it a boson emitted in a moving particle's decay feels (the W of t -> b W) |
+| `forces.deeperFlow` | `8` | how much more of the time-flow pull the deeper of two branches made together feels, keeping it nearer level |
+
+### Incoming
+
+The incoming lines come in mirrored, converging or level; an exchange between them stands upright; a resonance they make at rest runs level.
+
+| Setting | Default | What it controls |
+|---|---|---|
 | `forces.beams` | `4` | how strongly the incoming particles start level with each other, at mirrored angles |
+| `forces.beamsMirror` | `30` | how firmly two incoming particles entering at different points come in mirrored: converging, or level, never parallel and slanting |
+| `forces.blobBeamLength` | `0.75` | how long a beam into a blob is, relative to a leg |
+| `forces.blobBeamFlow` | `0.2` | how much of the time-flow pull a beam into a blob feels |
+| `forces.restLevel` | `100` | how firmly a resonance the incoming pair makes at rest (an s-channel gluon or photon) runs level |
+| `forces.uprightExchange` | `0.6` | how strongly a line exchanged between two simultaneous vertices stands upright (0: off) |
+
+### Decays
+
+A decay fans forward about its parent, its products alike in length and opening wide; twin branches mirror each other; final states end level, and do not run back together.
+
+| Setting | Default | What it controls |
+|---|---|---|
+| `forces.forwardFork` | `25` | how strongly a moving particle's last decay fans out about the way it travels (the products' mean heading level) |
+| `forces.equalProducts` | `3` | how firmly the outgoing legs of one decay keep the same length |
+| `forces.decayOpening` | `40` | the least angle between the two legs of a two-body decay into final states (degrees) |
 | `forces.finalPlane` | `2` | how strongly the final-state particles end level with each other (and a decay's products line up upright) |
-| `forces.stageShrink` | `0.7` | how much shorter each generation of decay is drawn than the one before |
-| `forces.smallestStage` | `0.45` | the shortest a deep decay's lines get, relative to the first stage |
-| `forces.smallestLegStage` | `0.7` | the shortest a deep decay's outgoing legs get, relative to the first stage |
+| `forces.planeFirst` | `0` | `final plane: on`: every final state ends on the plane and each last decay's bisector is level (1), or the usual rules (0) |
+| `forces.alignFinalStates` | `1` | end the final states of a decay level: outgoing legs grow to reach the furthest (1 on, 0 off) |
+| `forces.alignStretch` | `1.6` | the most an outgoing leg grows to reach that plane, as a multiple of its length |
+| `forces.alignSteepest` | `60` | legs of a branch's last decay leaving steeper than this, degrees from level, keep their length |
+| `forces.alignLevel` | `20` | legs of an earlier decay reach the plane only if they leave within this many degrees of level |
+| `forces.alignGap` | `0.35` | a growing leg stops this far (in line lengths) from another leg's end |
+| `forces.noConverging` | `20` | how strongly two outgoing legs from different vertices are kept from heading toward each other |
+| `forces.convergeLeeway` | `4` | degrees, per decay generation, that legs of different branches may lean toward each other |
+| `forces.convergeReach` | `1.8` | how near (top to bottom) two outgoing legs must run for that to matter |
+| `forces.mirror` | `2` | how strongly same-shaped branches from one vertex mirror each other |
+| `forces.pairTogether` | `20` | a particle–antiparticle pair from a contact vertex leaving together: how hard, and the angle between them (degrees) |
+| `forces.pairOpening` | `16` | a particle–antiparticle pair from a contact vertex leaving together: how hard, and the angle between them (degrees) |
+
+### Mass
+
+Heavier particles run inside and carry on; a massive particle's light product (the b of a top, the top of a stop) is short and leaves to the outside.
+
+| Setting | Default | What it controls |
+|---|---|---|
 | `forces.lightOutside` | `200` | how strongly light lines keep to the outside: heavy (SUSY) innermost, then bosons, fermions outermost |
 | `forces.heavyCarriesOn` | `20` | how strongly a heavy particle decaying to another heavy one keeps to a small turn |
 | `forces.heavyTurn` | `12` | the small turn toward level, degrees, a heavy particle's line makes at each decay to another heavy one |
 | `forces.wideLean` | `60` | the furthest the light product of a heavy-to-heavy decay may lean from the way time runs, degrees |
 | `forces.lightFermionLean` | `45` | the furthest a light fermion from a heavy-to-heavy decay (a tau from a chargino) may lean, degrees |
-| `forces.offShellFlow` | `0.4` | how much of the time-flow pull an intermediate (likely off-shell) boson feels |
-| `forces.emittedFlow` | `0.4` | how much of it a boson emitted in a moving particle's decay feels (the W of t -> b W) |
-| `forces.restLevel` | `100` | how firmly a resonance the incoming pair makes at rest (an s-channel gluon or photon) runs level |
-| `forces.equalProducts` | `3` | how firmly the outgoing legs of one decay keep the same length |
-| `forces.deeperFlow` | `8` | how much more of the time-flow pull the deeper of two branches made together feels, keeping it nearer level |
-| `forces.forwardFork` | `25` | how strongly a moving particle's last decay fans out about the way it travels (the products' mean heading level) |
 | `forces.heavyFlow` | `22` | how much of the time-flow pull a heavy (SUSY) particle feels before its chain ends |
 | `forces.depthEase` | `0.5` | how fast that pull falls with the number of heavy decays still ahead (pull / ahead^ease) |
-| `forces.noConverging` | `20` | how strongly two outgoing legs from different vertices are kept from heading toward each other |
+| `forces.settle` | `0.8` | how far toward level a SUSY chain moves by its last particle (1: all the way) |
+| `forces.givenOffFlow` | `0` | time-flow weight of the fermion a decay gives off beside a boson that decays on (the b of t -> b W): none, so it leans out to the side |
+| `forces.givenOffLength` | `0.75` | that fermion's length, as a fraction of a leg: short, as papers draw the b |
+| `forces.givenOffTurn` | `40` | how far, in degrees, a top's b turns from the top's heading, to the outside (the W is left as it lies) |
+| `forces.givenOffSide` | `6` | how firmly it does |
+| `forces.susyProductLength` | `0.8` | the length, in lines, of the ordinary particle a SUSY particle gives off that decays on (the stop's top) |
+| `forces.susyProductHold` | `4` | how much more firmly that length is held than an ordinary line's |
+| `forces.susyOpening` | `50` | the least angle, in degrees, between a SUSY particle's partner and the ordinary particle it decays to when that decays on (stop -> t neutralino): wide, so the top can be short |
+
+### Hadrons
+
+A hadron's quarks run side by side, evenly spaced; a vacuum pair's quarks arc away together.
+
+| Setting | Default | What it controls |
+|---|---|---|
 | `forces.hadron` | `20` | how strongly a hadron's legs end together, evenly spaced, and hadrons line up |
-| `forces.hadronSpacing` | `0.6` | the spacing between the ends of one hadron's quark legs, in line lengths |
+| `forces.rail` | `40` | how strongly a quark rail between hadrons runs straight through its vertices |
 | `forces.mesonGap` | `0.25` | the least space between two mesons' ellipses, in line lengths |
 | `forces.baryonGap` | `0.35` | the least space between two hadrons when either is a baryon, in line lengths |
-| `forces.rail` | `40` | how strongly a quark rail between hadrons runs straight through its vertices |
-| `forces.blobBeamLength` | `0.75` | how long a beam into a blob is, relative to a leg |
-| `forces.blobBeamFlow` | `0.2` | how much of the time-flow pull a beam into a blob feels |
-| `forces.convergeReach` | `1.8` | how near (top to bottom) two outgoing legs must run for that to matter |
-| `forces.convergeLeeway` | `4` | degrees, per decay generation, that legs of different branches may lean toward each other |
-| `forces.settle` | `0.8` | how far toward level a SUSY chain moves by its last particle (1: all the way) |
+| `forces.hadronSpacing` | `0.6` | the spacing between the ends of one hadron's quark legs, in line lengths |
+
+### Loops
+
+A loop keeps its shape: a half circle over a line, or a regular polygon, upright.
+
+| Setting | Default | What it controls |
+|---|---|---|
 | `forces.loop` | `20` | how strongly a loop keeps its shape: an arc a half circle over a straight stretch, any other a regular polygon |
 | `forces.loopLeg` | `1` | a leg into a loop's corner, as a share of an ordinary leg's length |
 | `forces.loopUpright` | `6` | how firmly a loop stands upright: a box's sides level and upright, a triangle with one side upright |
-| `forces.pairTogether` | `20` | a particle–antiparticle pair from a contact vertex leaving together: how hard, and the angle between them (degrees) |
-| `forces.pairOpening` | `16` |  |
-| `forces.decayOpening` | `40` | the least angle between the two legs of a two-body decay into final states (degrees) |
 
 ## Layout v1 rules: `layout`
 
