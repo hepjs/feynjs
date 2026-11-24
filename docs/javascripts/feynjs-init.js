@@ -198,7 +198,7 @@
       layer.className = "feynjs-water";
       layer.setAttribute("aria-hidden", "true");
       splash.insertBefore(layer, splash.firstChild);
-      var EVERY = 1.8, SECONDS = 9;
+      var EVERY = 0.9, SECONDS = 18;
       var ring = function () {
         var b = splash.getBoundingClientRect(), s = source.getBoundingClientRect();
         var r = document.createElement("span");

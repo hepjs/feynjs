@@ -399,7 +399,7 @@
   animation-name: feynjs-water; animation-timing-function: linear; animation-fill-mode: forwards;
 }
 @keyframes feynjs-water {
-  0% { width: 0.6rem; height: 0.6rem; opacity: 0.5; }
+  0% { width: 0.6rem; height: 0.6rem; opacity: 0.35; }
   100% { width: var(--to); height: var(--to); opacity: 0; }
 }
 [data-md-color-scheme="slate"] .md-typeset .feynjs-water-ring { border-color: #e05a4c; }
