@@ -2,7 +2,6 @@
 # GitHub release with the built files. npm trusts this workflow by "trusted publishing" (set up
 # once on npmjs.com for the package), so no npm token is stored here. A version already on npm
 # (the first, published by hand) is not published again.
-# (on Apple Silicon, where the approved layouts were approved: see ci.yml)
 name: Release
 on:
   push:

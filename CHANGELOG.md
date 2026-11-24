@@ -3,7 +3,34 @@
 All notable changes, newest first. Versions follow [semantic versioning](https://semver.org): a
 layout that moves is a change, recorded here.
 
-## 0.9.3 — 2026-11-24
+## 0.9.4 — 2026-11-24
+
+0.9.3 was not published: its changes are here, after this release's own.
+
+- **The same diagram on every machine.** The layout's maths no longer uses the engine's own
+  `Math.sin`, `cos`, `atan2`, `exp`, `log` and `pow`, whose last bit differs between processors
+  (V8 on ARM64 and x86-64) and engines (Safari, Firefox, Bun). It uses portable fdlibm ports written
+  with `+ - * /` and `sqrt` alone, which every engine rounds alike. Every diagram now draws the
+  same bits in Node (ARM64 and x86-64), Deno, Bun, Chromium, Firefox, WebKit and QuickJS
+  (WebAssembly). Before, 170 to 301 of 382 diagrams differed between them. Text descriptions no
+  longer depend on the reader's locale. 24 approved layouts moved, each to the layout x86 machines
+  already drew: EXOT-2013-22 fig. 1b by 0.73 of a line length, SUSY-2019-14 fig. 1 by 0.68, the
+  rest by less.
+- **`toTikz` looks like the web page:** the theme's line widths, arrowheads, waves, coils and label
+  sizes; every label where the page puts it; hadron braces and ellipses; colours from CSS names and
+  `#hex`. Waves are TikZ's standard coil, which draws at any length and which arXiv's HTML converter
+  (LaTeXML) draws too. Every example and every validation diagram compiles with pdfLaTeX.
+- **Feynman diagrams in LaTeX:** `integrations/latex/feynjs.sty`, a `feynjs` environment and
+  `\feynjsfile`, with `feynjs cache` to draw the diagrams (as bibtex does citations). The drawings
+  need only TikZ-Feynman, so Overleaf, arXiv and journals compile them without Node.js. The CLI's
+  `tikz` takes `--unit` and `--picture`.
+- **`inline: a`** puts point a on the math axis of the text, where an equation's middle sits, on the
+  page and in TikZ.
+- **One environment on every platform:** `pixi.toml` (Node, TeX through tectonic, LaTeXML, Bun,
+  Deno), and a Platforms workflow that hashes every diagram on Linux, Windows and macOS, x86 and
+  ARM, in three browsers, and fails if any differ.
+- **A skill for agents** (`skills/feynjs/SKILL.md`): writing, checking and rendering diagrams.
+
 
 - **Every part of a drawing is named** in the SVG: each line's group carries `data-edge="a--b"`
   with its ends and particle, each drawn point `data-vertex="b"`, and the SVG holds the whole

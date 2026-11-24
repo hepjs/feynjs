@@ -1,6 +1,6 @@
-# Every push and pull request: type-check, build and test. The approved layouts are checked on
-# Apple Silicon, where they were approved: the layout's arithmetic rounds a little differently on
-# other processors, enough to move a few diagrams slightly.
+# Every push and pull request: type-check, build and test. The layout's maths gives the same bits
+# on every processor (src/geometry/portable-math.ts), so the approved layouts hold on Linux as on
+# Apple Silicon; the Platforms workflow compares every diagram across systems and engines.
 name: CI
 on:
   push:
