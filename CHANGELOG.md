@@ -15,6 +15,12 @@ layout that moves is a change, recorded here.
 - **Dark pages:** the grid behind a grid layout, and the lattice view's grid and sites, are drawn in
   the diagram's own colour, thinned, so they stay faint on dark pages as on light.
 - **Releases** carry the Obsidian plugin as `feynjs-obsidian.zip`.
+- **Names in any case:** `Gluino`, `Svj`, `lrj` (where only one name fits; single letters keep
+  their case, so B and T stay the heavy quarks). **Detector objects in a process** (`p p > Z(> LRJ) H`,
+  `Zp > SVJ SVJ`) are drawn as the objects, not as plain lines.
+- **Playground:** examples in menus by field (Standard Model, SUSY, Flavour physics, Heavy ion, Views
+  and engines), and autocomplete in the editor (switches, particles, line styles, objects, options,
+  point names).
 - **Top decays** (default engine): the b of t -> b W leaves to the outside of the diagram, turned
   40 degrees from the top's heading and a little short, while the W and what follows lie as
   before; a b that settles inside its W is turned over to the outside. A top level with the beams

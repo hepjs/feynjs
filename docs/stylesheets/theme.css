@@ -239,3 +239,12 @@
 .md-typeset svg.pg-tool-draw .pg-snapgrid { display: inline; }
 .md-typeset .pg-ghost { display: none; fill: var(--feynjs-rule); fill-opacity: 0.35; stroke: var(--feynjs-rule); stroke-width: 1; pointer-events: none; }
 .md-typeset svg.pg-tool-draw .pg-ghost { display: inline; }
+[data-feynjs-playground] { position: relative; }
+.md-typeset .pg-complete { position: absolute; z-index: 10; min-width: 12rem; max-width: 18rem; padding: 0.2rem; border: 1px solid var(--md-default-fg-color--lighter); border-radius: 0.4rem; background: var(--md-default-bg-color); box-shadow: 0 0.3rem 1rem rgba(0, 0, 0, 0.18); font-family: var(--md-code-font-family); font-size: 0.66rem; }
+.md-typeset .pg-complete[hidden] { display: none; }
+.md-typeset .pg-choice { display: flex; justify-content: space-between; gap: 1rem; padding: 0.15rem 0.45rem; border-radius: 0.25rem; cursor: pointer; }
+.md-typeset .pg-choice em { font-style: normal; font-family: var(--md-text-font-family); font-size: 0.56rem; color: var(--md-default-fg-color--light); }
+.md-typeset .pg-choice.pg-picked { background: var(--feynjs-rule); color: #fff; }
+.md-typeset .pg-choice.pg-picked em { color: rgba(255, 255, 255, 0.8); }
+.md-typeset .pg-examples { display: inline-flex; flex-wrap: wrap; gap: 0.25rem; }
+.md-typeset .pg-top .pg-example { max-width: 7.5rem; }

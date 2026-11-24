@@ -138,6 +138,12 @@ export function lookupParticle(name: string): Particle | undefined {
     const particle = lookupParticle(base);
     if (particle) return { ...particle, label: `\\bar{${particle.label}}`, anti: !particle.anti };
   }
+  // (and in any case, Gluino, NEUTRALINO1, Svj, where only one name fits; not single letters,
+  // where case tells particles apart: b and B, t and T)
+  if (name.length > 1) {
+    const lower = name.toLowerCase(), fits = Object.keys(P).filter((k) => k.toLowerCase() === lower);
+    if (fits.length === 1) return P[fits[0]];
+  }
   return undefined;
 }
 

@@ -73,8 +73,11 @@ function parseContents(list: string[]): ObjectContent[] | undefined {
   return out;
 }
 
-// (short names exactly as written, so `tau` and `top` stay particles; long names in any case)
-const lookupObject = (word: string) => OBJECT_NAMES.find((o) => o.short === word || o.names.includes(word.toLowerCase()));
+// (short names in any case, lrj or LRJ, except where the word is a particle too: `tau`, `top` and
+// `j` stay particles, TAU, TOP and J are the objects; long names in any case)
+const PARTICLE_WORDS = new Set(["tau", "top", "j"]);
+const sameShort = (short: string, word: string) => short === word || (!PARTICLE_WORDS.has(word) && short.toLowerCase() === word.toLowerCase());
+const lookupObject = (word: string) => OBJECT_NAMES.find((o) => sameShort(o.short, word) || o.names.includes(word.toLowerCase()));
 const lookupAdjective = (word: string) => OBJECT_ADJECTIVES.find((a) => a.short === word || a.names.includes(word.toLowerCase()));
 
 /**

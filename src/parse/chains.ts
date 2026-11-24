@@ -1,5 +1,6 @@
 import { FeynError } from "../model.ts";
-import { lookupParticle } from "../particles/registry.ts";
+import { lookupParticle, particleNames } from "../particles/registry.ts";
+import { parseObject } from "../particles/objects.ts";
 
 /**
  * Decay chains: a shorthand for cascades, written with `>` and expanded into ordinary lines
@@ -72,6 +73,9 @@ export function expandChains(source: string): string {
   // or a leg out of the diagram
   const emit = (from: string, item: Item, seen: string[]): void => {
     const rule: Rule | undefined = item.decay ? { products: item.decay } : seen.includes(item.name) ? undefined : nextDecay(item.name);
+    // (a detector object, LRJ or SVJ, is drawn as one: the leg takes the object's style; a name
+    // that is a particle as written, tau, stays the particle)
+    if (!rule && !particleNames().includes(item.name) && parseObject(item.name)) { out.push(`${from} -- [${item.name}] ${fresh("out")} [out]`); return; }
     if (!rule) { out.push(`${from} -- ${fresh("out")} [${item.name}, out]`); return; }
     if (rule.loop) {
       const corners = drawLoop(rule.loop, 1 + rule.products.length, process!.line);

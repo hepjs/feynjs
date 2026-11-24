@@ -10,19 +10,46 @@
 (function () {
   "use strict";
 
-  const EXAMPLES = {
-    "e⁺e⁻ → μ⁺μ⁻": "i1 [e-] -- a -- i2 [e+]\na -- [photon] b\nf1 [mu-] -- b -- f2 [mu+]",
-    "Compton scattering": "in: i1 i2\nout: f1 f2\ni1 [e-] -- a\ni2 [gamma] -- a\na -- [fermion] b\nb -- f1 [e-]\nb -- f2 [gamma]",
-    "Higgs by gluon fusion": "g g > {t} > H\nH > Z Z\nZ > e+ e-\nZ > mu+ mu-",
-    "Top pair, decayed": "p p > t tbar\nt > b W+(> e+ nu)\ntbar > bbar W-(> q qbar)",
-    "Colour flow": "colour flow: on\nd dbar > g > t tbar\nt > b W+\ntbar > bbar W-",
-    "Gluino pair (SUSY)": "p p > gluino gluino\ngluino > q q neutralino2\nneutralino2 > Z neutralino1",
-    "One gluino decayed": "p p > gluino(> q q neutralino1) gluino",
-    "B⁰ → K*⁰ μ⁺μ⁻ penguin": "in: d1 b\nout: d2 s mu1 mu2\nd1 [d] -- [fermion] d2 [d]\ns [\\bar{s}] -- [fermion] l2 -- [fermion] l1 -- [fermion] b [\\bar{b}]\nl1 -- [boson, label=W^-] x -- [boson] l2\nx -- [photon, label={\\gamma, Z^0}] v\nv -- [fermion] mu1 [\\mu^-]\nmu2 [\\mu^+] -- [fermion] v\nhadron: B^0 = d1 b\nhadron: K^{*0} = d2 s",
-    "Boosted top, as the detector sees it": "p p > t tbar\nt > bjet W+(> LRJ)\ntbar > bbar W-(> e- nu~)",
-    "Kinematic view": "view: kinematic\np p > t tbar\nt > b W+(> e+ nu)\ntbar > bbar W-(> q qbar)",
-    "Grid, isometric": "layout: grid\ngrid: iso\np p > t tbar\nt > b W+(> e+ nu)\ntbar > bbar W-(> q qbar)",
+  // (grouped as the menus show them; every one drawn by this site's own diagrams)
+  const GROUPS = {
+    "Standard Model": {
+      "e⁺e⁻ → μ⁺μ⁻": "i1 [e-] -- a -- i2 [e+]\na -- [photon] b\nf1 [mu-] -- b -- f2 [mu+]",
+      "Compton scattering": "in: i1 i2\nout: f1 f2\ni1 [e-] -- a\ni2 [gamma] -- a\na -- [fermion] b\nb -- f1 [e-]\nb -- f2 [gamma]",
+      "Drell–Yan": "i1 [q] -- a -- i2 [qbar]\na -- [gamma] b\nf1 [mu-] -- b -- f2 [mu+]",
+      "Higgs by gluon fusion, H → 4ℓ": "g g > {t} > H\nH > Z Z\nZ > e+ e-\nZ > mu+ mu-",
+      "Vector-boson fusion": "i1 [q] -- a -- f1 [q]\ni2 [q] -- b -- f3 [q]\na -- [W] c -- [W] b\nc [dot, label=\\kappa_V, color=green] -- f2 [H]",
+      "Top pair, decayed": "p p > t tbar\nt > b W+(> e+ nu)\ntbar > bbar W-(> q qbar)",
+      "Single top, tW": "in: i1 i2\nout: f2 f1\ni1 [g] -- a\ni2 [b] -- b -- [fermion, label=t] a\nb -- [boson] f1 [W-]\na -- f2 [t]",
+      "Colour flow": "colour flow: on\nd dbar > g > t tbar\nt > b W+\ntbar > bbar W-",
+      "Boosted top, as the detector sees it": "p p > t tbar\nt > bjet W+(> LRJ)\ntbar > bbar W-(> e- nu~)"
+    },
+    "SUSY": {
+      "Gluino pair": "p p > gluino gluino\ngluino > q q neutralino2\nneutralino2 > Z neutralino1",
+      "One gluino decayed": "p p > gluino(> q q neutralino1) gluino",
+      "Stop pair": "p p > stop stop~\nstop > t neutralino1\nstop~ > tbar neutralino1",
+      "Long cascade": "i1 [p] -- pp [blob] -- i2 [p]\npp -- [gluino] d1\npp -- [gluino] d2\nd1 -- f1 [q]\nd1 -- f2 [q]\nd1 -- [chargino] e1\ne1 -- f3 [W]\ne1 -- [neutralino2] g1\ng1 -- f4 [Z]\ng1 -- f5 [neutralino1]\nd2 -- [chargino] e2\ne2 -- [neutralino2] g2\ne2 -- f6 [W]\ng2 -- f7 [neutralino1]\ng2 -- f8 [Z]\nd2 -- f9 [q]\nd2 -- f10 [q]",
+      "Squark and gluino": "in: i1 i2\nout: f1 f2\ni1 [q] -- a -- f1 [squark]\ni2 [g] -- b\na -- [gluino] b\nb -- f2 [gluino]",
+      "Slepton pair": "i1 [q] -- a -- i2 [qbar]\na -- [gamma] b\nb -- [slepton] c\nb -- [slepton] d\nc -- f1 [l]\nc -- f2 [neutralino]\nd -- f3 [l]\nd -- f4 [neutralino]"
+    },
+    "Flavour physics": {
+      "B⁰ → K*⁰ μ⁺μ⁻ penguin": "in: d1 b\nout: d2 s mu1 mu2\nd1 [d] -- [fermion] d2 [d]\ns [\\bar{s}] -- [fermion] l2 -- [fermion, label={\\bar{u}, \\bar{c}, \\bar{t}}] l1 -- [fermion] b [\\bar{b}]\nl1 -- [boson, label=W^-] x -- [boson] l2\nx -- [photon, label={\\gamma, Z^0}] v\nv -- [fermion] mu1 [\\mu^-]\nmu2 [\\mu^+] -- [fermion] v\nhadron: B^0 = d1 b [brace]\nhadron: K^{*0} = d2 s [brace]",
+      "Bc⁺ → J/ψ Ds⁺": "in: c1 b\nout: c2 cbar s c3\nc1 [c] -- [fermion] c2 [c]\ncbar [\\bar{c}] -- [fermion] v -- [fermion] b [\\bar{b}]\nv -- [boson, label=W] w\ns [\\bar{s}] -- [fermion] w -- [fermion] c3 [c]\nmeson: B_c^+ = c1 b\nmeson: J/\\psi = c2 cbar\nmeson: D_s^+ = s c3",
+      "Bc⁺ → J/ψ Ds⁽*⁾⁺, annihilation": "in: b1 c1\nout: s1 c2 cb c3\nw1 -- [fermion] b1 [\\bar b]\nc1 [c] -- [fermion] w1\nw1 -- [boson, label=W] w2\ns1 [\\bar s] -- [fermion] w2 -- [fermion] c3 [c]\ncb [\\bar c] -- [fermion] vc -- [fermion] c2 [c]\nmeson: B_c^+ = b1 c1\nmeson: D_s^{(*)+} = s1 c2\nmeson: J/\\psi = cb c3"
+    },
+    "Heavy ion": {
+      "Light-by-light scattering in Pb+Pb": "in: pb1 pb2\nout: pb3 g1 g2 pb4\npb1 [\\mathrm{Pb}]\npb2 [\\mathrm{Pb}]\npb3 [\\mathrm{Pb(*)}]\npb4 [\\mathrm{Pb(*)}]\nB1 [hatched blob]\nB2 [hatched blob]\npb1 -- [fermion] B1 -- [fermion] pb3\npb2 -- [fermion] B2 -- [fermion] pb4\nB1 -- [gamma] a\nB2 -- [gamma] d\na -- [fermion] b -- [fermion] c -- [fermion] d -- [fermion] a\nb -- [photon] g1 [gamma]\nc -- [photon] g2 [gamma]",
+      "Delbrück scattering": "in: g1 c1\nout: g2 c2\nc1 [crossed dot]\nc2 [crossed dot]\ng1 -- [photon] a\na -- [fermion] b -- [fermion] c -- [fermion] d -- [fermion] a\nb -- [photon] g2\nc1 -- [photon] d\nc2 -- [photon] c",
+      "A photon off a lead nucleus": "i1 [Pb] -- b [nucleus=Pb] -- o1 [Pb]\nb -- [photon] g [gamma]",
+      "Photon fusion to an axion": "i1 [p] -- a [dot] -- f1 [p*]\ni2 [p] -- b -- f3 [p]\na -- [gamma] c -- [gamma] b\nc -- [scalar, label=a] d\nd -- f2 [gamma]\nd -- f4 [gamma]"
+    },
+    "Views & engines": {
+      "Kinematic view": "view: kinematic\np p > t tbar\nt > b W+(> e+ nu)\ntbar > bbar W-(> q qbar)",
+      "Lattice QCD": "view: lattice\nlattice: 8x6\nboundary: periodic\nwilson loop: (1,1) to (4,4)\nplaquette: (5,1)\nlink: (5,4) to (6,4)\npolyakov loop: 7\nsite: (0,4) [label=\\psi(x)]",
+      "Grid layout, isometric": "layout: grid\ngrid: iso\np p > t tbar\nt > b W+(> e+ nu)\ntbar > bbar W-(> q qbar)",
+      "SUSY cascade on the grid": "layout: grid\np p > gluino gluino\ngluino > q q neutralino2\nneutralino2 > Z neutralino1"
+    }
   };
+  const EXAMPLES = Object.assign({}, ...Object.values(GROUPS));
   // (the lines the palette offers, each drawn by feynjs itself in its chip)
   const PALETTE = ["fermion", "anti fermion", "photon", "gluon", "scalar", "ghost", "W+", "Z", "H", "g", "gluino", "neutralino1"];
   const STYLINGS = [
@@ -78,7 +105,7 @@
             <button type="button" data-tool="erase" title="Click a point or a line to remove it">Erase</button>
           </span>
           <span class="pg-sep"></span>
-          <select class="pg-example" aria-label="Example"><option value="">Examples…</option>${Object.keys(EXAMPLES).map((k) => `<option>${k}</option>`).join("")}</select>
+          <span class="pg-examples">${Object.entries(GROUPS).map(([group, list]) => `<select class="pg-example" aria-label="${group} examples"><option value="">${group}</option>${Object.keys(list).map((k) => `<option>${k}</option>`).join("")}</select>`).join("")}</span>
           <button type="button" data-do="surprise" title="A random example">Surprise me</button>
           <span class="pg-sep"></span>
           <label title="Layout engine">Engine <select data-switch="layout"><option value="">default</option><option value="grid">grid</option><option value="manual">manual</option><option value="v1">v1</option></select></label>
@@ -365,6 +392,82 @@
     drawing.addEventListener("dragover", (e) => { const edge = e.target.closest?.("[data-edge]"); if (edge) { e.preventDefault(); show(edge); } });
     drawing.addEventListener("drop", (e) => { const edge = e.target.closest?.("[data-edge]"); if (!edge) return; e.preventDefault(); restyle(edge, e.dataTransfer.getData("text/plain")); });
 
+    // ---- autocomplete: what fits where the cursor is ------------------------------------------
+    // (switches at the start of a line; inside [ ] the line styles, particles, objects and
+    // options; in a process, particles and objects; in edges, the diagram's own point names)
+    const SWITCH_WORDS = ["layout", "grid", "background", "colour flow", "charge colour", "colours", "size", "scale", "view", "projection", "rotate", "show intermediate", "reconstruct", "in", "out", "hadron", "meson", "baryon", "note", "title", "arrows", "dots", "final plane", "lattice", "boundary", "wilson loop", "plaquette", "link", "polyakov loop", "site", "axes", "every fermion", "every photon", "every gluon", "every scalar", "horizontal", "vertical", "inline", "reveal"];
+    const OBJECT_WORDS = ["LRJ", "SRJ", "SVJ", "EMG", "TRK", "TAU", "MET", "LJ", "BJ", "DT", "DL", "PR", "J", "bjet"];
+    const OPTION_WORDS = ["label=", "label'=", "momentum=", "momentum'=", "reversed momentum=", "insertion=", "with arrow=", "with reversed arrow=", "bend=", "half left", "half right", "quarter left", "quarter right", "out=", "in=", "looseness=", "color=", "no label", "no arrow", "dot", "empty dot", "crossed dot", "square dot", "blob", "small blob", "hatched blob", "nucleus=", "cone", "jet", "pulse", "lifetime", "radiation", "brace", "cap", "particle="];
+    const vocabulary = (kind) => {
+      const lib = window.feynjs;
+      const particles = lib.particleNames ? lib.particleNames() : [], styles = lib.lineStyles ? Object.keys(lib.lineStyles) : [];
+      if (kind === "switch") return [...SWITCH_WORDS.map((w) => ({ word: w, kind: "switch", insert: `${w}: ` })), ...particles.map((w) => ({ word: w, kind: "particle" }))];
+      if (kind === "bracket") return [...styles.map((w) => ({ word: w, kind: "line" })), ...particles.map((w) => ({ word: w, kind: "particle" })), ...OBJECT_WORDS.map((w) => ({ word: w, kind: "object" })), ...OPTION_WORDS.map((w) => ({ word: w, kind: "option" }))];
+      if (kind === "process") return [...particles.map((w) => ({ word: w, kind: "particle" })), ...OBJECT_WORDS.map((w) => ({ word: w, kind: "object" }))];
+      return (model?.vertices ?? []).map((v) => ({ word: v.id, kind: "point" }));
+    };
+    const menu = document.createElement("div");
+    menu.className = "pg-complete"; menu.hidden = true; menu.setAttribute("role", "listbox");
+    root.appendChild(menu);
+    let choices = [], picked = 0, token = null;
+    // (where the cursor is in the editor, in page pixels: a copy of the text up to it, laid out alike)
+    function caretPoint() {
+      const style = getComputedStyle(source), copy = document.createElement("div");
+      for (const k of ["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing", "paddingTop", "paddingLeft", "paddingRight", "borderTopWidth", "borderLeftWidth", "boxSizing", "whiteSpace", "wordWrap", "tabSize"]) copy.style[k] = style[k];
+      copy.style.position = "absolute"; copy.style.visibility = "hidden"; copy.style.whiteSpace = "pre-wrap"; copy.style.width = source.clientWidth + "px";
+      copy.textContent = source.value.slice(0, source.selectionStart);
+      const mark = document.createElement("span"); mark.textContent = "\u200b"; copy.appendChild(mark);
+      root.appendChild(copy);
+      const box = root.getBoundingClientRect(), at = mark.getBoundingClientRect(), from = copy.getBoundingClientRect();
+      const ed = source.getBoundingClientRect();
+      const point = { x: ed.left - box.left + (at.left - from.left) - source.scrollLeft, y: ed.top - box.top + (at.top - from.top) - source.scrollTop + parseFloat(style.lineHeight || "16") };
+      copy.remove();
+      return point;
+    }
+    function closeMenu() { menu.hidden = true; choices = []; token = null; }
+    function suggest() {
+      const caret = source.selectionStart;
+      if (caret !== source.selectionEnd) return closeMenu();
+      const before = source.value.slice(0, caret), lineStart = before.lastIndexOf("\n") + 1, line = before.slice(lineStart);
+      const word = /[\w+\-~'*]*$/.exec(line)[0];
+      if (!word) return closeMenu();
+      const open = line.lastIndexOf("["), shut = line.lastIndexOf("]");
+      const kind = open > shut ? "bracket" : line.trim() === word ? "switch" : /(^|\s)>(\s|$)/.test(line) || /^[\w+\-~]+(\s+[\w+\-~]+)*\s*$/.test(line) && !line.includes("--") ? "process" : "points";
+      const lower = word.toLowerCase();
+      const seen = new Set();
+      choices = vocabulary(kind).filter((c) => c.word.toLowerCase().startsWith(lower) && c.word !== word && !seen.has(c.word) && seen.add(c.word))
+        .sort((a, b) => a.word.length - b.word.length).slice(0, 8);
+      if (!choices.length) return closeMenu();
+      token = { from: caret - word.length, to: caret };
+      picked = 0;
+      menu.innerHTML = choices.map((c, k) => `<div class="pg-choice${k === 0 ? " pg-picked" : ""}" role="option" data-k="${k}"><span>${c.word.replace(/&/g, "&amp;").replace(/</g, "&lt;")}</span><em>${c.kind}</em></div>`).join("");
+      const at = caretPoint();
+      menu.style.left = `${Math.min(at.x, root.clientWidth - 220)}px`; menu.style.top = `${at.y + 2}px`;
+      menu.hidden = false;
+    }
+    function accept(k) {
+      if (!token || !choices[k]) return;
+      const c = choices[k], text = c.insert ?? c.word;
+      const v = source.value;
+      source.value = v.slice(0, token.from) + text + v.slice(token.to);
+      const caret = token.from + text.length;
+      source.setSelectionRange(caret, caret);
+      closeMenu(); later();
+    }
+    source.addEventListener("input", suggest);
+    source.addEventListener("click", closeMenu);
+    source.addEventListener("blur", () => setTimeout(closeMenu, 150));
+    source.addEventListener("keydown", (e) => {
+      if (menu.hidden) return;
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        e.preventDefault();
+        picked = (picked + (e.key === "ArrowDown" ? 1 : choices.length - 1)) % choices.length;
+        menu.querySelectorAll(".pg-choice").forEach((el, k) => el.classList.toggle("pg-picked", k === picked));
+      } else if (e.key === "Enter" || e.key === "Tab") { e.preventDefault(); accept(picked); }
+      else if (e.key === "Escape") { e.preventDefault(); closeMenu(); }
+    });
+    menu.addEventListener("mousedown", (e) => { const el = e.target.closest(".pg-choice"); if (el) { e.preventDefault(); accept(+el.dataset.k); } });
+
     // ---- controls -----------------------------------------------------------------------------
     function setTool(name) {
       tool = name;
@@ -375,10 +478,10 @@
     }
     root.querySelectorAll("[data-tool]").forEach((b) => b.addEventListener("click", () => setTool(b.dataset.tool)));
     source.addEventListener("input", later);
-    $(".pg-example").addEventListener("change", (e) => {
+    root.querySelectorAll(".pg-example").forEach((menu) => menu.addEventListener("change", (e) => {
       if (!e.target.value) return;
       change(EXAMPLES[e.target.value]); e.target.value = ""; tikz.hidden = true;
-    });
+    }));
     root.querySelectorAll("[data-switch]").forEach((sel) => sel.addEventListener("change", () => {
       let src = writeSwitch(source.value, sel.dataset.switch, sel.value);
       if (sel.dataset.switch === "layout" && sel.value !== "grid") src = writeSwitch(src, "grid", "");

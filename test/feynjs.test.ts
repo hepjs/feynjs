@@ -770,3 +770,14 @@ test("every part of a drawing is named: lines by their ends, drawn points by nam
   assert.equal(model.vertices.find((v: { id: string }) => v.id === "i1").role, "in");
   assert.deepEqual(model.edges.map((e: { id: string }) => e.id), ["i1--a", "a--i2", "a--b", "b--f1", "b--f2", "b--f2#2"]);
 });
+
+test("names in any case, and detector objects in a process, drawn as objects", () => {
+  // (a process's final state that is an object, LRJ or SVJ, in any case, is drawn as the object)
+  for (const src of ["p p > Z(> LRJ) H", "p p > Zp > SVJ SVJ", "p p > Zp > lrj svj"]) assert.match(render(src), /feynjs-jet-rim/, src);
+  // (particles in any case where only one fits; single letters keep their case: B is not b)
+  assert.match(render("p p > Gluino gluino"), /feynjs-susy/);
+  assert.doesNotThrow(() => render("a -- [Svj] b"));
+  assert.doesNotMatch(render("a -- [B] b"), /data-particle="b"/);
+  // (tau as written stays the particle; TAU is the hadronic tau object)
+  assert.match(render("p p > TAU"), /feynjs-jet/);
+});
