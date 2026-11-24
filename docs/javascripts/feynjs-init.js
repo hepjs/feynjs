@@ -99,13 +99,25 @@
       var boxes = ends.map(function (svg) { return /viewBox="([^"]+)"/.exec(svg)[1].split(/\s+/).map(Number); });
       var x0 = Math.min(boxes[0][0], boxes[1][0]), y0 = Math.min(boxes[0][1], boxes[1][1]);
       var x1 = Math.max(boxes[0][0] + boxes[0][2], boxes[1][0] + boxes[1][2]), y1 = Math.max(boxes[0][1] + boxes[0][3], boxes[1][1] + boxes[1][3]);
-      var frame = x0.toFixed(2) + " " + y0.toFixed(2) + " " + (x1 - x0).toFixed(2) + " " + (y1 - y0).toFixed(2);
+      // (with room round it, so nothing on its way between the two is cut off)
+      var padX = (x1 - x0) * 0.06, padY = (y1 - y0) * 0.08;
+      var frame = (x0 - padX).toFixed(2) + " " + (y0 - padY).toFixed(2) + " " + (x1 - x0 + 2 * padX).toFixed(2) + " " + (y1 - y0 + 2 * padY).toFixed(2);
+      // (each end's labels, to show as it arrives: placed once, where they will stay)
+      var labelsOf = function (svg) { var m = /<g class="feynjs-labels">[\s\S]*<\/g><\/svg>\s*$/.exec(svg); return m ? m[0].replace(/<\/svg>\s*$/, "") : ""; };
+      var endLabels = ends.map(labelsOf);
       // (the grid the grid engine draws behind its diagram, to draw in part way)
       var gridLines = (/<path class="feynjs-grid"[^>]*\/>/.exec(ends[1]) || [""])[0];
-      var show = function (svg, grid, gridShown) {
+      var show = function (svg, grid, gridShown, labels) {
         // (the same frame and no size of its own: the box sizes it, the same every frame)
         var drawn = svg.replace(/<svg ([^>]*?)viewBox="[^"]+"([^>]*?) width="[^"]*" height="[^"]*"/, '<svg $1viewBox="' + frame + '"$2');
         if (gridShown && gridLines) drawn = drawn.replace(/(<g class="feynjs-edges")/, gridLines.replace("<path ", '<path opacity="' + gridShown.toFixed(3) + '" ') + "$1");
+        // (on the way between, labels would hop from side to side as feynjs places them afresh each
+        // frame: they fade out as the points set off, and the arriving end's own fade in)
+        if (labels) {
+          var own = labelsOf(drawn), shown = labels.from > 0 ? own.replace('<g class="feynjs-labels">', '<g class="feynjs-labels" opacity="' + labels.from.toFixed(3) + '">') : "";
+          var arriving = labels.to > 0 ? endLabels[labels.end].replace('<g class="feynjs-labels">', '<g class="feynjs-labels" opacity="' + labels.to.toFixed(3) + '">') : "";
+          drawn = drawn.replace(own, shown + arriving);
+        }
         box.innerHTML = drawn;
         box.classList.toggle("feynjs-on-grid", !!grid);
       };
@@ -130,7 +142,22 @@
       label.setAttribute("aria-hidden", "true");
       label.innerHTML = '<span data-to="0" class="feynjs-on">Forces</span><span data-to="1">Grid</span>';
       box.parentElement.insertBefore(label, box);
-      var mark = function (to) { label.querySelectorAll("span").forEach(function (b) { b.classList.toggle("feynjs-on", Number(b.dataset.to) === to); }); };
+      // (the source beside it follows: its layout: grid line there on the grid, faded out on forces)
+      var code = box.closest(".feynjs-row") && box.closest(".feynjs-row").querySelector(".feynjs-row-text pre code");
+      var gridLine = null;
+      if (code) {
+        var escape = function (text) { return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); };
+        // (the switch line a block of its own, a highlighted band, so no line break after it)
+        code.innerHTML = code.textContent.replace(/\n$/, "").split("\n").map(function (line) {
+          return /^\s*layout:\s*grid\s*$/.test(line) ? '<span class="feynjs-switch-line">' + escape(line) + "</span>" : escape(line) + "\n";
+        }).join("").replace(/\n$/, "");
+        gridLine = code.querySelector(".feynjs-switch-line");
+      }
+      var mark = function (to) {
+        label.querySelectorAll("span").forEach(function (b) { b.classList.toggle("feynjs-on", Number(b.dataset.to) === to); });
+        if (gridLine) gridLine.classList.toggle("feynjs-on", to === 1);
+      };
+      mark(0);
       var still = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       var go = function (to, then) {
         if (to === state || running) return;
@@ -142,7 +169,8 @@
           var seconds = (now - start) / 1000, t = Math.min(1, seconds / LENGTH);
           // (the grid draws in over the second half on the way there, fades over the first half back)
           var gridShown = to === 1 ? Math.max(0, (t - 0.45) / 0.55) : Math.max(0, 1 - t / 0.5);
-          if (t < 1) { show(between(seconds, from), false, gridShown); requestAnimationFrame(step); }
+          var labels = { from: Math.max(0, 1 - t / 0.18), to: Math.max(0, (t - 0.78) / 0.22), end: to };
+          if (t < 1) { show(between(seconds, from), false, gridShown, labels); requestAnimationFrame(step); }
           else { state = to; running = null; show(ends[to], to === 1); if (then) then(); }
         };
         requestAnimationFrame(step);

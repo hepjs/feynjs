@@ -403,3 +403,7 @@
   100% { width: var(--to); height: var(--to); opacity: 0; }
 }
 [data-md-color-scheme="slate"] .md-typeset .feynjs-water-ring { border-color: #e05a4c; }
+/* (the two-engines row's source follows the diagram: its layout: grid line lit on the grid, faded on forces) */
+.md-typeset .feynjs-switch-line { display: block; padding: 0 0.3em; margin: 0 -0.3em; border-radius: 0.2em; opacity: 0.28; transition: opacity 0.5s, background-color 0.5s, color 0.5s; }
+.md-typeset .feynjs-switch-line.feynjs-on { opacity: 1; color: var(--feynjs-brick, #c0392b); background: rgba(192, 57, 43, 0.1); }
+[data-md-color-scheme="slate"] .md-typeset .feynjs-switch-line.feynjs-on { color: #e05a4c; background: rgba(224, 90, 76, 0.14); }

@@ -35,7 +35,7 @@ A JavaScript display engine for *Feynman diagrams*{ .feynjs-accent }
 
 ## Write it, see it { #write-it-see-it .feynjs-tour-title }
 
-Every diagram here is drawn live, by your browser, from the text beside it. Written in syntax
+Every diagram below is drawn live by your browser, from the source beside it. Written in syntax
 inspired by MadGraph and TikZ-Feynman.
 { .feynjs-tour-lead }
 
