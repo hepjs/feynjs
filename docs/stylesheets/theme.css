@@ -316,7 +316,7 @@
 .md-typeset .feynjs-splash .feynjs-punch { margin: 1.3rem 0 1.4rem; font-size: 1.45em; line-height: 1.25; text-wrap: balance; }
 .md-typeset .feynjs-splash-text > p:last-child { display: flex; flex-wrap: wrap; gap: 0.6rem; }
 .md-typeset .feynjs-splash .md-button { margin: 0; }
-.md-typeset .feynjs-splash-diagram { position: relative; flex: 1 1 22rem; max-width: 30rem; }
+.md-typeset .feynjs-splash-diagram { position: relative; flex: 1 1 18rem; max-width: 24rem; }
 .md-typeset .feynjs-splash-diagram div.feynman { position: relative; z-index: 1; margin: 0; }
 .md-typeset .feynjs-splash-diagram div.feynman svg.feynjs { width: 100%; height: auto; }
 /* (the ripples' centre is put on the diagram's collision blob once it is drawn; until then, and
