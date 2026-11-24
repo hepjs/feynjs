@@ -6,6 +6,7 @@ tags:
   - manual layout
   - pin a vertex
   - final plane
+  - debug
   - v1
   - TikZ-Feynman
 ---
@@ -822,6 +823,53 @@ feynjs.render(source, { theme: { layout: { branchAngle: 22 } } });
 // v2: longer propagators
 feynjs.render(source, { theme: { forces: { lineLength: 1.2 } } });
 ```
+
+## Why a line is where it is
+
+`debug: on` shows how the layout came out the way it did. Behind the drawing is a faint grid,
+half a line apart. Each point carries its name, and each line a number. Under the drawing, line by
+line, is the line's length and direction and the rules that hold it there.
+
+```text
+debug: on
+in: i1 i2
+out: f1 f2 f3
+i1 [g] -- a
+i2 [g] -- a
+a -- [t] b
+b -- f1 [b]
+b -- [W] c
+c -- f2 [l+]
+c -- f3 [nu]
+```
+
+```feynman
+debug: on
+in: i1 i2
+out: f1 f2 f3
+i1 [g] -- a
+i2 [g] -- a
+a -- [t] b
+b -- f1 [b]
+b -- [W] c
+c -- f2 [l+]
+c -- f3 [nu]
+```
+
+The reasons are measured, not written by hand. The diagram is settled again with each rule of the
+force layout left out in turn. A rule is a reason for a line when leaving it out changes that line,
+and the number in brackets is by how much: how far the line moves, in line lengths. The rules a
+line depends on most come first. After them come the steps that run once the forces have settled,
+when they moved the line: legs turned over to follow the `out:` list, a top's b turned outside, two
+halves made an exact mirror image, final states lined up.
+
+Hover over a line's number to see its reasons beside the drawing. Every SVG carries them too, in
+the `data-why` attribute of each number's group.
+
+Use it to find which rule to [steer](#steering-it) or [tune](../reference/theme.md). A diagram with
+`debug: on` takes longer to draw, about a twentieth of a second for each rule it uses, so take it
+out once the layout is right. The [rule engine (v1)](#the-rule-engine-v1) is not measured: its
+lines are numbered and their lengths and directions given, without reasons.
 
 ## Measuring a layout
 

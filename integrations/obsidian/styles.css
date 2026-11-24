@@ -10,6 +10,7 @@
 .theme-dark .feynjs-obsidian svg.feynjs .feynjs-smallblob,
 .theme-dark .feynjs-obsidian svg.feynjs .feynjs-collision { fill: #7d8590; }
 .theme-dark .feynjs-obsidian svg.feynjs .feynjs-brace { stroke: #e05a4c; }
+.theme-dark .feynjs-obsidian svg.feynjs .feynjs-grid { stroke-opacity: 0.32; }
 .feynjs-obsidian svg.feynjs .feynjs-jet-stop { stop-color: #3f90da; }
 .feynjs-obsidian .feynjs-error { text-align: left; color: var(--text-error); border-left: 3px solid var(--text-error); padding: 0.6em 1em; white-space: pre-wrap; }
 .theme-dark .feynjs-obsidian svg.feynjs .feynjs-lifetime stop:last-child { stop-opacity: 0.8; }

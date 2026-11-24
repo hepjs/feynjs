@@ -54,6 +54,12 @@ layout that moves is a change, recorded here.
 - **Mirror-image diagrams are drawn exactly so:** two alike chains either side of a t-channel
   exchange (squarks either side of a gluino) mirror each other point for point, at least a line
   apart. 23 approved layouts moved in all.
+- **`debug: on`:** a faint grid behind the drawing, each point's name, each line numbered, and
+  under the drawing why each line lies where it does: the rules without which it would move most,
+  measured by settling the diagram again without each, and the steps after the forces that moved
+  it. Each line's reasons are also its number's tooltip and `data-why` attribute.
+- **Dark pages:** the background grid is a lighter grey (docs site and Obsidian), where the text
+  colour thinned had come out near black.
 
 ## 0.9.1 — 2026-11-24
 

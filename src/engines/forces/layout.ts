@@ -11,7 +11,14 @@ import type { Force } from "./forces.ts";
  * Positions are in propagator lengths, x across and y down; `rowOverRank` converts y to
  * the renderer's rows.
  */
-export function layoutWithForces(diagram: Diagram, rules: ForceRules, rowOverRank: number, sizes?: Sizes, crossIncoming = true): void {
+/**
+ * What the steps after the forces did, for `debug: on`: each step's name and how far it moved
+ * each point it moved (in line lengths), in the order they ran.
+ */
+export interface LayoutTrace { steps: { step: string; moved: Map<string, number> }[] }
+
+export function layoutWithForces(diagram: Diagram, rules: ForceRules, rowOverRank: number, sizes?: Sizes, crossIncoming = true, trace?: LayoutTrace): void {
+  if (trace) trace.steps.length = 0;
   // a line that is not drawn (a vacuum pair's invisible line in) has no say in the layout,
   // unless the author drew it [invisible] to hold the layout together
   // (no lines at all, a nucleus or a hadron drawn on its own: each point where it is, side by side)
@@ -21,6 +28,13 @@ export function layoutWithForces(diagram: Diagram, rules: ForceRules, rowOverRan
   if (sizes) sizes = { ...sizes, edgeLabel: sizes.edgeLabel.filter((_, k) => shown[k]) };
   const s = readStructure(d, sizes, rules.vertexPad);
   const start = startingPositions(d, s, rules, rowOverRank);
+  // (each step after the forces, noted with the points it moved)
+  const noted = (step: string, before: Float64Array, after: Float64Array) => {
+    if (!trace) return;
+    const moved = new Map<string, number>();
+    s.ids.forEach((id, i) => { const far = Math.hypot(after[2 * i] - before[2 * i], after[2 * i + 1] - before[2 * i + 1]); if (far > 0.02) moved.set(id, far); });
+    if (moved.size) trace.steps.push({ step, moved });
+  };
   const pinned = s.ids.flatMap((id) => (d.vertices.get(id)!.fixed ? [true, true] : [false, false]));
   const forces = allForces(s, rules), ties = levelTies(s);
   const heights = ties.filter((t) => t.axis === 1);
@@ -55,7 +69,9 @@ export function layoutWithForces(diagram: Diagram, rules: ForceRules, rowOverRan
     const flipped = flipBranchesToListedOrder(s, p, wrong);
     if (wrong(flipped) < wrong(p)) {
       // (the author has chosen the order, so the force that would choose one stands down)
+      const was = p;
       p = settle(flipped, [keepListedOrder(listed, rules)], "light outside");
+      noted("turned over to follow the order in: and out: list", was, p);
     }
   }
   // (a top's b on the inside of its W, where it settled first: the forces cannot pass one line
@@ -63,35 +79,49 @@ export function layoutWithForces(diagram: Diagram, rules: ForceRules, rowOverRan
   const outward = topsBOutward(s, p);
   if (outward !== p) {
     const again = settle(outward);
-    if (topsBInside(s, again) < topsBInside(s, p)) p = again;
+    if (topsBInside(s, again) < topsBInside(s, p)) { noted("turned over so the top's b goes outside", p, again); p = again; }
   }
+  const unmirrored = p;
   p = mirrorWholeDiagram(s, p, wrong, rules.lineLength);
+  noted("made the exact mirror image of its partner half", unmirrored, p);
+  let was = Float64Array.from(p);
   settlePairs(s, p);
+  noted("squared up with its vacuum pair", was, p);
+  was = Float64Array.from(p);
   if (rules.planeFirst && !s.hadrons.length) planeTree(s, p, rules);
   else if (rules.alignFinalStates) alignFinalStates(s, p, rules);
+  noted(rules.planeFirst ? "laid out as a tree, final states on one plane" : "final states lined up level with each other", was, p);
+  was = Float64Array.from(p);
   crossListedLegs(s, p, listed);
+  noted("legs crossed, as the out: list orders them", was, p);
   // (incoming lines that should cross: try the layout again with the two the other way round;
   // if that has fewer crossings, keep it and cross the two incoming lines)
   // (a point the author placed stays exactly where they put it, whatever the steps after the
   // forces did: the manual layout, TikZ-Feynman style, with the forces placing the rest)
   const anyPinned = pinned.some(Boolean);
+  was = Float64Array.from(p);
   pinned.forEach((isPinned, k) => { if (isPinned) p[k] = start[k]; });
+  noted("put where its at (x, y) says", was, p);
   const toCross = crossIncoming && !anyPinned ? incomingToCross(s, p) : undefined;
   if (toCross) {
     const before = crossingCount(s, p);
     const [a, b] = toCross.map((i) => diagram.vertices.get(s.ids[i])!);
     const order = [a.declaredOrder, b.declaredOrder];
     [a.declaredOrder, b.declaredOrder] = [order[1] ?? order[0], order[0] ?? order[1]];
-    layoutWithForces(diagram, rules, rowOverRank, sizes, false);
+    layoutWithForces(diagram, rules, rowOverRank, sizes, false, trace);
     [a.declaredOrder, b.declaredOrder] = order;
     const q = new Float64Array(p.length);
     s.ids.forEach((id, i) => { const v = diagram.vertices.get(id)!; q[2 * i] = v.x; q[2 * i + 1] = v.y * rowOverRank; });
     // (the beams crossed: their legs trade places)
     [q[2 * toCross[0]], q[2 * toCross[1]]] = [q[2 * toCross[1]], q[2 * toCross[0]]];
     [q[2 * toCross[0] + 1], q[2 * toCross[1] + 1]] = [q[2 * toCross[1] + 1], q[2 * toCross[0] + 1]];
-    if (crossingCount(s, q) < before) { [a.x, b.x, a.y, b.y] = [b.x, a.x, b.y, a.y]; return; }
+    if (crossingCount(s, q) < before) {
+      [a.x, b.x, a.y, b.y] = [b.x, a.x, b.y, a.y];
+      trace?.steps.push({ step: "incoming lines crossed: fewer lines cross that way", moved: new Map([[a.id, 1], [b.id, 1]]) });
+      return;
+    }
     // (no better: back to the layout as it was)
-    layoutWithForces(diagram, rules, rowOverRank, sizes, false);
+    layoutWithForces(diagram, rules, rowOverRank, sizes, false, trace);
     return;
   }
   s.ids.forEach((id, i) => {
@@ -261,7 +291,7 @@ function bendAlongCircles(d: Diagram, s: Structure, p: Float64Array): void {
  * evenly about the middle in the order they were written. Starting symmetric means the
  * forces keep a symmetric diagram symmetric.
  */
-function startingPositions(d: Diagram, s: Structure, rules: ForceRules, rowOverRank = 1): Float64Array {
+export function startingPositions(d: Diagram, s: Structure, rules: ForceRules, rowOverRank = 1): Float64Array {
   const p = new Float64Array(s.ids.length * 2);
   const columns = new Map<number, number[]>();
   s.time.forEach((t, i) => (columns.get(t) ?? columns.set(t, []).get(t)!).push(i));

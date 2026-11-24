@@ -154,7 +154,6 @@
 [data-md-color-scheme="slate"] .md-typeset .feynjs-hero-stage svg.feynjs .feynjs-collision { fill: #3b414b; }
 [data-md-color-scheme="slate"] .md-typeset .feynjs-hero-stage svg.feynjs .feynjs-pulse { stroke: #ff7a6b; }
 [data-md-color-scheme="slate"] .md-typeset .feynjs-hero-stage svg.feynjs .feynjs-ip { fill: #e6e8eb; }
-[data-md-color-scheme="slate"] .md-typeset .feynjs-hero-stage svg.feynjs .feynjs-grid { opacity: 0.22; }
 [data-md-color-scheme="slate"] .md-typeset .feynjs-hero-tile { background: rgba(255, 255, 255, 0.035); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07), 0 2px 4px rgba(0, 0, 0, 0.3), 0 6px 16px rgba(0, 0, 0, 0.35); }
 [data-md-color-scheme="slate"] .md-typeset .feynjs-hero-tile:hover { background: rgba(255, 255, 255, 0.07); box-shadow: inset 0 0 0 1px rgba(255, 122, 107, 0.5), 0 3px 6px rgba(0, 0, 0, 0.35), 0 12px 28px rgba(0, 0, 0, 0.45); }
 [data-md-color-scheme="slate"] .md-typeset .feynjs-hero-tile > div.feynman { color: #e6e8eb; }

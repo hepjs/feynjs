@@ -446,6 +446,22 @@ test("optical size: a smaller diagram is smaller, with relatively heavier lines"
   assert.ok(stroke(half) / stroke(normal) > width(half) / width(normal));
 });
 
+test("debug: on draws a grid, every point's name, and why each line lies where it does", () => {
+  const src = readFileSync("validation/atlas/SUSY-2013-15/fig_002a.feyn", "utf8");
+  const svg = render(`debug: on\n${src}`), plain = render(src);
+  assert.ok(svg.includes('class="feynjs-grid"') && !plain.includes('class="feynjs-grid"'), "a grid behind the drawing");
+  // (every line numbered, its reasons measured: the stop's top is held by its length, among others)
+  const why = [...svg.matchAll(/data-why="([^"]*)"/g)].map((m) => m[1]);
+  assert.equal(why.length, 16);
+  assert.match(why.find((w) => w.includes("s1–t1"))!, /lines at -?\d+°; held by .*its length \(\d\.\d\d\)/);
+  // (a step after the forces is named with the lines it moved: the neutralinos lined up)
+  assert.match(why.find((w) => w.includes("s1–n1"))!, /then final states lined up/);
+  assert.ok(svg.includes(">t1</text>"), "the points' names");
+  // (debug changes nothing about the layout)
+  const at = (s: string, id: string) => JSON.parse(s.match(/<metadata class="feynjs-model">([\s\S]*?)<\/metadata>/)![1].replace(/&quot;/g, '"')).vertices.find((v: { id: string }) => v.id === id);
+  assert.deepEqual(at(svg, "t1"), at(plain, "t1"));
+});
+
 test("two alike chains either side of a t-channel exchange mirror each other exactly (EXOT-2014-09 fig_01b)", () => {
   const d = parse(readFileSync("validation/atlas/EXOT-2014-09/fig_01b.feyn", "utf8"));
   layoutDiagram(d, { ...defaultTheme, engine: "v2" });

@@ -10,6 +10,9 @@ div.feynman svg.feynjs { max-width: 100%; height: auto; }
 svg.feynjs .feynjs-susy { color: var(--feynjs-susy, var(--feynjs-susy-light)); }
 [data-md-color-scheme="slate"] svg.feynjs .feynjs-susy { color: var(--feynjs-susy, var(--feynjs-susy-dark)); }
 svg.feynjs .feynjs-bg { fill: var(--md-default-bg-color, #fff); }
+/* The background grid (layout: grid, background: grid, debug: on): faint in the text colour on
+   light pages; on dark ones that is near black, so it is lifted to a light grey. */
+[data-md-color-scheme="slate"] svg.feynjs .feynjs-grid { stroke-opacity: 0.32; }
 /* Hadron braces in brick, lifted on dark pages as the brand's red is. */
 [data-md-color-scheme="slate"] svg.feynjs .feynjs-brace { stroke: #e05a4c; }
 /* Blobs and hadron ellipses: a grey with a little blue, at low opacity, never darker than

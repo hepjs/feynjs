@@ -20,6 +20,10 @@ import { particleOfEdge } from "../particles/identify.ts";
 import { drawNotes } from "./notes.ts";
 import { drawHadronGroup } from "./hadrons.ts";
 import { layoutWithForces } from "../engines/forces/layout.ts";
+import type { LayoutTrace } from "../engines/forces/layout.ts";
+import { whyLines } from "../engines/forces/why.ts";
+import { drawDebug } from "./debug.ts";
+import type { DebugInfo } from "./debug.ts";
 import type { Sizes } from "../engines/forces/structure.ts";
 import { layoutLabel } from "../label/label.ts";
 import { Scene } from "./scene.ts";
@@ -53,7 +57,7 @@ export interface RenderOptions {
 
 const escapeText = (s: string) => s.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-function assembleSvg(scene: Scene, title: string | undefined, ariaLabel: string, scale: number, description: string, grid = 0, origin = { x: 0, y: 0 }, iso = false, inlineAt?: number, model = ""): string {
+function assembleSvg(scene: Scene, title: string | undefined, ariaLabel: string, scale: number, description: string, grid = 0, origin = { x: 0, y: 0 }, iso = false, inlineAt?: number, model = "", gridArea?: { left: number; top: number; right: number; bottom: number }): string {
   const b = scene.bounds, pad = scene.theme.padding;
   const width = b.right - b.left + 2 * pad, height = b.bottom - b.top + 2 * pad;
   // (`inline: a`: in a line of text, the point `a` sits on the text's baseline, as TikZ's
@@ -66,7 +70,9 @@ function assembleSvg(scene: Scene, title: string | undefined, ariaLabel: string,
   // own colour, thinned, so it stays faint on dark pages as on light)
   let gridLines = "";
   if (grid > 0) {
-    const [x0, y0, x1, y1] = [b.left - pad, b.top - pad, b.right + pad, b.bottom + pad];
+    // (over the diagram only: not under what `debug: on` writes below it)
+    const area = gridArea ?? b;
+    const [x0, y0, x1, y1] = [area.left - pad, area.top - pad, area.right + pad, area.bottom + pad];
     const path: string[] = [];
     if (iso) {
       // (isometric: rows sqrt(3)/2 of a step apart, and lines at 60 and 120 degrees through the
@@ -135,7 +141,7 @@ function markRadiusPx(v: Vertex, theme: Theme): number {
  * each line's style, then place the vertices. The layout reads line styles (to follow
  * decay chains and radiation), so styles are resolved first.
  */
-export function layoutDiagram(d: Diagram, theme: Theme): void {
+export function layoutDiagram(d: Diagram, theme: Theme, debug?: DebugInfo): void {
   assignRoles(d);
   inheritStylesFromExternalParticles(d);
   applyDiagramDirectives(d);
@@ -153,12 +159,26 @@ export function layoutDiagram(d: Diagram, theme: Theme): void {
     // (not in a hadron diagram: its hadrons' columns are its final plane already)
     const planeFirst = /^(on|yes|true)$/i.test((d.directives["final plane"] ?? "").trim()) && d.hadrons.length === 0;
     const forces = planeFirst ? { ...theme.forces, planeFirst: 1, alignSteepest: 89, alignLevel: 89, alignStretch: 4, finalPlane: theme.forces.finalPlane * 5 } : theme.forces;
-    layoutWithForces(d, forces, theme.unitY / theme.unitX, labelSizes(d, theme));
+    const trace: LayoutTrace | undefined = debug ? { steps: [] } : undefined;
+    const sizes = labelSizes(d, theme);
+    layoutWithForces(d, forces, theme.unitY / theme.unitX, sizes, true, trace);
+    // (`debug: on`: why each line lies where it does, measured by settling again without each force)
+    if (debug) { debug.steps.push(...trace!.steps); debug.why = whyLines(d, forces, theme.unitY / theme.unitX, sizes); }
   }
+  if (debug) debug.engine = engine === "v2" ? "default" : engine;
+  // (each step after the engine, noted for `debug: on` with the points it moved)
+  const noted = (step: string, run: () => void) => {
+    const before = debug && new Map([...d.vertices.values()].map((v) => [v.id, [v.x, v.y * (theme.unitY / theme.unitX)]]));
+    run();
+    if (!debug || !before) return;
+    const moved = new Map<string, number>();
+    for (const v of d.vertices.values()) { const [x, y] = before.get(v.id)!; const far = Math.hypot(v.x - x, v.y * (theme.unitY / theme.unitX) - y); if (far > 0.02) moved.set(v.id, far); }
+    if (moved.size) debug.steps.push({ step, moved });
+  };
   const isoGrid = /^iso/i.test((d.directives.grid ?? "").trim());
-  if (engine === "grid") snapToGrid(d, isoGrid ? 60 : Number(d.directives.grid) === 45 ? 45 : 22.5, theme.forces.lineLength, theme.unitY / theme.unitX, /^(true|on|yes|diagonal)/i.test((d.directives["grid forks"] ?? "").trim()) ? "diagonal" : "corner");
-  stretchObjectLegs(d, theme.line.objectLegStretch);
-  orientDiagram(d, theme.unitY / theme.unitX);
+  if (engine === "grid") noted("turned onto the grid's directions", () => snapToGrid(d, isoGrid ? 60 : Number(d.directives.grid) === 45 ? 45 : 22.5, theme.forces.lineLength, theme.unitY / theme.unitX, /^(true|on|yes|diagonal)/i.test((d.directives["grid forks"] ?? "").trim()) ? "diagonal" : "corner"));
+  noted("drawn longer to hold its detector object", () => stretchObjectLegs(d, theme.line.objectLegStretch));
+  noted("turned with the whole diagram, as horizontal: or vertical: asks", () => orientDiagram(d, theme.unitY / theme.unitX));
 }
 
 /**
@@ -279,7 +299,9 @@ export function drawDiagram(d: Diagram, options: RenderOptions = {}): { svg: str
     : edges === "tinted" ? { ...thinned, vertex: { ...thinned.vertex, protonEdge: "#8e1f10", neutronEdge: "#aab3c3" } } : thinned;
   // (the lattice view draws space-time cut into sites and links, not the diagram)
   if (/^lattice$/i.test((d.directives.view ?? "").trim())) return { svg: drawLattice(d, theme), scene: new Scene(d, theme, options.idPrefix ?? "feyn") };
-  layoutDiagram(d, theme);
+  // (`debug: on`: a faint grid, each point's name, and why each line lies where it does)
+  const debug: DebugInfo | undefined = /^(on|yes|true)$/i.test((d.directives.debug ?? "").trim()) ? { engine: "", steps: [] } : undefined;
+  layoutDiagram(d, theme, debug);
 
   const scene = new Scene(d, theme, options.idPrefix ?? "feyn");
   for (const [e, ids] of smallestLoops(d)) {
@@ -352,10 +374,12 @@ export function drawDiagram(d: Diagram, options: RenderOptions = {}): { svg: str
   scene.placeLabels();
   // notes last, where the diagram and its labels leave room
   drawNotes(scene, d);
+  const drawnArea = { left: scene.bounds.left, top: scene.bounds.top, right: scene.bounds.right, bottom: scene.bounds.bottom };
+  if (debug) drawDebug(scene, d, debug);
   if (warnings.length) drawWarning(scene, warnings);
   const label = `Feynman diagram: ${describeParsed(d).process}`;
   // (the background grid: asked for, or with the grid layout; at half a line length)
-  const background = (d.directives.background ?? (/^grid$/i.test((d.directives.layout ?? "").trim()) ? "grid" : "")).trim().toLowerCase();
+  const background = (d.directives.background ?? (debug || /^grid$/i.test((d.directives.layout ?? "").trim()) ? "grid" : "")).trim().toLowerCase();
   const gridStep = background === "grid" ? (theme.forces.lineLength * theme.unitX) / 2 : 0;
   // (through the beam axis: a horizontal grid line through the middle of the incoming legs,
   // a vertical one through the first of them; a grid layout keeps its own crossings)
@@ -370,7 +394,7 @@ export function drawDiagram(d: Diagram, options: RenderOptions = {}): { svg: str
   const inlineId = d.directives.inline?.trim().replace(/^\((.*)\)$/, "$1");
   const inlineVertex = inlineId ? d.vertices.get(inlineId) : undefined;
   if (inlineId && !inlineVertex) throw new FeynError(`inline: names a point of the diagram, such as "inline: a"`);
-  const svg = assembleSvg(scene, d.directives.title, label, (Number(d.directives.scale) || 1) * theme.drawingScale, explainParsed(d), gridStep, origin, /^iso/i.test((d.directives.grid ?? "").trim()), inlineVertex && scene.position(inlineVertex).y, diagramModel(d, scene));
+  const svg = assembleSvg(scene, d.directives.title, label, (Number(d.directives.scale) || 1) * theme.drawingScale, explainParsed(d), gridStep, origin, /^iso/i.test((d.directives.grid ?? "").trim()), inlineVertex && scene.position(inlineVertex).y, diagramModel(d, scene), debug ? drawnArea : undefined);
   // (the black-and-white scheme: every colour the drawing uses, made grey)
   // (the kinematic view draws the event instead of the diagram)
   const view = (d.directives.view ?? "").trim().toLowerCase();

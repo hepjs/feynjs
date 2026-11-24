@@ -165,6 +165,7 @@ Contents: `j` jet, `b` b-tagged jet (with its secondary vertex), `e` electron, `
 | `show intermediate: true` | in the kinematic view, draw the particles that decay on (tops, W bosons), their products starting from their ends |
 | `view: lattice` | draw space-time as a lattice instead of the diagram: `lattice: 8x6` (sites across by up), `wilson loop: (1,1) to (4,4)`, `plaquette: (5,1)`, `link: (5,4) to (6,4)`, `polyakov loop: 7`, `site: (1,1) [label=\psi]`, `boundary: periodic`, `axes: off`; each may be written many times, and takes `[label=...]` and `[color=...]` |
 | `background: grid` | a light grey grid behind the drawing, every half line length (on by default with `layout: grid`) |
+| `debug: on` | a faint grid, each point's name, each line numbered, and under the drawing why each line lies where it does: the rules without which it would move most (measured, in line lengths), and the steps after the forces that moved it ([Why a line is where it is](../guide/layout.md#why-a-line-is-where-it-is)) |
 | `final plane: on` | the decays laid out as a tree: every final state on one vertical plane, every decay forking about level, the branches of a decay mirrored with equal room (by default each decay follows its parent's direction) |
 | `colour flow: on` | draw colour flow beside quarks and gluons |
 | `nucleon edges: tinted` (or `none`, `ink`) | how nuclei's nucleons are edged: a darker red and lighter grey, none, or ink (the default) |
