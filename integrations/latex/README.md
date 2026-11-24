@@ -29,6 +29,9 @@ citations:
 
 With `--shell-escape` and `feynjs` installed, LaTeX does step 2 itself, in one run.
 
+With Tectonic, add `--keep-intermediates` (and `--keep-logs`): Tectonic otherwise keeps the files
+a document writes in memory, so the diagram sources never reach the disk for `feynjs cache`.
+
 Each drawing records the MD5 checksum of the source it was drawn from, so an edited diagram is
 noticed (a warning, and the box again) until it is redrawn.
 

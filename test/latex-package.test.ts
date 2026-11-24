@@ -55,6 +55,6 @@ function feynjsCache(dir: string): string {
 function texCompiler(): { command: string; args: string[] } | undefined {
   const runs = (command: string) => { try { execFileSync(command, ["--version"], { stdio: "ignore" }); return true; } catch { return false; } };
   if (runs("pdflatex")) return { command: "pdflatex", args: ["-interaction=nonstopmode", "-halt-on-error"] };
-  if (runs("tectonic")) return { command: "tectonic", args: ["--keep-logs", "--chatter", "minimal"] };
+  if (runs("tectonic")) return { command: "tectonic", args: ["--keep-logs", "--keep-intermediates", "--chatter", "minimal"] }; // (keeping what a document writes: the feynjs package's sources)
   return undefined;
 }
