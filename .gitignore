@@ -11,3 +11,6 @@ docs/javascripts/feynjs.min.js
 
 # pixi environments
 .pixi/
+
+# the paper is kept in its own (private) repository, in this folder
+paper/
