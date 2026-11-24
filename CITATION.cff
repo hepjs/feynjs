@@ -4,6 +4,14 @@ title: "feynjs: Feynman diagrams for the web, written as text and laid out autom
 version: 0.9.4
 date-released: 2026-11-24
 license: MIT
+doi: 10.5281/zenodo.24497761
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.24497761
+    description: "All versions: always resolves to the latest"
+  - type: doi
+    value: 10.5281/zenodo.24497762
+    description: "Version 0.9.4"
 repository-code: "https://github.com/hepjs/feynjs"
 url: "https://hepjs.github.io/feynjs/"
 type: software

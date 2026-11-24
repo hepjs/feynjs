@@ -12,8 +12,7 @@
   <a href="https://www.jsdelivr.com/package/npm/feynjs"><img src="https://data.jsdelivr.com/v1/package/npm/feynjs/badge" alt="jsDelivr"></a>
   <a href="https://hepjs.github.io/feynjs/"><img src="https://img.shields.io/badge/docs-hepjs.github.io%2Ffeynjs-c0392b" alt="docs"></a>
   <a href="LICENSE.md"><img src="https://img.shields.io/badge/licence-MIT-blue" alt="MIT licence"></a>
-  <!-- DOI: once the first release is archived on Zenodo, add its badge here:
-  <a href="https://doi.org/10.5281/zenodo.XXXXXXX"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg" alt="DOI"></a> -->
+  <a href="https://doi.org/10.5281/zenodo.24497761"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.24497761.svg" alt="DOI 10.5281/zenodo.24497761"></a>
 </p>
 
 # feynjs
@@ -118,8 +117,11 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for how the code is organised and how to 
 
 ## Cite
 
-If feynjs helps your work, please cite it: see [CITATION.cff](CITATION.cff). A paper describing it
-is in preparation.
+If feynjs helps your work, please cite it. Every release is archived on Zenodo:
+[10.5281/zenodo.24497761](https://doi.org/10.5281/zenodo.24497761) always resolves to the latest
+version, and each version has a DOI of its own (0.9.4:
+[10.5281/zenodo.24497762](https://doi.org/10.5281/zenodo.24497762)). [CITATION.cff](CITATION.cff)
+has the details. A paper describing feynjs is in preparation.
 
 ## Licence and thanks
 
