@@ -446,14 +446,16 @@ test("optical size: a smaller diagram is smaller, with relatively heavier lines"
   assert.ok(stroke(half) / stroke(normal) > width(half) / width(normal));
 });
 
-test("v2 follows the out: order and keeps a moving top's decay forward (TOPQ-2018-22 fig_01b)", () => {
+test("v2 follows the out: order, puts a top's b outside, and keeps the decay forward (TOPQ-2018-22 fig_01b)", () => {
   const d = parse(readFileSync("validation/atlas/TOPQ-2018-22/fig_01b.feyn", "utf8"));
   layoutDiagram(d, { ...defaultTheme, engine: "v2" });
   // (in px: a row and a rank are not the same length)
   const at = (id: string) => { const v = d.vertices.get(id)!; return { x: v.x * defaultTheme.unitX, y: v.y * defaultTheme.unitY }; };
-  // listed top to bottom: nubar, l, bbar, gamma, u/c
-  const ys = ["f1", "f2", "f3", "f4", "f5"].map((id) => at(id).y);
+  // listed top to bottom: nubar, l, bbar, gamma, u/c; all but the top's b keep that order
+  const ys = ["f1", "f2", "f4", "f5"].map((id) => at(id).y);
   assert.deepEqual([...ys].sort((a, b) => a - b), ys);
+  // the tbar heads up, so its b goes to the outside: above the W, whatever the list says
+  assert.ok(at("f3").y < at("w").y, "the tbar's bbar is outside its W");
   // the W leaves the tbar decay forward, not upright
   const c = at("c"), w = at("w");
   const lean = Math.atan2(c.y - w.y, w.x - c.x) * 180 / Math.PI;

@@ -15,6 +15,10 @@ layout that moves is a change, recorded here.
 - **Dark pages:** the grid behind a grid layout, and the lattice view's grid and sites, are drawn in
   the diagram's own colour, thinned, so they stay faint on dark pages as on light.
 - **Releases** carry the Obsidian plugin as `feynjs-obsidian.zip`.
+- **Top decays** (default engine): the b of t -> b W leaves to the outside of the diagram, turned
+  40 degrees from the top's heading and a little short, while the W and what follows lie as
+  before; a b that settles inside its W is turned over to the outside. A top level with the beams
+  keeps the listed order. 17 approved layouts moved, all with tops.
 - **Cascades on the grid:** with `layout: grid`, a decay along a cascade is drawn as a level
   spine with what it gives off hanging from it. The particle that carries the cascade on (the
   superpartner, else the one product that decays further) runs level; the final states it throws

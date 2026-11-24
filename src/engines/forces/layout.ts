@@ -1,6 +1,6 @@
 import type { Diagram } from "../../model.ts";
 import type { ForceRules } from "../../theme.ts";
-import { allForces, givenOffToward, levelTies, mirroredPairs, quarkRails, segmentsCross } from "./forces.ts";
+import { allForces, givenOffToward, givesOffFermion, levelTies, topOutside, mirroredPairs, quarkRails, segmentsCross } from "./forces.ts";
 import { balance } from "./solve.ts";
 import { readStructure } from "./structure.ts";
 import type { Sizes, Structure } from "./structure.ts";
@@ -57,6 +57,13 @@ export function layoutWithForces(diagram: Diagram, rules: ForceRules, rowOverRan
       // (the author has chosen the order, so the force that would choose one stands down)
       p = settle(flipped, [keepListedOrder(listed, rules)], "light outside");
     }
+  }
+  // (a top's b on the inside of its W, where it settled first: the forces cannot pass one line
+  // through the other, so the decay is turned over and settles again, the b outside)
+  const outward = topsBOutward(s, p);
+  if (outward !== p) {
+    const again = settle(outward);
+    if (topsBInside(s, again) < topsBInside(s, p)) p = again;
   }
   settlePairs(s, p);
   if (rules.planeFirst && !s.hadrons.length) planeTree(s, p, rules);
@@ -349,6 +356,54 @@ function outwardness(s: Structure, i: number): number {
   const into = s.linesAt[i].find((l) => s.time[s.lines[l].a === i ? s.lines[l].b : s.lines[l].a] < s.time[i]);
   const kind = into === undefined ? 1 : s.lines[into].heavy ? 0 : s.lines[into].fermion ? 2 : 1;
   return 2 * kind + (s.external[i] ? 1 : 0);
+}
+
+/** The tops whose b lies on the inside of the W: toward the middle, not the way the top is heading. */
+function topsBInsideAt(s: Structure, p: Float64Array): number[] {
+  const other = (l: number, i: number) => (s.lines[l].a === i ? s.lines[l].b : s.lines[l].a);
+  return s.ids.map((_, at) => at).filter((at) => {
+    if (s.external[at] || !givesOffFermion(s, at)) return false;
+    const into = s.linesAt[at].find((l) => s.time[other(l, at)] < s.time[at])!;
+    const made = s.linesAt[at].filter((l) => s.time[other(l, at)] > s.time[at]);
+    const b = other(made.find((l) => s.lines[l].fermion)!, at), w = other(made.find((l) => !s.lines[l].fermion)!, at);
+    const from = other(into, at);
+    const hx = p[2 * at] - p[2 * from], hy = p[2 * at + 1] - p[2 * from + 1];
+    // (outside: see topOutside; a top with none is left be)
+    const away = topOutside(s, p, from, at);
+    if (!away) return false;
+    const side = (j: number) => hx * (p[2 * j + 1] - p[2 * at + 1]) - hy * (p[2 * j] - p[2 * at]);
+    // (side > 0 is below the top's line, in the drawing's y-down; outside below is away > 0)
+    return Math.sign(side(b) - side(w)) !== Math.sign(away) && Math.sign(away) !== 0;
+  });
+}
+const topsBInside = (s: Structure, p: Float64Array) => topsBInsideAt(s, p).length;
+
+/** The layout with every top whose b lies inside turned over (b and W swapped about the top's decay), or the same layout if none is. */
+function topsBOutward(s: Structure, p: Float64Array): Float64Array {
+  const wrong = topsBInsideAt(s, p);
+  if (!wrong.length) return p;
+  const other = (l: number, i: number) => (s.lines[l].a === i ? s.lines[l].b : s.lines[l].a);
+  const later = (i: number) => s.linesAt[i].map((l) => other(l, i)).filter((j) => s.time[j] > s.time[i]);
+  const q = Float64Array.from(p);
+  for (const at of wrong) {
+    const after = new Set<number>(), stack = later(at);
+    while (stack.length) { const j = stack.pop()!; if (!after.has(j)) { after.add(j); stack.push(...later(j)); } }
+    // (reflected across the middle of the products' headings: b and W swap sides, each still forward)
+    let ux = 0, uy = 0;
+    for (const j of later(at)) { const fx = q[2 * j] - q[2 * at], fy = q[2 * j + 1] - q[2 * at + 1], n = Math.hypot(fx, fy) || 1; ux += fx / n; uy += fy / n; }
+    const n = Math.hypot(ux, uy) || 1; ux /= n; uy /= n;
+    // (the b and the W swap sides; what the W decays to moves with it, unturned, so its own
+    // products keep their order)
+    const cx = q[2 * at], cy = q[2 * at + 1];
+    const mirror = (j: number) => { const x = q[2 * j] - cx, y = q[2 * j + 1] - cy, along = x * ux + y * uy; return [cx + 2 * along * ux - x, cy + 2 * along * uy - y]; };
+    const products = later(at), w = products.find((j) => !s.external[j]);
+    const shift = w === undefined ? [0, 0] : (() => { const [x, y] = mirror(w); return [x - q[2 * w], y - q[2 * w + 1]]; })();
+    for (const j of after) {
+      if (products.includes(j)) { const [x, y] = mirror(j); q[2 * j] = x; q[2 * j + 1] = y; }
+      else { q[2 * j] += shift[0]; q[2 * j + 1] += shift[1]; }
+    }
+  }
+  return q;
 }
 
 /** Every pair of legs in the author's `in:` and `out:` lists, as point indices, the upper one first (so the count of pairs the wrong way round measures how far the order is off). */

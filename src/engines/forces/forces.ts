@@ -105,7 +105,9 @@ export function lineLength(s: Structure, rules: ForceRules): Force {
       const rim = intoBlob
         ? [line.a, line.b].reduce((sum, i) => sum + Math.max(0, s.markRadius[i] - s.blobRadius), 0)
         : s.markRadius[line.a] + s.markRadius[line.b];
-      const want = (line.leg ? rules.legLength * (intoLoop ? rules.loopLeg : 1) : rules.lineLength) * (halves ? 0.5 : 1) * stage * (intoBlob ? rules.blobBeamLength : 1) * (between(line) ? 0.5 : intoRun(line) ? 0.7 : 1) + rim;
+      // (the fermion a decay gives off beside a boson that decays on, the b of t -> b W, is short)
+      const givenOff = line.leg && line.fermion && !line.heavy && givesOffFermion(s, start);
+      const want = (line.leg ? rules.legLength * (intoLoop ? rules.loopLeg : 1) * (givenOff ? rules.givenOffLength : 1) : rules.lineLength) * (halves ? 0.5 : 1) * stage * (intoBlob ? rules.blobBeamLength : 1) * (between(line) ? 0.5 : intoRun(line) ? 0.7 : 1) + rim;
       // (an outgoing leg gives way first: when the final states end level, the leg with less
       // far to go grows to meet them, not the propagator that brought it)
       const stiffness = rules.length * (line.leg && !intoBlob ? rules.legGive : 1);
@@ -221,7 +223,9 @@ export function timeFlow(s: Structure, rules: ForceRules): Force {
     terms: timed.map((line) => {
       const [early, late] = s.time[line.a] < s.time[line.b] ? [line.a, line.b] : [line.b, line.a];
       // an intermediate boson that decays is likely off-shell: freer to swing wide
+      // (the fermion given off beside it, the b of t -> b W, feels none: givenOffSideways sets its way)
       const emitted = !line.leg && !line.fermion && !line.heavy && !s.external[late] && movingDecay.has(early);
+      const givenOff = line.leg && line.fermion && !line.heavy && movingDecay.has(early) && givesOffFermion(s, early);
       const offShell = !line.leg && !line.fermion && !line.heavy && !s.external[late] && !emitted;
       // a heavy particle keeps the heading it was made with (it deflects less), so time does not level it
       // a heavy particle mostly keeps its heading (only a little of the pull), except the last
@@ -230,7 +234,7 @@ export function timeFlow(s: Structure, rules: ForceRules): Force {
       // cascade opens wider at the collision, a short one stays forward)
       // (beams into a blob feel little of it, so they open wide)
       const intoBlob = s.time[early] === 0 && s.blob[late];
-      const w = weight * (line.heavy && !line.leg ? rules.heavyFlow / Math.max(1, heavyAhead[late]) ** rules.depthEase : offShell ? rules.offShellFlow : emitted ? rules.emittedFlow : intoBlob ? rules.blobBeamFlow : 1)
+      const w = weight * (line.heavy && !line.leg ? rules.heavyFlow / Math.max(1, heavyAhead[late]) ** rules.depthEase : offShell ? rules.offShellFlow : emitted ? rules.emittedFlow : givenOff ? rules.givenOffFlow : intoBlob ? rules.blobBeamFlow : 1)
         // of two branches made together, the one with more decays ahead keeps nearer level,
         // giving its longer cascade the room (the tbar of tbar -> W bbar, W -> l nu beside a t -> gamma q)
         * (deeper.has(late) ? rules.deeperFlow : 1);
@@ -240,6 +244,54 @@ export function timeFlow(s: Structure, rules: ForceRules): Force {
       });
     }),
   };
+}
+
+/** A quark's name, by its key or its label: u, d, s, c, b, t or q, with or without its bar (not B or T). */
+function isQuark(name: string | undefined): boolean {
+  if (!name) return false;
+  // (\bar{t}, \bar t, tbar, t~, b_1, q_h: the letter under the bar, sub- and superscripts and primes off)
+  const bare = name.replace(/\\bar\s*\{([^}]*)\}/, "$1").replace(/\\bar\s*/, "").replace(/[_^].*$/, "").replace(/(bar|~)$/i, "").replace(/['\d]+$/, "").trim();
+  // (lower case: B and T are the heavy vector-like quarks, not a b and a t)
+  return /^[udscbtq]$/.test(bare);
+}
+
+/**
+ * A decay into one outgoing fermion and one boson that decays on (t -> b W, then W -> l nu):
+ * the boson carries the decay on, and the fermion is given off to the side, as papers draw the
+ * b of a top.
+ */
+export function givesOffFermion(s: Structure, at: number): boolean {
+  const other = (l: number, i: number) => (s.lines[l].a === i ? s.lines[l].b : s.lines[l].a);
+  // (only a fermion made in the collision that decays to another flavour, t -> b: in a hadron
+  // diagram the quarks run with their hadrons, and a loop's corners are the loop's to set)
+  if (s.hadrons.length || s.loops.some((loop) => loop.points.includes(at))) return false;
+  const into = s.linesAt[at].filter((l) => s.time[other(l, at)] < s.time[at]);
+  if (into.length !== 1 || !s.lines[into[0]].fermion || s.lines[into[0]].heavy || s.external[other(into[0], at)]) return false;
+  const made = s.linesAt[at].filter((l) => s.time[other(l, at)] > s.time[at]);
+  if (made.length !== 2) return false;
+  if (made.some((l) => s.lines[l].fermion && s.lineLabel[l] !== undefined && s.lineLabel[l] === s.lineLabel[into[0]])) return false;
+  // (quarks only, a top to a b: a lepton's decay, nu -> mu W*, keeps its own diagonal run)
+  // (a leg's name may be on its line or on its end, f6 [q_h])
+  const legName = (l: number) => { const j = other(l, at); return s.lineLabel[l] ?? s.particle[j] ?? s.label[j]; };
+  if (!isQuark(s.lineLabel[into[0]]) || !made.some((l) => s.lines[l].fermion && isQuark(legName(l)))) return false;
+  const fermion = made.find((l) => s.lines[l].leg && s.lines[l].fermion && !s.lines[l].heavy);
+  const boson = made.find((l) => !s.lines[l].leg && !s.lines[l].fermion && !s.lines[l].heavy && !s.external[other(l, at)]);
+  return fermion !== undefined && boson !== undefined;
+}
+
+/**
+ * Which way is outside for a top decaying at `at` (in the drawing's y, -1 up, +1 down), or 0
+ * where it has none: the way the top heads, up or down; a top running level, the side of the
+ * beams it lies on (0 when level with them, a single top that is the diagram's middle).
+ */
+export function topOutside(s: Structure, p: Float64Array, from: number, at: number): number {
+  const hx = p[2 * at] - p[2 * from], hy = p[2 * at + 1] - p[2 * from + 1];
+  if (Math.abs(hy) > 0.15 * Math.hypot(hx, hy)) return Math.sign(hy);
+  const beams = s.ids.map((_, i) => i).filter((i) => s.external[i] && s.time[i] === 0);
+  if (!beams.length) return 0;
+  const middle = beams.reduce((sum, i) => sum + p[2 * i + 1], 0) / beams.length;
+  const off = p[2 * at + 1] - middle;
+  return Math.abs(off) < 0.25 ? 0 : Math.sign(off);
 }
 
 /**
@@ -303,6 +355,7 @@ export function timeOrder(s: Structure, rules: ForceRules): Force {
   const heavyDecay = (v: number) => !s.external[v] && s.linesAt[v].filter((l) => s.lines[l].heavy).length >= 2;
   const wide = Math.cos((rules.wideLean * Math.PI) / 180);
   const fermionLean = Math.cos((rules.lightFermionLean * Math.PI) / 180);
+  const upright = Math.cos((88 * Math.PI) / 180);
   // (what a shower makes, four or more that each decay, fans wide: see showerFan)
   const showers = new Map(showerPoints(s).map(({ at, made }) => [at, Math.cos(((showerSpread(made.length) + 12) * Math.PI) / 180)]));
   return {
@@ -312,7 +365,9 @@ export function timeOrder(s: Structure, rules: ForceRules): Force {
       return limit([early, late], (p) => {
         const x = dx(p, early, late), y = dy(p, early, late);
         // (a light fermion from a heavy decay goes forward, a light boson may swing wide)
-        const allowed = showers.get(early) ?? (heavyDecay(early) && !line.heavy ? (line.fermion ? fermionLean : wide) : least);
+        // (and the fermion a decay gives off beside a boson that decays on, the b of t -> b W, as wide)
+        const allowed = showers.get(early) ?? (heavyDecay(early) && !line.heavy ? (line.fermion ? fermionLean : wide)
+          : line.leg && line.fermion && givesOffFermion(s, early) ? upright : least);
         const shortfall = allowed - x / (Math.hypot(x, y) || 1);
         return shortfall > 0 ? rules.timeOrder * shortfall ** 2 : 0;
       });
@@ -1926,6 +1981,35 @@ export function straightIntoBlob(s: Structure, rules: ForceRules): Force {
   };
 }
 
+/**
+ * The b of a top's decay (t -> b W, the W decaying on) leaves to the outside: turned
+ * `givenOffTurn` from the top's heading, the way the top is heading (up or down), so the quark
+ * sits on the outside of the diagram and the W carries the decay on. Only the b turns: the W and
+ * everything after it lie as they would without this.
+ */
+export function givenOffSideways(s: Structure, rules: ForceRules): Force {
+  const other = (l: number, i: number) => (s.lines[l].a === i ? s.lines[l].b : s.lines[l].a);
+  const turn = (rules.givenOffTurn * Math.PI) / 180;
+  const terms: Term[] = [];
+  s.ids.forEach((_, at) => {
+    if (s.external[at] || !givesOffFermion(s, at)) return;
+    const into = s.linesAt[at].filter((l) => s.time[other(l, at)] < s.time[at]);
+    const from = other(into[0], at);
+    const fermion = s.linesAt[at].find((l) => s.time[other(l, at)] > s.time[at] && s.lines[l].fermion)!;
+    const leg = other(fermion, at);
+    // (the term turns the b alone: the top's heading is the top's to set)
+    terms.push(term([at, leg], (p) => {
+      // (outside: see topOutside; where a top has none, its b turns the way it already leans)
+      const heading = Math.atan2(dy(p, from, at), dx(p, from, at));
+      const away = topOutside(s, p, from, at) || Math.sign(dx(p, from, at) * dy(p, at, leg) - dy(p, from, at) * dx(p, at, leg)) || -1;
+      let miss = Math.atan2(dy(p, at, leg), dx(p, at, leg)) - (heading + away * turn);
+      miss = Math.atan2(Math.sin(miss), Math.cos(miss));
+      return rules.givenOffSide * miss ** 2;
+    }));
+  });
+  return { name: "given off sideways", terms };
+}
+
 export function allForces(s: Structure, rules: ForceRules): Force[] {
-  return [straightIntoBlob(s, rules), pairsTogether(s, rules), restLevel(s, rules), equalProducts(s, rules), forwardForks(s, rules), lineLength(s, rules), evenAngles(s, rules), timeFlow(s, rules), timeOrder(s, rules), clearance(s, rules), uprightExchange(s, rules), exchangeFan(s, rules), showerFan(s, rules), mirrorBranches(s, rules), beamsStartTogether(s, rules), finalPlane(s, rules), lightOutside(s, rules), heavyCarriesOn(s, rules), noConverging(s, rules), hadrons(s, rules), vacuumArcs(s, rules), loopShapes(s, rules)];
+  return [straightIntoBlob(s, rules), pairsTogether(s, rules), restLevel(s, rules), equalProducts(s, rules), forwardForks(s, rules), lineLength(s, rules), evenAngles(s, rules), timeFlow(s, rules), timeOrder(s, rules), clearance(s, rules), uprightExchange(s, rules), exchangeFan(s, rules), showerFan(s, rules), mirrorBranches(s, rules), beamsStartTogether(s, rules), finalPlane(s, rules), lightOutside(s, rules), heavyCarriesOn(s, rules), givenOffSideways(s, rules), noConverging(s, rules), hadrons(s, rules), vacuumArcs(s, rules), loopShapes(s, rules)];
 }
