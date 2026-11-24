@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Documentation
+    url: https://hepjs.github.io/feynjs/
+    about: The syntax, every particle and switch, and examples to copy.
+  - name: Playground
+    url: https://hepjs.github.io/feynjs/playground/
+    about: Try a diagram in the browser, and share a link to it in your issue.
+  - name: Report a vulnerability
+    url: https://github.com/hepjs/feynjs/security/advisories/new
+    about: Privately, please, not as a public issue.

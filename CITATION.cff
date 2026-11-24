@@ -4,6 +4,11 @@ title: "feynjs: a JavaScript engine for Feynman diagrams"
 version: 0.9.4
 date-released: 2026-11-24
 license: MIT
+abstract: >-
+  feynjs is a JavaScript engine for Feynman diagrams. A diagram is written as text, in the syntax of
+  TikZ-Feynman or MadGraph, and feynjs places every vertex itself, following the conventions of
+  published diagrams, and draws it: as SVG in a web page, a Markdown site or an Obsidian note, or as
+  TikZ-Feynman code for a LaTeX document. A diagram lays out identically on every platform.
 doi: 10.5281/zenodo.24497761
 identifiers:
   - type: doi
@@ -29,3 +34,7 @@ keywords:
   - particle physics
   - visualisation
   - SVG
+  - JavaScript
+  - Markdown
+  - LaTeX
+  - TikZ-Feynman

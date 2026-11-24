@@ -1,7 +1,7 @@
 {
   "name": "feynjs",
   "version": "0.9.4",
-  "description": "Feynman diagrams for the web: written as text, laid out automatically, drawn as SVG.",
+  "description": "A JavaScript engine for Feynman diagrams: written as text, laid out automatically, drawn as SVG for the web and Markdown, and as TikZ-Feynman for LaTeX.",
   "keywords": [
     "feynman",
     "feynman-diagram",
@@ -11,7 +11,15 @@
     "svg",
     "diagram",
     "tikz-feynman",
-    "madgraph"
+    "madgraph",
+    "feynman-diagrams",
+    "markdown",
+    "latex",
+    "tikz",
+    "obsidian",
+    "mkdocs",
+    "zensical",
+    "visualization"
   ],
   "license": "MIT",
   "author": "Jason Oliver",
@@ -61,5 +69,8 @@
     "@types/node": "^26.6.6",
     "esbuild": "^0.25.0",
     "typescript": "^5.6.0"
-  }
+  },
+  "contributors": [
+    "Pengxuan Zhu (https://orcid.org/0000-0003-2039-5794)"
+  ]
 }

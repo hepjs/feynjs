@@ -294,3 +294,47 @@
 .md-typeset .feynjs-hero-logo .md-button { margin: 0; }
 /* Three tiles in one row, each a little larger. */
 .md-typeset .feynjs-hero-stage .feynjs-hero-tile svg.feynjs { max-height: 150px; }
+
+/* The home page: a full-width splash. On the left the animated logo (two quarks scatter by a
+   photon), the line under it and two buttons; on the right a Feynman diagram, drawn live, with
+   ripples spreading from its proton collision across the whole banner. No card, no tiles. */
+.md-main:has(.feynjs-splash) { overflow-x: clip; }
+.md-content__inner:has(.feynjs-splash) { margin-top: 0; padding-top: 0; }
+.md-content__inner:has(.feynjs-splash)::before { display: none; }
+.md-typeset .feynjs-splash {
+  position: relative; overflow: hidden; box-sizing: border-box;
+  width: 100vw; margin: 0 calc(50% - 50vw); min-height: calc(100vh - 6.4rem); padding: 2.5rem max(1.5rem, calc(50vw - 30rem));
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 2.5rem 3rem;
+  background: radial-gradient(ellipse 55% 60% at 70% 50%, rgba(192, 57, 43, 0.05), transparent 70%);
+}
+.md-typeset .feynjs-splash-text { flex: 1 1 20rem; max-width: 24rem; position: relative; z-index: 1; }
+.md-typeset .feynjs-splash-text > p { margin: 0; }
+.md-typeset .feynjs-splash-logo { display: block; width: 100%; height: auto; }
+.md-typeset .feynjs-splash-logo--dark { display: none; }
+[data-md-color-scheme="slate"] .md-typeset .feynjs-splash-logo--light { display: none; }
+[data-md-color-scheme="slate"] .md-typeset .feynjs-splash-logo--dark { display: block; }
+.md-typeset .feynjs-splash .feynjs-punch { margin: 1.3rem 0 1.4rem; font-size: 1.45em; line-height: 1.25; text-wrap: balance; }
+.md-typeset .feynjs-splash-text > p:last-child { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.md-typeset .feynjs-splash .md-button { margin: 0; }
+.md-typeset .feynjs-splash-diagram { position: relative; flex: 1 1 22rem; max-width: 30rem; }
+.md-typeset .feynjs-splash-diagram div.feynman { position: relative; z-index: 1; margin: 0; }
+.md-typeset .feynjs-splash-diagram div.feynman svg.feynjs { width: 100%; height: auto; }
+/* (the ripples' centre is put on the diagram's collision blob once it is drawn; until then, and
+   without the script, near where the blob is) */
+.md-typeset .feynjs-splash-ripples { position: absolute; left: 24%; top: 50%; width: 0; height: 0; z-index: 0; pointer-events: none; }
+.md-typeset .feynjs-splash-ripples span {
+  position: absolute; left: 0; top: 0; width: 1.4rem; height: 1.4rem; border-radius: 50%; transform: translate(-50%, -50%);
+  border: 1.25px solid var(--feynjs-brick, #c0392b); opacity: 0;
+  animation: feynjs-splash-ripple 4.8s cubic-bezier(0.12, 0.55, 0.35, 1) infinite;
+}
+.md-typeset .feynjs-splash-ripples span:nth-child(1) { animation-delay: 0.6s; }
+.md-typeset .feynjs-splash-ripples span:nth-child(2) { animation-delay: 1.8s; }
+.md-typeset .feynjs-splash-ripples span:nth-child(3) { animation-delay: 3s; }
+.md-typeset .feynjs-splash-ripples span:nth-child(4) { animation-delay: 4.2s; }
+/* (the ring grows, not scales: its line stays fine however wide it gets) */
+@keyframes feynjs-splash-ripple { from { width: 1.4rem; height: 1.4rem; opacity: 0.55; } to { width: 160vmax; height: 160vmax; opacity: 0; } }
+[data-md-color-scheme="slate"] .md-typeset .feynjs-splash-ripples span { border-color: #e05a4c; }
+[data-md-color-scheme="slate"] .md-typeset .feynjs-splash { background: radial-gradient(ellipse 55% 60% at 70% 50%, rgba(224, 90, 76, 0.06), transparent 70%); }
+[data-md-color-scheme="slate"] .md-typeset .feynjs-splash-diagram div.feynman { color: #e6e8eb; }
+@media (prefers-reduced-motion: reduce) { .md-typeset .feynjs-splash-ripples { display: none; } }
+@media (max-width: 45em) { .md-typeset .feynjs-splash { justify-content: center; text-align: center; } .md-typeset .feynjs-splash-text > p:last-child { justify-content: center; } }
