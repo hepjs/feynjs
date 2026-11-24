@@ -12,7 +12,6 @@ repo_name = "hepjs/feynjs"
 edit_uri = "edit/main/docs/"
 
 nav = [
-  { "Home" = "index.md" },
   { "Features" = "features.md" },
   { "Get started" = [
     { "Choose your setup" = "get-started/index.md" },
@@ -23,27 +22,28 @@ nav = [
     { "Browser support" = "get-started/browser-support.md" },
     { "Licence" = "get-started/licence.md" },
   ] },
-  { "Components" = [
-    { "Overview" = "guide/index.md" },
-    { "Write edges, as in TikZ-Feynman" = "guide/syntax.md" },
-    { "Write processes, as in MadGraph" = "guide/processes.md" },
-    { "Lines and particles" = "guide/lines.md" },
-    { "All particles" = "reference/particles.md" },
-    { "Vertices, blobs and nuclei" = "guide/vertices.md" },
-    { "Labels and notes" = "guide/labels.md" },
-    { "Loops, boxes and hadrons" = "guide/loops-hadrons.md" },
-    { "Colour flow" = "guide/colour-flow.md" },
-    { "Detector objects" = "guide/objects.md" },
-    { "Panels and switches" = "guide/panels.md" },
-    { "Syntax at a glance" = "reference/index.md" },
+  { "Guide" = [
+    { "Components" = [
+      { "Overview" = "guide/index.md" },
+      { "Write edges, as in TikZ-Feynman" = "guide/syntax.md" },
+      { "Write processes, as in MadGraph" = "guide/processes.md" },
+      { "Lines and particles" = "guide/lines.md" },
+      { "All particles" = "reference/particles.md" },
+      { "Vertices, blobs and nuclei" = "guide/vertices.md" },
+      { "Labels and notes" = "guide/labels.md" },
+      { "Loops, boxes and hadrons" = "guide/loops-hadrons.md" },
+      { "Colour flow" = "guide/colour-flow.md" },
+      { "Detector objects" = "guide/objects.md" },
+      { "Panels and switches" = "guide/panels.md" },
+      { "Syntax at a glance" = "reference/index.md" },
+    ] },
+    { "Layout & Styling" = [
+      { "Layout engines" = "guide/layout.md" },
+      { "Views" = "guide/views.md" },
+      { "Styling and export" = "guide/styling.md" },
+      { "Theme settings" = "reference/theme.md" },
+    ] },
   ] },
-  { "Layout & Styling" = [
-    { "Layout engines" = "guide/layout.md" },
-    { "Views" = "guide/views.md" },
-    { "Styling and export" = "guide/styling.md" },
-    { "Theme settings" = "reference/theme.md" },
-  ] },
-  { "Playground" = "playground.md" },
   { "Examples" = [
     { "Overview" = "examples/index.md" },
     { "Every line type" = "examples/lines.md" },
@@ -52,26 +52,29 @@ nav = [
     { "Stop production" = "examples/stop.md" },
     { "Gallery" = "examples/gallery.md" },
   ] },
-  { "Usage" = [
-    { "Use feynjs from code" = "developers/index.md" },
-    { "JavaScript API" = "reference/api.md" },
-    { "Command line" = "reference/cli.md" },
-    { "Checking diagrams" = "guide/tools.md" },
-    { "Hand-over format" = "developers/interchange.md" },
-  ] },
-  { "Compatibility" = [
-    { "TikZ-Feynman" = "compatibility/tikz-feynman.md" },
-    { "MadGraph" = "compatibility/madgraph.md" },
-    { "LaTeX" = "compatibility/latex.md" },
-  ] },
-  { "Contributing" = [
-    { "How to contribute" = "contributing/index.md" },
-    { "Development setup" = "contributing/setup.md" },
-    { "Architecture" = "contributing/architecture.md" },
-    { "Extending feynjs" = "contributing/extending.md" },
-    { "Testing" = "contributing/testing.md" },
-    { "The docs site" = "contributing/docs.md" },
-    { "Layout rules (v1)" = "reference/layout-rules.md" },
+  { "Playground" = "playground.md" },
+  { "Integrations" = [
+    { "Usage" = [
+      { "Use feynjs from code" = "developers/index.md" },
+      { "JavaScript API" = "reference/api.md" },
+      { "Command line" = "reference/cli.md" },
+      { "Checking diagrams" = "guide/tools.md" },
+      { "Hand-over format" = "developers/interchange.md" },
+    ] },
+    { "Compatibility" = [
+      { "TikZ-Feynman" = "compatibility/tikz-feynman.md" },
+      { "MadGraph" = "compatibility/madgraph.md" },
+      { "LaTeX" = "compatibility/latex.md" },
+    ] },
+    { "Contributing" = [
+      { "How to contribute" = "contributing/index.md" },
+      { "Development setup" = "contributing/setup.md" },
+      { "Architecture" = "contributing/architecture.md" },
+      { "Extending feynjs" = "contributing/extending.md" },
+      { "Testing" = "contributing/testing.md" },
+      { "The docs site" = "contributing/docs.md" },
+      { "Layout rules (v1)" = "reference/layout-rules.md" },
+    ] },
   ] },
 ]
 
@@ -102,7 +105,7 @@ features = [
   "content.tooltips",
   # "header.autohide",
   "navigation.expand",
-  "navigation.footer",
+  # "navigation.footer",
   # "navigation.indexes",
   "navigation.instant",
   "navigation.instant.prefetch",

@@ -292,3 +292,5 @@
 .md-typeset .feynjs-hero-logo .feynjs-punch .feynjs-aside { display: block; font-size: 0.8em; margin-top: 0.15em; }
 .md-typeset .feynjs-hero-logo p:last-child { margin: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
 .md-typeset .feynjs-hero-logo .md-button { margin: 0; }
+/* Three tiles in one row, each a little larger. */
+.md-typeset .feynjs-hero-stage .feynjs-hero-tile svg.feynjs { max-height: 150px; }
