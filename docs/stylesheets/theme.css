@@ -278,3 +278,9 @@
 /* The home page's four feature cards, two by two (one column on a narrow screen). */
 .md-typeset .grid.cards.feynjs-features { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 @media (max-width: 45em) { .md-typeset .grid.cards.feynjs-features { grid-template-columns: minmax(0, 1fr); } }
+
+/* The playground's data and TikZ panels: a plain disclosure line, not an admonition box. */
+.md-typeset details.pg-model, .md-typeset details.pg-tikz { border: 0; box-shadow: none; background: none; padding: 0; margin: 0.5rem 0 0; font-size: 0.64rem; }
+.md-typeset details.pg-model > summary, .md-typeset details.pg-tikz > summary { background: none; border: 0; padding: 0.15rem 1.6rem 0.15rem 0; font-weight: 500; color: var(--md-default-fg-color--light); }
+.md-typeset details.pg-model > summary::before, .md-typeset details.pg-tikz > summary::before { display: none; }
+.md-typeset details.pg-model > summary:hover, .md-typeset details.pg-tikz > summary:hover { color: var(--feynjs-rule); }

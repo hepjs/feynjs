@@ -125,7 +125,7 @@
           <div class="pg-palette" aria-label="Line to draw with">${PALETTE.map((p, i) => `<button type="button" class="pg-chip${i === 0 ? " pg-active" : ""}" draggable="true" data-style="${p}" title="${p}: click to draw with it, or drop it on a line"><span class="pg-chip-line"></span><span class="pg-chip-name">${p}</span></button>`).join("")}</div>
         </div>
       </div>
-      <details class="pg-model"><summary>What a program (or an AI) sees: the diagram as data</summary><pre><code></code></pre></details>
+      <details class="pg-model"><summary>The diagram as data: what a program, or an AI, sees</summary><pre><code></code></pre></details>
       <details class="pg-tikz" hidden><summary>TikZ-Feynman code</summary><pre><code></code></pre></details>`;
     const $ = (sel) => root.querySelector(sel);
     const drawing = $(".pg-drawing"), hover = $(".pg-hover"), hint = $(".pg-hint");

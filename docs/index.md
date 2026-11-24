@@ -161,11 +161,19 @@ Feynman diagrams, meet *Markdown*{ .feynjs-accent }. *Oh, and the web.*{ .feynjs
     f1 [mu-] -- b -- f2 [mu+]
     ```
 
-    ```text
-    i1 [e-] -- a -- i2 [e+]
-    a -- [gamma] b
-    f1 [mu-] -- b -- f2 [mu+]
+    ````tex
+    ```feynman
+    i1 [e-] -- a -- i2 [e+] % (1)!
+    a -- [gamma] b % (2)!
+    f1 [mu-] -- b -- f2 [mu+] % (3)!
     ```
+    ````
+
+    1.  An electron and a positron come in and meet at the point `a`. Points are any names you
+        like; a leg's particle goes in brackets after it.
+    2.  A photon from `a` to `b`. The particle in the brackets sets the line's style, arrow and
+        label.
+    3.  The muon pair goes out from `b`. Time runs left to right; no coordinates are needed.
 
 -   **[A process, as in MadGraph](guide/processes.md)**: feynjs makes the lines.
 
@@ -175,16 +183,22 @@ Feynman diagrams, meet *Markdown*{ .feynjs-accent }. *Oh, and the web.*{ .feynjs
     neutralino2 > Z neutralino1
     ```
 
-    ```text
-    p p > gluino gluino
-    gluino > q q neutralino2
-    neutralino2 > Z neutralino1
+    ````tex
+    ```feynman
+    p p > gluino gluino % (1)!
+    gluino > q q neutralino2 % (2)!
+    neutralino2 > Z neutralino1 % (3)!
     ```
+    ````
+
+    1.  The process: two protons make a pair of gluinos, drawn in the SUSY style.
+    2.  How each gluino decays. A decay line applies to every particle of that name.
+    3.  The neutralino's own decay, joined on: a cascade in three lines.
 
 </div>
 
-No coordinates and no styles to pick: the particles set each line, and the layout draws it as
-papers do. Write either in a `feynman` block in your Markdown.
+Either goes in a `feynman` block in your Markdown. Click a number in the code to see what each line
+does.
 
 ## Everything it does
 
