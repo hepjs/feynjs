@@ -30,6 +30,7 @@
     feynjs.run({ querySelector: ".feynjs-row div.feynman:not([data-processed])" });
     stepByStep();
     twoEngines();
+    water();
     feynjs.run({ querySelector: "div.feynman:not([data-processed])", download: true });
   };
   // the time-order row plays: each step of the diagram appears in turn, and as a vertex is
@@ -80,7 +81,7 @@
   // the two-engines row: the same diagram moves between the force layout and the grid. Each frame
   // is drawn by feynjs, every point pinned (at (x, y)) part way between where the two engines put
   // it, so the lines re-fit their waves and arrows as they go. It plays back and forth while the
-  // row is in view; the switch above it goes to either engine.
+  // row is in view, a label over it saying which engine is showing.
   var twoEngines = function () {
     document.querySelectorAll(".feynjs-row--morph div.feynman[data-source]:not([data-morph])").forEach(function (box) {
       box.setAttribute("data-morph", "");
@@ -110,12 +111,13 @@
         return feynjs.render("layout: manual\n" + source + "\n" + pins.join("\n"), { idPrefix: "morph" });
       };
       var ease = function (t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
-      var state = 0, running = null, timer = null, auto = true;
-      var buttons = document.createElement("div");
-      buttons.className = "feynjs-engine-switch";
-      buttons.innerHTML = '<button type="button" data-to="0" class="feynjs-on">Forces</button><button type="button" data-to="1">Grid</button>';
-      box.parentElement.insertBefore(buttons, box);
-      var mark = function (to) { buttons.querySelectorAll("button").forEach(function (b) { b.classList.toggle("feynjs-on", Number(b.dataset.to) === to); }); };
+      var state = 0, running = null, timer = null;
+      var label = document.createElement("div");
+      label.className = "feynjs-engine-label";
+      label.setAttribute("aria-hidden", "true");
+      label.innerHTML = '<span data-to="0" class="feynjs-on">Forces</span><span data-to="1">Grid</span>';
+      box.parentElement.insertBefore(label, box);
+      var mark = function (to) { label.querySelectorAll("span").forEach(function (b) { b.classList.toggle("feynjs-on", Number(b.dataset.to) === to); }); };
       var still = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       var go = function (to, then) {
         if (to === state || running) return;
@@ -130,19 +132,61 @@
         };
         requestAnimationFrame(step);
       };
-      var loop = function () { if (!auto) return; timer = setTimeout(function () { go(1 - state, loop); }, 2200); };
-      buttons.addEventListener("click", function (e) {
-        var to = e.target.dataset && e.target.dataset.to;
-        if (to === undefined) return;
-        auto = false; clearTimeout(timer); go(Number(to));
-      });
+      var loop = function () { timer = setTimeout(function () { go(1 - state, loop); }, 2200); };
       show(ends[0], false);
       if (!still && "IntersectionObserver" in window) {
         new IntersectionObserver(function (seen) {
-          if (seen[0].isIntersecting) { if (auto && !timer && !running) loop(); }
+          if (seen[0].isIntersecting) { if (!timer && !running) loop(); }
           else { clearTimeout(timer); timer = null; }
         }, { threshold: 0.5 }).observe(box);
       }
+    });
+  };
+  // the home page's banner, like water: from the js, a drop every few seconds, each a train of three
+  // rings that thin and fade as they spread; now and then a smaller drop lands somewhere else in
+  // the banner. Paused while the banner is out of view or the page is hidden; still for readers
+  // who ask for less motion.
+  var water = function () {
+    document.querySelectorAll(".feynjs-splash:not([data-water])").forEach(function (splash) {
+      splash.setAttribute("data-water", "");
+      if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      var source = splash.querySelector(".feynjs-splash-ripples");
+      if (!source) return;
+      var layer = document.createElement("div");
+      layer.className = "feynjs-water";
+      layer.setAttribute("aria-hidden", "true");
+      splash.insertBefore(layer, splash.firstChild);
+      var ring = function (x, y, to, opacity, seconds, delay) {
+        var r = document.createElement("span");
+        r.className = "feynjs-water-ring";
+        r.style.left = x + "px"; r.style.top = y + "px";
+        r.style.setProperty("--to", to + "px"); r.style.setProperty("--o", opacity);
+        r.style.animationDuration = seconds + "s"; r.style.animationDelay = delay + "s";
+        r.addEventListener("animationend", function () { r.remove(); });
+        layer.appendChild(r);
+      };
+      var where = function () {
+        var b = splash.getBoundingClientRect(), s = source.getBoundingClientRect();
+        return { x: s.left - b.left, y: s.top - b.top, w: b.width, h: b.height };
+      };
+      // (a drop: a train of rings, close together, each fainter than the one before)
+      var drop = function (x, y, to, opacity, seconds, rings) {
+        for (var k = 0; k < rings; k++) ring(x, y, to * (1 - k * 0.06), opacity * Math.pow(0.6, k), seconds, k * 0.22);
+      };
+      var big = null, small = null, on = false;
+      var bigDrop = function () { var p = where(); drop(p.x, p.y, Math.max(p.w, p.h) * 1.7, 0.62, 5.6, 3); };
+      var smallDrop = function () {
+        var p = where();
+        drop(p.w * (0.06 + Math.random() * 0.88), p.h * (0.08 + Math.random() * 0.84), 140 + Math.random() * 180, 0.34, 2.6 + Math.random(), 2);
+        small = setTimeout(smallDrop, 1100 + Math.random() * 1500);
+      };
+      var start = function () { if (on) return; on = true; bigDrop(); big = setInterval(bigDrop, 2600); small = setTimeout(smallDrop, 900); };
+      var stop = function () { on = false; clearInterval(big); clearTimeout(small); };
+      splash.classList.add("feynjs-water-on");
+      if ("IntersectionObserver" in window) {
+        new IntersectionObserver(function (seen) { if (seen[0].isIntersecting && !document.hidden) start(); else stop(); }, { threshold: 0.1 }).observe(splash);
+      } else start();
+      document.addEventListener("visibilitychange", function () { if (document.hidden) stop(); else if (splash.isConnected) start(); });
     });
   };
   if (window.document$ && window.document$.subscribe) window.document$.subscribe(go);
