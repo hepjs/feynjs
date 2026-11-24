@@ -21,6 +21,8 @@ layout that moves is a change, recorded here.
 - **Playground:** examples in menus by field (Standard Model, SUSY, Flavour physics, Heavy ion, Views
   and engines), and autocomplete in the editor (switches, particles, line styles, objects, options,
   point names).
+- **Objects' contents in a process:** `p p > Zp > LRJ(1b W(2j)) j`. Each object's line carries
+  `data-object` in the SVG. In the playground, click a large-R jet to choose what it holds.
 - **Top decays** (default engine): the b of t -> b W leaves to the outside of the diagram, turned
   40 degrees from the top's heading and a little short, while the W and what follows lie as
   before; a b that settles inside its W is turned over to the outside. A top level with the beams

@@ -248,3 +248,14 @@
 .md-typeset .pg-choice.pg-picked em { color: rgba(255, 255, 255, 0.8); }
 .md-typeset .pg-examples { display: inline-flex; flex-wrap: wrap; gap: 0.25rem; }
 .md-typeset .pg-top .pg-example { max-width: 7.5rem; }
+.md-typeset .pg-filler { position: absolute; z-index: 11; width: 15rem; padding: 0.5rem; border: 1px solid var(--md-default-fg-color--lighter); border-radius: 0.5rem; background: var(--md-default-bg-color); box-shadow: 0 0.4rem 1.2rem rgba(0, 0, 0, 0.2); font-size: 0.62rem; }
+.md-typeset .pg-filler[hidden] { display: none; }
+.md-typeset .pg-filler-title { font-weight: 600; margin-bottom: 0.35rem; }
+.md-typeset .pg-filler-list { display: grid; grid-template-columns: 1fr 1fr; gap: 0.25rem; }
+.md-typeset .pg-filler button { display: flex; flex-direction: column; align-items: flex-start; gap: 0.05rem; padding: 0.25rem 0.35rem; font: inherit; border: 1px solid var(--md-default-fg-color--lightest); border-radius: 0.3rem; background: var(--md-default-bg-color); color: var(--md-default-fg-color); cursor: pointer; text-align: left; }
+.md-typeset .pg-filler button:hover { border-color: var(--feynjs-rule); }
+.md-typeset .pg-filler button code { font-size: 0.56rem; padding: 0; background: none; color: var(--md-default-fg-color--light); }
+.md-typeset .pg-filler-own { display: flex; gap: 0.25rem; margin-top: 0.35rem; }
+.md-typeset .pg-filler-own input { flex: 1; min-width: 0; font: inherit; font-family: var(--md-code-font-family); padding: 0.2rem 0.35rem; border: 1px solid var(--md-default-fg-color--lighter); border-radius: 0.3rem; background: var(--md-default-bg-color); color: var(--md-default-fg-color); }
+.md-typeset .pg-filler-own button { flex-direction: row; }
+.md-typeset .pg-drawing [data-object="large"] { cursor: pointer; }

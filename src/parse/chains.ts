@@ -219,9 +219,17 @@ function splitSegments(text: string, line: number): Item[][] {
       if (!name) throw new FeynError(`cannot read "${text}"`, line);
       const item: Item = { name };
       if (text[k] === "(") {
+        // (a detector object's contents, LRJ(1b W(2j)): kept with its name, the object reads them)
+        const contents = /^\((?!\s*>)((?:[^()]|\([^()]*\))*)\)/.exec(text.slice(k));
+        if (contents && parseObject(`${name}(${contents[1]})`)) {
+          item.name = `${name}(${contents[1]})`;
+          k += contents[0].length;
+          items.push(item);
+          continue;
+        }
         k++;
         while (k < text.length && /\s/.test(text[k])) k++;
-        if (text[k] !== ">") throw new FeynError(`write a decay as "${name}(> products)"`, line);
+        if (text[k] !== ">") throw new FeynError(`write a decay as "${name}(> products)", or an object's contents as "LRJ(2j)"`, line);
         k++;
         item.decay = readItems(true);
       }

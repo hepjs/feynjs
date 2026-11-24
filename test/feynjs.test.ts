@@ -781,3 +781,12 @@ test("names in any case, and detector objects in a process, drawn as objects", (
   // (tau as written stays the particle; TAU is the hadronic tau object)
   assert.match(render("p p > TAU"), /feynjs-jet/);
 });
+
+test("a detector object in a process may hold contents, LRJ(1b W(2j)), and object lines are named as objects", () => {
+  const plain = render("p p > LRJ"), filled = render("p p > LRJ(1b W(2j))");
+  assert.ok((filled.match(/<path/g) ?? []).length > (plain.match(/<path/g) ?? []).length, "the contents are drawn inside the cone");
+  assert.match(filled, /data-object="large"/);
+  // (a decay is still a decay)
+  assert.doesNotThrow(() => render("p p > Z(> e+ e-) H"));
+  assert.throws(() => render("p p > Z(e+ e-)"), /write a decay as/);
+});

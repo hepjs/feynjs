@@ -111,7 +111,7 @@ function diagramModel(d: Diagram, scene: Scene): string {
   });
   const edges = d.edges.map((e) => {
     const particle = particleOfEdge(d, e);
-    return { id: scene.edgeIds.get(e), from: e.from, to: e.to, ...(particle ? { particle } : {}), line: e.style.line, ...(e.label ? { label: e.label } : {}) };
+    return { id: scene.edgeIds.get(e), from: e.from, to: e.to, ...(particle ? { particle } : {}), line: e.style.line, ...(e.style.object ? { object: e.style.object } : {}), ...(e.label ? { label: e.label } : {}) };
   });
   return JSON.stringify({ feynjs: 1, unit: { x: unitX, y: unitY }, vertices, edges });
 }

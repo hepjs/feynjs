@@ -351,6 +351,7 @@
       const hit = partAt(e.target);
       if (!hit) return;
       if (tool === "erase") return erase(hit);
+      if (tool === "move" && hit.dataset.object === "large") return openFiller(hit, e);
       if (tool === "draw" && hit.dataset.edge) return restyle(hit, brush);
       if (tool === "move") {
         const ids = hit.dataset.edge ? [hit.dataset.from, hit.dataset.to] : [hit.dataset.vertex];
@@ -391,6 +392,55 @@
     });
     drawing.addEventListener("dragover", (e) => { const edge = e.target.closest?.("[data-edge]"); if (edge) { e.preventDefault(); show(edge); } });
     drawing.addEventListener("drop", (e) => { const edge = e.target.closest?.("[data-edge]"); if (!edge) return; e.preventDefault(); restyle(edge, e.dataTransfer.getData("text/plain")); });
+
+    // ---- inside a large-R jet: click one to choose what it holds --------------------------
+    const FILLINGS = [["2 jets", "2j"], ["3 jets", "3j"], ["b + 2 jets (a top)", "1b 2j"], ["b + W → 2 jets", "1b W(2j)"], ["W → 2 jets", "W(2j)"], ["Z → 2 jets", "Z(2j)"], ["H → b b̄", "H(2b)"], ["empty", ""]];
+    const filler = document.createElement("div");
+    filler.className = "pg-filler"; filler.hidden = true;
+    filler.innerHTML = `<div class="pg-filler-title">Inside this large-R jet</div><div class="pg-filler-list">${FILLINGS.map(([name, text]) => `<button type="button" data-fill="${text}">${name}<code>${text || "—"}</code></button>`).join("")}</div><form class="pg-filler-own"><input type="text" placeholder="your own: 1b W(2j)" aria-label="contents"><button type="submit">Set</button></form>`;
+    root.appendChild(filler);
+    let filling = null;
+    // (every large-R jet written in the source, in order: in a line's brackets, [LRJ 1b], or in a
+    // process, LRJ(1b W(2j)))
+    function jetsInSource(src) {
+      const found = [], re = /\b(LRJ|large[ -]r jet|fat jet)\b/gi;
+      let m;
+      while ((m = re.exec(src))) {
+        const word = m[0];
+        const lineStart = src.lastIndexOf("\n", m.index) + 1, upTo = src.slice(lineStart, m.index);
+        const inBracket = (upTo.match(/\[/g) || []).length > (upTo.match(/\]/g) || []).length;
+        if (inBracket) {
+          const close = src.indexOf("]", m.index), comma = src.indexOf(",", m.index);
+          const end = comma >= 0 && comma < close ? comma : close;
+          found.push({ from: m.index, to: end, write: (inside) => `${word}${inside ? " " + inside : ""}` });
+        } else {
+          let end = m.index + word.length;
+          if (src[end] === "(" && !/^\(\s*>/.test(src.slice(end))) { let depth = 0; do { if (src[end] === "(") depth++; if (src[end] === ")") depth--; end++; } while (depth > 0 && end < src.length); }
+          found.push({ from: m.index, to: end, write: (inside) => `${word}${inside ? `(${inside})` : ""}` });
+        }
+      }
+      return found;
+    }
+    function openFiller(edge, e) {
+      const jets = [...drawing.querySelectorAll('[data-object="large"]')];
+      filling = { k: jets.indexOf(edge) };
+      const box = root.getBoundingClientRect();
+      filler.style.left = `${Math.min(e.clientX - box.left + 8, root.clientWidth - 250)}px`;
+      filler.style.top = `${e.clientY - box.top + 8}px`;
+      filler.hidden = false;
+      filler.querySelector("input").value = "";
+    }
+    function fill(inside) {
+      if (!filling) return;
+      const jets = jetsInSource(source.value), jet = jets[filling.k] ?? (jets.length === 1 ? jets[0] : undefined);
+      filler.hidden = true;
+      if (!jet) return say("Can't find this large-R jet in the source: write its contents as [LRJ 1b W(2j)] or LRJ(1b W(2j)).", true);
+      change(source.value.slice(0, jet.from) + jet.write(inside.trim()) + source.value.slice(jet.to), inside ? `The large-R jet now holds ${inside}.` : "The large-R jet is empty.");
+      filling = null;
+    }
+    filler.addEventListener("click", (e) => { const b = e.target.closest("[data-fill]"); if (b) fill(b.dataset.fill); });
+    filler.querySelector("form").addEventListener("submit", (e) => { e.preventDefault(); fill(filler.querySelector("input").value); });
+    document.addEventListener("pointerdown", (e) => { if (!filler.hidden && !filler.contains(e.target) && !e.target.closest?.('[data-object="large"]')) filler.hidden = true; });
 
     // ---- autocomplete: what fits where the cursor is ------------------------------------------
     // (switches at the start of a line; inside [ ] the line styles, particles, objects and

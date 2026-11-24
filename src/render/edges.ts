@@ -150,7 +150,7 @@ export function drawEdge(scene: Scene, d: Diagram, e: Edge, degree: Map<string, 
   }
   // (named, with its ends and its particle, so a program or a reader of the SVG can find it)
   const particle = particleOfEdge(d, e);
-  const names = ` data-edge="${attr(scene.edgeIds.get(e) ?? `${e.from}--${e.to}`)}" data-from="${attr(e.from)}" data-to="${attr(e.to)}"${particle ? ` data-particle="${attr(particle)}"` : ""}`;
+  const names = ` data-edge="${attr(scene.edgeIds.get(e) ?? `${e.from}--${e.to}`)}" data-from="${attr(e.from)}" data-to="${attr(e.to)}"${particle ? ` data-particle="${attr(particle)}"` : ""}${e.style.object ? ` data-object="${attr(e.style.object)}"` : ""}`;
   scene.edges.push(`<g${cssClass}${names}${color ? ` color="${color}"` : ""}>${drawLine(drawn, e.style, theme.line)}</g>`);
   // a long-lived particle's band (and brace, on the side away from its label)
   if (e.lifetime !== undefined) {
