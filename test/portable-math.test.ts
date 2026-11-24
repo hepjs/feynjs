@@ -9,15 +9,13 @@ import * as portable from "../src/geometry/portable-math.ts";
 // Safari, Node, Bun, Deno). The engines' own transcendental maths is not: see portable-math.ts.
 
 const MODULE = join("src", "geometry", "portable-math.ts");
-// (forces.ts follows once the work in progress on it is committed: then this list is empty)
-const NOT_YET = [join("src", "engines", "forces", "forces.ts")];
 const ENGINE_MATHS = /\bMath\.(sin|cos|tan|asin|acos|atan|atan2|sinh|cosh|tanh|asinh|acosh|atanh|exp|expm1|log|log1p|log2|log10|pow|cbrt|hypot)\s*\(/;
 const EXPONENT_OPERATOR = /[\w)\]]\s*\*\*\s*[\w(.-]/;
 
 test("src/ uses the portable maths, never the engine's own", () => {
   const offenders: string[] = [];
   for (const file of sourceFiles("src")) {
-    if (file === MODULE || NOT_YET.includes(file)) continue;
+    if (file === MODULE) continue;
     readFileSync(file, "utf8").split("\n").forEach((line, i) => {
       const code = line.replace(/\/\/.*$/, "");
       if (ENGINE_MATHS.test(code) || EXPONENT_OPERATOR.test(code)) offenders.push(`${file}:${i + 1}: ${line.trim()}`);
@@ -28,7 +26,7 @@ test("src/ uses the portable maths, never the engine's own", () => {
 
 test("src/ never depends on the reader's language (locale), which differs between machines and engines", () => {
   const offenders: string[] = [];
-  for (const file of sourceFiles("src").filter((f) => !NOT_YET.includes(f))) {
+  for (const file of sourceFiles("src")) {
     readFileSync(file, "utf8").split("\n").forEach((line, i) => {
       if (/\blocaleCompare\b|\bIntl\.|\btoLocale\w*\(/.test(line.replace(/\/\/.*$/, ""))) offenders.push(`${file}:${i + 1}: ${line.trim()}`);
     });

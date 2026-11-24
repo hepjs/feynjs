@@ -2,6 +2,7 @@ import type { ForceRules } from "../../theme.ts";
 import { beyond, exchangeSpine } from "./structure.ts";
 import type { Tie } from "./solve.ts";
 import type { Loop, Structure } from "./structure.ts";
+import * as portable from "../../geometry/portable-math.ts";
 
 /**
  * The forces of layout v2. Each is a sum of small terms, every term an energy over a few
@@ -93,7 +94,7 @@ export function lineLength(s: Structure, rules: ForceRules): Force {
       // little longer, as papers draw a cascade's spine)
       const depth = loopStage.get(s.lines.indexOf(line)) ?? generation[start];
       const shower = showerLines.has(s.lines.indexOf(line));
-      const stage = shower ? 1.35 : Math.max(line.leg ? rules.smallestLegStage : rules.smallestStage, rules.stageShrink ** (line.heavy && !line.leg ? depth * 0.75 : depth));
+      const stage = shower ? 1.35 : Math.max(line.leg ? rules.smallestLegStage : rules.smallestStage, portable.power(rules.stageShrink, line.heavy && !line.leg ? depth * 0.75 : depth));
       // a beam into a blob (the pp collision) is drawn short
       // (quarks into a contact blob are ordinary legs: only beams, protons or ions, are short)
       const beam = (i: number) => !s.particle[i] || !s.lines[s.linesAt[i][0]].fermion;
@@ -119,9 +120,9 @@ export function lineLength(s: Structure, rules: ForceRules): Force {
       // (a quark line under a cap is as long as running beside the cap's other quark makes
       // it: only not shorter than usual)
       if (line.leg && (capped.has(line.a) || capped.has(line.b))) {
-        return limit([line.a, line.b], (p) => { const short = want - Math.hypot(dx(p, line.a, line.b), dy(p, line.a, line.b)); return short > 0 ? stiffness * short ** 2 : 0; });
+        return limit([line.a, line.b], (p) => { const short = want - portable.hypot(dx(p, line.a, line.b), dy(p, line.a, line.b)); return short > 0 ? stiffness * portable.square(short) : 0; });
       }
-      return term([line.a, line.b], (p) => stiffness * (Math.hypot(dx(p, line.a, line.b), dy(p, line.a, line.b)) - want) ** 2);
+      return term([line.a, line.b], (p) => stiffness * portable.square(portable.hypot(dx(p, line.a, line.b), dy(p, line.a, line.b)) - want));
     }),
   };
 }
@@ -185,10 +186,10 @@ export function evenAngles(s: Structure, rules: ForceRules): Force {
       const n = ends.length + (pair ? 1 : 0), angle = new Float64Array(n);
       const even = (2 * Math.PI) / n;
       const direction = (p: Float64Array, i: number) => {
-        if (i < ends.length) return Math.atan2(dy(p, v, ends[i]), dx(p, v, ends[i]));
+        if (i < ends.length) return portable.atan2(dy(p, v, ends[i]), dx(p, v, ends[i]));
         let mx = 0, my = 0;
-        for (const j of pair!) { const n = Math.hypot(dx(p, v, j), dy(p, v, j)) || 1; mx += dx(p, v, j) / n; my += dy(p, v, j) / n; }
-        return Math.atan2(my, mx);
+        for (const j of pair!) { const n = portable.hypot(dx(p, v, j), dy(p, v, j)) || 1; mx += dx(p, v, j) / n; my += dy(p, v, j) / n; }
+        return portable.atan2(my, mx);
       };
       return term([v, ...ends, ...(pair ?? [])], (p) => {
         // the lines' directions, sorted round the vertex
@@ -201,7 +202,7 @@ export function evenAngles(s: Structure, rules: ForceRules): Force {
         let e = 0;
         for (let i = 0; i < n; i++) {
           const gap = i + 1 < n ? angle[i + 1] - angle[i] : angle[0] + 2 * Math.PI - angle[i];
-          e += (gap - even) ** 2;
+          e += portable.square(gap - even);
         }
         return weight * e;
       });
@@ -239,13 +240,13 @@ export function timeFlow(s: Structure, rules: ForceRules): Force {
       // cascade opens wider at the collision, a short one stays forward)
       // (beams into a blob feel little of it, so they open wide)
       const intoBlob = s.time[early] === 0 && s.blob[late];
-      const w = weight * (line.heavy && !line.leg ? rules.heavyFlow / Math.max(1, heavyAhead[late]) ** rules.depthEase : offShell ? rules.offShellFlow : emitted ? rules.emittedFlow : givenOff ? rules.givenOffFlow : intoBlob ? rules.blobBeamFlow : 1)
+      const w = weight * (line.heavy && !line.leg ? rules.heavyFlow / portable.power(Math.max(1, heavyAhead[late]), rules.depthEase) : offShell ? rules.offShellFlow : emitted ? rules.emittedFlow : givenOff ? rules.givenOffFlow : intoBlob ? rules.blobBeamFlow : 1)
         // of two branches made together, the one with more decays ahead keeps nearer level,
         // giving its longer cascade the room (the tbar of tbar -> W bbar, W -> l nu beside a t -> gamma q)
         * (deeper.has(late) ? rules.deeperFlow : 1);
       return term([early, late], (p) => {
         const x = dx(p, early, late), y = dy(p, early, late);
-        return w * (1 - x / (Math.hypot(x, y) || 1));
+        return w * (1 - x / (portable.hypot(x, y) || 1));
       });
     }),
   };
@@ -285,7 +286,7 @@ export function givesOffFermion(s: Structure, at: number): boolean {
  */
 export function topOutside(s: Structure, p: Float64Array, from: number, at: number): number {
   const hx = p[2 * at] - p[2 * from], hy = p[2 * at + 1] - p[2 * from + 1];
-  if (Math.abs(hy) > 0.15 * Math.hypot(hx, hy)) return Math.sign(hy);
+  if (Math.abs(hy) > 0.15 * portable.hypot(hx, hy)) return Math.sign(hy);
   const beams = s.ids.map((_, i) => i).filter((i) => s.external[i] && s.time[i] === 0);
   if (!beams.length) return 0;
   const middle = beams.reduce((sum, i) => sum + p[2 * i + 1], 0) / beams.length;
@@ -339,7 +340,7 @@ export function heavyDecaysAhead(s: Structure): number[] {
 export function flowWeight(s: Structure, rules: ForceRules): number {
   const steps = Math.max(...s.time);
   const extra = Math.max(0, steps - rules.shortDiagram);
-  return Math.max(rules.longFlow, rules.timeFlow * rules.flowFade ** extra);
+  return Math.max(rules.longFlow, rules.timeFlow * portable.power(rules.flowFade, extra));
 }
 
 /**
@@ -349,14 +350,14 @@ export function flowWeight(s: Structure, rules: ForceRules): number {
 export function timeOrder(s: Structure, rules: ForceRules): Force {
   const outsideTime = loopLinesOutsideTime(s);
   const timed = s.lines.filter((line, l) => s.time[line.a] !== s.time[line.b] && !outsideTime.has(l));
-  const least = Math.cos((rules.maxLean * Math.PI) / 180);
+  const least = portable.cos((rules.maxLean * Math.PI) / 180);
   // the light product of a heavy particle decaying to another heavy one may lean further
   const heavyDecay = (v: number) => !s.external[v] && s.linesAt[v].filter((l) => s.lines[l].heavy).length >= 2;
-  const wide = Math.cos((rules.wideLean * Math.PI) / 180);
-  const fermionLean = Math.cos((rules.lightFermionLean * Math.PI) / 180);
-  const upright = Math.cos((88 * Math.PI) / 180);
+  const wide = portable.cos((rules.wideLean * Math.PI) / 180);
+  const fermionLean = portable.cos((rules.lightFermionLean * Math.PI) / 180);
+  const upright = portable.cos((88 * Math.PI) / 180);
   // (what a shower makes, four or more that each decay, fans wide: see showerFan)
-  const showers = new Map(showerPoints(s).map(({ at, made }) => [at, Math.cos(((showerSpread(made.length) + 12) * Math.PI) / 180)]));
+  const showers = new Map(showerPoints(s).map(({ at, made }) => [at, portable.cos(((showerSpread(made.length) + 12) * Math.PI) / 180)]));
   return {
     name: "time order",
     terms: timed.map((line) => {
@@ -367,8 +368,8 @@ export function timeOrder(s: Structure, rules: ForceRules): Force {
         // (and the fermion a decay gives off beside a boson that decays on, the b of t -> b W, as wide)
         const allowed = showers.get(early) ?? (heavyDecay(early) && !line.heavy ? (line.fermion ? fermionLean : wide)
           : line.leg && line.fermion && givesOffFermion(s, early) ? upright : least);
-        const shortfall = allowed - x / (Math.hypot(x, y) || 1);
-        return shortfall > 0 ? rules.timeOrder * shortfall ** 2 : 0;
+        const shortfall = allowed - x / (portable.hypot(x, y) || 1);
+        return shortfall > 0 ? rules.timeOrder * portable.square(shortfall) : 0;
       });
     }),
   };
@@ -387,7 +388,7 @@ function pointToSegment(p: Float64Array, q: number, a: number, b: number): numbe
   const vx = p[2 * b] - p[2 * a], vy = p[2 * b + 1] - p[2 * a + 1];
   const wx = p[2 * q] - p[2 * a], wy = p[2 * q + 1] - p[2 * a + 1];
   const t = Math.max(0, Math.min(1, (vx * wx + vy * wy) / ((vx * vx + vy * vy) || 1)));
-  return Math.hypot(wx - t * vx, wy - t * vy);
+  return portable.hypot(wx - t * vx, wy - t * vy);
 }
 
 /**
@@ -413,7 +414,7 @@ export function clearance(s: Structure, rules: ForceRules): Force {
   const elementAt = (p: Float64Array, i: number, out: Float64Array): Float64Array => {
     const from = attachedTo[i];
     if (from < 0 || s.pad[i] <= rules.vertexPad) { out[0] = p[2 * i]; out[1] = p[2 * i + 1]; return out; }
-    const x = dx(p, from, i), y = dy(p, from, i), l = Math.hypot(x, y) || 1;
+    const x = dx(p, from, i), y = dy(p, from, i), l = portable.hypot(x, y) || 1;
     out[0] = p[2 * i] + (x / l) * s.pad[i]; out[1] = p[2 * i + 1] + (y / l) * s.pad[i];
     return out;
   };
@@ -429,7 +430,7 @@ export function clearance(s: Structure, rules: ForceRules): Force {
   const distanceToLine = (q: Float64Array, p: Float64Array, a: number, b: number) => {
     const vx = p[2 * b] - p[2 * a], vy = p[2 * b + 1] - p[2 * a + 1], wx = q[0] - p[2 * a], wy = q[1] - p[2 * a + 1];
     const t = Math.max(0, Math.min(1, (vx * wx + vy * wy) / ((vx * vx + vy * vy) || 1)));
-    return Math.hypot(wx - t * vx, wy - t * vy);
+    return portable.hypot(wx - t * vx, wy - t * vy);
   };
   // a line's label sits beside it on the side the renderer will choose: a nearly level line
   // on the side facing the middle of the diagram (above, if it runs along the middle), a
@@ -440,7 +441,7 @@ export function clearance(s: Structure, rules: ForceRules): Force {
   const labelOf = (p: Float64Array, l: number, out: Float64Array): Float64Array => {
     const { a, b } = s.lines[l];
     const mx = (p[2 * a] + p[2 * b]) / 2, my = (p[2 * a + 1] + p[2 * b + 1]) / 2;
-    const x = dx(p, a, b), y = dy(p, a, b), len = Math.hypot(x, y) || 1;
+    const x = dx(p, a, b), y = dy(p, a, b), len = portable.hypot(x, y) || 1;
     let nx = -y / len, ny = x / len;
     let cx = 0, cy = 0;
     for (const i of internal) { cx += p[2 * i]; cy += p[2 * i + 1]; }
@@ -461,11 +462,11 @@ export function clearance(s: Structure, rules: ForceRules): Force {
     out[0] = mx + nx * s.linePad[l]; out[1] = my + ny * s.linePad[l];
     return out;
   };
-  const push = (shortfall: number) => (shortfall > 0 ? rules.clearance * shortfall ** 2 : 0);
+  const push = (shortfall: number) => (shortfall > 0 ? rules.clearance * portable.square(shortfall) : 0);
   const labelled = straight.filter((l) => s.linePad[l] > 0);
   // how clear a term is at least, from the points alone: an element lies within its pad of
   // its point, a line's label within its pad of the line's middle
-  const apartBy = (ax: number, ay: number, bx: number, by: number) => Math.hypot(bx - ax, by - ay);
+  const apartBy = (ax: number, ay: number, bx: number, by: number) => portable.hypot(bx - ax, by - ay);
   const mid = (p: Float64Array, l: number, axis: 0 | 1) => (p[2 * s.lines[l].a + axis] + p[2 * s.lines[l].b + axis]) / 2;
   const centre = new Float64Array(2);
   const middleOf = (p: Float64Array, l: number) => { centre[0] = mid(p, l, 0); centre[1] = mid(p, l, 1); return centre; };
@@ -476,7 +477,7 @@ export function clearance(s: Structure, rules: ForceRules): Force {
       // every element keeps the margin from every other it is not joined to
       ...pairs.map(([a, b]) => limit([...reach(a), ...reach(b)], (p) => {
         const u = elementAt(p, a, first), w = elementAt(p, b, second);
-        return push(rules.margin + s.pad[a] + s.pad[b] - Math.hypot(w[0] - u[0], w[1] - u[1]));
+        return push(rules.margin + s.pad[a] + s.pad[b] - portable.hypot(w[0] - u[0], w[1] - u[1]));
       }, (p) => apartBy(p[2 * a], p[2 * a + 1], p[2 * b], p[2 * b + 1]) - rules.margin - 2 * s.pad[a] - 2 * s.pad[b])),
       // ...and from every line it does not touch
       ...s.ids.flatMap((_, i) => straight.map((l) => [i, l] as const).filter(([, l]) => !alongOneRun(i, l) && s.lines[l].a !== i && s.lines[l].b !== i && attachedTo[i] !== s.lines[l].a && attachedTo[i] !== s.lines[l].b))
@@ -486,12 +487,12 @@ export function clearance(s: Structure, rules: ForceRules): Force {
       // ...and from every other line's label
       ...labelled.flatMap((l, n) => labelled.slice(n + 1).map((k) => limit([s.lines[l].a, s.lines[l].b, s.lines[k].a, s.lines[k].b, ...internal], (p) => {
         const u = labelOf(p, l, first), w = labelOf(p, k, second);
-        return push(rules.margin + s.linePad[l] + s.linePad[k] - Math.hypot(w[0] - u[0], w[1] - u[1]));
+        return push(rules.margin + s.linePad[l] + s.linePad[k] - portable.hypot(w[0] - u[0], w[1] - u[1]));
       }, (p) => apartBy(mid(p, l, 0), mid(p, l, 1), mid(p, k, 0), mid(p, k, 1)) - rules.margin - 2 * s.linePad[l] - 2 * s.linePad[k]))),
       ...labelled.flatMap((l) => [
         ...s.ids.map((_, i) => i).filter((i) => i !== s.lines[l].a && i !== s.lines[l].b).map((i) => limit([s.lines[l].a, s.lines[l].b, ...reach(i), ...internal], (p) => {
           const m = labelOf(p, l, first), e = elementAt(p, i, second);
-          return push(rules.margin + s.linePad[l] + s.pad[i] - Math.hypot(e[0] - m[0], e[1] - m[1]));
+          return push(rules.margin + s.linePad[l] + s.pad[i] - portable.hypot(e[0] - m[0], e[1] - m[1]));
         }, (p) => apartBy(mid(p, l, 0), mid(p, l, 1), p[2 * i], p[2 * i + 1]) - rules.margin - 2 * s.linePad[l] - 2 * s.pad[i])),
         ...straight.filter((k) => k !== l && ![s.lines[k].a, s.lines[k].b].some((e) => e === s.lines[l].a || e === s.lines[l].b))
           .map((k) => limit([s.lines[l].a, s.lines[l].b, s.lines[k].a, s.lines[k].b, ...internal], (p) => push(rules.margin + s.linePad[l] - distanceToLine(labelOf(p, l, first), p, s.lines[k].a, s.lines[k].b)),
@@ -526,25 +527,25 @@ export function clearance(s: Structure, rules: ForceRules): Force {
         const bothDecay = twoBody && outLegs.every((j) => !s.external[j]);
         const least = (rules.minAngle * Math.PI) / 180, opening = ((parentAtRest ? 1.75 : bothDecay ? 1.5 : 1) * rules.decayOpening * Math.PI) / 180;
         return limit([v, ...ends], (p) => {
-          const angles = ends.map((to, k) => [Math.atan2(dy(p, v, to), dx(p, v, to)), width[k]]).sort((a, b) => a[0] - b[0]);
+          const angles = ends.map((to, k) => [portable.atan2(dy(p, v, to), dx(p, v, to)), width[k]]).sort((a, b) => a[0] - b[0]);
           let e = 0;
           angles.forEach(([a, wa], i) => {
             const [b, wb] = angles[(i + 1) % angles.length];
             const gap = i + 1 < angles.length ? b - a : b + 2 * Math.PI - a;
             const need = least + wa + wb;
-            if (gap < need) e += (need - gap) ** 2;
+            if (gap < need) e += portable.square(need - gap);
           });
           if (susyFork) {
             const [j, k] = products.map((l) => other(l, v));
-            const a = Math.atan2(dy(p, v, j), dx(p, v, j)), b = Math.atan2(dy(p, v, k), dx(p, v, k));
+            const a = portable.atan2(dy(p, v, j), dx(p, v, j)), b = portable.atan2(dy(p, v, k), dx(p, v, k));
             let gap = Math.abs(a - b); if (gap > Math.PI) gap = 2 * Math.PI - gap;
-            if (gap < susyOpening) e += (susyOpening - gap) ** 2;
+            if (gap < susyOpening) e += portable.square(susyOpening - gap);
           }
           if (twoBody) {
             const [j, k] = outLegs;
-            const a = Math.atan2(dy(p, v, j), dx(p, v, j)), b = Math.atan2(dy(p, v, k), dx(p, v, k));
+            const a = portable.atan2(dy(p, v, j), dx(p, v, j)), b = portable.atan2(dy(p, v, k), dx(p, v, k));
             let gap = Math.abs(a - b); if (gap > Math.PI) gap = 2 * Math.PI - gap;
-            if (gap < opening) e += (opening - gap) ** 2;
+            if (gap < opening) e += portable.square(opening - gap);
           }
           // (firm: a few degrees short must cost more than the forces that push lines together)
           return rules.clearance * 4 * e;
@@ -558,7 +559,7 @@ export function clearance(s: Structure, rules: ForceRules): Force {
         return limit([m.a, m.b, n.a, n.b], (p) => {
           if (!segmentsCross(p, m.a, m.b, n.a, n.b)) return 0;
           // grows smoothly from nothing, so the solver can always take a step
-          return rules.clearance * nearest(p) ** 2;
+          return rules.clearance * portable.square(nearest(p));
         }, (p) => (segmentsCross(p, m.a, m.b, n.a, n.b) ? 0 : nearest(p)));
       }),
     ],
@@ -589,7 +590,7 @@ export function uprightExchange(s: Structure, rules: ForceRules): Force {
   // (a point that makes something going on forward sits a little ahead: the two lines into it
   // lean forward, 15 degrees, as the bosons carry some of the quarks' forward momentum)
   const ahead = exchangePointsAhead(s);
-  const lean = Math.sin((15 * Math.PI) / 180);
+  const lean = portable.sin((15 * Math.PI) / 180);
   return {
     name: "upright exchange",
     terms: spine.map((l) => {
@@ -597,11 +598,11 @@ export function uprightExchange(s: Structure, rules: ForceRules): Force {
       const [end, middle] = ahead.has(b) && !ahead.has(a) ? [a, b] : ahead.has(a) && !ahead.has(b) ? [b, a] : [-1, -1];
       if (end >= 0) return term([end, middle], (p) => {
         const x = dx(p, end, middle), y = dy(p, end, middle);
-        return rules.uprightExchange * 30 * (x / (Math.hypot(x, y) || 1) - lean) ** 2;
+        return rules.uprightExchange * 30 * portable.square(x / (portable.hypot(x, y) || 1) - lean);
       });
       return term([a, b], (p) => {
         const x = dx(p, a, b), y = dy(p, a, b);
-        return rules.uprightExchange * (x / (Math.hypot(x, y) || 1)) ** 2;
+        return rules.uprightExchange * portable.square(x / (portable.hypot(x, y) || 1));
       });
     }),
   };
@@ -635,8 +636,8 @@ export function exchangeFan(s: Structure, rules: ForceRules): Force {
       terms.push(term([v, given, first, last], (p) => {
         const down = p[2 * last + 1] >= p[2 * first + 1] ? 1 : -1;
         const angle = rank * down * widest;
-        const x = dx(p, v, given), y = dy(p, v, given), n = Math.hypot(x, y) || 1;
-        return rules.uprightExchange * 250 * ((x / n - Math.cos(angle)) ** 2 + (y / n - Math.sin(angle)) ** 2);
+        const x = dx(p, v, given), y = dy(p, v, given), n = portable.hypot(x, y) || 1;
+        return rules.uprightExchange * 250 * (portable.square(x / n - portable.cos(angle)) + portable.square(y / n - portable.sin(angle)));
       }));
     });
   }
@@ -673,26 +674,26 @@ export function showerFan(s: Structure, rules: ForceRules): Force {
   const bundles = showerPoints(s).flatMap(({ at, made }) => made.map((j) => ({ at, j, products: s.linesAt[j].map((l) => other(l, j)).filter((k) => s.time[k] > s.time[j]) }))).filter((b) => b.products.length >= 2);
   const half = (10 * Math.PI) / 180;
   const tight = bundles.map(({ at, j, products }) => term([at, j, ...products], (p) => {
-    const heading = Math.atan2(dy(p, at, j), dx(p, at, j));
-    const angles = products.map((k) => Math.atan2(dy(p, j, k), dx(p, j, k))).sort((a, b) => a - b);
+    const heading = portable.atan2(dy(p, at, j), dx(p, at, j));
+    const angles = products.map((k) => portable.atan2(dy(p, j, k), dx(p, j, k))).sort((a, b) => a - b);
     let sum = 0;
-    angles.forEach((a, k) => { const want = heading - half + (2 * half * k) / (products.length - 1); sum += (a - want) ** 2; });
+    angles.forEach((a, k) => { const want = heading - half + (2 * half * k) / (products.length - 1); sum += portable.square(a - want); });
     return rules.forwardFork * 40 * sum;
   }));
   return {
     name: "shower fan",
     terms: [...tight, ...showerPoints(s).map(({ at, from, made }) => term([from, at, ...made], (p) => {
-      const heading = Math.atan2(dy(p, from, at), dx(p, from, at)), spread = (showerSpread(made.length) * Math.PI) / 180;
+      const heading = portable.atan2(dy(p, from, at), dx(p, from, at)), spread = (showerSpread(made.length) * Math.PI) / 180;
       // (in the order they lie, top to bottom, each to its share of the fan)
-      const angles = made.map((j) => Math.atan2(dy(p, at, j), dx(p, at, j))).sort((a, b) => a - b);
+      const angles = made.map((j) => portable.atan2(dy(p, at, j), dx(p, at, j))).sort((a, b) => a - b);
       let sum = 0;
       angles.forEach((a, k) => {
         const want = heading - spread + (2 * spread * k) / (made.length - 1);
-        sum += (a - want) ** 2;
+        sum += portable.square(a - want);
       });
       // (and all as long as each other: a fan, not a ragged edge)
-      const lengths = made.map((j) => Math.hypot(dx(p, at, j), dy(p, at, j))), mean = lengths.reduce((t, x) => t + x, 0) / lengths.length;
-      const ragged = lengths.reduce((t, x) => t + (x - mean) ** 2, 0);
+      const lengths = made.map((j) => portable.hypot(dx(p, at, j), dy(p, at, j))), mean = lengths.reduce((t, x) => t + x, 0) / lengths.length;
+      const ragged = lengths.reduce((t, x) => t + portable.square(x - mean), 0);
       return rules.forwardFork * 12 * sum + rules.length * 4 * ragged;
     }))],
   };
@@ -778,7 +779,7 @@ export function mirrorBranches(s: Structure, rules: ForceRules): Force {
       // for branches off the two ends of an exchange, level through the exchange's middle)
       let ux = 1, uy = 0;
       if (axisFrom >= 0) {
-        const l = Math.hypot(dx(p, axisFrom, at), dy(p, axisFrom, at)) || 1;
+        const l = portable.hypot(dx(p, axisFrom, at), dy(p, axisFrom, at)) || 1;
         ux = dx(p, axisFrom, at) / l; uy = dy(p, axisFrom, at) / l;
       }
       const ox = at2 === undefined ? p[2 * at] : (p[2 * at] + p[2 * at2]) / 2, oy = at2 === undefined ? p[2 * at + 1] : (p[2 * at + 1] + p[2 * at2 + 1]) / 2;
@@ -786,7 +787,7 @@ export function mirrorBranches(s: Structure, rules: ForceRules): Force {
       const along = rx * ux + ry * uy;
       // reflect n across the mirror line and compare with m
       const fx = ox + 2 * along * ux - rx, fy = oy + 2 * along * uy - ry;
-      return weight * ((p[2 * m] - fx) ** 2 + (p[2 * m + 1] - fy) ** 2);
+      return weight * (portable.square(p[2 * m] - fx) + portable.square(p[2 * m + 1] - fy));
     }))),
   };
 }
@@ -802,7 +803,9 @@ export function mirroredPairs(s: Structure): MirrorPair[] {
   // (alike products are matched as a mirror matches them: the top one of one branch with the
   // bottom one of the other, in the order the author listed the legs)
   const listed = (i: number): number => s.order[i] >= 0 ? s.order[i] : Math.min(Infinity, ...later(i).map(listed));
-  const points = (i: number, flip = 1): number[] => [i, ...later(i).sort((a, b) => shape(a).localeCompare(shape(b)) || flip * (listed(a) - listed(b))).flatMap((j) => points(j, flip))];
+  // (shapes compared character by character, not by the reader's locale: the same on every machine)
+  const byShape = (a: number, b: number) => { const x = shape(a), y = shape(b); return x < y ? -1 : x > y ? 1 : 0; };
+  const points = (i: number, flip = 1): number[] => [i, ...later(i).sort((a, b) => byShape(a, b) || flip * (listed(a) - listed(b))).flatMap((j) => points(j, flip))];
   const pairs: MirrorPair[] = [];
   // (a shower fans its branches evenly instead: see showerFan)
   const showers = new Set(showerPoints(s).map(({ at }) => at));
@@ -852,12 +855,12 @@ export function beamsStartTogether(s: Structure, rules: ForceRules): Force {
   const terms: Term[] = [];
   for (let m = 0; m < incoming.length; m++) for (let n = m + 1; n < incoming.length; n++) {
     const [a, b] = [incoming[m], incoming[n]];
-    terms.push(term([a, b], (p) => rules.beams * (p[2 * a] - p[2 * b]) ** 2));
+    terms.push(term([a, b], (p) => rules.beams * portable.square(p[2 * a] - p[2 * b])));
   }
   // a single incoming particle (a decay) comes in level, firmly: its decay forks about it
   if (incoming.length === 1) {
     const [a] = incoming, ea = entry(a);
-    terms.push(term([a, ea], (p) => rules.restLevel * (dy(p, a, ea) / (Math.hypot(dx(p, a, ea), dy(p, a, ea)) || 1)) ** 2));
+    terms.push(term([a, ea], (p) => rules.restLevel * portable.square(dy(p, a, ea) / (portable.hypot(dx(p, a, ea), dy(p, a, ea)) || 1))));
   }
   if (incoming.length === 2) {
     const [a, b] = incoming, [ea, eb] = incoming.map(entry);
@@ -868,14 +871,14 @@ export function beamsStartTogether(s: Structure, rules: ForceRules): Force {
     if (ea !== eb) terms.push(term([a, b, ea, eb], (p) => {
       // mirrored: the slopes of the two legs are equal and opposite (firmly: two beams slanting
       // the same way, parallel and diagonal, read as a mistake; they converge, or run level)
-      const sa = dy(p, a, ea) / (Math.hypot(dx(p, a, ea), dy(p, a, ea)) || 1);
-      const sb = dy(p, b, eb) / (Math.hypot(dx(p, b, eb), dy(p, b, eb)) || 1);
-      return mirror * (sa + sb) ** 2;
+      const sa = dy(p, a, ea) / (portable.hypot(dx(p, a, ea), dy(p, a, ea)) || 1);
+      const sb = dy(p, b, eb) / (portable.hypot(dx(p, b, eb), dy(p, b, eb)) || 1);
+      return mirror * portable.square(sa + sb);
     }));
     // ...and never spread apart on their way in: two beams run parallel or close in
     if (ea !== eb) terms.push(limit([a, b, ea, eb], (p) => {
       const start = Math.abs(p[2 * b + 1] - p[2 * a + 1]), end = Math.abs(p[2 * eb + 1] - p[2 * ea + 1]);
-      return end > start ? rules.clearance * (end - start) ** 2 : 0;
+      return end > start ? rules.clearance * portable.square(end - start) : 0;
     }));
   }
   return { name: "beams start together", terms };
@@ -912,9 +915,9 @@ export function finalPlane(s: Structure, rules: ForceRules): Force {
       // products of one decay: the line through their ends stands upright
       terms.push(term([a, b], (p) => {
         const x = dx(p, a, b), y = dy(p, a, b);
-        return rules.finalPlane * (x / (Math.hypot(x, y) || 1)) ** 2;
+        return rules.finalPlane * portable.square(x / (portable.hypot(x, y) || 1));
       }));
-    } else terms.push(term([a, b], (p) => (rules.finalPlane / outgoing.length) * (p[2 * a] - p[2 * b]) ** 2));
+    } else terms.push(term([a, b], (p) => (rules.finalPlane / outgoing.length) * portable.square(p[2 * a] - p[2 * b])));
   }
   // final states from different decays end apart: at least 0.6 of a line between their ends,
   // so the inv of an S and the lepton of a Z beside it do not crowd
@@ -922,8 +925,8 @@ export function finalPlane(s: Structure, rules: ForceRules): Force {
     const [a, b] = [outgoing[m], outgoing[n]];
     if (from(a) === from(b) || capped.has(a) || capped.has(b)) continue;
     terms.push(limit([a, b], (p) => {
-      const short = 0.6 * rules.lineLength - Math.hypot(dx(p, a, b), dy(p, a, b));
-      return short > 0 ? rules.clearance * short ** 2 : 0;
+      const short = 0.6 * rules.lineLength - portable.hypot(dx(p, a, b), dy(p, a, b));
+      return short > 0 ? rules.clearance * portable.square(short) : 0;
     }));
   }
   return { name: "final plane", terms };
@@ -982,9 +985,9 @@ export function lightOutside(s: Structure, rules: ForceRules): Force {
       const out = (lone >= 0 ? -1 : 1) * Math.max(-1, Math.min(1, (p[2 * v + 1] - middle) / 0.4));
       if (out === 0) return 0;
       // the outer line must point at least as far outward as the inner one
-      const lean = (k: number) => dy(p, v, k) / (Math.hypot(dx(p, v, k), dy(p, v, k)) || 1);
+      const lean = (k: number) => dy(p, v, k) / (portable.hypot(dx(p, v, k), dy(p, v, k)) || 1);
       const wrong = (lean(inner) - lean(outer)) * out;
-      return wrong > 0 ? rules.lightOutside * wrong ** 2 : 0;
+      return wrong > 0 ? rules.lightOutside * portable.square(wrong) : 0;
     })),
   };
 }
@@ -1014,7 +1017,7 @@ export function heavyCarriesOn(s: Structure, rules: ForceRules): Force {
     name: "heavy carries on",
     terms: chains.map(([a, v, b]) => term([a, v, b], (p) => {
       // the heading coming in, and the heading going out
-      const inAngle = Math.atan2(dy(p, a, v), dx(p, a, v)), outAngle = Math.atan2(dy(p, v, b), dx(p, v, b));
+      const inAngle = portable.atan2(dy(p, a, v), dx(p, a, v)), outAngle = portable.atan2(dy(p, v, b), dx(p, v, b));
       // bend toward the middle line of the diagram, the same way at every decay: by the house
       // angle, or by an equal share of the way toward level (not all the way) by its last
       // particle, whichever is more (a short cascade bends more at each decay)
@@ -1026,8 +1029,8 @@ export function heavyCarriesOn(s: Structure, rules: ForceRules): Force {
       const share = (rules.settle * Math.max(0, toward * -inAngle)) / decaysLeft.get(v)!;
       const wanted = inAngle + toward * Math.max(turn, share);
       let miss = outAngle - wanted;
-      miss = Math.atan2(Math.sin(miss), Math.cos(miss));
-      return rules.heavyCarriesOn * miss ** 2;
+      miss = portable.atan2(portable.sin(miss), portable.cos(miss));
+      return rules.heavyCarriesOn * portable.square(miss);
     })),
   };
 }
@@ -1056,7 +1059,7 @@ export function noConverging(s: Structure, rules: ForceRules): Force {
     if (a.from === b.from) continue;
     // legs of different branches may lean toward each other a little, more the deeper they are
     const sameBranch = branchOf(a.from) === branchOf(b.from);
-    const leeway = sameBranch ? 0 : Math.tan((rules.convergeLeeway * Math.max(generation[a.from], generation[b.from]) * Math.PI) / 180);
+    const leeway = sameBranch ? 0 : portable.tan((rules.convergeLeeway * Math.max(generation[a.from], generation[b.from]) * Math.PI) / 180);
     terms.push(limit([a.end, a.from, b.end, b.from], (p) => {
       const x0 = Math.max(p[2 * a.from], p[2 * b.from]), x1 = Math.min(p[2 * a.end], p[2 * b.end]);
       if (x1 <= x0) return 0;
@@ -1071,7 +1074,7 @@ export function noConverging(s: Structure, rules: ForceRules): Force {
       const near = Math.max(0, Math.min(1, (rules.convergeReach - Math.abs(g0)) / 0.3));
       if (near === 0) return 0;
       const closing = Math.sign(g0) * (g0 - g1) - leeway * (x1 - x0);
-      return closing > 0 ? near * rules.noConverging * closing ** 2 : 0;
+      return closing > 0 ? near * rules.noConverging * portable.square(closing) : 0;
     }));
   }
   return { name: "no converging", terms };
@@ -1088,7 +1091,7 @@ export function noConverging(s: Structure, rules: ForceRules): Force {
 export function hadrons(s: Structure, rules: ForceRules): Force {
   const terms: Term[] = [];
   const other = (l: number, i: number) => (s.lines[l].a === i ? s.lines[l].b : s.lines[l].a);
-  const lineUp = (a: number, b: number) => term([a, b], (p) => rules.hadron * (p[2 * a] - p[2 * b]) ** 2);
+  const lineUp = (a: number, b: number) => term([a, b], (p) => rules.hadron * portable.square(p[2 * a] - p[2 * b]));
   // (an incoming hadron whose rail gives off something toward its other quarks, the W of a
   // colour-suppressed decay, holds them apart by room for the quarks that makes between them)
   const room = new Map<(typeof s.hadrons)[number], number>();
@@ -1119,7 +1122,7 @@ export function hadrons(s: Structure, rules: ForceRules): Force {
     if (h.legs.length > 1) terms.push(term(h.legs, (p) => {
       const ys = h.legs.map((i) => p[2 * i + 1]).sort((a, b) => a - b);
       let sum = 0;
-      for (let k = 1; k < ys.length; k++) sum += (ys[k] - ys[k - 1] - apart) ** 2;
+      for (let k = 1; k < ys.length; k++) sum += portable.square(ys[k] - ys[k - 1] - apart);
       return rules.hadron * sum;
     }));
   }
@@ -1137,7 +1140,7 @@ export function hadrons(s: Structure, rules: ForceRules): Force {
       terms.push(limit([a, b, from(a), from(b)], (p) => {
         if (p[2 * from(a) + 1] >= p[2 * from(b) + 1] - 1e-6) return 0;
         const over = p[2 * a + 1] - (p[2 * b + 1] - rules.hadronSpacing * 0.5);
-        return over > 0 ? 10 * rules.hadron * over ** 2 : 0;
+        return over > 0 ? 10 * rules.hadron * portable.square(over) : 0;
       }));
     }
   }
@@ -1151,7 +1154,7 @@ export function hadrons(s: Structure, rules: ForceRules): Force {
     terms.push(term([v, ...h.legs], (p) => {
       let mean = 0;
       for (const i of h.legs) mean += p[2 * i + 1];
-      return 5 * rules.hadron * (p[2 * v + 1] - mean / h.legs.length) ** 2;
+      return 5 * rules.hadron * portable.square(p[2 * v + 1] - mean / h.legs.length);
     }));
   }
   // the hadrons on each side share a column, and in a hadron diagram every other final state
@@ -1191,14 +1194,14 @@ export function hadrons(s: Structure, rules: ForceRules): Force {
   };
   // the space kept between two hadrons: one gap for mesons, a larger one for baryons
   const gapOf = (h: (typeof ellipses)[number]) => (h.legs.length >= 3 ? rules.baryonGap : rules.mesonGap);
-  const push = (shortfall: number) => (shortfall > 0 ? rules.clearance * shortfall ** 2 : 0);
+  const push = (shortfall: number) => (shortfall > 0 ? rules.clearance * portable.square(shortfall) : 0);
   for (const [n, h] of ellipses.entries()) {
     const own = new Set(h.legs), ownLines = new Set(h.legs.flatMap((i) => s.linesAt[i]));
     for (let i = 0; i < s.ids.length; i++) {
       if (own.has(i)) continue;
       terms.push(limit([...h.legs, i], (p) => {
         const { cx, cy, r } = sizeOf(h, p);
-        return push(r + s.pad[i] + rules.margin - Math.hypot(p[2 * i] - cx, p[2 * i + 1] - cy));
+        return push(r + s.pad[i] + rules.margin - portable.hypot(p[2 * i] - cx, p[2 * i + 1] - cy));
       }));
     }
     s.lines.forEach((line, l) => {
@@ -1208,7 +1211,7 @@ export function hadrons(s: Structure, rules: ForceRules): Force {
         const vx = p[2 * line.b] - p[2 * line.a], vy = p[2 * line.b + 1] - p[2 * line.a + 1];
         const wx = cx - p[2 * line.a], wy = cy - p[2 * line.a + 1];
         const t = Math.max(0, Math.min(1, (vx * wx + vy * wy) / ((vx * vx + vy * vy) || 1)));
-        return push(r + rules.margin - Math.hypot(wx - t * vx, wy - t * vy));
+        return push(r + rules.margin - portable.hypot(wx - t * vx, wy - t * vy));
       }));
     });
     for (const g of ellipses.slice(n + 1)) {
@@ -1221,10 +1224,10 @@ export function hadrons(s: Structure, rules: ForceRules): Force {
         // stacked in one column: their edges keep the gap (a margin, either way round);
         // otherwise as circles
         const short = h.outgoing === g.outgoing ? a.ry + b.ry + gap - Math.abs(a.cy - b.cy)
-          : a.r + b.r + gap - Math.hypot(a.cx - b.cx, a.cy - b.cy);
+          : a.r + b.r + gap - portable.hypot(a.cx - b.cx, a.cy - b.cy);
         // (firmly: two hadrons touching read as one; less so for two a vacuum pair joins, whose
         // lines between them must not be pulled across each other)
-        return short > 0 ? (fed ? 10 : 50) * rules.hadron * short ** 2 : 0;
+        return short > 0 ? (fed ? 10 : 50) * rules.hadron * portable.square(short) : 0;
       }));
     }
   }
@@ -1241,7 +1244,7 @@ export function hadrons(s: Structure, rules: ForceRules): Force {
     terms.push(limit(pts, (p) => {
       const a = sizeOf(h, p);
       const nearest = Math.min(...column.map((g) => { const b = sizeOf(g, p); return Math.abs(a.cy - b.cy) - a.ry - b.ry; }));
-      return nearest > reach ? rules.hadron * (nearest - reach) ** 2 : 0;
+      return nearest > reach ? rules.hadron * portable.square(nearest - reach) : 0;
     }));
   }
   // rails: a quark running from an incoming hadron to an outgoing one passes straight
@@ -1254,7 +1257,7 @@ export function hadrons(s: Structure, rules: ForceRules): Force {
       const [a, v, b] = [path[k - 1], path[k], path[k + 1]];
       terms.push(term([a, v, b], (p) => {
         const ax = dx(p, v, a), ay = dy(p, v, a), bx = dx(p, v, b), by = dy(p, v, b);
-        return rules.rail * (1 + (ax * bx + ay * by) / ((Math.hypot(ax, ay) * Math.hypot(bx, by)) || 1));
+        return rules.rail * (1 + (ax * bx + ay * by) / ((portable.hypot(ax, ay) * portable.hypot(bx, by)) || 1));
       }));
       for (const l of s.linesAt[v]) {
         const e = other(l, v);
@@ -1268,7 +1271,7 @@ export function hadrons(s: Structure, rules: ForceRules): Force {
           const bundle = others.reduce((sum, i) => sum + p[2 * i + 1], 0) / others.length;
           const away = (toward ? -1 : 1) * (Math.sign(p[2 * start + 1] - bundle) || 1);
           const lean = (p[2 * e + 1] - p[2 * v + 1]) * away;
-          return lean < rules.margin ? rules.rail * (rules.margin - lean) ** 2 : 0;
+          return lean < rules.margin ? rules.rail * portable.square(rules.margin - lean) : 0;
         }));
       }
     }
@@ -1281,17 +1284,17 @@ export function hadrons(s: Structure, rules: ForceRules): Force {
     terms.push(term([...dir.flat()], (p) => {
       const [[a0, a1], [b0, b1]] = dir;
       const ax = dx(p, a0, a1), ay = dy(p, a0, a1), bx = dx(p, b0, b1), by = dy(p, b0, b1);
-      const la = Math.hypot(ax, ay) || 1, lb = Math.hypot(bx, by) || 1;
+      const la = portable.hypot(ax, ay) || 1, lb = portable.hypot(bx, by) || 1;
       // (firmly: the cap is the picture of two quarks running together)
-      const parallel = 5 * rules.hadron * ((ax * by - ay * bx) / (la * lb)) ** 2;
+      const parallel = 5 * rules.hadron * portable.square((ax * by - ay * bx) / (la * lb));
       // the mean heading of the two lines; the ends keep no distance along it and the
       // spacing across it
       let mx = ax / la + bx / lb, my = ay / la + by / lb;
-      const m = Math.hypot(mx, my) || 1;
+      const m = portable.hypot(mx, my) || 1;
       mx /= m; my /= m;
       const ex = dx(p, a1, b1), ey = dy(p, a1, b1);
       const along = ex * mx + ey * my, across = Math.abs(ex * my - ey * mx);
-      return parallel + rules.hadron * (along ** 2 + (across - rules.hadronSpacing) ** 2);
+      return parallel + rules.hadron * (portable.square(along) + portable.square(across - rules.hadronSpacing));
     }));
   }
   return { name: "hadrons", terms };
@@ -1437,7 +1440,7 @@ export function vacuumArcs(s: Structure, rules: ForceRules): Force {
     const v = pair.at;
     terms.push(term([v, e1, e2], (p) => {
       const c = centre(p);
-      return rules.hadron * ((p[2 * v] - (c.x - inner(p))) ** 2 + (p[2 * v + 1] - c.y) ** 2);
+      return rules.hadron * (portable.square(p[2 * v] - (c.x - inner(p))) + portable.square(p[2 * v + 1] - c.y));
     }));
     const legs = pair.partners.map((q) => q.leg);
     const outer = (p: Float64Array) => (legs.length === 2 ? Math.abs(p[2 * legs[0] + 1] - p[2 * legs[1] + 1]) / 2
@@ -1447,18 +1450,18 @@ export function vacuumArcs(s: Structure, rules: ForceRules): Force {
       // the partner starts on the wider circle, on the side the pair opens from
       terms.push(term([from, e1, e2, ...legs], (p) => {
         const c = centre(p);
-        return rules.hadron * (Math.hypot(p[2 * from] - c.x, p[2 * from + 1] - c.y) - outer(p)) ** 2;
+        return rules.hadron * portable.square(portable.hypot(p[2 * from] - c.x, p[2 * from + 1] - c.y) - outer(p));
       }));
       terms.push(limit([from, e1, e2], (p) => {
         const short = p[2 * from] - (centre(p).x - rules.margin);
-        return short > 0 ? rules.hadron * short ** 2 : 0;
+        return short > 0 ? rules.hadron * portable.square(short) : 0;
       }));
     }
     // the C is symmetric about the gap: its partners start, on average, level with it
     const starts = pair.partners.map((q) => q.from).filter((i) => !s.external[i]);
     if (starts.length) terms.push(term([...starts, e1, e2], (p) => {
       const mean = starts.reduce((sum, i) => sum + p[2 * i + 1], 0) / starts.length;
-      return rules.hadron * (mean - centre(p).y) ** 2;
+      return rules.hadron * portable.square(mean - centre(p).y);
     }));
     // in each hadron the pair's quark faces the gap, its partner lies outside it
     for (const { leg } of pair.partners) {
@@ -1466,7 +1469,7 @@ export function vacuumArcs(s: Structure, rules: ForceRules): Force {
       terms.push(limit([e, leg, e1, e2], (p) => {
         const c = centre(p);
         const short = Math.abs(p[2 * e + 1] - c.y) + rules.hadronSpacing * 0.9 - Math.abs(p[2 * leg + 1] - c.y);
-        return short > 0 ? rules.hadron * short ** 2 : 0;
+        return short > 0 ? rules.hadron * portable.square(short) : 0;
       }));
     }
   }
@@ -1500,20 +1503,20 @@ export function loopShapes(s: Structure, rules: ForceRules): Force {
         const [a, b] = ends;
         terms.push(term([a, v, b], (p) => {
           const ax = dx(p, v, a), ay = dy(p, v, a), bx = dx(p, v, b), by = dy(p, v, b);
-          return rules.loop * (1 + (ax * bx + ay * by) / ((Math.hypot(ax, ay) * Math.hypot(bx, by)) || 1));
+          return rules.loop * (1 + (ax * bx + ay * by) / ((portable.hypot(ax, ay) * portable.hypot(bx, by)) || 1));
         }));
       }
       // ...and level: a loop hangs from a level line
       const ends = [loop.run[0], loop.run[loop.run.length - 1]], inner = loop.path.slice(1, -1);
       const [r0, r1] = ends;
-      terms.push(term([r0, r1], (p) => rules.loop * (dy(p, r0, r1) / (Math.hypot(dx(p, r0, r1), dy(p, r0, r1)) || 1)) ** 2));
+      terms.push(term([r0, r1], (p) => rules.loop * portable.square(dy(p, r0, r1) / (portable.hypot(dx(p, r0, r1), dy(p, r0, r1)) || 1))));
       // an arc with no point of its own keeps its top clear of everything else
       if (inner.length === 0) { terms.push(...arcTopClear(s, rules, loop)); continue; }
       // the arc's own points on the half circle over it, evenly spaced, on the side they are on
       const [first, last] = [loop.path[0], loop.path[loop.path.length - 1]];
       terms.push(term([...ends, ...inner], (p) => {
         const mx = (p[2 * first] + p[2 * last]) / 2, my = (p[2 * first + 1] + p[2 * last + 1]) / 2;
-        const ux = (p[2 * first] - mx), uy = (p[2 * first + 1] - my), r = Math.hypot(ux, uy) || 1;
+        const ux = (p[2 * first] - mx), uy = (p[2 * first + 1] - my), r = portable.hypot(ux, uy) || 1;
         // the side of the stretch the arc is on: where its points are, on the whole
         let lean = 0;
         for (const x of inner) lean += ux * (p[2 * x + 1] - my) - uy * (p[2 * x] - mx);
@@ -1521,8 +1524,8 @@ export function loopShapes(s: Structure, rules: ForceRules): Force {
         let e = 0;
         inner.forEach((x, j) => {
           const turn = (Math.PI * (j + 1)) / (inner.length + 1);
-          const tx = mx + Math.cos(turn) * ux - side * Math.sin(turn) * uy, ty = my + Math.cos(turn) * uy + side * Math.sin(turn) * ux;
-          e += (p[2 * x] - tx) ** 2 + (p[2 * x + 1] - ty) ** 2;
+          const tx = mx + portable.cos(turn) * ux - side * portable.sin(turn) * uy, ty = my + portable.cos(turn) * uy + side * portable.sin(turn) * ux;
+          e += portable.square(p[2 * x] - tx) + portable.square(p[2 * x + 1] - ty);
         });
         // (firmly: the arc is a half circle, whatever pulls on the point the boson leaves from)
         return (20 * rules.loop * e) / r;
@@ -1537,18 +1540,18 @@ export function loopShapes(s: Structure, rules: ForceRules): Force {
       const a = loop.points[(k + n - 1) % n], b = loop.points[(k + 1) % n];
       terms.push(term([a, v, b], (p) => {
         const ax = dx(p, v, a), ay = dy(p, v, a), bx = dx(p, v, b), by = dy(p, v, b);
-        const angle = Math.acos(Math.max(-1, Math.min(1, (ax * bx + ay * by) / ((Math.hypot(ax, ay) * Math.hypot(bx, by)) || 1))));
+        const angle = portable.acos(Math.max(-1, Math.min(1, (ax * bx + ay * by) / ((portable.hypot(ax, ay) * portable.hypot(bx, by)) || 1))));
         // (a box held square more firmly: what pulls on its corners must not skew it)
-        return (n === 4 ? 3 : 1) * rules.loop * (angle - corner) ** 2;
+        return (n === 4 ? 3 : 1) * rules.loop * portable.square(angle - corner);
       }));
     });
     // ...standing upright: a box with its sides level and upright, a triangle (or any other
     // polygon) with one side upright, facing what comes in
     const sides = loop.points.map((v, k) => [v, loop.points[(k + 1) % n]] as const);
     terms.push(term(loop.points, (p) => {
-      const turns = sides.map(([a, b]) => Math.atan2(dy(p, a, b), dx(p, a, b)));
-      if (n === 4) return 3 * rules.loopUpright * turns.reduce((e, t) => e + Math.sin(2 * t) ** 2, 0);
-      return rules.loopUpright * Math.min(...turns.map((t) => Math.cos(t) ** 2));
+      const turns = sides.map(([a, b]) => portable.atan2(dy(p, a, b), dx(p, a, b)));
+      if (n === 4) return 3 * rules.loopUpright * turns.reduce((e, t) => e + portable.square(portable.sin(2 * t)), 0);
+      return rules.loopUpright * Math.min(...turns.map((t) => portable.square(portable.cos(t))));
     }));
   }
   return { name: "loops", terms };
@@ -1584,12 +1587,12 @@ function arcTopClear(s: Structure, rules: ForceRules, loop: Loop): Term[] {
     top[0] = mx + nx; top[1] = my + ny;
     return top;
   };
-  const push = (shortfall: number) => (shortfall > 0 ? rules.clearance * shortfall ** 2 : 0);
+  const push = (shortfall: number) => (shortfall > 0 ? rules.clearance * portable.square(shortfall) : 0);
   const near = [a, b, ...(rail ? [] : rest)];
   const terms: Term[] = [];
   s.ids.forEach((_, i) => {
     if (loop.points.includes(i)) return;
-    terms.push(limit([...near, i], (p) => { const t = topOf(p); return push(rules.margin + reach + s.pad[i] - Math.hypot(p[2 * i] - t[0], p[2 * i + 1] - t[1])); }));
+    terms.push(limit([...near, i], (p) => { const t = topOf(p); return push(rules.margin + reach + s.pad[i] - portable.hypot(p[2 * i] - t[0], p[2 * i + 1] - t[1])); }));
   });
   s.lines.forEach((l, k) => {
     if (loop.lines.includes(k)) return;
@@ -1597,7 +1600,7 @@ function arcTopClear(s: Structure, rules: ForceRules, loop: Loop): Term[] {
       const t = topOf(p);
       const vx = p[2 * l.b] - p[2 * l.a], vy = p[2 * l.b + 1] - p[2 * l.a + 1], wx = t[0] - p[2 * l.a], wy = t[1] - p[2 * l.a + 1];
       const u = Math.max(0, Math.min(1, (vx * wx + vy * wy) / ((vx * vx + vy * vy) || 1)));
-      return push(rules.margin + reach - Math.hypot(wx - u * vx, wy - u * vy));
+      return push(rules.margin + reach - portable.hypot(wx - u * vx, wy - u * vy));
     }));
   });
   return terms;
@@ -1632,13 +1635,13 @@ export function forwardForks(s: Structure, rules: ForceRules): Force {
     terms.push(term(cascade && !rules.planeFirst ? [from, at, ...products] : [at, ...products], (p) => {
       let mx = 0, my = 0;
       for (const j of products) {
-        const x = dx(p, at, j), y = dy(p, at, j), n = Math.hypot(x, y) || 1;
+        const x = dx(p, at, j), y = dy(p, at, j), n = portable.hypot(x, y) || 1;
         mx += x / n; my += y / n;
       }
-      const n = Math.hypot(mx, my) || 1;
-      if (!alongParent) return rules.forwardFork * (my / n) ** 2;
-      const px = dx(p, from, at), py = dy(p, from, at), pn = Math.hypot(px, py) || 1;
-      return rules.forwardFork * ((mx * py - my * px) / (n * pn)) ** 2;
+      const n = portable.hypot(mx, my) || 1;
+      if (!alongParent) return rules.forwardFork * portable.square(my / n);
+      const px = dx(p, from, at), py = dy(p, from, at), pn = portable.hypot(px, py) || 1;
+      return rules.forwardFork * portable.square((mx * py - my * px) / (n * pn));
     }));
   }
   // a SUSY particle that ends its chain by falling into ordinary particles alone (an R-parity
@@ -1652,17 +1655,17 @@ export function forwardForks(s: Structure, rules: ForceRules): Force {
     const from = other(into[0], at), products = made.map((l) => other(l, at));
     terms.push(term([from, at, ...products], (p) => {
       let mx = 0, my = 0;
-      for (const j of products) { const x = dx(p, at, j), y = dy(p, at, j), n = Math.hypot(x, y) || 1; mx += x / n; my += y / n; }
-      const n = Math.hypot(mx, my) || 1;
-      const px = dx(p, from, at), py = dy(p, from, at), pn = Math.hypot(px, py) || 1;
+      for (const j of products) { const x = dx(p, at, j), y = dy(p, at, j), n = portable.hypot(x, y) || 1; mx += x / n; my += y / n; }
+      const n = portable.hypot(mx, my) || 1;
+      const px = dx(p, from, at), py = dy(p, from, at), pn = portable.hypot(px, py) || 1;
       // (and each keeps within a narrow cone about that way: they go on with it)
       let wide = 0;
       for (const j of products) {
-        const x = dx(p, at, j), y = dy(p, at, j), c = (x * px + y * py) / ((Math.hypot(x, y) || 1) * pn);
-        const off = Math.acos(Math.max(-1, Math.min(1, c))) - (20 * Math.PI) / 180;
+        const x = dx(p, at, j), y = dy(p, at, j), c = (x * px + y * py) / ((portable.hypot(x, y) || 1) * pn);
+        const off = portable.acos(Math.max(-1, Math.min(1, c))) - (20 * Math.PI) / 180;
         if (off > 0) wide += off * off;
       }
-      return rules.forwardFork * (((mx * py - my * px) / (n * pn)) ** 2 + wide);
+      return rules.forwardFork * (portable.square((mx * py - my * px) / (n * pn)) + wide);
     }));
   });
   // a particle made at rest (a resonance from the incoming particles, W* -> H W) decays back
@@ -1678,10 +1681,10 @@ export function forwardForks(s: Structure, rules: ForceRules): Force {
     // hadron diagram, where the line is free to settle between the hadrons, both)
     terms.push(term(s.hadrons.length ? [from, at, ...made] : [at, ...made], (p) => {
       let mx = 0, my = 0;
-      for (const j of made) { const x = dx(p, at, j), y = dy(p, at, j), n = Math.hypot(x, y) || 1; mx += x / n; my += y / n; }
-      const n = Math.hypot(mx, my) || 1;
-      const px = dx(p, from, at), py = dy(p, from, at), pn = Math.hypot(px, py) || 1;
-      return 4 * rules.forwardFork * ((mx * py - my * px) / (n * pn)) ** 2;
+      for (const j of made) { const x = dx(p, at, j), y = dy(p, at, j), n = portable.hypot(x, y) || 1; mx += x / n; my += y / n; }
+      const n = portable.hypot(mx, my) || 1;
+      const px = dx(p, from, at), py = dy(p, from, at), pn = portable.hypot(px, py) || 1;
+      return 4 * rules.forwardFork * portable.square((mx * py - my * px) / (n * pn));
     }));
   });
   // a boson that decays to two particles has them mirrored about its own line, whatever they
@@ -1696,12 +1699,12 @@ export function forwardForks(s: Structure, rules: ForceRules): Force {
     if (s.external[from]) return;
     const [j, k] = made;
     terms.push(term([at, j, k], (p) => {
-      const px = dx(p, from, at), py = dy(p, from, at), pn = Math.hypot(px, py) || 1;
+      const px = dx(p, from, at), py = dy(p, from, at), pn = portable.hypot(px, py) || 1;
       const ux = px / pn, uy = py / pn;
       const ax = dx(p, at, j), ay = dy(p, at, j), bx = dx(p, at, k), by = dy(p, at, k);
       // k reflected across the parent's line lands on j
       const along = bx * ux + by * uy, rx = 2 * along * ux - bx, ry = 2 * along * uy - by;
-      return rules.mirror * 10 * ((ax - rx) ** 2 + (ay - ry) ** 2);
+      return rules.mirror * 10 * (portable.square(ax - rx) + portable.square(ay - ry));
     }));
   });
   // with the final plane first, every decay forks symmetrically about level, the ones that
@@ -1715,8 +1718,8 @@ export function forwardForks(s: Structure, rules: ForceRules): Force {
     if (into.length !== 1 || made.length < 2) return;
     terms.push(term([at, ...made], (p) => {
       let mx = 0, my = 0;
-      for (const j of made) { const x = dx(p, at, j), y = dy(p, at, j), n = Math.hypot(x, y) || 1; mx += x / n; my += y / n; }
-      return 4 * rules.forwardFork * (my / (Math.hypot(mx, my) || 1)) ** 2;
+      for (const j of made) { const x = dx(p, at, j), y = dy(p, at, j), n = portable.hypot(x, y) || 1; mx += x / n; my += y / n; }
+      return 4 * rules.forwardFork * portable.square(my / (portable.hypot(mx, my) || 1));
     }));
   });
   // a lone particle coming in (a stop decaying on its own) comes in level, and what it decays
@@ -1730,9 +1733,9 @@ export function forwardForks(s: Structure, rules: ForceRules): Force {
     // (about level, which the incoming line is held to: so the term moves the products, not the line)
     if (products.length >= 2) terms.push(term([entry, ...products], (p) => {
       let mx = 0, my = 0;
-      for (const j of products) { const x = dx(p, entry, j), y = dy(p, entry, j), n = Math.hypot(x, y) || 1; mx += x / n; my += y / n; }
-      const n = Math.hypot(mx, my) || 1;
-      return 4 * rules.forwardFork * (my / n) ** 2;
+      for (const j of products) { const x = dx(p, entry, j), y = dy(p, entry, j), n = portable.hypot(x, y) || 1; mx += x / n; my += y / n; }
+      const n = portable.hypot(mx, my) || 1;
+      return 4 * rules.forwardFork * portable.square(my / n);
     }));
   }
   return { name: "forward forks", terms };
@@ -1793,14 +1796,14 @@ export function restLevel(s: Structure, rules: ForceRules): Force {
   const onLoop = new Map<number, number>();
   s.loops.forEach((loop, k) => loop.points.forEach((i) => onLoop.set(i, k)));
   const terms: Term[] = [];
-  const level = (from: number, to: number) => terms.push(term([from, to], (p) => { const x = dx(p, from, to), y = dy(p, from, to); return rules.restLevel * (y / (Math.hypot(x, y) || 1)) ** 2; }));
+  const level = (from: number, to: number) => terms.push(term([from, to], (p) => { const x = dx(p, from, to), y = dy(p, from, to); return rules.restLevel * portable.square(y / (portable.hypot(x, y) || 1)); }));
   // a line on its own (a key of line styles) lies level
   for (const line of lone) level(line.a, line.b);
   // an external field's line stands upright, the field below the point it acts at
   s.field.forEach((isField, i) => {
     if (!isField) return;
     const v = other(s.linesAt[i][0], i);
-    terms.push(term([v, i], (p) => { const x = dx(p, v, i), y = dy(p, v, i); return rules.restLevel * (1 - y / (Math.hypot(x, y) || 1)); }));
+    terms.push(term([v, i], (p) => { const x = dx(p, v, i), y = dy(p, v, i); return rules.restLevel * (1 - y / (portable.hypot(x, y) || 1)); }));
   });
   // a vertex where two or more earlier lines meet and one line leaves (on through a mixing or
   // insertion: Phi -> Phi_hs stays level)
@@ -1841,7 +1844,7 @@ export function equalProducts(s: Structure, rules: ForceRules): Force {
       // (two of the same particle, the two invisibles of an S, are held to one length firmly)
       const name = (i: number) => s.label[i] ?? s.particle[i];
       const twins = name(a) !== undefined && name(a) === name(b);
-      terms.push(term([v, a, b], (p) => (twins ? rules.mirror * 10 : rules.equalProducts) * (Math.hypot(dx(p, v, a), dy(p, v, a)) - Math.hypot(dx(p, v, b), dy(p, v, b))) ** 2));
+      terms.push(term([v, a, b], (p) => (twins ? rules.mirror * 10 : rules.equalProducts) * portable.square(portable.hypot(dx(p, v, a), dy(p, v, a)) - portable.hypot(dx(p, v, b), dy(p, v, b)))));
     }
   });
   return { name: "equal products", terms };
@@ -1897,13 +1900,13 @@ export function pairsTogether(s: Structure, rules: ForceRules): Force {
     name: "pairs together",
     terms: pairsLeavingTogether(s).map(({ at, legs }) => term([at, ...legs], (p) => {
       // (each neighbouring two at the opening, the whole heading forward)
-      const angles = legs.map((j) => Math.atan2(dy(p, at, j), dx(p, at, j))).sort((x, y) => x - y);
+      const angles = legs.map((j) => portable.atan2(dy(p, at, j), dx(p, at, j))).sort((x, y) => x - y);
       let e = 0, mx = 0, my = 0;
       for (let k = 0; k < angles.length; k++) {
-        mx += Math.cos(angles[k]); my += Math.sin(angles[k]);
-        if (k > 0) e += (angles[k] - angles[k - 1] - opening) ** 2;
+        mx += portable.cos(angles[k]); my += portable.sin(angles[k]);
+        if (k > 0) e += portable.square(angles[k] - angles[k - 1] - opening);
       }
-      return rules.pairTogether * (e + Math.atan2(my, mx) ** 2);
+      return rules.pairTogether * (e + portable.square(portable.atan2(my, mx)));
     })),
   };
 }
@@ -1958,10 +1961,10 @@ export function straightIntoBlob(s: Structure, rules: ForceRules): Force {
     const [a, b] = s.time[a0] < s.time[b0] ? [a0, b0] : [b0, a0];
     vbfTerms.push(term([a, v, b], (p) => {
       const ux = dx(p, a, v), uy = dy(p, a, v), wx = dx(p, v, b), wy = dy(p, v, b);
-      const nu = Math.hypot(ux, uy) || 1, nw = Math.hypot(wx, wy) || 1;
+      const nu = portable.hypot(ux, uy) || 1, nw = portable.hypot(wx, wy) || 1;
       // (and only a little: a turn of about 25 degrees in all, 12 in and 12 out; more by hand)
-      const turn = Math.acos(Math.max(-1, Math.min(1, (ux * wx + uy * wy) / (nu * nw))));
-      return rules.mirror * 10 * ((wx / nw - ux / nu) ** 2 + (wy / nw + uy / nu) ** 2) + rules.mirror * 10 * (turn - (25 * Math.PI) / 180) ** 2;
+      const turn = portable.acos(Math.max(-1, Math.min(1, (ux * wx + uy * wy) / (nu * nw))));
+      return rules.mirror * 10 * (portable.square(wx / nw - ux / nu) + portable.square(wy / nw + uy / nu)) + rules.mirror * 10 * portable.square(turn - (25 * Math.PI) / 180);
     }));
   }
   // (final-state radiation: a line that gives off one boson and then leaves the diagram runs
@@ -1993,7 +1996,7 @@ export function straightIntoBlob(s: Structure, rules: ForceRules): Force {
     name: "straight into blob",
     terms: [...runs.map(([a, v, b, k]) => term([a, v, b], (p) => {
       const ax = dx(p, v, a), ay = dy(p, v, a), bx = dx(p, v, b), by = dy(p, v, b);
-      return k * rules.rail * (1 + (ax * bx + ay * by) / ((Math.hypot(ax, ay) || 1) * (Math.hypot(bx, by) || 1)));
+      return k * rules.rail * (1 + (ax * bx + ay * by) / ((portable.hypot(ax, ay) || 1) * (portable.hypot(bx, by) || 1)));
     })), ...vbfTerms],
   };
 }
@@ -2017,11 +2020,11 @@ export function givenOffSideways(s: Structure, rules: ForceRules): Force {
     // (the term turns the b alone: the top's heading is the top's to set)
     terms.push(term([at, leg], (p) => {
       // (outside: see topOutside; where a top has none, its b turns the way it already leans)
-      const heading = Math.atan2(dy(p, from, at), dx(p, from, at));
+      const heading = portable.atan2(dy(p, from, at), dx(p, from, at));
       const away = topOutside(s, p, from, at) || Math.sign(dx(p, from, at) * dy(p, at, leg) - dy(p, from, at) * dx(p, at, leg)) || -1;
-      let miss = Math.atan2(dy(p, at, leg), dx(p, at, leg)) - (heading + away * turn);
-      miss = Math.atan2(Math.sin(miss), Math.cos(miss));
-      return rules.givenOffSide * miss ** 2;
+      let miss = portable.atan2(dy(p, at, leg), dx(p, at, leg)) - (heading + away * turn);
+      miss = portable.atan2(portable.sin(miss), portable.cos(miss));
+      return rules.givenOffSide * portable.square(miss);
     }));
   });
   return { name: "given off sideways", terms };
