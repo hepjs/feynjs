@@ -121,6 +121,9 @@ export interface LabelBox {
   width: number;
   ascent: number;
   descent: number;
+  /** the label as TeX should set it (an upright word wrapped in \mathrm), and at what size, px */
+  tex: string;
+  size: number;
 }
 
 interface Ctx { parts: string[]; top: number; bottom: number }
@@ -197,14 +200,16 @@ function uprightWord(src: string): string | undefined {
 
 /** Lay out a label. `wordScale` sets the size of labels that are upright words. */
 export function layoutLabel(tex: string, size: number, wordScale = 1): LabelBox {
+  const asWritten = tex.trim().replace(/^\$+|\$+$/g, "");
   tex = scriptCapitals(tex);
   let src = tex.trim().replace(/^\$+|\$+$/g, "");
   const word = uprightWord(src);
   if (word) { src = `\\mathrm{${word}}`; size *= wordScale; }
+  const texForTex = word ? `\\mathrm{${word}}` : asWritten;
   const root: Node = { t: "group", kids: new P(src).parseSeq(false) };
   const ctx: Ctx = { parts: [], top: 0, bottom: 0 };
   const width = lay(root, 0, 0, size, ctx);
-  return { svg: ctx.parts.join(""), width, ascent: -ctx.top, descent: ctx.bottom };
+  return { svg: ctx.parts.join(""), width, ascent: -ctx.top, descent: ctx.bottom, tex: texForTex, size };
 }
 
 /** `\mathcal{M}` as the Unicode script capital (no math font is loaded). */

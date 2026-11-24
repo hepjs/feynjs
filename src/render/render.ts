@@ -57,14 +57,18 @@ export interface RenderOptions {
 
 const escapeText = (s: string) => s.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
+/** Height of the math axis above the baseline, in em (TeX's \\fontdimen22 of Computer Modern). */
+export const MATH_AXIS_EM = 0.25;
+
 function assembleSvg(scene: Scene, title: string | undefined, ariaLabel: string, scale: number, description: string, grid = 0, origin = { x: 0, y: 0 }, iso = false, inlineAt?: number, model = "", gridArea?: { left: number; top: number; right: number; bottom: number }): string {
   const b = scene.bounds, pad = scene.theme.padding;
   const width = b.right - b.left + 2 * pad, height = b.bottom - b.top + 2 * pad;
-  // (`inline: a`: in a line of text, the point `a` sits on the text's baseline, as TikZ's
-  // `inline=(a)` sets it in an equation: the drawing's foot lowered that far below the baseline)
+  // (`inline: a`: in a line of text, the point `a` sits on the math axis, where an equation's
+  // middle sits (a quarter em above the baseline, the height of a minus sign): the drawing's foot
+  // lowered that far below the baseline, less the axis)
   // (sized to the text around it, in em: its labels a little smaller than the text)
   const em = 0.62 / scene.theme.fontSize;
-  const inline = inlineAt === undefined ? "" : ` style="vertical-align: ${fmt(-(b.bottom + pad - inlineAt) * em)}em"`;
+  const inline = inlineAt === undefined ? "" : ` style="vertical-align: ${fmt(-(b.bottom + pad - inlineAt) * em + MATH_AXIS_EM)}em"`;
   // (a faint grid behind the drawing, `background: grid`: lines every `grid` px, through the
   // layout's own origin, so the points of a grid layout sit on its crossings; in the drawing's
   // own colour, thinned, so it stays faint on dark pages as on light)

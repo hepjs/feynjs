@@ -26,6 +26,7 @@ function drawHadronBrace(scene: Scene, d: Diagram, group: HadronGroup): void {
   const bottom = Math.max(...points.map((p) => p.y)) + scene.theme.fontSize * 0.5;
   const depth = outward * scene.theme.hadronBraceDepth;
   scene.edges.push(`<path class="feynjs-brace" d="${bracePath(x, top, bottom, depth)}" fill="none" stroke="${scene.theme.hadronBraceColor}" stroke-width="${fmt(scene.theme.line.stroke * 0.8)}" stroke-linecap="round"/>`);
+  scene.shapes.push({ kind: "brace", x, top, bottom, depth, color: scene.theme.hadronBraceColor, width: scene.theme.line.stroke * 0.8 });
   scene.bounds.include(x + depth, top);
   scene.bounds.include(x + depth, bottom);
   if (group.label) scene.addLabel(group.label, { x: x + depth, y: (top + bottom) / 2 }, { x: outward, y: 0 }, scene.theme.labelGap);
@@ -65,6 +66,7 @@ function drawHadronEllipse(scene: Scene, d: Diagram, group: HadronGroup): void {
   const fill = group.hatched ? `url(#${scene.idPrefix}-hatch)` : scene.theme.vertex.blobFill;
   const background = group.hatched ? `<ellipse class="feynjs-bg" cx="${fmt(cx)}" cy="${fmt(cy)}" rx="${fmt(radiusX)}" ry="${fmt(radiusY)}" fill="#fff"/>` : "";
   scene.vertices.push(`${background}<ellipse class="feynjs-blob" cx="${fmt(cx)}" cy="${fmt(cy)}" rx="${fmt(radiusX)}" ry="${fmt(radiusY)}" fill="${fill}" stroke="currentColor" stroke-width="${fmt(scene.theme.line.stroke * 0.8)}"/>`);
+  scene.shapes.push({ kind: "ellipse", cx, cy, rx: radiusX, ry: radiusY, angle: 0, fill: scene.theme.vertex.blobFill, hatched: !!group.hatched, width: scene.theme.line.stroke * 0.8 });
   scene.bounds.include(cx - radiusX, cy - radiusY, 2);
   scene.bounds.include(cx + radiusX, cy + radiusY, 2);
   ellipseObstacle(scene, cx, cy, radiusX, radiusY);
@@ -109,6 +111,7 @@ function drawHadronCap(scene: Scene, d: Diagram, group: HadronGroup): void {
   // covers must not show through it)
   const shape = `cx="${fmt(cx)}" cy="${fmt(cy)}" rx="${fmt(rx)}" ry="${fmt(ry)}" transform="rotate(${fmt(angle)} ${fmt(cx)} ${fmt(cy)})"`;
   scene.vertices.push(`<ellipse class="feynjs-bg" ${shape} fill="#fff"/><ellipse class="feynjs-blob" ${shape} fill="${scene.theme.vertex.smallBlobFill}" stroke="currentColor" stroke-width="${fmt(scene.theme.line.stroke * 0.8)}"/>`);
+  scene.shapes.push({ kind: "ellipse", cx, cy, rx, ry, angle, fill: scene.theme.vertex.smallBlobFill, hatched: false, width: scene.theme.line.stroke * 0.8 });
   ellipseObstacle(scene, cx, cy, rx, ry, angle);
   scene.bounds.include(cx - rx, cy - rx, 2);
   scene.bounds.include(cx + rx, cy + rx, 2);

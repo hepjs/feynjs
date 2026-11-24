@@ -44,6 +44,13 @@ export class Scene {
   edgeIds = new Map<Edge, string>();
   vertices: string[] = [];
   labels: string[] = [];
+  /** hadron shapes as drawn (braces, ellipses, caps), in px, for exports that redraw them (toTikz) */
+  shapes: (
+    | { kind: "brace"; x: number; top: number; bottom: number; depth: number; color: string; width: number }
+    | { kind: "ellipse"; cx: number; cy: number; rx: number; ry: number; angle: number; fill: string; hatched: boolean; width: number }
+  )[] = [];
+  /** every label as placed: what it says (TeX), its size and where its baseline starts, px (for toTikz) */
+  placedLabels: { tex: string; size: number; x: number; baseline: number; color?: string }[] = [];
   bounds = new BoundingBox();
   usesHatching = false;
   /** direction (radians) of every line leaving each vertex */
@@ -217,6 +224,7 @@ export class Scene {
       const title = info ? `<title>${escapeXml(info)}</title>` : "";
       const particleAttr = info ? ` data-particle="${escapeXml(request.particle!)}"` : "";
       this.labels.push(`<g transform="translate(${fmt(best.x)} ${fmt(best.baseline)})"${colorAttr}${levelAttr}${particleAttr} fill="currentColor">${title}${size.svg}</g>`);
+      this.placedLabels.push({ tex: size.tex, size: size.size, x: best.x, baseline: best.baseline, color: request.color });
       this.labelBoxes.push(best.box);
       this.bounds.include(best.box.left, best.box.top, 2);
       this.bounds.include(best.box.right, best.box.bottom, 2);
@@ -256,6 +264,7 @@ export class Scene {
       if (cost < bestCost) { best = candidate; bestCost = cost; }
     });
     this.labels.push(`<g transform="translate(${fmt(best.x)} ${fmt(best.baseline)})"${color ? ` color="${color}"` : ""}${cls ? ` class="${cls}"` : ""} fill="currentColor">${label.svg}</g>`);
+    this.placedLabels.push({ tex: label.tex, size: label.size, x: best.x, baseline: best.baseline, color });
     this.labelBoxes.push(best.box);
     this.bounds.include(best.box.left, best.box.top, 2);
     this.bounds.include(best.box.right, best.box.bottom, 2);

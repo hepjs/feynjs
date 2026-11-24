@@ -21,18 +21,29 @@ function grey(r: number, g: number, b: number): string {
 /** One colour value made grey; anything that is not a colour is returned unchanged. */
 export function toGrey(value: string): string {
   const v = value.trim().toLowerCase();
-  const named = NAMED[v];
-  if (named) return toGrey(named);
-  let m = /^#([0-9a-f])([0-9a-f])([0-9a-f])$/.exec(v);
-  if (m) return grey(...(m.slice(1).map((c) => parseInt(c + c, 16)) as [number, number, number]));
-  m = /^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/.exec(v);
-  if (m) return grey(...(m.slice(1).map((c) => parseInt(c, 16)) as [number, number, number]));
-  m = /^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(,[^)]*)?\)$/.exec(v);
-  if (m) {
+  const m = /^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(,[^)]*)?\)$/.exec(v);
+  if (m?.[4]) {
     const g = grey(Number(m[1]), Number(m[2]), Number(m[3]));
-    return m[4] ? `rgba(${parseInt(g.slice(1, 3), 16)},${parseInt(g.slice(1, 3), 16)},${parseInt(g.slice(1, 3), 16)}${m[4]})` : g;
+    return `rgba(${parseInt(g.slice(1, 3), 16)},${parseInt(g.slice(1, 3), 16)},${parseInt(g.slice(1, 3), 16)}${m[4]})`;
   }
-  return value;
+  const rgb = colourAsRgb(v);
+  return rgb ? grey(...rgb) : value;
+}
+
+/**
+ * A colour as red, green and blue in 0-255: a CSS name from the table above, #rgb, #rrggbb or
+ * rgb(r, g, b). Undefined for anything else (currentColor, an unknown name).
+ */
+export function colourAsRgb(value: string): [number, number, number] | undefined {
+  const v = value.trim().toLowerCase();
+  if (NAMED[v]) return colourAsRgb(NAMED[v]);
+  let m = /^#([0-9a-f])([0-9a-f])([0-9a-f])$/.exec(v);
+  if (m) return m.slice(1).map((c) => parseInt(c + c, 16)) as [number, number, number];
+  m = /^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/.exec(v);
+  if (m) return m.slice(1).map((c) => parseInt(c, 16)) as [number, number, number];
+  m = /^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(,[^)]*)?\)$/.exec(v);
+  if (m) return [Number(m[1]), Number(m[2]), Number(m[3])];
+  return undefined;
 }
 
 /** The one grey the black-and-white scheme fills shapes with. */
