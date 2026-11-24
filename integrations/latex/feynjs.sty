@@ -1,0 +1,145 @@
+%% feynjs.sty: Feynman diagrams in LaTeX, laid out by feynjs, drawn by TikZ-Feynman.
+%%
+%%   \usepackage{feynjs}
+%%   \begin{feynjs}
+%%   p p > t tbar
+%%   t > b W+(> e+ nu)
+%%   \end{feynjs}
+%%
+%% TeX does not run feynjs. As bibtex does for citations, a separate step does the layout:
+%%   1. LaTeX writes each diagram's source beside the document: <job>-feynjs-<n>.feyn
+%%   2. `feynjs cache` draws each one as TikZ-Feynman, every vertex placed: <job>-feynjs-<n>.tex
+%%   3. LaTeX again reads those in.
+%% With --shell-escape and feynjs installed, LaTeX runs step 2 itself. Without (Overleaf, arXiv,
+%% journals), upload the <job>-feynjs-<n>.tex files with the document: they need nothing but
+%% TikZ-Feynman, compile with pdfLaTeX, LuaLaTeX and XeLaTeX, and convert to HTML with LaTeXML.
+%%
+%% Options, for the diagrams that follow: \feynjsset{unit=1.4}   (length of one propagator, cm)
+%%
+%% MIT licence. https://github.com/hepjs/feynjs
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{feynjs}[2026/11/24 v0.9 Feynman diagrams laid out by feynjs]
+\RequirePackage{amsmath}% (\text, \boldsymbol in particle labels)
+\RequirePackage{tikz-feynman}
+\tikzfeynmanset{compat=1.1.0}
+\RequirePackage{verbatim}
+\RequirePackage{pdftexcmds}
+
+\pgfkeys{
+  /feynjs/.is family,
+  /feynjs/unit/.store in=\feynjs@unit,
+  /feynjs/unit=1.4,
+}
+\newcommand\feynjsset[1]{\pgfkeys{/feynjs,#1}}
+
+\newcount\feynjs@count
+\newwrite\feynjs@out
+\newread\feynjs@in
+\newif\iffeynjs@anyoutofdate
+\newif\iffeynjs@current
+
+%% This diagram's files, without extension.
+\def\feynjs@name{\jobname-feynjs-\the\feynjs@count}
+
+%% ---------------------------------------------------------------------------------------------
+%% LaTeXML (arXiv's HTML) emulates TeX in Perl: it skips the source and reads the drawing.
+\ifdefined\lx@verbatim@
+  \newenvironment{feynjs}
+    {\global\advance\feynjs@count\@ne \comment}
+    {\endcomment \aftergroup\feynjs@readdrawing}
+  \newcommand\feynjsfile[1]{\global\advance\feynjs@count\@ne \feynjs@readdrawing}
+  \def\feynjs@readdrawing{\IfFileExists{\feynjs@name.tex}{\input{\feynjs@name.tex}}{\feynjs@placeholder}}
+  \def\feynjs@placeholder{\fbox{\ttfamily feynjs: \feynjs@name.tex missing}}
+  \expandafter\endinput
+\fi
+
+%% ---------------------------------------------------------------------------------------------
+%% TeX: write the source, then draw.
+
+%% \begin{feynjs} ... \end{feynjs}: the body, line by line, into <job>-feynjs-<n>.feyn
+\newenvironment{feynjs}{%
+  \global\advance\feynjs@count\@ne
+  \feynjs@startsource
+  \let\do\@makeother\dospecials\catcode`\^^M\active
+  \def\verbatim@processline{\immediate\write\feynjs@out{\the\verbatim@line}}%
+  \verbatim@start
+}{%
+  \immediate\closeout\feynjs@out
+  \aftergroup\feynjs@draw % (once the verbatim catcodes are gone with the group)
+}
+
+%% \feynjsfile{diagram.feyn}: a diagram kept in a file of its own, copied in line by line.
+\newcommand\feynjsfile[1]{%
+  \global\advance\feynjs@count\@ne
+  \begingroup
+  \feynjs@startsource
+  \endlinechar=-1
+  \immediate\openin\feynjs@in=#1\relax
+  \ifeof\feynjs@in \PackageError{feynjs}{Cannot find the diagram #1}{}\fi
+  \loop\unless\ifeof\feynjs@in
+    \readline\feynjs@in to\feynjs@line
+    \unless\ifeof\feynjs@in \immediate\write\feynjs@out{\feynjs@line}\fi
+  \repeat
+  \immediate\closein\feynjs@in
+  \immediate\closeout\feynjs@out
+  \endgroup
+  \feynjs@draw
+}
+
+%% The source file opens with its options, for `feynjs cache`.
+\def\feynjs@startsource{%
+  \immediate\openout\feynjs@out=\feynjs@name.feyn\relax
+  \immediate\write\feynjs@out{\@percentchar feynjs unit=\feynjs@unit}%
+}
+
+%% Read the drawing if it was drawn from this very source; else draw it now (--shell-escape)
+%% or leave a box saying what to run.
+\def\feynjs@draw{%
+  \ifdefined\pdf@filemdfivesum
+    \edef\feynjs@source{\pdf@filemdfivesum{\feynjs@name.feyn}}%
+  \else \let\feynjs@source\@empty \fi
+  \feynjs@checkdrawing
+  \iffeynjs@current\else
+    \ifnum\pdf@shellescape=\@ne
+      \immediate\write18{feynjs cache .}%
+      \feynjs@checkdrawing
+    \fi
+  \fi
+  \iffeynjs@current
+    \input{\feynjs@name.tex}%
+  \else
+    \global\feynjs@anyoutofdatetrue
+    \PackageWarning{feynjs}{Diagram \the\feynjs@count\space (\feynjs@name) is new or changed}%
+    \feynjs@placeholder
+  \fi
+}
+
+%% Current: the drawing exists and its first line records this source's MD5 (or, where the
+%% engine has no MD5, it simply exists).
+\def\feynjs@checkdrawing{%
+  \global\feynjs@currentfalse
+  \IfFileExists{\feynjs@name.tex}{%
+    \immediate\openin\feynjs@in=\feynjs@name.tex\relax
+    \begingroup\endlinechar=-1 \global\readline\feynjs@in to\feynjs@firstline\endgroup
+    \immediate\closein\feynjs@in
+    \ifx\feynjs@source\@empty \global\feynjs@currenttrue
+    \else
+      \ifnum\pdf@strcmp{\feynjs@firstline}{\@percentchar\space feynjs \feynjs@source}=\z@
+        \global\feynjs@currenttrue
+      \fi
+    \fi
+  }{}%
+}
+
+\def\feynjs@placeholder{%
+  \fbox{\parbox{0.6\linewidth}{\centering\small\ttfamily
+    feynjs: diagram \the\feynjs@count\ not drawn yet.\\ Run: feynjs cache .\\ then LaTeX again}}%
+}
+
+\AtEndDocument{%
+  \iffeynjs@anyoutofdate
+    \PackageWarningNoLine{feynjs}{Diagrams are new or changed: run `feynjs cache .'
+      (or compile with --shell-escape), then LaTeX again}%
+  \fi
+}
+\endinput
