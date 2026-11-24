@@ -19,16 +19,22 @@ the line that made it; drag a point to move it.***
 
 ## What you can do here
 
-- **Type**, or pick an **example**: the drawing follows within a moment, and a mistake shows
-  beneath the editor with what feynjs expected.
-- **Switches** set the engine, colour flow, black and white and size. Each writes its line into
-  the source (`layout: grid`, say), so what you see is what the source says.
-- **Point** at a line or a point: its name shows above the drawing with the source line that
-  made it. **Click** it to select that line in the editor.
-- **Drag** a point: dropping it writes `b at (x, y)` into the source, and the layout settles
-  round it.
-- **Share link** copies an address that holds the source, so the diagram opens as you see it.
-  **SVG**, **PNG** and **TikZ** take the diagram away.
+- **Type**, or pick an **example** (or **Surprise me**): the drawing follows within a moment, and
+  a mistake shows beneath the editor with what feynjs expected.
+- **Move**: drag a point. Dropping it writes `b at (x, y)` into the source, and the layout
+  settles round it. Click a part to select the source line that made it.
+- **Draw**: pick a line from the palette, then click empty space for a point, or drag from one
+  point to another (or out into space, which makes a point there). Each writes
+  `v1 -- [gluon] v2` into the source. Drop a palette line on a drawn line, or click it while
+  drawing, to change its style.
+- **Erase**: click a point or a line to remove it.
+- **Engine**, **Styling** and **Size** write their line into the source (`layout: grid`,
+  `colour flow: on`); with the grid engine, **Square** and **Iso** choose its grid.
+- **Undo** and **Redo** step back and forth through every change; **Share link** copies an
+  address that holds the source. **SVG**, **PNG** and **TikZ** take the diagram away.
+
+The pointer changes only lines written on their own (`a -- [gluon] b`); a chain or a process is
+changed in the source, and the page says so.
 
 ## Every part has a name
 

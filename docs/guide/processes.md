@@ -229,6 +229,44 @@ t > b W+(> mu+ nu)
 ```
 ````
 
+## Decaying only some of them
+
+A decay line, `gluino > q q neutralino1`, decays **every** particle of that name. To decay just
+one, write its decay in brackets right after it; the others stay undecayed lines:
+
+```feynman
+p p > gluino(> q q neutralino1) gluino
+```
+
+````markdown
+```feynman
+p p > gluino(> q q neutralino1) gluino
+```
+````
+
+Particles of other names are left alone: with `p p > t tbar`, the line `t > b W+` decays the top
+and not the antitop.
+
+## Detector objects in a process
+
+Detector objects are particle names like any other, so they go straight into a process: `bjet`,
+`j`, `LRJ` (a large-R jet), `MET` and the rest of [Detector objects](objects.md). Write the
+object where the particle would be, or as what a particle decays to:
+
+```feynman
+p p > t tbar
+t > bjet W+(> LRJ)
+tbar > bbar W-(> e- nu~)
+```
+
+````markdown
+```feynman
+p p > t tbar
+t > bjet W+(> LRJ)
+tbar > bbar W-(> e- nu~)
+```
+````
+
 ## When the same particle decays differently
 
 ### Gluinos decaying differently

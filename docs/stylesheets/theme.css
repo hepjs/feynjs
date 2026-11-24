@@ -204,3 +204,26 @@
 .md-typeset .pg-status.pg-error { color: var(--feynjs-rule); white-space: pre-wrap; font-family: var(--md-code-font-family); }
 .md-typeset .pg-model pre, .md-typeset .pg-tikz pre { max-height: 18rem; overflow: auto; margin: 0; }
 .md-typeset details.pg-tikz[hidden] { display: none; }
+.md-typeset .pg-tools { display: flex; flex-wrap: wrap; gap: 0.5rem 0.8rem; align-items: center; margin-bottom: 0.6rem; font-size: 0.68rem; }
+.md-typeset .pg-seg { display: inline-flex; border: 1px solid var(--md-default-fg-color--lighter); border-radius: 0.35rem; overflow: hidden; }
+.md-typeset .pg-seg[hidden] { display: none; }
+.md-typeset .pg-seg button { font: inherit; padding: 0.2rem 0.6rem; border: 0; background: var(--md-default-bg-color); color: var(--md-default-fg-color--light); cursor: pointer; }
+.md-typeset .pg-seg button + button { border-left: 1px solid var(--md-default-fg-color--lighter); }
+.md-typeset .pg-seg button.pg-active { background: var(--feynjs-rule); color: #fff; }
+.md-typeset .pg-palette { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+.md-typeset .pg-chip { display: inline-flex; flex-direction: column; align-items: center; gap: 0.05rem; width: 4.2rem; padding: 0.25rem 0.2rem 0.15rem; border: 1px solid var(--md-default-fg-color--lightest); border-radius: 0.4rem; background: var(--md-default-bg-color); color: var(--md-default-fg-color); cursor: grab; font: inherit; transition: transform 0.12s ease, border-color 0.12s ease; }
+.md-typeset .pg-chip:hover { transform: translateY(-2px); border-color: var(--feynjs-rule); }
+.md-typeset .pg-chip.pg-active { border-color: var(--feynjs-rule); box-shadow: 0 0 0 1px var(--feynjs-rule) inset; }
+.md-typeset .pg-chip-line { display: block; height: 1.1rem; width: 100%; color: var(--md-default-fg-color); }
+.md-typeset .pg-chip-line svg { width: 100%; height: 100%; }
+.md-typeset .pg-chip-name { font-size: 0.55rem; color: var(--md-default-fg-color--light); white-space: nowrap; }
+.md-typeset .pg-hint { position: absolute; right: 0.8rem; bottom: 0.5rem; font-size: 0.6rem; color: var(--md-default-fg-color--lighter); }
+.md-typeset .pg-band { stroke: var(--feynjs-rule); stroke-width: 2; stroke-dasharray: 5 4; stroke-linecap: round; }
+.md-typeset .pg-ripple { fill: none; stroke: var(--feynjs-rule); stroke-width: 2; vector-effect: non-scaling-stroke; transform-box: fill-box; transform-origin: center; animation: pg-ripple 0.75s cubic-bezier(0.1, 0.7, 0.3, 1) both; pointer-events: none; }
+@keyframes pg-ripple { from { transform: scale(1); opacity: 0.9; } to { transform: scale(6); opacity: 0; } }
+.md-typeset svg.pg-tool-draw { cursor: crosshair; }
+.md-typeset svg.pg-tool-draw .pg-handle { cursor: crosshair; fill: var(--feynjs-rule); fill-opacity: 0.1; stroke: var(--feynjs-rule); stroke-opacity: 0.5; }
+.md-typeset svg.pg-tool-erase [data-edge]:hover, .md-typeset svg.pg-tool-erase [data-edge].pg-on { color: var(--md-default-fg-color--lighter); cursor: not-allowed; }
+.md-typeset svg.pg-tool-erase .pg-handle { cursor: not-allowed; }
+.md-typeset .pg-stage { overflow: hidden; }
+.md-typeset .pg-hit { fill: none; stroke: transparent; stroke-width: 14; stroke-linecap: round; pointer-events: stroke; }
