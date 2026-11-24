@@ -18,7 +18,12 @@ type: software
 authors:
   - family-names: Oliver
     given-names: Jason
+    affiliation: Adelaide University
     orcid: "https://orcid.org/0000-0002-0713-6627"
+  - family-names: Zhu
+    given-names: Pengxuan
+    affiliation: Adelaide University
+    orcid: "https://orcid.org/0000-0003-2039-5794"
 keywords:
   - Feynman diagrams
   - particle physics
