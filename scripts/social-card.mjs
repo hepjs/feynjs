@@ -1,5 +1,6 @@
-// The social card (the picture shown when the repository or the site is shared): the wordmark with
-// its photon, feyn | js, centred; circles spreading from the photon like ripples; the line under it.
+// The social card (the picture shown when the repository or the site is shared): the wordmark,
+// feyn | js, with its photon between the words, and the line under it, on the left; circles spread
+// from the js across the card: the JavaScript engine at work.
 // Writes docs/brand/logo/social-card.svg and .png. Run: node scripts/social-card.mjs
 import { readFileSync, writeFileSync } from "node:fs";
 import { Resvg } from "@resvg/resvg-js";
@@ -11,26 +12,26 @@ const here = (path) => new URL(`../${path}`, import.meta.url).pathname;
 // the mark: the words and the photon between them, light on dark
 const markSource = readFileSync(here("docs/brand/logo/logo-photon-dark.svg"), "utf8");
 const [mx, my, mw, mh] = /viewBox="([^"]+)"/.exec(markSource)[1].split(/\s+/).map(Number);
-const markWidth = 560, markHeight = (markWidth * mh) / mw;
-// (the mark and the line under it, one block, centred below the red bar)
-const gap = 92, lineSize = 40;
-const top = 8 + (H - 8 - (markHeight + gap + 10)) / 2;
-const markX = (W - markWidth) / 2;
-const mark = markSource.replace(/<svg [^>]*>/, `<svg x="${markX}" y="${top.toFixed(1)}" width="${markWidth}" height="${markHeight.toFixed(1)}" viewBox="${mx} ${my} ${mw} ${mh}">`);
-// (the middle of the photon: it runs upright at x 202.2, from y -84 to 39, in the mark's own units)
-const photon = { x: markX + ((202.2 - mx) / mw) * markWidth, y: top + ((-22.5 - my) / mh) * markHeight };
+const markX = 80, markWidth = 400, markHeight = (markWidth * mh) / mw;
+// (the mark and the two lines under it, one block, centred top to bottom below the red bar)
+const markTop = 8 + (H - 8 - (markHeight + 60 + 48 + 10)) / 2;
+const mark = markSource.replace(/<svg [^>]*>/, `<svg x="${markX}" y="${markTop.toFixed(1)}" width="${markWidth}" height="${markHeight.toFixed(1)}" viewBox="${mx} ${my} ${mw} ${mh}">`);
+// (the middle of the red js, in the mark's own units: where the circles start)
+const js = { x: markX + ((262.05 - mx) / mw) * markWidth, y: markTop + ((-22.45 - my) / mh) * markHeight };
 
-// circles spreading from the photon, fading as they go
-const circles = [70, 135, 210, 295, 390, 495, 610].map((r, k) => `<circle cx="${photon.x.toFixed(1)}" cy="${photon.y.toFixed(1)}" r="${r}" fill="none" stroke="${RED}" stroke-width="1.5" stroke-opacity="${Math.max(0.04, 0.34 - k * 0.05).toFixed(3)}"/>`).join("");
+const lineY = markTop + markHeight + 74;
+const words = `<text x="${markX}" y="${lineY.toFixed(1)}" font-family="Inter" font-weight="600" font-size="40" fill="${INK}">A JavaScript display engine</text>`
+  + `<text x="${markX}" y="${(lineY + 50).toFixed(1)}" font-family="Inter" font-weight="600" font-size="40" fill="${INK}">for <tspan fill="${RED}">Feynman diagrams</tspan></text>`;
 
-const line = `<text x="${W / 2}" y="${(top + markHeight + gap).toFixed(1)}" text-anchor="middle" font-family="Inter" font-weight="600" font-size="${lineSize}" fill="${INK}">A JavaScript display engine for <tspan fill="${RED}">Feynman diagrams</tspan></text>`;
+// circles spreading from the js, fading as they go
+const circles = [34, 80, 140, 215, 305, 410, 530, 665, 815, 980].map((r, k) => `<circle cx="${js.x.toFixed(1)}" cy="${js.y.toFixed(1)}" r="${r}" fill="none" stroke="${RED}" stroke-width="1.5" stroke-opacity="${Math.max(0.04, 0.36 - k * 0.035).toFixed(3)}"/>`).join("");
 
 const card = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">`
-  + `<defs><radialGradient id="glow" cx="${(photon.x / W).toFixed(3)}" cy="${(photon.y / H).toFixed(3)}" r="0.5"><stop offset="0" stop-color="${RED}" stop-opacity="0.11"/><stop offset="1" stop-color="${RED}" stop-opacity="0"/></radialGradient><clipPath id="card"><rect width="${W}" height="${H}"/></clipPath></defs>`
+  + `<defs><radialGradient id="glow" cx="${(js.x / W).toFixed(3)}" cy="${(js.y / H).toFixed(3)}" r="0.45"><stop offset="0" stop-color="${RED}" stop-opacity="0.11"/><stop offset="1" stop-color="${RED}" stop-opacity="0"/></radialGradient><clipPath id="card"><rect width="${W}" height="${H}"/></clipPath></defs>`
   + `<rect width="${W}" height="${H}" fill="${BG}"/><rect width="${W}" height="${H}" fill="url(#glow)"/>`
   + `<g clip-path="url(#card)">${circles}</g>`
   + `<rect width="${W}" height="8" fill="${BAR}"/>`
-  + mark + line + `</svg>`;
+  + mark + words + `</svg>`;
 
 writeFileSync(here("docs/brand/logo/social-card.svg"), card);
 const fonts = ["docs/fonts/Inter-Regular.otf", "docs/fonts/Inter-SemiBold.otf"].map(here);
