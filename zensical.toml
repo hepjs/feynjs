@@ -13,6 +13,7 @@ edit_uri = "edit/main/docs/"
 
 nav = [
   { "Home" = "index.md" },
+  { "Features" = "features.md" },
   { "Get started" = [
     { "Choose your setup" = "get-started/index.md" },
     { "Zensical setup" = "get-started/zensical.md" },

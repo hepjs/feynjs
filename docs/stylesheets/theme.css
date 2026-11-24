@@ -284,3 +284,11 @@
 .md-typeset details.pg-model > summary, .md-typeset details.pg-tikz > summary { background: none; border: 0; padding: 0.15rem 1.6rem 0.15rem 0; font-weight: 500; color: var(--md-default-fg-color--light); }
 .md-typeset details.pg-model > summary::before, .md-typeset details.pg-tikz > summary::before { display: none; }
 .md-typeset details.pg-model > summary:hover, .md-typeset details.pg-tikz > summary:hover { color: var(--feynjs-rule); }
+
+/* The home page is the hero alone: on the left the logo, the punch line under it and the two
+   buttons; on the right the six tiles. */
+.md-typeset .feynjs-hero-stage > .feynjs-hero-logo { flex: 0 1 380px; display: flex; flex-direction: column; align-items: flex-start; }
+.md-typeset .feynjs-hero-logo .feynjs-punch { font-size: 1.55em; margin: 0.9em 0 0.8em; }
+.md-typeset .feynjs-hero-logo .feynjs-punch .feynjs-aside { display: block; font-size: 0.8em; margin-top: 0.15em; }
+.md-typeset .feynjs-hero-logo p:last-child { margin: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.md-typeset .feynjs-hero-logo .md-button { margin: 0; }
