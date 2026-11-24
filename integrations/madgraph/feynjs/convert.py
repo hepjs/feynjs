@@ -29,11 +29,35 @@ def _style(line):
     name = line.get_name()
     if name in KNOWN:
         return name
+    family = susy_family(name)
+    if family:
+        return "%s, label={%s}" % (family, tex_label(name))
     kind = line.get_info("line")
     style = STYLE_OF_LINE.get(kind, "plain")
     if kind == "straight" and line.is_fermion():
         style = "fermion"
     return "%s, label={%s}" % (style, tex_label(name))
+
+
+def susy_family(name):
+    """feynjs's own particle for an MSSM name's family, which draws it as papers do (a gluino
+    curly with a line through it, neutralinos and charginos wavy with a line through, squarks and
+    sleptons dashed), or None; the label stays the particle's own."""
+    core = name[:-1] if name.endswith("~") else name
+    if core == "go":
+        return "gluino"
+    if re.match(r"^n\d$", core):
+        return "neutralino1"
+    m = re.match(r"^x\d([+-])$", core)
+    if m:
+        return "chargino" + m.group(1)
+    if re.match(r"^[udscbt][lr12]$", core):
+        return "squark"
+    if re.match(r"^sv\d", core):
+        return "sneutrino"
+    if re.match(r"^sl\d", core):
+        return "slepton"
+    return None
 
 
 def tex_label(name):
