@@ -46,6 +46,14 @@ layout that moves is a change, recorded here.
   on the lower, so the branches mirror each other. A gluino's two quarks part about the upright and
   its neutralino's Z stands straight up, where before the quarks could take the Z's place and push
   it inward.
+- **Incoming lines converge or run level** (default engine), never parallel and slanting; quarks
+  that scatter, as in vector-boson fusion, keep their own deflection.
+- **A stop's top is short** (default engine): the quark a superpartner gives off that decays on
+  (stop -> t neutralino) is held at 0.8 of a line, and opens at least 50 degrees from the
+  neutralino, so its decay lies beside the neutralino.
+- **Mirror-image diagrams are drawn exactly so:** two alike chains either side of a t-channel
+  exchange (squarks either side of a gluino) mirror each other point for point, at least a line
+  apart. 23 approved layouts moved in all.
 
 ## 0.9.1 — 2026-11-24
 

@@ -446,6 +446,31 @@ test("optical size: a smaller diagram is smaller, with relatively heavier lines"
   assert.ok(stroke(half) / stroke(normal) > width(half) / width(normal));
 });
 
+test("two alike chains either side of a t-channel exchange mirror each other exactly (EXOT-2014-09 fig_01b)", () => {
+  const d = parse(readFileSync("validation/atlas/EXOT-2014-09/fig_01b.feyn", "utf8"));
+  layoutDiagram(d, { ...defaultTheme, engine: "v2" });
+  const at = (id: string) => d.vertices.get(id)!;
+  const level = (at("a").y + at("b").y) / 2;
+  // (each point and its partner: the top lepton of one half with the bottom one of the other)
+  for (const [u, l] of [["i1", "i2"], ["c", "d"], ["qj1", "qj2"], ["e", "f"], ["xd1", "xd2"], ["s1", "s2"], ["g1", "g4"], ["g2", "g3"], ["lp1", "lm4"], ["lm1", "lp4"], ["lp2", "lm3"], ["lm2", "lp3"]]) {
+    assert.ok(Math.abs(at(u).x - at(l).x) < 1e-6, `${u} and ${l} are level across`);
+    assert.ok(Math.abs(at(u).y - level + (at(l).y - level)) < 1e-6, `${u} and ${l} mirror each other`);
+  }
+});
+
+test("a stop's top is a short line, its decay beside the neutralino (SUSY-2013-15 fig_002a)", () => {
+  const d = parse(readFileSync("validation/atlas/SUSY-2013-15/fig_002a.feyn", "utf8"));
+  layoutDiagram(d, { ...defaultTheme, engine: "v2" });
+  // (in lines: a row and a rank are not the same length)
+  const at = (id: string) => { const v = d.vertices.get(id)!; return { x: v.x, y: (v.y * defaultTheme.unitY) / defaultTheme.unitX }; };
+  const length = (a: string, b: string) => Math.hypot(at(a).x - at(b).x, at(a).y - at(b).y);
+  for (const [stop, top] of [["s1", "t1"], ["s2", "t2"]]) {
+    // (shorter than an ordinary line, and shorter than the neutralino beside it)
+    assert.ok(length(stop, top) < 1, `${stop}--${top} is ${length(stop, top).toFixed(2)} long`);
+    assert.ok(length(stop, top) < length(stop, stop === "s1" ? "n1" : "n2"), `${stop}'s top is shorter than its neutralino`);
+  }
+});
+
 test("v2 follows the out: order, puts a top's b outside, and keeps the decay forward (TOPQ-2018-22 fig_01b)", () => {
   const d = parse(readFileSync("validation/atlas/TOPQ-2018-22/fig_01b.feyn", "utf8"));
   layoutDiagram(d, { ...defaultTheme, engine: "v2" });

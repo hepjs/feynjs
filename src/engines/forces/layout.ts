@@ -65,6 +65,7 @@ export function layoutWithForces(diagram: Diagram, rules: ForceRules, rowOverRan
     const again = settle(outward);
     if (topsBInside(s, again) < topsBInside(s, p)) p = again;
   }
+  p = mirrorWholeDiagram(s, p, wrong, rules.lineLength);
   settlePairs(s, p);
   if (rules.planeFirst && !s.hadrons.length) planeTree(s, p, rules);
   else if (rules.alignFinalStates) alignFinalStates(s, p, rules);
@@ -107,6 +108,83 @@ export function layoutWithForces(diagram: Diagram, rules: ForceRules, rowOverRan
     const v = d.vertices.get(here), w = d.vertices.get(there);
     if (v && w && !s.index.has(there)) { w.x = (v.x ?? 0) - rules.lineLength; w.y = v.y; }
   });
+}
+
+/**
+ * A diagram that is its own mirror image top to bottom (two alike chains off the two ends of a
+ * t-channel exchange, the squarks either side of a gluino) is drawn exactly so: each point and
+ * its partner are averaged about the level line through the middle. The forces hold the two
+ * halves together, but where the listed order makes them settle again from a turned-over
+ * start, a nearly balanced layout can tip a little to one side.
+ * (only when the mirror pairs every point, and the mirrored layout keeps the listed order and
+ * adds no crossing)
+ */
+function mirrorWholeDiagram(s: Structure, p: Float64Array, wrong: (q: Float64Array) => number, lineLength: number): Float64Array {
+  if (s.spines.length !== 1) return p;
+  const path = s.spines[0];
+  const [va, vb] = [path[0], path[path.length - 1]];
+  const other = (l: number, i: number) => (s.lines[l].a === i ? s.lines[l].b : s.lines[l].a);
+  const earlier = (i: number) => s.linesAt[i].map((l) => other(l, i)).filter((j) => s.time[j] < s.time[i]);
+  const partner = new Map<number, number>();
+  const pair = (i: number, j: number) => {
+    if ((partner.has(i) && partner.get(i) !== j) || (partner.has(j) && partner.get(j) !== i)) return false;
+    partner.set(i, j); partner.set(j, i); return true;
+  };
+  // the exchange runs end to end, so its points pair from the two ends inward
+  for (let k = 0; k < path.length; k++) if (!pair(path[k], path[path.length - 1 - k])) return p;
+  // the beams into its two ends
+  const [ia, ib] = [earlier(va), earlier(vb)];
+  if (ia.length !== ib.length || ia.length > 1 || (ia.length && !pair(ia[0], ib[0]))) return p;
+  // and the alike branches off its two ends, point by point
+  for (const m of mirroredPairs(s)) {
+    if (m.at2 === undefined || !((m.at === va && m.at2 === vb) || (m.at === vb && m.at2 === va))) continue;
+    for (const [i, j] of m.matches) if (!pair(i, j)) return p;
+  }
+  if (s.ids.some((_, i) => !partner.has(i))) return p;
+  // (the legs off two paired points pair as a mirror pairs them, by where they lie: the top one
+  // of one with the bottom one of the other, whichever particle each is: both halves may list
+  // their l+ first)
+  const later = (i: number) => s.linesAt[i].map((l) => other(l, i)).filter((j) => s.time[j] > s.time[i]);
+  for (const [i, j] of partner) {
+    if (i >= j) continue;
+    const legs = (v: number) => later(v).filter((k) => s.external[k]).sort((x, y) => p[2 * x + 1] - p[2 * y + 1]);
+    const [li, lj] = [legs(i), legs(j)];
+    if (li.length !== lj.length) return p;
+    li.forEach((k, n) => { const m = lj[lj.length - 1 - n]; partner.set(k, m); partner.set(m, k); });
+  }
+  // the level line through the middle of the exchange
+  const level = (p[2 * va + 1] + p[2 * vb + 1]) / 2;
+  // (the two halves averaged, or either half taken whole and reflected onto the other: the
+  // average of a tipped layout can bring the two halves' innermost legs together on the middle)
+  const upper = (i: number) => p[2 * i + 1] < p[2 * partner.get(i)! + 1] || (p[2 * i + 1] === p[2 * partner.get(i)! + 1] && i <= partner.get(i)!);
+  const mirrored = (from: "both" | "upper" | "lower") => {
+    const q = Float64Array.from(p);
+    s.ids.forEach((_, i) => {
+      const j = partner.get(i)!;
+      const own = from === "both" ? null : from === "upper" ? (upper(i) ? i : j) : (upper(i) ? j : i);
+      const x = own === null ? (p[2 * i] + p[2 * j]) / 2 : p[2 * own];
+      const half = own === null ? (p[2 * i + 1] - p[2 * j + 1]) / 2 : Math.abs(p[2 * own + 1] - level) * Math.sign(p[2 * i + 1] - p[2 * j + 1]);
+      q[2 * i] = x;
+      q[2 * i + 1] = level + half;
+    });
+    return q;
+  };
+  // (the one that keeps the listed order and adds no crossing, and of those, the one whose two
+  // halves keep furthest apart where they come closest)
+  const apart = (q: Float64Array) => {
+    let least = Infinity;
+    s.ids.forEach((_, i) => { if (!upper(i) || partner.get(i) === i) return; s.ids.forEach((_, j) => { if (upper(j)) return; least = Math.min(least, Math.hypot(q[2 * i] - q[2 * j], q[2 * i + 1] - q[2 * j + 1])); }); });
+    return least;
+  };
+  const [w0, c0] = [wrong(p), crossingCount(s, p)];
+  const fair = [mirrored("both"), mirrored("upper"), mirrored("lower")].filter((q) => wrong(q) <= w0 && crossingCount(s, q) <= c0);
+  if (!fair.length) return p;
+  const q = fair.reduce((x, y) => (apart(y) > apart(x) ? y : x));
+  // (and as far apart as the tipped layout kept them, and at least a line apart, room for the
+  // innermost legs' labels: each half moves away from the middle, the exchange growing to match)
+  const gap = (Math.max(apart(p), lineLength) - apart(q)) / 2;
+  if (gap > 0) s.ids.forEach((_, i) => { if (partner.get(i) !== i) q[2 * i + 1] += upper(i) ? -gap : gap; });
+  return wrong(q) <= w0 && crossingCount(s, q) <= c0 ? q : p;
 }
 
 /**

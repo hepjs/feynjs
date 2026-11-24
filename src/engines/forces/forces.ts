@@ -107,10 +107,15 @@ export function lineLength(s: Structure, rules: ForceRules): Force {
         : s.markRadius[line.a] + s.markRadius[line.b];
       // (the fermion a decay gives off beside a boson that decays on, the b of t -> b W, is short)
       const givenOff = line.leg && line.fermion && !line.heavy && givesOffFermion(s, start);
-      const want = (line.leg ? rules.legLength * (intoLoop ? rules.loopLeg : 1) * (givenOff ? rules.givenOffLength : 1) : rules.lineLength) * (halves ? 0.5 : 1) * stage * (intoBlob ? rules.blobBeamLength : 1) * (between(line) ? 0.5 : intoRun(line) ? 0.7 : 1) + rim;
+      // (and the quark a SUSY particle gives off that decays on, the stop's top, is a short line,
+      // held firmly: its decay goes beside the neutralino, not far out along it)
+      // (a quark only: a gaugino's W or Z, a dark scalar, keep their lengths)
+      const fromSusy = !line.leg && !line.heavy && line.fermion && isQuark(s.lineLabel[s.lines.indexOf(line)]) && s.linesAt[start].some((l) => s.lines[l].heavy && s.time[s.lines[l].a === start ? s.lines[l].b : s.lines[l].a] < s.time[start])
+        && s.linesAt[start].some((l) => l !== s.lines.indexOf(line) && s.lines[l].heavy && s.time[s.lines[l].a === start ? s.lines[l].b : s.lines[l].a] > s.time[start]);
+      const want = (line.leg ? rules.legLength * (intoLoop ? rules.loopLeg : 1) * (givenOff ? rules.givenOffLength : 1) : rules.lineLength * (fromSusy ? rules.susyProductLength : 1)) * (halves ? 0.5 : 1) * stage * (intoBlob ? rules.blobBeamLength : 1) * (between(line) ? 0.5 : intoRun(line) ? 0.7 : 1) + rim;
       // (an outgoing leg gives way first: when the final states end level, the leg with less
       // far to go grows to meet them, not the propagator that brought it)
-      const stiffness = rules.length * (line.leg && !intoBlob ? rules.legGive : 1);
+      const stiffness = rules.length * (line.leg && !intoBlob ? rules.legGive : 1) * (fromSusy ? rules.susyProductHold : 1);
       // (a quark line under a cap is as long as running beside the cap's other quark makes
       // it: only not shorter than usual)
       if (line.leg && (capped.has(line.a) || capped.has(line.b))) {
@@ -513,6 +518,13 @@ export function clearance(s: Structure, rules: ForceRules): Force {
         const parentHeavy = at.some((l) => s.time[other(l, v)] < s.time[v] && s.lines[l].heavy);
         // (nor where a product ends in a hadron: its quarks go where the hadron is)
         const twoBody = outLegs.length === 2 && ends.length === 3 && !parentHeavy && !outLegs.some((j) => inHadron.has(j));
+        // (a SUSY particle's decay into its partner and a quark that decays on, the stop's top and
+        // neutralino, opens wide: the top's own decay then clears the neutralino with a short top,
+        // where a narrow fork makes room only with a long one)
+        const products = at.filter((l) => s.time[other(l, v)] > s.time[v]);
+        const susyFork = !twoBody && parentHeavy && products.length === 2 && products.some((l) => s.lines[l].heavy)
+          && products.some((l) => !s.lines[l].heavy && s.lines[l].fermion && isQuark(s.lineLabel[l]) && !s.external[other(l, v)]);
+        const susyOpening = (rules.susyOpening * Math.PI) / 180;
         // (a particle made at rest, a resonance from the incoming particles, decays back to
         // back: papers draw a wide X, three quarters again as wide)
         const parentAtRest = twoBody && at.some((l) => { const j = other(l, v); return s.time[j] < s.time[v] && !s.external[j] && isAtRest(s, j); });
@@ -528,6 +540,12 @@ export function clearance(s: Structure, rules: ForceRules): Force {
             const need = least + wa + wb;
             if (gap < need) e += (need - gap) ** 2;
           });
+          if (susyFork) {
+            const [j, k] = products.map((l) => other(l, v));
+            const a = Math.atan2(dy(p, v, j), dx(p, v, j)), b = Math.atan2(dy(p, v, k), dx(p, v, k));
+            let gap = Math.abs(a - b); if (gap > Math.PI) gap = 2 * Math.PI - gap;
+            if (gap < susyOpening) e += (susyOpening - gap) ** 2;
+          }
           if (twoBody) {
             const [j, k] = outLegs;
             const a = Math.atan2(dy(p, v, j), dx(p, v, j)), b = Math.atan2(dy(p, v, k), dx(p, v, k));
@@ -849,11 +867,16 @@ export function beamsStartTogether(s: Structure, rules: ForceRules): Force {
   }
   if (incoming.length === 2) {
     const [a, b] = incoming, [ea, eb] = incoming.map(entry);
+    // (firmly only where neither comes in as a quark that scatters and carries on, VBF's quarks:
+    // those bend away from what they exchange, and the firm pull would bend them toward it)
+    const scatters = new Set(passThroughs(s).flatMap(([x, v, y]) => (s.time[x] === 0 ? [x] : s.time[y] === 0 ? [y] : [])));
+    const mirror = rules.beams + (scatters.has(a) || scatters.has(b) ? 0 : rules.beamsMirror);
     if (ea !== eb) terms.push(term([a, b, ea, eb], (p) => {
-      // mirrored: the slopes of the two legs are equal and opposite
+      // mirrored: the slopes of the two legs are equal and opposite (firmly: two beams slanting
+      // the same way, parallel and diagonal, read as a mistake; they converge, or run level)
       const sa = dy(p, a, ea) / (Math.hypot(dx(p, a, ea), dy(p, a, ea)) || 1);
       const sb = dy(p, b, eb) / (Math.hypot(dx(p, b, eb), dy(p, b, eb)) || 1);
-      return rules.beams * (sa + sb) ** 2;
+      return mirror * (sa + sb) ** 2;
     }));
     // ...and never spread apart on their way in: two beams run parallel or close in
     if (ea !== eb) terms.push(limit([a, b, ea, eb], (p) => {
