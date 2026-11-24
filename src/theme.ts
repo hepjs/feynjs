@@ -371,6 +371,8 @@ export interface Theme {
   hadronEllipseAspect: number;
   /** the least clear space a label keeps from every line and vertex, px */
   labelMargin: number;
+  /** a label with no clear place beside its line is set this much smaller, close in, rather than far from its line */
+  crowdedLabelScale: number;
   /** size of labels written as upright words (LSP, NLSP, HLSP), relative to particle labels */
   wordLabelScale: number;
   /** gap between a line and its label, px */
@@ -421,7 +423,7 @@ export const defaultTheme: Theme = {
   labelGap: 4,
   revealOpacity: 0.16,
   wordLabelScale: 0.78,
-  labelMargin: 3,
+  labelMargin: 3, crowdedLabelScale: 0.85,
   hadronBraceDepth: 10,
   hadronBraceColor: "#c0392b",
   hadronEllipseAspect: 0.45,

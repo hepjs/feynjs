@@ -190,16 +190,22 @@ export class Scene {
         const cost = this.crowding(candidate.box, request.ignore) + attempt * 0.01;
         if (cost < bestCost) { best = candidate; bestCost = cost; }
       }
-      // (still crowded: look all round each spot's own point on its line, a little further out
-      // each time, the line's own side first; the label stays by its line, only clear of the rest)
+      // (still crowded: look all round each spot's own point on its line, a little further out,
+      // the line's own side first; then the label a little smaller, close in. It never strays far:
+      // a label beside the wrong line reads worse than one a little tight by its own)
+      let size = label;
       if (bestCost >= 1) {
-        for (const spot of request.spots.slice(0, 4)) for (const reach of [1, 1.6, 2.4]) for (let k = 0; k < 16; k++) {
-          const angle = (k * Math.PI) / 8, direction = { x: Math.cos(angle), y: Math.sin(angle) };
-          const turn = Math.acos(Math.max(-1, Math.min(1, direction.x * spot.direction.x + direction.y * spot.direction.y)));
-          const candidate = this.boxAt({ anchor: spot.anchor, direction }, request.clearance * reach, label.width, label.ascent, label.descent);
-          const cost = this.crowding(candidate.box, request.ignore) + 0.05 * turn + 0.02 * reach;
-          if (cost < bestCost) { best = candidate; bestCost = cost; }
-        }
+        const ring = (look: typeof label, reaches: number[], extra: number) => {
+          for (const spot of request.spots.slice(0, 4)) for (const reach of reaches) for (let k = 0; k < 16; k++) {
+            const angle = (k * Math.PI) / 8, direction = { x: Math.cos(angle), y: Math.sin(angle) };
+            const turn = Math.acos(Math.max(-1, Math.min(1, direction.x * spot.direction.x + direction.y * spot.direction.y)));
+            const candidate = this.boxAt({ anchor: spot.anchor, direction }, request.clearance * reach, look.width, look.ascent, look.descent);
+            const cost = this.crowding(candidate.box, request.ignore) + 0.05 * turn + 0.02 * reach + extra;
+            if (cost < bestCost) { best = candidate; bestCost = cost; size = look; }
+          }
+        };
+        ring(label, [1, 1.4], 0);
+        if (bestCost >= 1) ring(layoutLabel(request.tex, this.theme.fontSize * request.scale * this.theme.crowdedLabelScale, this.theme.wordLabelScale), [0.7, 1], 0.1);
       }
       if (bestCost >= 1) this.crowdedLabels.push(request.tex);
       // a label that names a particle tells what it is when the pointer rests on it
@@ -210,7 +216,7 @@ export class Scene {
       // (the title is the plain tooltip of an exported file; on a page, run() shows a richer one)
       const title = info ? `<title>${escapeXml(info)}</title>` : "";
       const particleAttr = info ? ` data-particle="${escapeXml(request.particle!)}"` : "";
-      this.labels.push(`<g transform="translate(${fmt(best.x)} ${fmt(best.baseline)})"${colorAttr}${levelAttr}${particleAttr} fill="currentColor">${title}${label.svg}</g>`);
+      this.labels.push(`<g transform="translate(${fmt(best.x)} ${fmt(best.baseline)})"${colorAttr}${levelAttr}${particleAttr} fill="currentColor">${title}${size.svg}</g>`);
       this.labelBoxes.push(best.box);
       this.bounds.include(best.box.left, best.box.top, 2);
       this.bounds.include(best.box.right, best.box.bottom, 2);
