@@ -12,7 +12,7 @@ hide:
   - toc
 ---
 
-# Particles
+# All particles
 
 ***Every particle name feynjs knows, and how each is drawn: write a name on a line or a leg and it sets the line style, the arrow and the label.***
 

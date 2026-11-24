@@ -14,19 +14,23 @@ edit_uri = "edit/main/docs/"
 nav = [
   { "Home" = "index.md" },
   { "Get started" = [
-    { "Install and first diagram" = "get-started/index.md" },
+    { "Choose your setup" = "get-started/index.md" },
+    { "Zensical setup" = "get-started/zensical.md" },
+    { "Obsidian setup" = "get-started/obsidian.md" },
+    { "Your first diagram" = "get-started/first-diagram.md" },
     { "Write edges, as in TikZ-Feynman" = "guide/syntax.md" },
     { "Write processes, as in MadGraph" = "guide/processes.md" },
-    { "Where to use it" = "get-started/use.md" },
   ] },
   { "Features" = [
     { "Overview" = "guide/index.md" },
+    { "Syntax at a glance" = "reference/index.md" },
     { "Engines" = [
       { "Layout engines" = "guide/layout.md" },
       { "Views" = "guide/views.md" },
     ] },
     { "Diagram components" = [
       { "Lines and particles" = "guide/lines.md" },
+      { "All particles" = "reference/particles.md" },
       { "Vertices, blobs and nuclei" = "guide/vertices.md" },
       { "Labels and notes" = "guide/labels.md" },
       { "Loops, boxes and hadrons" = "guide/loops-hadrons.md" },
@@ -48,13 +52,11 @@ nav = [
     { "Stop production" = "examples/stop.md" },
     { "Gallery" = "examples/gallery.md" },
   ] },
-  { "Reference" = [
-    { "Syntax at a glance" = "reference/index.md" },
+  { "Developers" = [
+    { "Use feynjs from code" = "developers/index.md" },
     { "JavaScript API" = "reference/api.md" },
     { "Command line" = "reference/cli.md" },
-    { "Particles" = "reference/particles.md" },
     { "Theme settings" = "reference/theme.md" },
-    { "Layout rules (v1)" = "reference/layout-rules.md" },
   ] },
   { "Contributing" = [
     { "How to contribute" = "contributing/index.md" },
@@ -63,6 +65,7 @@ nav = [
     { "Extending feynjs" = "contributing/extending.md" },
     { "Testing" = "contributing/testing.md" },
     { "The docs site" = "contributing/docs.md" },
+    { "Layout rules (v1)" = "reference/layout-rules.md" },
   ] },
 ]
 

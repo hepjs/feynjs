@@ -64,7 +64,7 @@ Use the name on a leg (`f1 [J]`, which also labels it) or the style on a line
 On a line, an object is written like a line style: adjectives, then the object, then what is drawn
 inside it, as counts. `[LRJ 2j 1e]` is a large-R jet holding two jets and an electron;
 `[DIS J]` is a displaced jet. Long and short names are the same: `[large R jet 2j 1e]` and
-`[LRJ(2j, 1e)]` draw the same thing. See the [reference](../reference/index.md#detector-objects)
+`[LRJ(2j, 1e)]` draw the same thing. See [Syntax at a glance](../reference/index.md#detector-objects)
 for every name.
 
 ```feynman

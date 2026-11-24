@@ -162,7 +162,7 @@ properties: `--feynjs-tooltip-bg`, `--feynjs-tooltip-fg`, `--feynjs-tooltip-acce
 
 Labels are set in New Computer Modern, the face of TeX documents, when the page provides it, and
 fall back to Latin Modern, CMU Serif, STIX Two or Times. To load it, copy `docs/fonts/` and
-this site's `stylesheets/feynjs.css` (see [Where to use it](../get-started/use.md)). The
+this site's `stylesheets/feynjs.css` (see [Zensical setup](../get-started/zensical.md#optional-extras)). The
 `fontFamily` theme setting changes the face.
 
 ## Exporting

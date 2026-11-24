@@ -167,9 +167,9 @@ Feynman diagrams, meet *Markdown*{ .feynjs-accent }. *Oh, and the web.*{ .feynjs
 
     Name the process, `p p > t t~`, with its decays, loops and production modes.
 
--   **[Where to use it](get-started/use.md)**
+-   **[Where to use it](get-started/index.md)**
 
-    One script tag on any web page; Zensical and MkDocs sites, Obsidian notes, JavaScript and the command line.
+    A `feynman` block in a Zensical or MkDocs site or an Obsidian note; for your own code, a script tag, JavaScript or the command line.
 
 </div>
 
@@ -493,7 +493,7 @@ neutralino2 > Z neutralino1
 === "Docs site"
 
     In a Zensical or MkDocs site, a `feynman` code block becomes a diagram.
-    [Set it up](get-started/use.md#in-a-zensical-or-mkdocs-site) once, then write:
+    [Set it up](get-started/zensical.md) once, then write:
 
     ````markdown
     ```feynman
@@ -537,8 +537,10 @@ neutralino2 > Z neutralino1
 
 ## Where next
 
-- **New here?** [Get started](get-started/index.md): install it and draw a first diagram in five minutes.
+- **New here?** [Get started](get-started/index.md): set up a Zensical site or Obsidian, then [draw a first diagram](get-started/first-diagram.md).
 - **Writing diagrams?** The [guide](guide/index.md) covers every feature, one page per topic.
-- **Looking something up?** The [reference](reference/index.md) has the syntax on one page, the
-  API, every particle and every theme setting.
+- **Looking something up?** [Syntax at a glance](reference/index.md) has the syntax on one page,
+  and [All particles](reference/particles.md) every particle name.
+- **Writing code?** [Developers](developers/index.md) covers the script tag, the API, the command line
+  and every theme setting.
 - **Want to help?** [Contributing](contributing/index.md) explains how the library is built and how to change it.

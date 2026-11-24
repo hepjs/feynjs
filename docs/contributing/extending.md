@@ -65,7 +65,7 @@ at run time with [`registerParticle`](../reference/api.md#registerparticle) inst
 
 A `name: value` line is stored in `diagram.directives` by the parser. Read it where it matters
 (drawing switches in `src/render/edge-styles.ts`, layout switches in `src/render/render.ts`), and
-add it to [Panels and switches](../guide/panels.md) and the [syntax reference](../reference/index.md).
+add it to [Panels and switches](../guide/panels.md) and [Syntax at a glance](../reference/index.md).
 
 ## Change the layout
 
