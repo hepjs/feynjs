@@ -15,6 +15,13 @@ layout that moves is a change, recorded here.
 - **Dark pages:** the grid behind a grid layout, and the lattice view's grid and sites, are drawn in
   the diagram's own colour, thinned, so they stay faint on dark pages as on light.
 - **Releases** carry the Obsidian plugin as `feynjs-obsidian.zip`.
+- **Cascades on the grid:** with `layout: grid`, a decay along a cascade is drawn as a level
+  spine with what it gives off hanging from it. The particle that carries the cascade on (the
+  superpartner, else the one product that decays further) runs level; the final states it throws
+  off stand out from the spine away from the middle of the diagram, up on the upper branch and down
+  on the lower, so the branches mirror each other. A gluino's two quarks part about the upright and
+  its neutralino's Z stands straight up, where before the quarks could take the Z's place and push
+  it inward.
 
 ## 0.9.1 — 2026-11-24
 

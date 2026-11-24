@@ -150,8 +150,11 @@ diagram; `background: grid` draws it behind any layout.
 
 On the grid every point sits on a crossing. The final states of each last decay meet at a right
 angle: one runs level to the final plane, the other straight up or down. With
-`grid forks: diagonal` both run to the plane, symmetric about level. Here is top-quark pair
-production, one top decaying to a lepton, the other to quarks:
+`grid forks: diagonal` both run to the plane, symmetric about level. A cascade is a level spine:
+at each decay along it, the particle that carries it on (the superpartner, else the one product
+that decays further, a top's W) runs level, and the final states it gives off stand out from the
+spine away from the middle of the diagram, a gluino's two quarks parting about the upright. Here is
+top-quark pair production, one top decaying to a lepton, the other to quarks:
 
 ```feynman
 --- layout: default

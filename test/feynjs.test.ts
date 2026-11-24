@@ -558,6 +558,26 @@ test("detector objects written as words: adjectives, the object, its contents", 
   assert.match(render("i1 [q] -- a -- i2 [qbar]\na -- [LRJ 2j 1e] f1\na -- [q] f2"), /feynjs-jet/);
 });
 
+test("layout: grid draws a SUSY cascade as a level spine, what it gives off hanging out from the middle", () => {
+  for (const grid of ["", "grid: 45\n"]) {
+    const d = parse(`layout: grid\n${grid}p p > gluino gluino\ngluino > q q neutralino2\nneutralino2 > Z neutralino1`);
+    layoutDiagram(d, defaultTheme);
+    const parentOf = (id: string) => { const e = d.edges.find((e) => e.to === id || e.from === id)!; return d.vertices.get(e.from === id ? e.to : e.from)!; };
+    const legs = (particle: string) => [...d.vertices.values()].filter((v) => v.particle === particle && v.role === "out");
+    // (the neutralinos run level; each Z stands straight up or down, away from the middle line)
+    const middle = d.vertices.get(d.edges.find((e) => e.label === "\\tilde g")!.from)!.y;
+    for (const n of legs("neutralino1")) assert.ok(Math.abs(n.y - parentOf(n.id).y) < 1e-9, `${grid}${n.id} not level`);
+    for (const z of legs("Z")) {
+      const at = parentOf(z.id);
+      assert.ok(Math.abs(z.x - at.x) < 1e-9 && Math.sign(z.y - at.y) === Math.sign(at.y - middle), `${grid}${z.id} not upright and outward`);
+    }
+    // (the quarks hang on the same side, and the two branches mirror each other)
+    for (const q of legs("q")) assert.equal(Math.sign(q.y - parentOf(q.id).y), Math.sign(parentOf(q.id).y - middle), `${grid}${q.id} not outward`);
+    const ys = [...d.vertices.values()].map((v) => Math.round((v.y - middle) * 1e6)).sort((a, b) => a - b);
+    assert.deepEqual(ys, ys.map((y) => (y ? -y : 0)).reverse(), `${grid}branches not mirrored`);
+  }
+});
+
 test("layout: grid keeps hadrons whole: their quarks end in one column, the mesons apart", () => {
   const d = parse(`layout: grid\n${readFileSync("validation/atlas/BPHY-2018-08/fig_01c.feyn", "utf8").replace(/^layout:.*$/m, "")}`);
   layoutDiagram(d, defaultTheme);

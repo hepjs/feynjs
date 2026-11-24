@@ -37,6 +37,8 @@ export function snapToGrid(d: Diagram, step: number, lineLength: number, rowOver
   const middleY = placed.get(root)!.y;
   // the direction each point was reached along
   const arrivedAt = new Map<string, number>();
+  // (each decay along a cascade, and the product that carries the cascade on from it)
+  const carriers = new Map<string, string>();
   // (a part the rest does not reach, a quark pair from the vacuum, starts from its own first
   // point, on a crossing)
   const startAgain = () => {
@@ -73,7 +75,14 @@ export function snapToGrid(d: Diagram, step: number, lineLength: number, rowOver
     // (lines that leave the same way take distinct directions, spread evenly about the way they
     // go together: two at plus and minus one step, three at minus one, level and plus one)
     const spread = new Map<string, number>();
-    for (const side of [forward, back]) {
+    // (a decay along a cascade has its own ways: the particle that carries the cascade runs on
+    // level, what it throws off hangs out from it, away from the middle)
+    const cascade = arrivedAt.has(u) ? cascadeWays(d, u, next, raw, arrivedAt.get(u)!, Math.sign(from.y - middleY), unit, placed) : undefined;
+    if (cascade) {
+      for (const [v, angle] of cascade) spread.set(v, angle);
+      carriers.set(u, cascadeCarrier(d, u, next)!);
+    }
+    for (const side of cascade ? [] : [forward, back]) {
       if (side.length < 2) continue;
       // (a line the forces made exactly level, a quark line in a hadron diagram, stays level;
       // the lines beside it take their own rounded ways)
@@ -169,8 +178,12 @@ export function snapToGrid(d: Diagram, step: number, lineLength: number, rowOver
   if (lastDecays.size && !iso) {
     const plane = Math.max(...[...lastDecays.keys()].map((v) => placed.get(v)!.x)) + lineLength;
     const nameOf = (id: string) => d.vertices.get(id)!.label ?? d.vertices.get(id)!.particle;
+    // (a last decay along a cascade into three or more, by default: its carrier runs level on to
+    // the plane, the final states it throws off keep hanging from the spine)
+    const hangsOnSpine = (parent: string, legs: string[]) => forks !== "diagonal" && legs.length > 2 && legs.includes(carriers.get(parent)!);
     // (every level leg first, so a turned one can see all of them)
     for (const [parent, legs] of lastDecays) {
+      if (hangsOnSpine(parent, legs)) { placed.set(carriers.get(parent)!, { x: plane, y: placed.get(parent)!.y }); continue; }
       const alike = legs.length > 1 && legs.every((id) => nameOf(id) !== undefined && nameOf(id) === nameOf(legs[0]));
       if (forks !== "diagonal" && !alike && legs.length === 2) {
         const at0 = placed.get(parent)!, o = Math.sign(at0.y - middleY) || 1;
@@ -179,6 +192,7 @@ export function snapToGrid(d: Diagram, step: number, lineLength: number, rowOver
       }
     }
     for (const [parent, legs] of lastDecays) {
+      if (hangsOnSpine(parent, legs)) continue;
       const at = placed.get(parent)!;
       const out = Math.sign(at.y - middleY) || 1;
       legs.sort((p, q) => out * (placed.get(p)!.y - placed.get(q)!.y));
@@ -268,6 +282,95 @@ export function snapToGrid(d: Diagram, step: number, lineLength: number, rowOver
   }
   roundLoops(d, ids, placed);
   for (const [id, p] of placed) { const v = d.vertices.get(id)!; v.x = p.x; v.y = p.y / rowOverRank; }
+}
+
+/**
+ * A decay along a cascade, drawn as a spine with what it gives off hanging from it: the product
+ * that carries the cascade on runs level, the way the cascade was going, and the final states
+ * it throws off stand out from the spine on the side away from the middle of the diagram, the
+ * upper branch's up, the lower branch's down, so the two branches mirror each other. One
+ * product thrown off that decays in turn (a neutralino's Z, going on to two leptons) leans
+ * forward instead, so its own decay has room ahead. Undefined where the vertex is not such a
+ * decay, or where its products have no clear carrier; the ordinary rules then apply.
+ */
+function cascadeWays(d: Diagram, u: string, products: string[], raw: Map<string, number>, arrived: number, side: number, unit: number, placed: Map<string, unknown>): Map<string, number> | undefined {
+  // (a decay going somewhere: its parent reached it travelling left or right, not upright)
+  const ahead = Math.sign(Math.round(Math.cos(arrived) * 1e3));
+  if (products.length < 2 || !ahead || !products.every((v) => hangsFrom(d, u, v, placed))) return undefined;
+  const carrier = cascadeCarrier(d, u, products);
+  if (carrier === undefined) return undefined;
+  const thrownOff = products.filter((v) => v !== carrier);
+  const decaying = thrownOff.filter((v) => lineCount(d, v) > 1);
+  // (one that decays leans two steps forward of level: 45 degrees on the fine grid, upright on
+  // the 45 degree one; on the isometric grid one step, 60 degrees, as two would turn it back)
+  const leaning = [(unit > Math.PI / 4 ? 1 : 2) * unit];
+  const ways = decaying.length === 0 ? hangingWays(thrownOff.length, unit) : thrownOff.length === 1 ? leaning : undefined;
+  if (!ways) return undefined;
+  // (away from the middle; a decay on the middle line hangs its products where the forces did)
+  const out = side || Math.sign(thrownOff.reduce((t, v) => t + Math.sin(raw.get(v)!), 0)) || 1;
+  // (each way is an angle from straight ahead, turned towards `out`; the products take them in
+  // the order the forces left them in, so no two lines cross)
+  const fromAhead = (v: string) => Math.atan2(out * Math.sin(raw.get(v)!), ahead * Math.cos(raw.get(v)!));
+  const direction = (a: number) => (ahead > 0 ? out * a : Math.PI - out * a);
+  const result = new Map<string, number>([[carrier, ahead > 0 ? 0 : Math.PI]]);
+  thrownOff.sort((p, q) => fromAhead(p) - fromAhead(q)).forEach((v, i) => result.set(v, direction(ways[i])));
+  return result;
+}
+
+/**
+ * The product that carries a cascade on: the one superpartner among them (a sparticle decays to
+ * one sparticle and ordinary particles), else, where there is none, the one product that decays
+ * further (a top's W).
+ */
+function cascadeCarrier(d: Diagram, u: string, products: string[]): string | undefined {
+  const susy = products.filter((v) => d.edges.some((e) => ((e.from === u && e.to === v) || (e.to === u && e.from === v)) && e.style.cls === "susy"));
+  if (susy.length) return susy.length === 1 ? susy[0] : undefined;
+  const decaying = products.filter((v) => lineCount(d, v) > 1);
+  return decaying.length === 1 ? decaying[0] : undefined;
+}
+
+/**
+ * The ways `n` final states hang from a spine, as angles from straight ahead (all on one side):
+ * those of the grid nearest the upright, symmetric about it where the grid allows (two at plus
+ * and minus one step about the upright on the 22.5 degree grid), and leaning back where it does
+ * not. None leans forward to 45 degrees or more: a line one length long at 45 degrees ends
+ * exactly where the next decay along the spine hangs its own upright product.
+ */
+function hangingWays(n: number, unit: number): number[] | undefined {
+  const all: number[] = [];
+  for (let k = 1; k * unit < Math.PI - 1e-9; k++) if (k * unit > Math.PI / 4 + 1e-9) all.push(k * unit);
+  // (how far from upright, rounded so that ways equally far either side tie, the forward one first)
+  const nearUpright = (a: number) => Math.round(Math.abs(a - Math.PI / 2) * 1e6);
+  // (an even number pair off about the upright, leaving it free, where enough ways remain)
+  const offUpright = all.filter((a) => nearUpright(a) > 0);
+  const pool = n % 2 === 0 && offUpright.length >= n ? offUpright : all;
+  if (pool.length < n) return undefined;
+  return pool.sort((p, q) => nearUpright(p) - nearUpright(q) || p - q).slice(0, n).sort((p, q) => p - q);
+}
+
+/** The number of lines that meet at a point. */
+function lineCount(d: Diagram, id: string): number {
+  return d.edges.filter((e) => e.from === id || e.to === id).length;
+}
+
+/**
+ * True where `v`, beside `u`, leads only to points not yet placed except back through `u`: what
+ * lies beyond it hangs from `u` alone, a decay, not part of a loop or the way back to a beam.
+ */
+function hangsFrom(d: Diagram, u: string, v: string, placed: Map<string, unknown>): boolean {
+  const seen = new Set([u, v]);
+  for (const queue = [v]; queue.length;) {
+    const w = queue.shift()!;
+    if (d.vertices.get(w)?.role === "in") return false;
+    for (const e of d.edges) {
+      const x = e.from === w ? e.to : e.to === w ? e.from : undefined;
+      if (x === undefined || seen.has(x)) continue;
+      // (back to a point already placed, or round to another line from `u`: a loop)
+      if (placed.has(x) || d.edges.some((f) => (f.from === u && f.to === x) || (f.to === u && f.from === x))) return false;
+      seen.add(x); queue.push(x);
+    }
+  }
+  return true;
 }
 
 /**
