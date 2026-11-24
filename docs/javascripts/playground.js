@@ -51,7 +51,13 @@
   };
   const EXAMPLES = Object.assign({}, ...Object.values(GROUPS));
   // (the lines the palette offers, each drawn by feynjs itself in its chip)
-  const PALETTE = ["fermion", "anti fermion", "photon", "gluon", "scalar", "ghost", "W+", "Z", "H", "g", "gluino", "neutralino1"];
+  // (the palette: line styles, then particles by the names you type; every particle feynjs knows
+  // works the same, and the palette links to the whole list)
+  const PALETTE_GROUPS = [
+    ["Lines", ["fermion", "anti fermion", "photon", "gluon", "scalar", "ghost"]],
+    ["Particles", ["e-", "mu-", "nu", "t", "b", "gamma", "g", "W+", "Z", "H", "gluino", "neutralino1", "squark"]],
+  ];
+  const PALETTE = PALETTE_GROUPS.flatMap(([, names]) => names);
   const STYLINGS = [
     { name: "plain", lines: {} },
     { name: "colour flow", lines: { "colour flow": "on" } },
@@ -122,7 +128,7 @@
         <div class="pg-body">
           <div class="pg-editor"><textarea class="pg-source" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="feynjs source"></textarea><div class="pg-status"></div></div>
           <div class="pg-stage"><div class="pg-drawing" aria-live="polite"></div><div class="pg-hover"></div><div class="pg-hint"></div></div>
-          <div class="pg-palette" aria-label="Line to draw with">${PALETTE.map((p, i) => `<button type="button" class="pg-chip${i === 0 ? " pg-active" : ""}" draggable="true" data-style="${p}" title="${p}: click to draw with it, or drop it on a line"><span class="pg-chip-line"></span><span class="pg-chip-name">${p}</span></button>`).join("")}</div>
+          <div class="pg-palette" aria-label="Line to draw with">${PALETTE_GROUPS.map(([head, names]) => `<div class="pg-palette-head">${head}</div>` + names.map((p) => `<button type="button" class="pg-chip${p === PALETTE[0] ? " pg-active" : ""}" draggable="true" data-style="${p}" title="${p}: click to draw with it, or drop it on a line; write [${p}] in the source"><span class="pg-chip-line"></span><span class="pg-chip-name">${p}</span></button>`).join("")).join("")}<a class="pg-palette-more" href="../reference/particles/" title="Every particle name feynjs knows">All particles →</a></div>
         </div>
       </div>
       <details class="pg-model"><summary>The diagram as data: what a program, or an AI, sees</summary><pre><code></code></pre></details>
@@ -156,8 +162,8 @@
 
     const say = (text, error) => { status.textContent = text; status.className = error ? "pg-status pg-error" : "pg-status"; };
 
-    function draw() {
-      const src = source.value;
+    function draw(preview) {
+      const src = preview ?? source.value;
       root.querySelector('[data-switch="layout"]').value = readSwitch(src, "layout");
       root.querySelector('[data-switch="size"]').value = readSwitch(src, "size");
       const styling = STYLINGS.findIndex((s, i) => i > 0 && Object.entries(s.lines).every(([k, v]) => readSwitch(src, k) === v));
@@ -167,8 +173,11 @@
       $(".pg-gridkind").hidden = !grid;
       root.querySelectorAll("[data-grid]").forEach((b) => b.classList.toggle("pg-active", (readSwitch(src, "grid").startsWith("iso") ? "iso" : "") === b.dataset.grid));
       if (!src.trim()) {
-        // (an empty board to build on: the drawing's own units, a little room each way)
-        drawing.innerHTML = `<svg xmlns="${NS}" class="feynjs pg-board" viewBox="-60 -90 320 180" width="320" height="180"></svg>`;
+        // (an empty board to build on, as big as the pane: two pixels to the drawing's unit, the
+        // first point a little left of the middle; and held, so drawing begins where it is)
+        const stage = drawing.parentElement, w = Math.max(320, stage.clientWidth - 40), h = Math.max(180, stage.clientHeight - 56);
+        drawing.innerHTML = `<svg xmlns="${NS}" class="feynjs pg-board" viewBox="${(-w / 4 + 40).toFixed(1)} ${(-h / 4).toFixed(1)} ${(w / 2).toFixed(1)} ${(h / 2).toFixed(1)}" width="${w}" height="${h}"></svg>`;
+        freeze();
         model = { unit: UNIT, vertices: [], edges: [] };
         modelOut.textContent = JSON.stringify(model, null, 1);
         say(tool === "draw" ? "" : "An empty board: choose Draw to build a diagram, or pick an example.");
@@ -176,7 +185,9 @@
       } else {
         try {
           drawing.innerHTML = feynjs.render(src, { idPrefix: "pg" });
-          fit();
+          // (while points are being moved or drawn, the frame holds still, so a point stays where
+          // it was put; else the drawing fits the pane)
+          if (frozen) hold(); else fit();
           say("");
           const meta = drawing.querySelector("metadata.feynjs-model");
           model = meta ? JSON.parse(meta.textContent) : null;
@@ -184,10 +195,25 @@
           decorate();
         } catch (e) { say(String(e.message || e), true); }
       }
+      if (preview !== undefined) return;
       history.replaceState(null, "", toHash(src));
       showHint();
     }
     const later = () => { clearTimeout(timer); timer = setTimeout(draw, 120); };
+    // the frame the drawing is shown in, held still while points are moved or drawn: its viewBox
+    // and its size on the page, as they were when that began. Typing, an example or another tool
+    // lets it go, and the drawing fits the pane again.
+    let frozen = null;
+    function freeze() {
+      const svg = drawing.querySelector("svg");
+      if (!svg) return;
+      frozen = { viewBox: svg.getAttribute("viewBox"), width: svg.getAttribute("width"), height: svg.getAttribute("height") };
+    }
+    function hold() {
+      const svg = drawing.querySelector("svg");
+      if (!svg || !frozen) return;
+      svg.setAttribute("viewBox", frozen.viewBox); svg.setAttribute("width", frozen.width); svg.setAttribute("height", frozen.height);
+    }
     // (the drawing as large as the pane allows, up to a little over twice its own size; its own
     // size kept, so a resize only rescales it)
     function fit() {
@@ -251,7 +277,7 @@
     const snapped = (q) => { const [x, y] = snapAt(q), u = unitOf(); return { x: x * u.x, y: -y * u.y }; };
     // (onto a point already drawn, when the pointer is close to it; else onto the grid)
     function target(svg, q) {
-      let best = null, bestD = 11;
+      let best = null, bestD = 16;
       for (const h of svg.querySelectorAll(".pg-handle")) {
         const d = Math.hypot(+h.getAttribute("cx") - q.x, +h.getAttribute("cy") - q.y);
         if (d < bestD) { best = h; bestD = d; }
@@ -293,16 +319,21 @@
       if (!svg || e.button !== 0) return;
       const handle = e.target.closest(".pg-handle");
       if (tool === "move" && handle) {
-        e.preventDefault(); handle.setPointerCapture(e.pointerId);
-        gesture = { kind: "move", handle, svg };
+        // (the frame holds from here, so the point stays under the pointer, and the diagram is
+        // drawn again as it moves: its lines stretch and the other points settle round it)
+        e.preventDefault(); stageEl.setPointerCapture(e.pointerId);
+        if (!frozen) freeze();
+        gesture = { kind: "move", id: handle.dataset.vertex };
       } else if (tool === "draw") {
         // (a click on a line restyles it: see the click handler)
         if (!handle && e.target.closest("[data-edge]")) return;
         e.preventDefault(); stageEl.setPointerCapture(e.pointerId);
-        const start = handle ? { x: +handle.getAttribute("cx"), y: +handle.getAttribute("cy") } : snapped(toSvg(svg, e));
+        // (from a point already drawn when the pointer is near it, as the end of a line snaps to one)
+        const near = handle ? { x: +handle.getAttribute("cx"), y: +handle.getAttribute("cy"), vertex: handle.dataset.vertex } : target(svg, toSvg(svg, e));
+        const start = { x: near.x, y: near.y };
         const band = svgEl("line", { class: "pg-band", x1: start.x, y1: start.y, x2: start.x, y2: start.y });
         svg.appendChild(band);
-        gesture = { kind: "draw", from: handle?.dataset.vertex, start, band, svg };
+        gesture = { kind: "draw", from: near.vertex, start, band, svg };
       }
     });
     stageEl.addEventListener("pointermove", (e) => {
@@ -314,9 +345,17 @@
         if (ghost && tool === "draw") { const t = target(svg, toSvg(svg, e)); ghost.setAttribute("cx", t.x); ghost.setAttribute("cy", t.y); }
         return;
       }
+      if (gesture.kind === "move") {
+        gesture.at = toSvg(svg, e);
+        if (!gesture.frame) gesture.frame = requestAnimationFrame(() => {
+          gesture.frame = 0;
+          draw(writePin(source.value, gesture.id, ...atOf(gesture.at, 0.1)));
+          drawing.querySelector(`.pg-handle[data-vertex="${CSS.escape(gesture.id)}"]`)?.classList.add("pg-on");
+        });
+        return;
+      }
       const q = toSvg(gesture.svg, e);
-      if (gesture.kind === "move") { gesture.handle.setAttribute("cx", q.x); gesture.handle.setAttribute("cy", q.y); gesture.at = q; }
-      else {
+      {
         const t = target(gesture.svg, q);
         gesture.end = t;
         gesture.band.setAttribute("x2", t.x); gesture.band.setAttribute("y2", t.y);
@@ -329,7 +368,9 @@
       if (!gesture) return;
       const g = gesture; gesture = null;
       if (g.kind === "move") {
-        if (g.at) change(writePin(source.value, g.handle.dataset.vertex, ...atOf(g.at, 0.1)), `Moved ${g.handle.dataset.vertex}.`);
+        if (g.frame) cancelAnimationFrame(g.frame);
+        if (g.at) change(writePin(source.value, g.id, ...atOf(g.at, 0.1)), `Moved ${g.id}.`);
+        else draw();
         return;
       }
       g.band.remove();
@@ -521,17 +562,21 @@
 
     // ---- controls -----------------------------------------------------------------------------
     function setTool(name) {
+      const was = tool;
       tool = name;
+      // (drawing: the frame as it is now holds while the tool is on; leaving it, the drawing fits again)
+      if (name === "draw" && was !== "draw") freeze();
+      if (name !== "draw" && was === "draw") { frozen = null; draw(); }
       root.querySelectorAll("[data-tool]").forEach((b) => b.classList.toggle("pg-active", b.dataset.tool === name));
       const svg = drawing.querySelector("svg");
       if (svg) { svg.classList.remove("pg-tool-move", "pg-tool-draw", "pg-tool-erase"); svg.classList.add(`pg-tool-${name}`); }
       showHint();
     }
     root.querySelectorAll("[data-tool]").forEach((b) => b.addEventListener("click", () => setTool(b.dataset.tool)));
-    source.addEventListener("input", later);
+    source.addEventListener("input", () => { frozen = null; later(); });
     root.querySelectorAll(".pg-example").forEach((menu) => menu.addEventListener("change", (e) => {
       if (!e.target.value) return;
-      change(EXAMPLES[e.target.value]); e.target.value = ""; tikz.hidden = true;
+      frozen = null; change(EXAMPLES[e.target.value]); e.target.value = ""; tikz.hidden = true;
     }));
     root.querySelectorAll("[data-switch]").forEach((sel) => sel.addEventListener("change", () => {
       let src = writeSwitch(source.value, sel.dataset.switch, sel.value);

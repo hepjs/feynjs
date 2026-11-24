@@ -19,6 +19,7 @@ nav = [
     { "Obsidian setup" = "get-started/obsidian.md" },
     { "LaTeX setup" = "compatibility/latex.md" },
     { "MadGraph setup" = "compatibility/madgraph.md" },
+    { "Try it: the playground" = "playground.md" },
     { "Your first diagram" = "get-started/first-diagram.md" },
     { "Upgrading" = "get-started/upgrading.md" },
     { "Browser support" = "get-started/browser-support.md" },

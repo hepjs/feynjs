@@ -429,3 +429,8 @@
 .md-typeset .grid.cards.feynjs-start .md-button { margin: 0; font-size: 0.66rem; padding: 0.35em 1em; }
 .md-typeset .feynjs-start-next { margin: 1.8rem 0 0.6rem; }
 .md-typeset .feynjs-start-buttons .md-button { margin: 0 0.4rem 0.4rem 0; }
+
+/* the playground's palette in two groups, lines and particles, and a way to every particle */
+.md-typeset .pg-palette-head { margin: 0.35rem 0 0.05rem; font-size: 0.46rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--md-default-fg-color--light); text-align: center; }
+.md-typeset .pg-palette-head:first-child { margin-top: 0; }
+.md-typeset .pg-palette-more { display: block; margin: 0.4rem 0 0.2rem; font-size: 0.5rem; line-height: 1.3; text-align: center; color: var(--feynjs-rule, #c0392b); }
