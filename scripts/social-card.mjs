@@ -1,50 +1,40 @@
-// The social card (the picture shown when the repository or the site is shared): the home page in
-// one image. The logo and the line on the left; chargino-neutralino production, drawn by feynjs,
-// on the right, its collision level with the logo and ripples spreading from it.
+// The social card (the picture shown when the repository or the site is shared): the logo in the
+// middle, ripples spreading from its two interaction points, and the line under it.
 // Writes docs/brand/logo/social-card.svg and .png. Run after `npm run build`:
 //   node scripts/social-card.mjs
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { Resvg } from "@resvg/resvg-js";
-import { render } from "../dist/feynjs.mjs";
 
 const W = 1200, H = 630;
 const INK = "#e6e8eb", RED = "#e05a4c", BG = "#1e2129", BAR = "#c0392b";
 const here = (path) => new URL(`../${path}`, import.meta.url).pathname;
 
-// the logo: the static scatter logo, light on dark, its outer <svg> placed and sized
+// the logo, centred: the static scatter logo, light on dark, its outer <svg> placed and sized
 const logoSource = readFileSync(here("docs/brand/logo/logo-scatter-dark.svg"), "utf8");
-const logoBox = { x: 80, y: 120, width: 460 };
 const [lx, ly, lw, lh] = /viewBox="([^"]+)"/.exec(logoSource)[1].split(/\s+/).map(Number);
+const logoBox = { width: 560 };
 logoBox.height = (logoBox.width * lh) / lw;
+logoBox.x = (W - logoBox.width) / 2;
+logoBox.y = 112;
 const logo = logoSource.replace(/<svg [^>]*>/, `<svg x="${logoBox.x}" y="${logoBox.y}" width="${logoBox.width}" height="${logoBox.height.toFixed(1)}" viewBox="${lx} ${ly} ${lw} ${lh}">`);
-const logoMiddle = logoBox.y + logoBox.height / 2;
+// (where the photon meets the two quark lines, in the card's own coordinates)
+const toCard = (x, y) => ({ x: logoBox.x + ((x - lx) / lw) * logoBox.width, y: logoBox.y + ((y - ly) / lh) * logoBox.height });
+const points = [...logoSource.matchAll(/<circle cx="([-\d.]+)" cy="([-\d.]+)"/g)].map((m) => toCard(Number(m[1]), Number(m[2])));
 
-// the diagram, as the home page draws it, recoloured for a dark card
-const diagramSource = "arrows: none\np p > chargino neutralino2\nchargino > W neutralino1\nneutralino2 > Z neutralino1\nW > l nu\nZ > l l";
-let diagram = render(diagramSource, { standalone: true, idPrefix: "card" })
-  .replace('color="#000000"', `color="${INK}"`).replace(/<rect x="-100000"[^>]*\/>/, "").replace(/#c0392b/gi, RED);
-const [dx, dy, dw, dh] = /viewBox="([^"]+)"/.exec(diagram)[1].split(/\s+/).map(Number);
-const blob = /<circle class="feynjs-collision" cx="([-\d.]+)" cy="([-\d.]+)"/.exec(diagram);
-const diagramWidth = 440, scale = diagramWidth / dw, diagramHeight = dh * scale;
-// (placed so its collision is level with the middle of the logo)
-const diagramX = 690, diagramY = logoMiddle - (Number(blob[2]) - dy) * scale;
-diagram = diagram.replace(/<svg [^>]*?>/, (open) => open.replace(/ width="[^"]*"/, ` x="${diagramX}" y="${diagramY.toFixed(1)}" width="${diagramWidth}"`).replace(/ height="[^"]*"/, ` height="${diagramHeight.toFixed(1)}"`));
-const collision = { x: diagramX + (Number(blob[1]) - dx) * scale, y: logoMiddle };
+// ripples spreading from both interaction points, fading as they go, beneath the logo
+const ripples = points.flatMap((p) => [34, 80, 140, 215, 305].map((r, k) => `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${r}" fill="none" stroke="${RED}" stroke-width="1.4" stroke-opacity="${(0.34 - k * 0.065).toFixed(3)}"/>`)).join("");
+const middle = { x: points.reduce((s, p) => s + p.x, 0) / points.length, y: points.reduce((s, p) => s + p.y, 0) / points.length };
 
-// ripples from the collision, fading as they spread
-const ripples = [70, 150, 250, 370, 510].map((r, k) => `<circle cx="${collision.x.toFixed(1)}" cy="${collision.y.toFixed(1)}" r="${r}" fill="none" stroke="${RED}" stroke-width="1.5" stroke-opacity="${(0.32 - k * 0.06).toFixed(2)}"/>`).join("");
-
-// the line, under the logo, in two lines as the home page sets it
-const lineY = logoBox.y + logoBox.height + 70;
-const line = `<text x="${logoBox.x}" y="${lineY}" font-family="Inter" font-weight="600" font-size="36" fill="${INK}">A JavaScript display engine</text>`
-  + `<text x="${logoBox.x}" y="${lineY + 46}" font-family="Inter" font-weight="600" font-size="36" fill="${INK}">for <tspan fill="${RED}">Feynman diagrams</tspan></text>`;
+// the line, centred under the logo, on one line
+const lineY = logoBox.y + logoBox.height + 78;
+const line = `<text x="${W / 2}" y="${lineY}" text-anchor="middle" font-family="Inter" font-weight="600" font-size="40" fill="${INK}">A JavaScript display engine for <tspan fill="${RED}">Feynman diagrams</tspan></text>`;
 
 const card = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">`
-  + `<defs><radialGradient id="glow" cx="${(collision.x / W).toFixed(3)}" cy="${(collision.y / H).toFixed(3)}" r="0.55"><stop offset="0" stop-color="${RED}" stop-opacity="0.10"/><stop offset="1" stop-color="${RED}" stop-opacity="0"/></radialGradient><clipPath id="card"><rect width="${W}" height="${H}"/></clipPath></defs>`
+  + `<defs><radialGradient id="glow" cx="${(middle.x / W).toFixed(3)}" cy="${(middle.y / H).toFixed(3)}" r="0.5"><stop offset="0" stop-color="${RED}" stop-opacity="0.10"/><stop offset="1" stop-color="${RED}" stop-opacity="0"/></radialGradient><clipPath id="card"><rect width="${W}" height="${H}"/></clipPath></defs>`
   + `<rect width="${W}" height="${H}" fill="${BG}"/><rect width="${W}" height="${H}" fill="url(#glow)"/>`
   + `<g clip-path="url(#card)">${ripples}</g>`
   + `<rect width="${W}" height="8" fill="${BAR}"/>`
-  + logo + line + diagram + `</svg>`;
+  + logo + line + `</svg>`;
 
 writeFileSync(here("docs/brand/logo/social-card.svg"), card);
 // (Computer Modern has no italic script l: a browser takes the next serif in feynjs's list, STIX on
