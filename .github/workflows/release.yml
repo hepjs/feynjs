@@ -34,9 +34,12 @@ jobs:
         run: |
           node integrations/obsidian/build.mjs
           (cd integrations/obsidian/dist && zip -r ../../../feynjs-obsidian.zip feynjs)
+      - name: Zip the MadGraph plugin, a folder to drop into MadGraph's PLUGIN directory
+        run: (cd integrations/madgraph && zip -r ../../feynjs-madgraph.zip feynjs README.md -x "*/__pycache__/*")
       - uses: softprops/action-gh-release@v3
         with:
           files: |
             dist/feynjs.min.js
             dist/feynjs.mjs
             feynjs-obsidian.zip
+            feynjs-madgraph.zip

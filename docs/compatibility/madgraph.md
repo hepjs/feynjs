@@ -126,12 +126,13 @@ All four are in [Write processes, as in MadGraph](../guide/processes.md).
 
 ## Draw MadGraph's own diagrams
 
-feynjs comes with a MadGraph plugin, in `integrations/madgraph` in the repository. MadGraph
-generates every diagram of a process, in any model it can load, and the plugin hands each one
-to feynjs to draw:
+feynjs comes with a MadGraph plugin. MadGraph generates every diagram of a process, in any model
+it can load, and the plugin hands each one to feynjs to draw. Download `feynjs-madgraph.zip` from
+the [latest release](https://github.com/hepjs/feynjs/releases/latest), unzip it into MadGraph's
+`PLUGIN` folder (it holds one folder, `feynjs`), and start MadGraph in its mode:
 
 ```text
-cp -r integrations/madgraph/feynjs <MG5>/PLUGIN/
+unzip feynjs-madgraph.zip -d <MG5>/PLUGIN/
 <MG5>/bin/mg5_aMC --mode=feynjs
 MG5_aMC> generate e+ e- > t t~, t > b w+, t~ > b~ w-
 MG5_aMC> feynjs ttbar

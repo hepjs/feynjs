@@ -3,14 +3,15 @@ import type { Pt } from "../geometry/curve.ts";
 import type { ObjectContent, EdgeStyle } from "../model.ts";
 import type { LineLook } from "../theme.ts";
 
-/** Sine wave with a whole number of periods, so both ends meet the vertex on-axis. */
+/** A wave of sin(sin x), scaled back to the full amplitude: fuller crests and steeper crossings
+ * than a plain sine. A whole number of periods, so both ends meet the vertex on-axis. */
 function wavePoints(c: Curve, look: LineLook): Pt[] {
   const n = Math.max(1, Math.round(c.length / look.waveLength));
   const steps = n * 16;
   const pts: Pt[] = [];
   for (let i = 0; i <= steps; i++) {
     const t = i / steps;
-    pts.push(c.offset(t * c.length, -look.waveAmplitude * Math.sin(2 * Math.PI * n * t)));
+    pts.push(c.offset(t * c.length, -look.waveAmplitude * Math.sin(Math.sin(2 * Math.PI * n * t)) / Math.sin(1)));
   }
   return pts;
 }

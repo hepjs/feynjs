@@ -28,6 +28,9 @@ layout that moves is a change, recorded here.
 - **Labels in crowded places:** a label with no clear spot beside its line searches all round
   its line's points, a little further out each time, instead of overlapping another (MadGraph's
   2->6 diagrams: 25 crowded labels to none).
+- **Waves** (photons, W, Z) follow sin(sin x), scaled to the same height: rounder, fuller crests
+  and steeper crossings than a plain sine.
+- **The MadGraph plugin is a download:** each release carries `feynjs-madgraph.zip`.
 - **Top decays** (default engine): the b of t -> b W leaves to the outside of the diagram, turned
   40 degrees from the top's heading and a little short, while the W and what follows lie as
   before; a b that settles inside its W is turned over to the outside. A top level with the beams
