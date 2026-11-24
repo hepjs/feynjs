@@ -11,7 +11,7 @@ tags:
 
 # Edges, as in TikZ-Feynman
 
-***Write any diagram edge by edge: chains of vertices, options for vertices and lines, which legs come in and go out, and the TikZ-Feynman keys.***
+***Write any diagram edge by edge: chains of vertices, options for vertices and lines, and which legs come in and go out.***
 
 ```feynman
 i1 [e-] -- a -- i2 [e+]
@@ -122,18 +122,7 @@ b -- [photon] f1
 
 ## Coming from TikZ-Feynman
 
-The keys TikZ-Feynman users reach for work here too: `momentum'` and `reversed momentum`,
-`insertion=0.33`, `with arrow=0.3`, `out=` and `in=` with `looseness`, points placed from others
-(`b [right=of a]`), `horizontal: a to b` and `vertical: a to b` to turn the diagram, `inline: a`
-for a diagram in a line of text, and `every photon: ...` defaults.
-
-```feynman
-every photon: color=blue
-vertical: a to b
-i1 [e-] -- [fermion, momentum=p_1] a -- [fermion, momentum'=p_2] i2 [e+]
-a -- [photon, reversed momentum=k, insertion=0.5] b
-f1 [mu-] -- [fermion, with arrow=0.25, with arrow=0.75, no arrow] b -- f2 [mu+]
-```
+The TikZ-Feynman keys feynjs takes, side by side with TikZ-Feynman, are on [TikZ-Feynman](../compatibility/tikz-feynman.md).
 
 ## Next
 

@@ -27,7 +27,7 @@ b -- f1 [mu-]
 b -- f2 [mu+]
 ```
 
-The whole syntax on one page. The [guide](../guide/index.md) explains each part with examples.
+The whole syntax on one page. The [Components](../guide/index.md) pages explain each part with examples.
 
 ## Edges, as in TikZ-Feynman
 

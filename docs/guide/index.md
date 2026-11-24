@@ -1,16 +1,17 @@
 ---
 tags:
+  - components
   - user guide
-  - manual
   - how-to
   - TikZ-Feynman
   - MadGraph
   - syntax
 ---
 
-# Guide
+# Components
 
-***Find the page for each topic: the two ways to write a diagram, then lines, labels, loops, colour flow, layout, styling and checks.***
+***What a diagram is made of, one page each: the two ways to write it, then lines, vertices,
+labels, loops, colour flow, detector objects and panels.***
 
 ```feynman
 p p > t tbar
@@ -26,8 +27,8 @@ tbar > bbar W-(> q qbar)
 ```
 ````
 
-Everything feynjs can draw, one topic per page. Each page shows diagrams with the source that
-drew them, so you can copy any of them as a starting point.
+How to write each part of a diagram, one topic per page. Each page shows diagrams with the
+source that drew them, so you can copy any of them as a starting point.
 
 ## Two ways to write
 
@@ -44,15 +45,21 @@ feynjs reads two notations, and both give the same drawing.
 | Page | What it covers |
 |---|---|
 | [Edges](syntax.md) | chains, vertices, lines, which legs come in and go out |
-| [Processes](processes.md) | `p p > ...` processes, decays, the same particle decaying two ways |
+| [Processes](processes.md) | `p p > ...` processes, decays, loops, production modes, the same particle decaying two ways |
 | [Lines and particles](lines.md) | every line style, and the particles that pick them |
-| [Labels](labels.md) | TeX labels, which side they sit on, momenta, coupling labels |
-| [Vertices and blobs](vertices.md) | dots, blobs, proton beams, jets, insertions on a line |
+| [All particles](../reference/particles.md) | every particle name, with its line and label |
+| [Vertices, blobs and nuclei](vertices.md) | dots, blobs, proton beams, jets, marks on a line, nuclei, hadrons with their quarks |
+| [Labels and notes](labels.md) | TeX labels, which side they sit on, momenta, coupling labels, notes |
 | [Loops, boxes and hadrons](loops-hadrons.md) | loops over a line, penguins, boxes, mesons and baryons, spectators |
-| [Detector objects](objects.md) | large-R jets, hadronic taus, semi-visible, emerging and displaced jets, lepton-jets, missing energy |
 | [Colour flow](colour-flow.md) | colour lines beside quarks and gluons, in double-line notation |
-| [Views](views.md) | the event as the detector sees it, along the beam and across it; a lattice for lattice QCD |
+| [Detector objects](objects.md) | large-R jets, hadronic taus, semi-visible, emerging and displaced jets, lepton-jets, missing energy |
 | [Panels and switches](panels.md) | several diagrams side by side; diagram-wide switches |
-| [Layout engines](layout.md) | the force layout, the grid, manual placement and v1; the final plane; steering by hand |
-| [Styling and export](styling.md) | the theme, dark mode, colours, standalone SVG and TikZ |
-| [Checking diagrams](tools.md) | `check`, `describe`, `measure` |
+| [Syntax at a glance](../reference/index.md) | the whole syntax on one page |
+
+## Elsewhere
+
+| Section | For |
+|---|---|
+| **Layout & Styling** | [Layout engines](layout.md), [Views](views.md), [Styling and export](styling.md), [Theme settings](../reference/theme.md): where vertices go, the detector and lattice views, colours, sizes, SVG, PNG and TikZ |
+| **Usage** | [Use feynjs from code](../developers/index.md), the [JavaScript API](../reference/api.md), the [command line](../reference/cli.md), [Checking diagrams](tools.md) |
+| **Compatibility** | [TikZ-Feynman](../compatibility/tikz-feynman.md) and [MadGraph](../compatibility/madgraph.md): what carries over from each |

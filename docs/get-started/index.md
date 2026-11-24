@@ -28,4 +28,4 @@ tags:
 
 </div>
 
-Writing your own page or program? See [Developers](../developers/index.md).
+Writing your own page or program? See [Usage](../developers/index.md). Moving to a new release? See [Upgrading](upgrading.md).

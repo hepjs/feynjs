@@ -57,9 +57,10 @@ e- e+ > gamma > mu- mu+
 - **`W+(> e+ nu)` decays one particle on the spot**, without a rule for every `W+`.
 - **Whatever does not decay leaves the diagram.**
 
-Particle names are feynjs's own, listed in [Particles](../reference/particles.md): `tbar`, not
-`t~`; `gluino`, not `go`. A name feynjs doesn't know is drawn as a plain line carrying that name
-as its label.
+Particle names are feynjs's own, listed in [Particles](../reference/particles.md). MadGraph's
+Standard Model names work too (`t~`, `w+`, `ve`, `ta+`; see [MadGraph](../compatibility/madgraph.md#particle-names)),
+but its SUSY names don't: write `gluino`, not `go`. A name feynjs doesn't know is drawn as a plain
+line carrying that name as its label.
 
 To draw a particle with a label of your own, while keeping its line style and properties, add a
 `label:` line. This works in both syntaxes:
@@ -80,25 +81,7 @@ neutralino2 > Z neutralino1
 
 ## How it differs from MadGraph
 
-MadGraph generates every diagram for a process. feynjs draws **one**: the one your lines
-describe. So `e- e+ > mu- mu+` is a single four-point vertex; write `e- e+ > gamma > mu- mu+` or
-`e- e+ > Z > mu- mu+` to choose the diagram. Decays go on lines of their own, not after commas.
-Each diagram in a page is still a separate block, and `---` splits a block into
-[panels](panels.md) as usual.
-
-The two syntaxes reach the same drawing. Here the edge form of the diagram above:
-
-````markdown
-```feynman
-i1 [e-] -- a -- i2 [e+]
-a -- [gamma] b
-f1 [mu-] -- b -- f2 [mu+]
-```
-````
-
-Use processes for cascades and production-and-decay. Use [edges](syntax.md) for hadrons,
-coupling labels and anything you want to place by hand. Switches such as `layout:`,
-`title:` and `arrows:` work with both.
+What feynjs takes from MadGraph, and what it doesn't, is on [MadGraph](../compatibility/madgraph.md).
 
 ## Through a loop
 

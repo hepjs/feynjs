@@ -18,30 +18,29 @@ nav = [
     { "Zensical setup" = "get-started/zensical.md" },
     { "Obsidian setup" = "get-started/obsidian.md" },
     { "Your first diagram" = "get-started/first-diagram.md" },
+    { "Upgrading" = "get-started/upgrading.md" },
+    { "Browser support" = "get-started/browser-support.md" },
+    { "Licence" = "get-started/licence.md" },
+  ] },
+  { "Components" = [
+    { "Overview" = "guide/index.md" },
     { "Write edges, as in TikZ-Feynman" = "guide/syntax.md" },
     { "Write processes, as in MadGraph" = "guide/processes.md" },
-  ] },
-  { "Features" = [
-    { "Overview" = "guide/index.md" },
+    { "Lines and particles" = "guide/lines.md" },
+    { "All particles" = "reference/particles.md" },
+    { "Vertices, blobs and nuclei" = "guide/vertices.md" },
+    { "Labels and notes" = "guide/labels.md" },
+    { "Loops, boxes and hadrons" = "guide/loops-hadrons.md" },
+    { "Colour flow" = "guide/colour-flow.md" },
+    { "Detector objects" = "guide/objects.md" },
+    { "Panels and switches" = "guide/panels.md" },
     { "Syntax at a glance" = "reference/index.md" },
-    { "Engines" = [
-      { "Layout engines" = "guide/layout.md" },
-      { "Views" = "guide/views.md" },
-    ] },
-    { "Diagram components" = [
-      { "Lines and particles" = "guide/lines.md" },
-      { "All particles" = "reference/particles.md" },
-      { "Vertices, blobs and nuclei" = "guide/vertices.md" },
-      { "Labels and notes" = "guide/labels.md" },
-      { "Loops, boxes and hadrons" = "guide/loops-hadrons.md" },
-      { "Colour flow" = "guide/colour-flow.md" },
-      { "Detector objects" = "guide/objects.md" },
-      { "Panels and switches" = "guide/panels.md" },
-    ] },
-    { "Styling and output" = [
-      { "Styling and export" = "guide/styling.md" },
-      { "Checking diagrams" = "guide/tools.md" },
-    ] },
+  ] },
+  { "Layout & Styling" = [
+    { "Layout engines" = "guide/layout.md" },
+    { "Views" = "guide/views.md" },
+    { "Styling and export" = "guide/styling.md" },
+    { "Theme settings" = "reference/theme.md" },
   ] },
   { "Playground" = "playground.md" },
   { "Examples" = [
@@ -52,11 +51,15 @@ nav = [
     { "Stop production" = "examples/stop.md" },
     { "Gallery" = "examples/gallery.md" },
   ] },
-  { "Developers" = [
+  { "Usage" = [
     { "Use feynjs from code" = "developers/index.md" },
     { "JavaScript API" = "reference/api.md" },
     { "Command line" = "reference/cli.md" },
-    { "Theme settings" = "reference/theme.md" },
+    { "Checking diagrams" = "guide/tools.md" },
+  ] },
+  { "Compatibility" = [
+    { "TikZ-Feynman" = "compatibility/tikz-feynman.md" },
+    { "MadGraph" = "compatibility/madgraph.md" },
   ] },
   { "Contributing" = [
     { "How to contribute" = "contributing/index.md" },

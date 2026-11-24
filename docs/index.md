@@ -150,12 +150,30 @@ Feynman diagrams, meet *Markdown*{ .feynjs-accent }. *Oh, and the web.*{ .feynjs
 { .feynjs-lead }
 
 [Get started](get-started/index.md){ .md-button .md-button--primary }
-[See the features](guide/index.md){ .md-button }
+[See the components](guide/index.md){ .md-button }
 [See examples](examples/index.md){ .md-button }
 
 ## Core features
 
-### Start
+### Get started
+
+<div class="grid cards" markdown>
+
+-   **[Choose your setup](get-started/index.md)**
+
+    A `feynman` block in a Zensical or MkDocs site, or in an Obsidian note.
+
+-   **[Your first diagram](get-started/first-diagram.md)**
+
+    What each line of a diagram means, from one example.
+
+-   **[Upgrading](get-started/upgrading.md)**
+
+    Moving to a new release, and what changed in each.
+
+</div>
+
+### Components
 
 <div class="grid cards" markdown>
 
@@ -166,30 +184,6 @@ Feynman diagrams, meet *Markdown*{ .feynjs-accent }. *Oh, and the web.*{ .feynjs
 -   **[Write processes, as in MadGraph](guide/processes.md)**
 
     Name the process, `p p > t t~`, with its decays, loops and production modes.
-
--   **[Where to use it](get-started/index.md)**
-
-    A `feynman` block in a Zensical or MkDocs site or an Obsidian note; for your own code, a script tag, JavaScript or the command line.
-
-</div>
-
-### Engines
-
-<div class="grid cards" markdown>
-
--   **[Layout engines](guide/layout.md)**
-
-    Forces place every vertex for you. Snap the result to a grid, or pin vertices by hand.
-
--   **[Views](guide/views.md)**
-
-    The same process as an event in the detector, or a lattice QCD grid with Wilson loops.
-
-</div>
-
-### Diagram components
-
-<div class="grid cards" markdown>
 
 -   **[Lines and particles](guide/lines.md)**
 
@@ -221,17 +215,49 @@ Feynman diagrams, meet *Markdown*{ .feynjs-accent }. *Oh, and the web.*{ .feynjs
 
 </div>
 
-### Styling and output
+### Layout & Styling
 
 <div class="grid cards" markdown>
+
+-   **[Layout engines](guide/layout.md)**
+
+    Forces place every vertex for you. Snap the result to a grid, or pin vertices by hand.
+
+-   **[Views](guide/views.md)**
+
+    The same process as an event in the detector, or a lattice QCD grid with Wilson loops.
 
 -   **[Styling and export](guide/styling.md)**
 
     Sizes, colours, dark mode and black and white; SVG, PNG and TikZ-Feynman code out.
 
+</div>
+
+### Usage
+
+<div class="grid cards" markdown>
+
+-   **[Use feynjs from code](developers/index.md)**
+
+    A script tag on any page, `render()` from npm, or the `feynjs` command.
+
 -   **[Checking diagrams](guide/tools.md)**
 
     Catch broken fermion flow, describe a diagram in words, score its layout.
+
+</div>
+
+### Compatibility
+
+<div class="grid cards" markdown>
+
+-   **[TikZ-Feynman](compatibility/tikz-feynman.md)**
+
+    The keys feynjs takes, side by side, and TikZ-Feynman code out.
+
+-   **[MadGraph](compatibility/madgraph.md)**
+
+    MadGraph's process syntax and particle names, and what feynjs doesn't take.
 
 </div>
 
@@ -538,9 +564,12 @@ neutralino2 > Z neutralino1
 ## Where next
 
 - **New here?** [Get started](get-started/index.md): set up a Zensical site or Obsidian, then [draw a first diagram](get-started/first-diagram.md).
-- **Writing diagrams?** The [guide](guide/index.md) covers every feature, one page per topic.
+- **Writing diagrams?** [Components](guide/index.md) covers each part of a diagram, one page per
+  topic, and [Layout & Styling](guide/layout.md) where it goes and how it looks.
 - **Looking something up?** [Syntax at a glance](reference/index.md) has the syntax on one page,
   and [All particles](reference/particles.md) every particle name.
-- **Writing code?** [Developers](developers/index.md) covers the script tag, the API, the command line
-  and every theme setting.
+- **Writing code?** [Usage](developers/index.md) covers the script tag, the API and the command
+  line.
+- **Coming from TikZ-Feynman or MadGraph?** [Compatibility](compatibility/tikz-feynman.md) shows
+  what carries over.
 - **Want to help?** [Contributing](contributing/index.md) explains how the library is built and how to change it.

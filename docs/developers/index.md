@@ -10,7 +10,7 @@ tags:
   - data-edge
 ---
 
-# Developers
+# Use feynjs from code
 
 ***Use feynjs from your own code: a script tag on any web page, `render()` from npm, or the
 `feynjs` command in a shell.***

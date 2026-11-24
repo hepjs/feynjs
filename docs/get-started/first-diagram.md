@@ -27,7 +27,7 @@ f1 [mu-] -- b -- f2 [mu+]
 feynjs turns a few lines of text into a Feynman diagram, drawn as SVG. To draw these yourself, put
 them in a `feynman` block on a [Zensical site](zensical.md) or in an [Obsidian note](obsidian.md),
 or paste them into the [playground](../playground.md). To install feynjs for your own code, see
-[Developers](../developers/index.md#install).
+[Usage](../developers/index.md#install).
 
 !!! note "Early days"
     feynjs is at version 0.9. The syntax described here is stable enough to write diagrams
@@ -86,7 +86,7 @@ i2 [e+] -- b -- f2 [e+]
 a -- [gamma] b
 ```
 
-Add a gluon loop, a Higgs, a cascade of decays: the [features](../guide/index.md) cover each one.
+Add a gluon loop, a Higgs, a cascade of decays: the [components](../guide/index.md) cover each one.
 
 ## When something is wrong
 
