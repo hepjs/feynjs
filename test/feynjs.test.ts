@@ -790,3 +790,26 @@ test("a detector object in a process may hold contents, LRJ(1b W(2j)), and objec
   assert.doesNotThrow(() => render("p p > Z(> e+ e-) H"));
   assert.throws(() => render("p p > Z(e+ e-)"), /write a decay as/);
 });
+
+test("a diagram given as data draws as its source does; the hand-over format is versioned", async () => {
+  const { toSource, INTERCHANGE_VERSION, describe: describeAny } = await import("../src/index.ts");
+  const data = {
+    incoming: ["i1", "i2"],
+    vertices: [{ id: "v2", shape: "dot", coupling: "g_Z" }],
+    edges: [
+      { from: "i1", to: "v1", particle: "e-" }, { from: "v1", to: "i2", particle: "e-" },
+      { from: "v1", to: "v2", particle: "Z" },
+      { from: "v2", to: "f1", particle: "mu-" }, { from: "f2", to: "v2", particle: "mu-" },
+    ],
+  };
+  const source = toSource(data);
+  assert.match(source, new RegExp(`^% feynjs-interchange ${INTERCHANGE_VERSION}\\n`));
+  assert.equal(render(data), render(source));
+  assert.deepEqual(describeAny(data), describeAny(source));
+  // (bad data is refused, saying what is wrong)
+  assert.throws(() => toSource({ edges: [{ from: "a b", to: "c" }] }), /needs a name/);
+  assert.throws(() => toSource({ edges: [{ from: "a", to: "b", label: "\\frac{1" }] }), /braces/);
+  // (a file written for a newer hand-over format is flagged)
+  assert.ok(check(`% feynjs-interchange ${INTERCHANGE_VERSION + 1}\na -- [photon] b`).some((f) => f.rule === "interchange-version"));
+  assert.ok(!check(source).some((f) => f.rule === "interchange-version"));
+});

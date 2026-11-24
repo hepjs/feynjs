@@ -3,8 +3,15 @@ import { renderDiagram } from "./render/render.ts";
 import { composePanels, splitPanels } from "./render/panels.ts";
 import { themeWith } from "./theme.ts";
 import { registry } from "./particles/registry.ts";
-import { describe } from "./tools/describe.ts";
-import { explain } from "./tools/explain.ts";
+import { describe as describeText } from "./tools/describe.ts";
+import { explain as explainText } from "./tools/explain.ts";
+import { check as checkText } from "./tools/check.ts";
+import { toTikz as tikzText } from "./tools/tikz.ts";
+import { measure as measureText } from "./tools/quality.ts";
+import { sourceOf } from "./tools/interchange.ts";
+import type { DiagramInput } from "./tools/interchange.ts";
+import type { TikzOptions } from "./tools/tikz.ts";
+import type { ThemeOverrides } from "./theme.ts";
 import { addDownloadButton, fileNameFor } from "./download.ts";
 import { installTooltips } from "./tooltip.ts";
 import type { RenderOptions } from "./render/render.ts";
@@ -13,13 +20,10 @@ export { parse } from "./parse/parse.ts";
 export { FeynError } from "./model.ts";
 export { defaultTheme, themeWith } from "./theme.ts";
 export { registerParticle, registerLineStyle, lookupParticle, particleNames, STYLES as lineStyles } from "./particles/registry.ts";
-export { describe } from "./tools/describe.ts";
-export { explain } from "./tools/explain.ts";
 export { particleInfo, PROPERTIES as particleProperties } from "./particles/properties.ts";
 export type { ParticleProperties } from "./particles/properties.ts";
-export { check } from "./tools/check.ts";
-export { toTikz } from "./tools/tikz.ts";
-export { measure } from "./tools/quality.ts";
+export { INTERCHANGE_VERSION, toSource } from "./tools/interchange.ts";
+export type { DiagramInput, DiagramVertex, DiagramEdge } from "./tools/interchange.ts";
 export type { Quality } from "./tools/quality.ts";
 export type { Description } from "./tools/describe.ts";
 export type { Finding } from "./tools/check.ts";
@@ -39,7 +43,8 @@ function makeStandalone(svg: string, background: string): string {
  * Diagram source text -> SVG markup. Throws FeynError on bad input. Lines of `---` split the
  * source into panels drawn side by side, each captioned (a), (b), ... or with the text after the dashes.
  */
-export function render(source: string, options: RenderOptions = {}): string {
+export function render(input: string | DiagramInput, options: RenderOptions = {}): string {
+  const source = sourceOf(input);
   // the same source drawn the same way again (a page revisited, an edit elsewhere) is not
   // laid out again
   const key = `${registry.version}\u0000${JSON.stringify(options)}\u0000${source}`;
@@ -54,6 +59,18 @@ export function render(source: string, options: RenderOptions = {}): string {
   if (drawn.size > DRAWN_KEPT) drawn.delete(drawn.keys().next().value!);
   return svg;
 }
+
+// (every tool takes the source as text, or the diagram as data: see toSource)
+/** Structural checks: fermion flow, dangling lines, a hand-over version newer than this feynjs reads. */
+export const check = (input: string | DiagramInput) => checkText(sourceOf(input));
+/** The diagram as data: what comes in, what goes out, its vertices and loops. */
+export const describe = (input: string | DiagramInput) => describeText(sourceOf(input));
+/** The diagram in plain English. */
+export const explain = (input: string | DiagramInput) => explainText(sourceOf(input));
+/** How well the layout came out: crossings, crowding, angles. */
+export const measure = (input: string | DiagramInput, theme: ThemeOverrides = {}) => measureText(sourceOf(input), theme);
+/** TikZ-Feynman code for the diagram. */
+export const toTikz = (input: string | DiagramInput, options: TikzOptions = {}) => tikzText(sourceOf(input), options);
 
 /** The drawings made most recently, by source and options (oldest first). */
 const drawn = new Map<string, string>();

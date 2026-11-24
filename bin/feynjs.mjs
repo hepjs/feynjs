@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-// feynjs <render|check|describe|explain|measure|tikz> [file]   (reads standard input when no file is given)
+// feynjs <render|check|describe|explain|measure|tikz> [file]   (reads standard input when no file is given;
+// a .json file, or JSON on standard input, is a diagram given as data: see toSource)
 import { readFileSync } from "node:fs";
 import { check, describe, explain, measure, render, toTikz } from "../dist/feynjs.mjs";
 
@@ -21,7 +22,10 @@ if (!commands[command]) {
   process.exit(2);
 }
 try {
-  console.log(commands[command](readFileSync(file ?? 0, "utf8")));
+  // (a diagram given as data, a .json file or JSON on standard input, is read as data)
+  const text = readFileSync(file ?? 0, "utf8");
+  const input = (file ?? "").endsWith(".json") || /^\s*\{/.test(text) ? JSON.parse(text) : text;
+  console.log(commands[command](input));
 } catch (error) {
   console.error(`feynjs: ${error.message}`);
   process.exit(1);

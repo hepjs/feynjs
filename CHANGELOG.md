@@ -31,6 +31,10 @@ layout that moves is a change, recorded here.
 - **Waves** (photons, W, Z) follow sin(sin x), scaled to the same height: rounder, fuller crests
   and steeper crossings than a plain sine.
 - **The MadGraph plugin is a download:** each release carries `feynjs-madgraph.zip`.
+- **A hand-over format, versioned:** files that start `% feynjs-interchange 1` (the MadGraph
+  plugin writes them); `check` warns about a newer version. **A diagram as data:** `render`, `check`,
+  `describe`, `explain`, `measure` and `toTikz` take `{ incoming, edges, ... }` as well as text, and
+  `toSource` writes it as source; the command line reads `.json`.
 - **Top decays** (default engine): the b of t -> b W leaves to the outside of the diagram, turned
   40 degrees from the top's heading and a little short, while the W and what follows lie as
   before; a b that settles inside its W is turned over to the outside. A top level with the beams

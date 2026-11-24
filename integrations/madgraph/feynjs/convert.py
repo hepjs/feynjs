@@ -20,6 +20,10 @@ g a Z W+ W- H h z w+ w-""".split())
 STYLE_OF_LINE = {"straight": "plain", "dashed": "scalar", "wavy": "boson", "curly": "gluon",
                  "dotted": "ghost", "double": "double", "swavy": "susy", "scurly": "susy gluon"}
 
+# The hand-over format these files are written in: feynjs reads version 1 (see its docs,
+# Usage -> Hand-over format), and warns about a file written for a newer one.
+INTERCHANGE = "% feynjs-interchange 1"
+
 # (a decay chain's combinations, production diagrams times each decay's, can be many)
 MOST_COMBINATIONS = 60
 
@@ -176,7 +180,7 @@ class Piece:
         # (the incoming legs in MadGraph's order; the outgoing ones left to feynjs, which orders
         # them so that no lines cross: a fixed order, MadGraph's numbering, would force crossings)
         head = ["in: " + " ".join(n for n in legs if n.split("_")[-1][0] == "i")]
-        return "\n".join(head + ["%s -- [%s] %s" % (a, o, b) for a, o, b, _ in self.edges]) + "\n"
+        return "\n".join([INTERCHANGE] + head + ["%s -- [%s] %s" % (a, o, b) for a, o, b, _ in self.edges]) + "\n"
 
 
 def _joined(chain, model, prefix, budget):

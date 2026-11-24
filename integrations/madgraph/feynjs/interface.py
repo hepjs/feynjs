@@ -38,7 +38,9 @@ class FeynjsInterface(master_interface.MasterCmd):
             for n, (_, _, source) in enumerate(diagrams, 1):
                 path = os.path.join(outdir, "%s_%d.feyn" % (stem, n))
                 with open(path, "w") as f:
-                    f.write("%% %s, diagram %d\n%s" % (process.nice_string().splitlines()[0], n, source))
+                    # (the hand-over version first, then which diagram this is)
+                    head, rest = source.split("\n", 1)
+                    f.write("%s\n%% %s, diagram %d\n%s" % (head, process.nice_string().splitlines()[0], n, rest))
                 written.append(path)
                 figures.append('<figure><div class="feynman">%s</div><figcaption>diagram %d</figcaption></figure>' % (html.escape(source), n))
             sections.append("<section><h2>%s</h2>%s</section>" % (html.escape(process.input_string()), "".join(figures)))

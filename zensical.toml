@@ -56,6 +56,7 @@ nav = [
     { "JavaScript API" = "reference/api.md" },
     { "Command line" = "reference/cli.md" },
     { "Checking diagrams" = "guide/tools.md" },
+    { "Hand-over format" = "developers/interchange.md" },
   ] },
   { "Compatibility" = [
     { "TikZ-Feynman" = "compatibility/tikz-feynman.md" },

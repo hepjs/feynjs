@@ -120,6 +120,13 @@ parse(source: string): Diagram
 The source as data, before layout: `{ vertices, edges, hadrons, directives }`. Process lines are
 already expanded into edges.
 
+## A diagram as data
+
+`render`, `check`, `describe`, `explain`, `measure` and `toTikz` each take the source as text, or
+the diagram as data: `{ incoming, outgoing, vertices, edges, switches }`. `toSource(data)` returns
+the source it is drawn from, in the [hand-over format](../developers/interchange.md);
+`INTERCHANGE_VERSION` is the version of that format this feynjs reads.
+
 ## The drawing's parts, by name
 
 Every SVG feynjs draws names its parts, so a program (a page script, a test, or a language model

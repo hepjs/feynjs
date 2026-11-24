@@ -1,4 +1,5 @@
 import { FeynError } from "../model.ts";
+import { INTERCHANGE_VERSION, interchangeVersion } from "./interchange.ts";
 import type { Edge } from "../model.ts";
 import { splitPanels } from "../render/panels.ts";
 import { isExternal, kindOfLine, linesByVertex, readDiagram } from "./prepare.ts";
@@ -37,6 +38,14 @@ const isFermionLine = (e: Edge) => {
  * does not know charges or which vertices a model allows.
  */
 export function check(source: string): Finding[] {
+  // (a hand-over file written for a newer feynjs than this one may use lines this one reads otherwise)
+  const version = interchangeVersion(source);
+  const newer: Finding[] = version !== undefined && version > INTERCHANGE_VERSION
+    ? [{ severity: "warning", rule: "interchange-version", message: `written for hand-over format ${version}; this feynjs reads ${INTERCHANGE_VERSION}, so some lines may not be read as meant` }] : [];
+  return [...newer, ...checkPanels(source)];
+}
+
+function checkPanels(source: string): Finding[] {
   // several panels: each is a diagram of its own
   const panels = splitPanels(source);
   if (panels.length > 1) {
