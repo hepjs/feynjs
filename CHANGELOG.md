@@ -12,9 +12,6 @@ layout that moves is a change, recorded here.
 - **The playground**, a page of the docs: write source, see the diagram as you type; point at a
   part to see its name and source line; drag a point to write its `at (x, y)`; switches, share
   links, SVG, PNG and TikZ.
-
-## 0.9.2 — 2026-11-24
-
 - **Dark pages:** the grid behind a grid layout, and the lattice view's grid and sites, are drawn in
   the diagram's own colour, thinned, so they stay faint on dark pages as on light.
 - **Releases** carry the Obsidian plugin as `feynjs-obsidian.zip`.
