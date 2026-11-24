@@ -17,6 +17,8 @@ nav = [
     { "Choose your setup" = "get-started/index.md" },
     { "Zensical setup" = "get-started/zensical.md" },
     { "Obsidian setup" = "get-started/obsidian.md" },
+    { "LaTeX setup" = "compatibility/latex.md" },
+    { "MadGraph setup" = "compatibility/madgraph.md" },
     { "Your first diagram" = "get-started/first-diagram.md" },
     { "Upgrading" = "get-started/upgrading.md" },
     { "Browser support" = "get-started/browser-support.md" },
@@ -63,8 +65,6 @@ nav = [
     ] },
     { "Compatibility" = [
       { "TikZ-Feynman" = "compatibility/tikz-feynman.md" },
-      { "MadGraph" = "compatibility/madgraph.md" },
-      { "LaTeX" = "compatibility/latex.md" },
     ] },
     { "Contributing" = [
       { "How to contribute" = "contributing/index.md" },
