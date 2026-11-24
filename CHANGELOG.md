@@ -23,6 +23,8 @@ layout that moves is a change, recorded here.
   point names).
 - **Objects' contents in a process:** `p p > Zp > LRJ(1b W(2j)) j`. Each object's line carries
   `data-object` in the SVG. In the playground, click a large-R jet to choose what it holds.
+- **A MadGraph plugin** (`integrations/madgraph`): `mg5_aMC --mode=feynjs`, then `feynjs DIR`
+  draws every diagram MadGraph generated, decay chains joined into whole diagrams.
 - **Top decays** (default engine): the b of t -> b W leaves to the outside of the diagram, turned
   40 degrees from the top's heading and a little short, while the W and what follows lie as
   before; a b that settles inside its W is turned over to the outside. A top level with the beams

@@ -123,3 +123,23 @@ These are feynjs's own, not MadGraph's:
 - **Detector objects** as particles, `bjet`, `LRJ`, `MET`.
 
 All four are in [Write processes, as in MadGraph](../guide/processes.md).
+
+## Draw MadGraph's own diagrams
+
+feynjs comes with a MadGraph plugin, in `integrations/madgraph` in the repository. MadGraph
+generates every diagram of a process, in any model it can load, and the plugin hands each one
+to feynjs to draw:
+
+```text
+cp -r integrations/madgraph/feynjs <MG5>/PLUGIN/
+<MG5>/bin/mg5_aMC --mode=feynjs
+MG5_aMC> generate e+ e- > t t~, t > b w+, t~ > b~ w-
+MG5_aMC> feynjs ttbar
+```
+
+`feynjs DIR` writes each diagram as feynjs source, `DIR/<process>_<n>.feyn`, and a page,
+`DIR/index.html`, that draws them all; `feynjs DIR --svg` writes SVGs too, through Node's `npx`.
+A decay chain, which MadGraph keeps as a production and its decays, comes out as whole diagrams,
+each decay joined on where its particle leaves. Standard Model particles keep their MadGraph names,
+which feynjs reads; a new model's particles are drawn by the line type the model gives them and
+labelled with their TeX names.
