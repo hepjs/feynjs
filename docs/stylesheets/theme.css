@@ -235,3 +235,7 @@
 /* (the playground page: the pane right under the tabs) */
 .md-content__inner:has([data-feynjs-playground]) { margin-top: 0.4rem; padding-top: 0; }
 .md-content__inner:has([data-feynjs-playground])::before { display: none; }
+.md-typeset .pg-snapgrid { display: none; fill: none; stroke: var(--md-default-fg-color); stroke-opacity: 0.22; stroke-width: 2.2; stroke-linecap: round; vector-effect: non-scaling-stroke; pointer-events: none; }
+.md-typeset svg.pg-tool-draw .pg-snapgrid { display: inline; }
+.md-typeset .pg-ghost { display: none; fill: var(--feynjs-rule); fill-opacity: 0.35; stroke: var(--feynjs-rule); stroke-width: 1; pointer-events: none; }
+.md-typeset svg.pg-tool-draw .pg-ghost { display: inline; }

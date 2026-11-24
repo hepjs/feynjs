@@ -190,19 +190,46 @@
       }
       const g = svgEl("g", { class: "pg-handles" });
       for (const v of model.vertices) {
-        const c = svgEl("circle", { class: "pg-handle", cx: v.x, cy: v.y, r: 7 });
+        const c = svgEl("circle", { class: "pg-handle", cx: v.x, cy: v.y, r: 5.5 });
         c.dataset.vertex = v.id;
         g.appendChild(c);
       }
       svg.appendChild(g);
+      snapGrid(svg);
+    }
+    // (the snapping grid, shown while drawing: dots over the whole pane, in the source's units)
+    function snapGrid(svg) {
+      const stage = drawing.parentElement.getBoundingClientRect(), ctm = svg.getScreenCTM();
+      if (!ctm) return;
+      const inv = ctm.inverse(), corner = (x, y) => { const p = svg.createSVGPoint(); p.x = x; p.y = y; return p.matrixTransform(inv); };
+      const a = corner(stage.left, stage.top), b = corner(stage.right, stage.bottom), u = unitOf();
+      const sx = SNAP.x * u.x, sy = SNAP.y * u.y;
+      const dots = [];
+      for (let x = Math.ceil(a.x / sx) * sx; x <= b.x && dots.length < 4000; x += sx)
+        for (let y = Math.ceil(a.y / sy) * sy; y <= b.y; y += sy) dots.push(`M${x.toFixed(1)} ${y.toFixed(1)}h0`);
+      svg.insertBefore(svgEl("path", { class: "pg-snapgrid", d: dots.join("") }), svg.firstChild);
+      svg.appendChild(svgEl("circle", { class: "pg-ghost", r: 4, cx: -1e4, cy: -1e4 }));
     }
     const unitOf = () => (model && model.unit) || UNIT;
     function toSvg(svg, e) {
       const p = svg.createSVGPoint(); p.x = e.clientX; p.y = e.clientY;
       return p.matrixTransform(svg.getScreenCTM().inverse());
     }
-    // (to a tenth of a line's spacing when moving; to half a step when building, so designs line up)
+    // (moving: to a tenth of a line's spacing; drawing: onto the snapping grid, half a step across
+    // and three quarters up, near enough square on the page, so designs line up)
+    const SNAP = { x: 0.5, y: 0.75 };
     const atOf = (q, step) => { const r = (n) => Math.round(n / step) * step; const u = unitOf(); return [+(r(q.x / u.x)).toFixed(2), +(r(-q.y / u.y)).toFixed(2) || 0]; };
+    const snapAt = (q) => { const u = unitOf(); return [+(Math.round(q.x / u.x / SNAP.x) * SNAP.x).toFixed(2), +(Math.round(-q.y / u.y / SNAP.y) * SNAP.y).toFixed(2) || 0]; };
+    const snapped = (q) => { const [x, y] = snapAt(q), u = unitOf(); return { x: x * u.x, y: -y * u.y }; };
+    // (onto a point already drawn, when the pointer is close to it; else onto the grid)
+    function target(svg, q) {
+      let best = null, bestD = 11;
+      for (const h of svg.querySelectorAll(".pg-handle")) {
+        const d = Math.hypot(+h.getAttribute("cx") - q.x, +h.getAttribute("cy") - q.y);
+        if (d < bestD) { best = h; bestD = d; }
+      }
+      return best ? { x: +best.getAttribute("cx"), y: +best.getAttribute("cy"), vertex: best.dataset.vertex } : snapped(q);
+    }
     function ripple(svg, q) {
       for (const delay of [0, 120]) {
         const c = svgEl("circle", { class: "pg-ripple", cx: q.x, cy: q.y, r: 5 });
@@ -232,7 +259,8 @@
 
     // ---- gestures: move, draw, erase ---------------------------------------------------------
     let gesture = null;
-    drawing.addEventListener("pointerdown", (e) => {
+    const stageEl = drawing.parentElement;
+    stageEl.addEventListener("pointerdown", (e) => {
       const svg = drawing.querySelector("svg");
       if (!svg || e.button !== 0) return;
       const handle = e.target.closest(".pg-handle");
@@ -242,20 +270,34 @@
       } else if (tool === "draw") {
         // (a click on a line restyles it: see the click handler)
         if (!handle && e.target.closest("[data-edge]")) return;
-        e.preventDefault(); drawing.setPointerCapture(e.pointerId);
-        const start = handle ? { x: +handle.getAttribute("cx"), y: +handle.getAttribute("cy") } : toSvg(svg, e);
+        e.preventDefault(); stageEl.setPointerCapture(e.pointerId);
+        const start = handle ? { x: +handle.getAttribute("cx"), y: +handle.getAttribute("cy") } : snapped(toSvg(svg, e));
         const band = svgEl("line", { class: "pg-band", x1: start.x, y1: start.y, x2: start.x, y2: start.y });
         svg.appendChild(band);
         gesture = { kind: "draw", from: handle?.dataset.vertex, start, band, svg };
       }
     });
-    drawing.addEventListener("pointermove", (e) => {
-      if (!gesture) return;
+    stageEl.addEventListener("pointermove", (e) => {
+      const svg = drawing.querySelector("svg");
+      if (!svg) return;
+      const ghost = svg.querySelector(".pg-ghost");
+      if (!gesture) {
+        // (where a click would put a point)
+        if (ghost && tool === "draw") { const t = target(svg, toSvg(svg, e)); ghost.setAttribute("cx", t.x); ghost.setAttribute("cy", t.y); }
+        return;
+      }
       const q = toSvg(gesture.svg, e);
       if (gesture.kind === "move") { gesture.handle.setAttribute("cx", q.x); gesture.handle.setAttribute("cy", q.y); gesture.at = q; }
-      else { gesture.band.setAttribute("x2", q.x); gesture.band.setAttribute("y2", q.y); gesture.moved = Math.hypot(q.x - gesture.start.x, q.y - gesture.start.y) > 6; }
+      else {
+        const t = target(gesture.svg, q);
+        gesture.end = t;
+        gesture.band.setAttribute("x2", t.x); gesture.band.setAttribute("y2", t.y);
+        if (ghost) { ghost.setAttribute("cx", t.x); ghost.setAttribute("cy", t.y); }
+        gesture.moved = Math.hypot(q.x - gesture.start.x, q.y - gesture.start.y) > 6;
+      }
     });
-    drawing.addEventListener("pointerup", (e) => {
+    stageEl.addEventListener("pointerleave", () => { const ghost = drawing.querySelector(".pg-ghost"); if (ghost) ghost.setAttribute("cx", -1e4); });
+    stageEl.addEventListener("pointerup", (e) => {
       if (!gesture) return;
       const g = gesture; gesture = null;
       if (g.kind === "move") {
@@ -263,17 +305,16 @@
         return;
       }
       g.band.remove();
-      const end = toSvg(g.svg, e);
-      const over = document.elementFromPoint(e.clientX, e.clientY)?.closest?.(".pg-handle");
+      const end = g.end ?? target(g.svg, toSvg(g.svg, e));
       let src = source.value, from = g.from;
-      const place = (q) => { const id = nextPointName(); const [x, y] = atOf(q, 0.5); src = `${src.replace(/\s*$/, "")}\n${id} at (${x}, ${y})`.replace(/^\n/, ""); model.vertices.push({ id }); return id; };
+      const place = (q) => { const id = nextPointName(); const [x, y] = snapAt(q); src = `${src.replace(/\s*$/, "")}\n${id} at (${x}, ${y})`.replace(/^\n/, ""); model.vertices.push({ id }); return id; };
       if (!g.moved) {
         // (a click: a point of its own, on empty space)
         if (!from) { const id = place(end); ripple(g.svg, end); change(src, `Added point ${id}.`); }
         return;
       }
       if (!from) from = place(g.start);
-      const to = over?.dataset.vertex ?? place(end);
+      const to = end.vertex ?? place(end);
       if (to === from) return;
       src = `${src.replace(/\s*$/, "")}\n${from} -- [${brush}] ${to}`.replace(/^\n/, "");
       ripple(g.svg, end);
