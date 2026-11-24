@@ -49,18 +49,22 @@ Write every line, as in TikZ-Feynman, without a `tikzpicture`, coordinates or a 
 TikZ-Feynman edges
 { .feynjs-code-caption }
 
-```text
+````markdown
+```feynman
 i1 [e-] -- a -- i2 [e+]
 a -- [photon] b
 f1 [mu-] -- b -- f2 [mu+]
 ```
+````
 
 MadGraph process
 { .feynjs-code-caption }
 
-```text
+````markdown
+```feynman
 e- e+ > gamma > mu- mu+
 ```
+````
 
 </div>
 <div class="feynjs-row-diagram" markdown>
@@ -80,11 +84,13 @@ f1 [mu-] -- b -- f2 [mu+]
 
 feynjs knows when each particle lives: the collision, then each decay, left to right, as papers draw them. Every part of the drawing knows its step, so a page can build it up one at a time.
 
-```text
+````markdown
+```feynman
 p p > H
 H > Z Z
 Z > l+ l-
 ```
+````
 
 </div>
 <div class="feynjs-row-diagram" markdown>
@@ -104,7 +110,8 @@ Z > l+ l-
 
 A particle's name brings its line, arrow, label and colour: superpartners in red, a W wavy, a Higgs dashed. Over a hundred names are built in.
 
-```text
+````markdown
+```feynman
 arrows: none
 p p > chargino neutralino2
 chargino > W neutralino1
@@ -112,6 +119,7 @@ neutralino2 > Z neutralino1
 W > l nu
 Z > l l
 ```
+````
 
 </div>
 <div class="feynjs-row-diagram" markdown>
@@ -134,9 +142,11 @@ Z > l l
 
 Put a particle in braces to run it round a loop: the top-quark triangle of Higgs production by gluon fusion is one line.
 
-```text
+````markdown
+```feynman
 g g > {t} > H
 ```
+````
 
 </div>
 <div class="feynjs-row-diagram" markdown>
@@ -155,12 +165,14 @@ g g > {t} > H
 The force engine balances the diagram until it settles; the grid engine puts every line on a grid.
 One line switches between them, and the same diagram moves from one to the other.
 
-```text
+````markdown
+```feynman
 layout: grid
 p p > t t~
 t > b W+(> e+ ve)
 t~ > b~ W-(> d u~)
 ```
+````
 
 </div>
 <div class="feynjs-row-diagram" markdown>
@@ -180,13 +192,15 @@ t~ > b~ W-(> d u~)
 
 The final states a detector sees, drawn as it sees them: large-R jets with what they hold, semi-visible and emerging jets, missing energy. A pulse draws the eye where it should go.
 
-```text
+````markdown
+```feynman
 i1 [p] -- pp [blob, pulse] -- i2 [p]
 pp -- [LRJ 1b W(2j)] j1 [J]
 pp -- [Z'] z
 z -- [SVJ] f1 [\text{SVJ}]
 z -- [EMG] f2 [\text{EJ}]
 ```
+````
 
 </div>
 <div class="feynjs-row-diagram" markdown>
