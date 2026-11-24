@@ -45,7 +45,7 @@ latest. Cite the version you used:
 ```bibtex
 @software{feynjs,
   author  = {Oliver, Jason},
-  title   = {feynjs: Feynman diagrams for the web, written as text and laid out automatically},
+  title   = {feynjs: Feynman diagrams for the web},
   version = {0.9.4},
   year    = {2026},
   doi     = {10.5281/zenodo.24497762},
