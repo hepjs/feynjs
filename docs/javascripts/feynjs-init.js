@@ -12,12 +12,18 @@
       if (el.querySelector(".feynjs-js") || el.textContent.trim() !== "feynjs") return;
       el.textContent = "";
       el.appendChild(part("feynjs-feyn", "feyn"));
+      // (the photon between the words, as in the logo)
+      var photon = part("feynjs-photon", "");
+      photon.setAttribute("aria-hidden", "true");
+      el.appendChild(photon);
       el.appendChild(part("feynjs-js", "js"));
     });
   };
 
   var go = function () {
     brandName();
+    // (the home page's tour first, without download buttons)
+    feynjs.run({ querySelector: ".feynjs-row div.feynman:not([data-processed])" });
     feynjs.run({ querySelector: "div.feynman:not([data-processed])", download: true });
   };
   if (window.document$ && window.document$.subscribe) window.document$.subscribe(go);
