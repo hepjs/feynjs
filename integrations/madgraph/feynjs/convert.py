@@ -57,9 +57,10 @@ def susy_family(name):
         return "chargino" + m.group(1)
     if re.match(r"^[udscbt][lr12]$", core):
         return "squark"
-    if re.match(r"^sv\d", core):
+    if re.match(r"^sv(\d|[emt])$", core):
         return "sneutrino"
-    if re.match(r"^sl\d", core):
+    # (sleptons: sl1-, or as the MSSM model names them, el-, mur+, ta1-)
+    if re.match(r"^(sl\d|(e|mu)[lr]|ta[12])[+-]$", core):
         return "slepton"
     return None
 
@@ -82,6 +83,17 @@ def tex_label(name):
     if m:
         squark = "\\tilde %s_{%s}" % (m.group(1), m.group(2).upper() if m.group(2) in "lr" else m.group(2))
         return "\\bar{%s}" % squark if bar else squark
+    # (the MSSM model's own slepton names: el- a left selectron, mur+ a right smuon, ta1- a stau,
+    # sve an electron sneutrino)
+    m = re.match(r"^(e|mu)([lr])([+-])$", core)
+    if m:
+        return "\\tilde{%s}^%s_%s" % ("e" if m.group(1) == "e" else "\\mu", m.group(3), m.group(2).upper())
+    m = re.match(r"^ta([12])([+-])$", core)
+    if m:
+        return "\\tilde\\tau^%s_%s" % (m.group(2), m.group(1))
+    m = re.match(r"^sv([emt])$", core)
+    if m:
+        return "\\tilde\\nu_{%s}" % {"e": "e", "m": "\\mu", "t": "\\tau"}[m.group(1)]
     m = re.match(r"^(sv|sl|ta|mu|e)(\d?)([lr]?)([+-]?)$", core)
     if m and core.startswith(("sv", "sl")):
         base = "\\tilde\\nu" if m.group(1) == "sv" else "\\tilde\\ell"
