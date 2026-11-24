@@ -358,3 +358,31 @@
 .md-typeset .feynjs-row-code pre { margin: 0 0 0.8rem; }
 .md-typeset .feynjs-row--anywhere .md-button { margin: 0.2rem 0.4rem 0 0; }
 @media (max-width: 45em) { .md-typeset .feynjs-row { grid-template-columns: minmax(0, 1fr); } }
+
+/* The time-order row: each step of the diagram appears in turn; as a vertex is reached it punches
+   and sends out a ripple, as the logo's vertices do. (Without motion, the diagram is simply there.) */
+.md-typeset .feynjs-row-code pre + p, .md-typeset .feynjs-code-caption { margin: 0.9rem 0 0.3rem; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--md-default-fg-color--light); }
+.md-typeset .feynjs-row-text .feynjs-code-caption { margin: 0.9rem 0 0.3rem; }
+@media (prefers-reduced-motion: no-preference) {
+  .md-typeset .feynjs-row--steps svg[data-steps] [data-level] { opacity: 0; }
+  .md-typeset .feynjs-row--steps svg.feynjs-play [data-level] { animation: feynjs-step-in 0.45s ease-out both; animation-delay: calc(var(--step) * 0.6s); }
+  .md-typeset .feynjs-step-ripple { fill: none; stroke: var(--feynjs-brick, #c0392b); stroke-width: 1.4; vector-effect: non-scaling-stroke; opacity: 0; transform-box: fill-box; transform-origin: center; }
+  .md-typeset .feynjs-play .feynjs-step-ripple { animation: feynjs-step-ripple 1.4s cubic-bezier(0.1, 0.7, 0.3, 1) forwards; animation-delay: calc(var(--step) * 0.6s + 0.32s + var(--k) * 0.2s); }
+  .md-typeset .feynjs-step-punch { fill: var(--feynjs-brick, #c0392b); opacity: 0; transform-box: fill-box; transform-origin: center; }
+  .md-typeset .feynjs-play .feynjs-step-punch { animation: feynjs-step-punch 0.9s ease-out forwards; animation-delay: calc(var(--step) * 0.6s + 0.3s); }
+  [data-md-color-scheme="slate"] .md-typeset .feynjs-step-ripple { stroke: #e05a4c; }
+  [data-md-color-scheme="slate"] .md-typeset .feynjs-step-punch { fill: #e05a4c; }
+}
+@media (prefers-reduced-motion: reduce) { .md-typeset .feynjs-step-marks { display: none; } }
+@keyframes feynjs-step-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes feynjs-step-ripple { from { transform: scale(1); opacity: 0.9; } to { transform: scale(8); opacity: 0; } }
+@keyframes feynjs-step-punch { 0% { transform: scale(0); opacity: 1; } 18% { transform: scale(1.8); opacity: 1; } 45% { transform: scale(0.9); opacity: 1; } 100% { transform: scale(1); opacity: 0; } }
+
+/* The two-engines row: a small switch over the diagram, and the grid fading in when it lands on it */
+.md-typeset .feynjs-engine-switch { display: inline-flex; margin: 0 0 0.6rem; border: 1px solid var(--md-default-fg-color--lighter); border-radius: 0.3rem; overflow: hidden; font-size: 0.62rem; }
+.md-typeset .feynjs-engine-switch button { padding: 0.18rem 0.7rem; border: 0; background: var(--md-default-bg-color); color: var(--md-default-fg-color--light); cursor: pointer; font: inherit; }
+.md-typeset .feynjs-engine-switch button + button { border-left: 1px solid var(--md-default-fg-color--lighter); }
+.md-typeset .feynjs-engine-switch button.feynjs-on { background: var(--feynjs-rule, #c0392b); color: #fff; }
+.md-typeset .feynjs-row--morph .feynjs-row-diagram { text-align: center; }
+.md-typeset .feynjs-row--morph div.feynman svg.feynjs { width: 100%; height: auto; max-height: none; }
+.md-typeset .feynjs-row--morph .feynjs-on-grid .feynjs-grid { animation: feynjs-step-in 0.5s ease-out both; }
