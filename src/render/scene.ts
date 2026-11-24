@@ -190,6 +190,17 @@ export class Scene {
         const cost = this.crowding(candidate.box, request.ignore) + attempt * 0.01;
         if (cost < bestCost) { best = candidate; bestCost = cost; }
       }
+      // (still crowded: look all round each spot's own point on its line, a little further out
+      // each time, the line's own side first; the label stays by its line, only clear of the rest)
+      if (bestCost >= 1) {
+        for (const spot of request.spots.slice(0, 4)) for (const reach of [1, 1.6, 2.4]) for (let k = 0; k < 16; k++) {
+          const angle = (k * Math.PI) / 8, direction = { x: Math.cos(angle), y: Math.sin(angle) };
+          const turn = Math.acos(Math.max(-1, Math.min(1, direction.x * spot.direction.x + direction.y * spot.direction.y)));
+          const candidate = this.boxAt({ anchor: spot.anchor, direction }, request.clearance * reach, label.width, label.ascent, label.descent);
+          const cost = this.crowding(candidate.box, request.ignore) + 0.05 * turn + 0.02 * reach;
+          if (cost < bestCost) { best = candidate; bestCost = cost; }
+        }
+      }
       if (bestCost >= 1) this.crowdedLabels.push(request.tex);
       // a label that names a particle tells what it is when the pointer rests on it
       const info = this.tooltips && request.particle ? particleInfo(request.particle) : undefined;

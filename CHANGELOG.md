@@ -25,6 +25,9 @@ layout that moves is a change, recorded here.
   `data-object` in the SVG. In the playground, click a large-R jet to choose what it holds.
 - **A MadGraph plugin** (`integrations/madgraph`): `mg5_aMC --mode=feynjs`, then `feynjs DIR`
   draws every diagram MadGraph generated, decay chains joined into whole diagrams.
+- **Labels in crowded places:** a label with no clear spot beside its line searches all round
+  its line's points, a little further out each time, instead of overlapping another (MadGraph's
+  2->6 diagrams: 25 crowded labels to none).
 - **Top decays** (default engine): the b of t -> b W leaves to the outside of the diagram, turned
   40 degrees from the top's heading and a little short, while the W and what follows lie as
   before; a b that settles inside its W is turned over to the outside. A top level with the beams
