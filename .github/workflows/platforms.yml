@@ -1,0 +1,108 @@
+# The same diagrams on every machine. Each platform builds feynjs, runs the tests, and hashes
+# every diagram it draws; the last job checks that all the hashes agree: operating systems
+# (Linux, macOS, Windows), processors (x86, ARM) and JavaScript engines (Node, Deno, Bun, and
+# the browsers Chromium, Firefox and WebKit).
+name: Platforms
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+
+jobs:
+  platform:
+    name: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm, macos-latest, macos-15-intel, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: prefix-dev/setup-pixi@v0.9.0
+        with:
+          environments: paper
+      # tectonic fetches its TeX packages on first use (minutes): keep them between runs
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/Tectonic
+            ~/Library/Caches/Tectonic
+            ~/AppData/Local/TectonicProject/Tectonic
+          key: tectonic-${{ runner.os }}-${{ runner.arch }}-v1
+      # the tests, with tectonic so the TikZ export is compiled too
+      - run: pixi run -e paper test
+      - run: pixi run node scripts/platform-hashes.mjs --out hashes-${{ matrix.os }}.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hashes-${{ matrix.os }}
+          path: hashes-${{ matrix.os }}.json
+
+  # Windows on ARM: conda-forge has no Node for it yet, so plain Node
+  windows-arm:
+    runs-on: windows-11-arm
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22.22.2
+      - run: npm ci
+      - run: npm run build
+      - run: npm test
+      - run: node scripts/platform-hashes.mjs --out hashes-windows-11-arm.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hashes-windows-11-arm
+          path: hashes-windows-11-arm.json
+
+  engines:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: prefix-dev/setup-pixi@v0.9.0
+        with:
+          environments: engines
+      - run: pixi run -e engines build
+      - run: pixi run -e engines bun scripts/platform-hashes.mjs --out hashes-bun.json
+      - run: pixi run -e engines deno run -A scripts/platform-hashes.mjs --out hashes-deno.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hashes-engines
+          path: hashes-*.json
+
+  browsers:
+    name: browsers (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: prefix-dev/setup-pixi@v0.9.0
+      - run: pixi run build
+      - run: pixi run npm install --no-save playwright
+      - run: pixi run npx playwright install --with-deps chromium firefox webkit
+      - run: pixi run node scripts/platform-hashes-browsers.mjs --out-dir .
+      - run: for f in hashes-chromium.json hashes-firefox.json hashes-webkit.json; do mv "$f" "${f%.json}-${{ matrix.os }}.json"; done
+        shell: bash
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hashes-browsers-${{ matrix.os }}
+          path: hashes-*.json
+
+  same-everywhere:
+    needs: [platform, windows-arm, engines, browsers]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22.22.2
+      - uses: actions/download-artifact@v4
+        with:
+          path: hashes
+          merge-multiple: true
+      - run: node scripts/platform-hashes.mjs --compare hashes/hashes-ubuntu-latest.json $(ls hashes/*.json | grep -v ubuntu-latest.json)

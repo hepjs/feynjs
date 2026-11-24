@@ -8,3 +8,6 @@ docs/javascripts/feynjs.min.js
 .env
 .env.*
 .cache/
+
+# pixi environments
+.pixi/

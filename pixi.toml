@@ -1,0 +1,83 @@
+# One environment for feynjs on every major platform: macOS (Apple Silicon and Intel), Linux
+# (x86 and ARM) and Windows. Install pixi (https://pixi.sh), then:
+#
+#   pixi run test            build, type-check and run the tests
+#   pixi run hashes          every diagram's layout, hashed: the same on every machine (CI compares)
+#   pixi run -e paper paper  the Physica Scripta paper (figures drawn by feynjs, compiled by tectonic)
+#   pixi run -e latexml arxiv-html-test   LaTeXML, arXiv's LaTeX -> HTML converter (Linux, macOS)
+#   pixi run -e engines hashes-bun     the same check in Bun (JavaScriptCore) and Deno
+#   pixi run -e docs docs    the documentation site
+[workspace]
+name = "feynjs"
+channels = ["conda-forge"]
+platforms = ["osx-arm64", "osx-64", "linux-64", "linux-aarch64", "win-64"]
+
+[dependencies]
+# node --test runs the .ts tests directly (type stripping, Node 22.18+)
+nodejs = ">=22.18,<25"
+
+[tasks]
+install = { cmd = "npm ci", inputs = ["package-lock.json"], outputs = ["node_modules/.package-lock.json"] }
+build = { cmd = "npm run build", depends-on = ["install"] }
+typecheck = { cmd = "npm run typecheck", depends-on = ["install"] }
+test = { cmd = "npm test", depends-on = ["build", "typecheck"] }
+hashes = { cmd = "node scripts/platform-hashes.mjs", depends-on = ["build"] }
+
+# TeX for the paper and the toTikz compile test: tectonic runs on every platform and fetches the
+# packages it needs (tikz-feynman included) on first use.
+[feature.tex.dependencies]
+tectonic = "*"
+
+[feature.tex.tasks]
+paper-figures = { cmd = "node scripts/paper-figures.mjs", depends-on = ["build"] }
+paper = { cmd = "tectonic --keep-logs --outdir build feynjs.tex", cwd = "paper", depends-on = ["paper-figures"] }
+
+# LaTeXML is not packaged for conda-forge: it is built from CPAN into the environment, once.
+[feature.latexml]
+platforms = ["osx-arm64", "osx-64", "linux-64", "linux-aarch64"]
+
+[feature.latexml.dependencies]
+perl = "5.32.*"
+perl-app-cpanminus = "*"
+libxml2 = "*"
+libxslt = "*"
+zlib = "*"
+make = "*"
+c-compiler = "*"
+pkg-config = "*"
+tectonic = "*"
+
+[feature.latexml.activation.env]
+PERL5LIB = "$CONDA_PREFIX/latexml/lib/perl5"
+PATH = "$CONDA_PREFIX/latexml/bin:$PATH"
+
+[feature.latexml.tasks]
+# (skipped once built: perl answers whether latexmlc is already there)
+install-latexml = "perl -e 'exit(-x \"$ENV{CONDA_PREFIX}/latexml/bin/latexmlc\" ? 0 : 1)' || cpanm --notest --local-lib $CONDA_PREFIX/latexml LaTeXML"
+arxiv-html-test = { cmd = "sh paper/tools/latexml/test/run.sh", depends-on = ["install-latexml", "build"] }
+
+# Other JavaScript engines, for the platform check: Bun runs JavaScriptCore (Safari's engine),
+# Deno runs V8 like Node.
+[feature.engines.dependencies]
+bun = "*"
+deno = "*"
+
+[feature.engines.tasks]
+hashes-bun = { cmd = "bun scripts/platform-hashes.mjs", depends-on = ["build"] }
+hashes-deno = { cmd = "deno run -A scripts/platform-hashes.mjs", depends-on = ["build"] }
+
+[feature.docs.dependencies]
+python = "3.12.*"
+
+[feature.docs.pypi-dependencies]
+zensical = "*"
+
+[feature.docs.tasks]
+docs = { cmd = "zensical build --clean", depends-on = ["build"] }
+
+[environments]
+default = { solve-group = "default" }
+paper = { features = ["tex"], solve-group = "default" }
+latexml = { features = ["latexml"], solve-group = "latexml" }
+docs = { features = ["docs"], solve-group = "default" }
+engines = { features = ["engines"], solve-group = "engines" }

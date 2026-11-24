@@ -1,0 +1,6 @@
+# The same bytes on every platform: diagram sources and code check out with LF line endings on
+# Windows too, so layouts and their hashes match across machines.
+* text=auto eol=lf
+*.png binary
+*.pdf binary
+*.otf binary
