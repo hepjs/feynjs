@@ -1,66 +1,239 @@
 ---
+hide:
+  - navigation
+  - toc
 tags:
   - features
   - overview
+  - how it works
+  - examples
   - TikZ-Feynman
   - MadGraph
-  - Markdown
 ---
 
 # What feynjs does
 
-## Two ways to write a diagram
+feynjs reads a diagram written as text, places every vertex itself, and draws it: in a web page, in
+a Markdown note, or in a LaTeX paper. This is what it draws, and how.
 
-<div class="grid cards" markdown>
+## What it draws
 
--   **[Edges, as in TikZ-Feynman](guide/syntax.md)**: every line written out.
+Every diagram on this page is drawn live, by your browser, as the page loads.
+
+<div class="grid cards feynjs-gallery" markdown>
+
+-   **[e⁺e⁻ → μ⁺μ⁻](guide/syntax.md)**: QED, written as lines
 
     ```feynman
     i1 [e-] -- a -- i2 [e+]
-    a -- [gamma] b
+    a -- [photon] b
     f1 [mu-] -- b -- f2 [mu+]
     ```
 
-    ````tex
+-   **[Top pairs](guide/processes.md)**: a process with its decays
+
     ```feynman
-    i1 [e-] -- a -- i2 [e+] % (1)!
-    a -- [gamma] b % (2)!
-    f1 [mu-] -- b -- f2 [mu+] % (3)!
+    p p > t t~
+    t > b W+(> e+ ve)
+    t~ > b~ W-(> d u~)
     ```
-    ````
 
-    1.  An electron and a positron come in and meet at the point `a`. Points are any names you
-        like; a leg's particle goes in brackets after it.
-    2.  A photon from `a` to `b`. The particle in the brackets sets the line's style, arrow and
-        label.
-    3.  The muon pair goes out from `b`. Time runs left to right; no coordinates are needed.
-
--   **[A process, as in MadGraph](guide/processes.md)**: feynjs makes the lines.
+-   **[Gluon fusion](guide/loops-hadrons.md)**: a loop, in braces
 
     ```feynman
-    p p > gluino gluino
-    gluino > q q neutralino2
+    g g > {t} > H
+    ```
+
+-   **[H → ZZ → 4ℓ](guide/processes.md)**: decays, in time order
+
+    ```feynman
+    p p > H
+    H > Z Z
+    Z > l+ l-
+    ```
+
+-   **[Vector-boson fusion](guide/processes.md)**: a production mode by name
+
+    ```feynman
+    VBF > H
+    ```
+
+-   **[Charginos and neutralinos](guide/lines.md)**: superpartners in their colour
+
+    ```feynman
+    arrows: none
+    p p > chargino neutralino2
+    chargino > W neutralino1
     neutralino2 > Z neutralino1
+    W > l nu
+    Z > l l
     ```
 
-    ````tex
+-   **[B⁰ → K*⁰μμ](guide/loops-hadrons.md)**: a penguin, with its hadrons
+
     ```feynman
-    p p > gluino gluino % (1)!
-    gluino > q q neutralino2 % (2)!
-    neutralino2 > Z neutralino1 % (3)!
+    % B0 -> K*0 mu mu: a W loop over the quark line, with the photon leaving the loop
+    in: d1 b
+    out: d2 s mu1 mu2
+    d1 [d] -- [fermion] d2 [d]
+    s [\bar{s}] -- [fermion] l2 -- [fermion, label={\bar{u}, \bar{c}, \bar{t}}] l1 -- [fermion] b [\bar{b}]
+    l1 -- [boson, label=W^-] x -- [boson] l2
+    x -- [photon, label={\gamma, Z^0}] v
+    v -- [fermion] mu1 [\mu^-]
+    mu2 [\mu^+] -- [fermion] v
+    hadron: B^0 = d1 b [brace]
+    hadron: K^{*0} = d2 s [brace]
     ```
-    ````
 
-    1.  The process: two protons make a pair of gluinos, drawn in the SUSY style.
-    2.  How each gluino decays. A decay line applies to every particle of that name.
-    3.  The neutralino's own decay, joined on: a cascade in three lines.
+-   **[Colour flow](guide/colour-flow.md)**: beside every quark and gluon
+
+    ```feynman
+    colour flow: on
+    i1 [g] -- a -- i2 [g]
+    a -- [gluon] b
+    f1 [t] -- b -- f2 [tbar]
+    ```
+
+-   **[Detector objects](guide/objects.md)**: jets, large-R, semi-visible, emerging
+
+    ```feynman
+    i1 [p] -- pp [blob] -- i2 [p]
+    pp -- [LRJ 1b W(2j)] j1 [J]
+    pp -- [Z'] z
+    z -- [SVJ] f1 [\text{SVJ}]
+    z -- [EMG] f2 [\text{EJ}]
+    ```
+
+-   **[Light-by-light](guide/vertices.md)**: nuclei, here lead
+
+    ```feynman
+    i1 [Pb] -- b1 [nucleus=Pb] -- o1 [Pb]
+    i2 [Pb] -- b2 [nucleus=Pb] -- o2 [Pb]
+    b1 -- [photon] a
+    b2 -- [photon] d
+    a -- [fermion] b -- [fermion] c -- [fermion] d -- [fermion] a
+    b -- [photon] g1 [gamma]
+    c -- [photon] g2 [gamma]
+    ```
+
+-   **[The event](guide/views.md)**: as the detector sees it
+
+    ```feynman
+    view: kinematic
+    i1 [p] -- pp [blob] -- i2 [p]
+    pp -- [t] t1
+    pp -- [tbar] t2
+    t1 -- b1 [b]
+    t1 -- [W+] w1
+    w1 -- l1 [e+]
+    w1 -- n1 [nu_e]
+    t2 -- [W-] w2
+    t2 -- b2 [bbar]
+    w2 -- q1 [d]
+    w2 -- q2 [ubar]
+    ```
+
+-   **[The lattice](guide/views.md)**: Wilson loops and plaquettes
+
+    ```feynman
+    view: lattice
+    lattice: 8x6
+    wilson loop: (1,1) to (4,4)
+    plaquette: (5,1)
+    ```
 
 </div>
 
-Either goes in a `feynman` block in your Markdown. Click a number in the code to see what each line
-does.
+## How it works
 
-## Everything it does
+<div class="feynjs-row" markdown>
+<div class="feynjs-row-text" markdown>
+
+### 1 · Read
+
+The text names the points and the lines between them, as TikZ-Feynman does; or it names the
+process, as MadGraph does, and feynjs makes the points and lines. Each particle's name brings its
+line style, arrow, label and colour.
+
+</div>
+<div class="feynjs-row-diagram feynjs-row-code" markdown>
+
+````markdown
+```feynman
+p p > H
+H > Z Z
+Z > l+ l-
+```
+````
+
+</div>
+</div>
+
+<div class="feynjs-row feynjs-row--steps" markdown>
+<div class="feynjs-row-text" markdown>
+
+### 2 · Order in time
+
+Every point gets its moment: the collision first, then each decay, in order. Time runs left to
+right, so a diagram reads as a paper draws it, and nothing runs backwards.
+
+</div>
+<div class="feynjs-row-diagram" markdown>
+
+```feynman
+p p > H
+H > Z Z
+Z > l+ l-
+```
+
+</div>
+</div>
+
+<div class="feynjs-row" markdown>
+<div class="feynjs-row-text" markdown>
+
+### 3 · Settle
+
+Forces pull on the points until the diagram balances: lines keep their length, angles spread
+evenly, decays fan forward, heavy particles carry on, and everything keeps clear of everything
+else. The rules come in seven families; `debug: on` marks each line with the family that holds it
+most. Or set `layout: grid`, or pin points by hand, as in TikZ.
+
+</div>
+<div class="feynjs-row-diagram feynjs-row-debug" markdown>
+
+```feynman
+debug: on
+p p > H
+H > Z Z
+Z > l+ l-
+```
+
+</div>
+</div>
+
+<div class="feynjs-row" markdown>
+<div class="feynjs-row-text" markdown>
+
+### 4 · Draw
+
+Labels are set in the TeX face, clear of the lines, and the diagram is drawn as SVG in the page's
+own colours, light or dark, or written as TikZ-Feynman code for a paper. Every machine and every
+browser draws it bit for bit the same.
+
+</div>
+<div class="feynjs-row-diagram" markdown>
+
+```feynman
+p p > H
+H > Z Z
+Z > l+ l-
+```
+
+</div>
+</div>
+
+## Every feature, by page
 
 <div class="grid cards feynjs-features" markdown>
 

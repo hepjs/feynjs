@@ -407,3 +407,25 @@
 .md-typeset .feynjs-switch-line { display: block; padding: 0 0.3em; margin: 0 -0.3em; border-radius: 0.2em; opacity: 0.28; transition: opacity 0.5s, background-color 0.5s, color 0.5s; }
 .md-typeset .feynjs-switch-line.feynjs-on { opacity: 1; color: var(--feynjs-brick, #c0392b); background: rgba(192, 57, 43, 0.1); }
 [data-md-color-scheme="slate"] .md-typeset .feynjs-switch-line.feynjs-on { color: #e05a4c; background: rgba(224, 90, 76, 0.14); }
+
+/* "What feynjs does": a gallery of live diagrams, three to a row, each with its caption */
+.md-typeset .grid.cards.feynjs-gallery { grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: 0.6rem; }
+.md-typeset .grid.cards.feynjs-gallery > ul > li { display: flex; flex-direction: column; justify-content: space-between; padding: 0.7rem 0.8rem; font-size: 0.68rem; }
+.md-typeset .grid.cards.feynjs-gallery div.feynman { margin: 0 0 0.5rem; display: flex; align-items: center; justify-content: center; min-height: 9.5rem; }
+.md-typeset .grid.cards.feynjs-gallery div.feynman svg.feynjs { max-width: 100%; max-height: 10rem; height: auto; }
+.md-typeset .grid.cards.feynjs-gallery > ul > li > p:first-child { margin: 0 0 0.4rem; }
+.md-typeset .grid.cards.feynjs-gallery > ul > li div.feynman { flex: 1; }
+.md-typeset .feynjs-row-debug div.feynman svg.feynjs { max-height: none; }
+
+/* "Get started": a card for each place feynjs can draw, its first step and a way on */
+.md-typeset .feynjs-start-lead { font-size: 0.85rem; color: var(--md-default-fg-color--light); margin: 0 0 1.2rem; }
+.md-typeset .grid.cards.feynjs-start { grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr)); gap: 0.7rem; }
+.md-typeset .grid.cards.feynjs-start > ul > li { display: flex; flex-direction: column; padding: 0.9rem 1rem; }
+.md-typeset .grid.cards.feynjs-start > ul > li > p:first-child { font-size: 0.9rem; margin: 0 0 0.3rem; }
+.md-typeset .grid.cards.feynjs-start > ul > li > p { margin: 0 0 0.6rem; font-size: 0.7rem; }
+.md-typeset .grid.cards.feynjs-start > ul > li > p:last-child { margin: auto 0 0; padding-top: 0.4rem; }
+.md-typeset .grid.cards.feynjs-start pre { margin: 0 0 0.4rem; }
+.md-typeset .grid.cards.feynjs-start pre code { font-size: 0.62rem; white-space: pre; overflow-x: auto; }
+.md-typeset .grid.cards.feynjs-start .md-button { margin: 0; font-size: 0.66rem; padding: 0.35em 1em; }
+.md-typeset .feynjs-start-next { margin: 1.8rem 0 0.6rem; }
+.md-typeset .feynjs-start-buttons .md-button { margin: 0 0.4rem 0.4rem 0; }
