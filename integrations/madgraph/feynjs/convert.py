@@ -7,6 +7,7 @@ keeps as a production and its decays, is joined back into whole diagrams: each d
 where its particle leaves the production.
 """
 import itertools
+import re
 
 import madgraph.core.drawing as drawing
 
@@ -17,7 +18,7 @@ g a Z W+ W- H h z w+ w-""".split())
 
 # Any other particle (a new model's) is drawn by the kind of line its model gives it.
 STYLE_OF_LINE = {"straight": "plain", "dashed": "scalar", "wavy": "boson", "curly": "gluon",
-                 "dotted": "ghost", "double": "double", "swavy": "gaugino", "scurly": "gluino"}
+                 "dotted": "ghost", "double": "double", "swavy": "susy", "scurly": "susy gluon"}
 
 # (a decay chain's combinations, production diagrams times each decay's, can be many)
 MOST_COMBINATIONS = 60
@@ -32,7 +33,35 @@ def _style(line):
     style = STYLE_OF_LINE.get(kind, "plain")
     if kind == "straight" and line.is_fermion():
         style = "fermion"
-    return "%s, label={%s}" % (style, line.get_name("texname") or name)
+    return "%s, label={%s}" % (style, tex_label(name))
+
+
+def tex_label(name):
+    """A label for a particle feynjs does not know, by its MadGraph name: the MSSM's names as
+    papers write them (go a gluino, n1 a neutralino, x1+ a chargino, t1 and ul squarks, sl1- a
+    slepton), else the name itself, upright."""
+    bar = name.endswith("~")
+    core = name[:-1] if bar else name
+    m = re.match(r"^(x)(\d)([+-])$", core)
+    if m:
+        return "\\tilde\\chi^%s_%s" % (m.group(3), m.group(2))
+    m = re.match(r"^n(\d)$", core)
+    if m:
+        return "\\tilde\\chi^0_%s" % m.group(1)
+    if core == "go":
+        return "\\tilde g"
+    m = re.match(r"^([udscbt])([lr12])$", core)
+    if m:
+        squark = "\\tilde %s_{%s}" % (m.group(1), m.group(2).upper() if m.group(2) in "lr" else m.group(2))
+        return "\\bar{%s}" % squark if bar else squark
+    m = re.match(r"^(sv|sl|ta|mu|e)(\d?)([lr]?)([+-]?)$", core)
+    if m and core.startswith(("sv", "sl")):
+        base = "\\tilde\\nu" if m.group(1) == "sv" else "\\tilde\\ell"
+        return "%s_{%s}%s" % (base, m.group(2) or "", "^" + m.group(4) if m.group(4) else "")
+    for higgs, tex in (("h01", "h"), ("h02", "H"), ("a0", "A"), ("h+", "H^+"), ("h-", "H^-")):
+        if core == higgs:
+            return tex
+    return "\\mathrm{%s}" % name
 
 
 def p_in(point, edge):
@@ -66,11 +95,14 @@ class Piece:
             return [b, style, a, abs(line.id)] if line.id < 0 and style in KNOWN else [a, style, b, abs(line.id)]
         self.edges = [edge(line) for line in picture.lineList]
         self.prefix = prefix
+        self.process = process
+        # (each leg's particle by its signed id, as the process lists it: a t and a t~ differ)
+        listed = process.get("legs")
         self.legs = {}
         for line in picture.lineList:
             for point in (line.begin, line.end):
                 if point.is_external():
-                    self.legs[name_of(point)] = abs(line.id)
+                    self.legs[name_of(point)] = listed[line.number - 1].get("id")
 
     def outgoing_of(self, pid, taken):
         """The first outgoing leg of particle `pid` not yet given a decay."""
@@ -117,35 +149,45 @@ class Piece:
     def source(self):
         self.merge_pass_throughs()
         legs = sorted(self.legs, key=lambda n: (n.count("_"), n))
-        head = ["in: " + " ".join(n for n in legs if n.split("_")[-1][0] == "i"),
-                "out: " + " ".join(n for n in legs if n.split("_")[-1][0] == "f")]
+        # (the incoming legs in MadGraph's order; the outgoing ones left to feynjs, which orders
+        # them so that no lines cross: a fixed order, MadGraph's numbering, would force crossings)
+        head = ["in: " + " ".join(n for n in legs if n.split("_")[-1][0] == "i")]
         return "\n".join(head + ["%s -- [%s] %s" % (a, o, b) for a, o, b, _ in self.edges]) + "\n"
 
 
+def _joined(chain, model, prefix, budget):
+    """Whole diagrams (Pieces) of a decay chain (a DecayChainAmplitude): each of its own
+    diagrams with a decay joined on wherever a particle it decays leaves (every gluino of a
+    gluino pair, as MadGraph reads `(go > t t~ n1)`), decays within decays too; at most budget[0]."""
+    chains = [(sub.get("amplitudes")[0].get("process").get("legs")[0].get("id"), sub) for sub in chain.get("decay_chains")]
+    for core in chain.get("amplitudes"):
+        process = core.get("process")
+        for diagram in core.get("diagrams"):
+            base = Piece(diagram, model, process, prefix)
+            # (the legs that decay, each with its own decays' whole diagrams, made under its own name)
+            places, options, taken = [], [], set()
+            for pid, sub in chains:
+                while True:
+                    leg = base.outgoing_of(pid, taken)
+                    if leg is None:
+                        break
+                    taken.add(leg)
+                    places.append(leg)
+                    options.append(list(_joined(sub, model, "%sd%d_" % (prefix, len(places)), [budget[0]])))
+            for choice in itertools.product(*options):
+                if budget[0] <= 0:
+                    return
+                whole = Piece(diagram, model, process, prefix)
+                for leg, decay in zip(places, choice):
+                    whole.attach(leg, decay)
+                budget[0] -= 1
+                yield whole
+
+
 def whole_diagrams(amplitude, model):
-    """(title, feynjs source) for every diagram of an amplitude; a decay chain's production and
-    decays joined into whole diagrams (at most MOST_COMBINATIONS). One level of decays: a decay's
-    own decay chain, (t > b w+, w+ > e+ ve), is joined as far as its first level."""
+    """(process, number, feynjs source) for every diagram of an amplitude; a decay chain's
+    production and decays, to any depth, joined into whole diagrams (at most MOST_COMBINATIONS)."""
     if "decay_chains" not in amplitude:
         process = amplitude.get("process")
         return [(process, n, Piece(d, model, process).source()) for n, d in enumerate(amplitude.get("diagrams"), 1)]
-    results = []
-    for core in amplitude.get("amplitudes"):
-        process = core.get("process")
-        # each decay chain's diagrams, as (process, diagram), one list per decaying particle
-        decays = [[(a.get("process"), d) for a in chain.get("amplitudes") for d in a.get("diagrams")] for chain in amplitude.get("decay_chains")]
-        for n, diagram in enumerate(core.get("diagrams"), 1):
-            for choice in itertools.product(*decays):
-                whole = Piece(diagram, model, process)
-                taken = set()
-                for k, (dprocess, ddiagram) in enumerate(choice):
-                    pid = abs(dprocess.get("legs")[0].get("id"))
-                    leg = whole.outgoing_of(pid, taken)
-                    if leg is None:
-                        continue
-                    taken.add(leg)
-                    whole.attach(leg, Piece(ddiagram, model, dprocess, prefix="d%d_" % (k + 1)))
-                results.append((process, n, whole.source()))
-                if len(results) >= MOST_COMBINATIONS:
-                    return results
-    return results
+    return [(whole.process, n, whole.source()) for n, whole in enumerate(_joined(amplitude, model, "", [MOST_COMBINATIONS]), 1)]
