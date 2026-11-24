@@ -5,6 +5,7 @@ import { balance } from "./solve.ts";
 import { readStructure } from "./structure.ts";
 import type { Sizes, Structure } from "./structure.ts";
 import type { Force } from "./forces.ts";
+import * as portable from "../../geometry/portable-math.ts";
 
 /**
  * Layout v2: decide when each point happens, then let a few forces settle where it goes.
@@ -32,7 +33,7 @@ export function layoutWithForces(diagram: Diagram, rules: ForceRules, rowOverRan
   const noted = (step: string, before: Float64Array, after: Float64Array) => {
     if (!trace) return;
     const moved = new Map<string, number>();
-    s.ids.forEach((id, i) => { const far = Math.hypot(after[2 * i] - before[2 * i], after[2 * i + 1] - before[2 * i + 1]); if (far > 0.02) moved.set(id, far); });
+    s.ids.forEach((id, i) => { const far = portable.hypot(after[2 * i] - before[2 * i], after[2 * i + 1] - before[2 * i + 1]); if (far > 0.02) moved.set(id, far); });
     if (moved.size) trace.steps.push({ step, moved });
   };
   const pinned = s.ids.flatMap((id) => (d.vertices.get(id)!.fixed ? [true, true] : [false, false]));
@@ -203,7 +204,7 @@ function mirrorWholeDiagram(s: Structure, p: Float64Array, wrong: (q: Float64Arr
   // halves keep furthest apart where they come closest)
   const apart = (q: Float64Array) => {
     let least = Infinity;
-    s.ids.forEach((_, i) => { if (!upper(i) || partner.get(i) === i) return; s.ids.forEach((_, j) => { if (upper(j)) return; least = Math.min(least, Math.hypot(q[2 * i] - q[2 * j], q[2 * i + 1] - q[2 * j + 1])); }); });
+    s.ids.forEach((_, i) => { if (!upper(i) || partner.get(i) === i) return; s.ids.forEach((_, j) => { if (upper(j)) return; least = Math.min(least, portable.hypot(q[2 * i] - q[2 * j], q[2 * i + 1] - q[2 * j + 1])); }); });
     return least;
   };
   const [w0, c0] = [wrong(p), crossingCount(s, p)];
@@ -252,10 +253,10 @@ function bendLoopArcs(d: Diagram, s: Structure, p: Float64Array): void {
       const i = s.index.get(e.from)!, j = s.index.get(e.to)!;
       const ux = p[2 * j] - p[2 * i], uy = p[2 * j + 1] - p[2 * i + 1];
       const vx = p[2 * i] - cx, vy = p[2 * i + 1] - cy, wx = p[2 * j] - cx, wy = p[2 * j + 1] - cy;
-      const spans = Math.acos(Math.max(-1, Math.min(1, (vx * wx + vy * wy) / ((Math.hypot(vx, vy) * Math.hypot(wx, wy)) || 1))));
+      const spans = portable.acos(Math.max(-1, Math.min(1, (vx * wx + vy * wy) / ((portable.hypot(vx, vy) * portable.hypot(wx, wy)) || 1))));
       // bulge away from the centre; a line through the centre bulges away from the rest
       const mx = (p[2 * i] + p[2 * j]) / 2 - cx, my = (p[2 * i + 1] + p[2 * j + 1]) / 2 - cy;
-      const [bx, by] = Math.hypot(mx, my) > 1e-6 * Math.hypot(ux, uy) ? [mx, my] : [-ax, -ay];
+      const [bx, by] = portable.hypot(mx, my) > 1e-6 * portable.hypot(ux, uy) ? [mx, my] : [-ax, -ay];
       // (positive bends bulge to the left of travel: on screen, y down, that is (uy, -ux))
       e.bend = (bx * uy - by * ux > 0 ? 1 : -1) * (spans * 90) / Math.PI;
       e.bendIsAutomatic = true;
@@ -276,7 +277,7 @@ function bendAlongCircles(d: Diagram, s: Structure, p: Float64Array): void {
       const e = d.edges[l];
       const a = s.index.get(e.from)!, b = s.index.get(e.to)!;
       const ax = p[2 * a] - cx, ay = p[2 * a + 1] - cy, bx = p[2 * b] - cx, by = p[2 * b + 1] - cy;
-      const spans = Math.acos(Math.max(-1, Math.min(1, (ax * bx + ay * by) / ((Math.hypot(ax, ay) * Math.hypot(bx, by)) || 1))));
+      const spans = portable.acos(Math.max(-1, Math.min(1, (ax * bx + ay * by) / ((portable.hypot(ax, ay) * portable.hypot(bx, by)) || 1))));
       // bulge away from the centre: the centre lies left of travel (screen, y down) or right
       const ux = bx - ax, uy = by - ay;
       const centreLeft = (cx - (p[2 * a] + p[2 * b]) / 2) * uy + (cy - (p[2 * a + 1] + p[2 * b + 1]) / 2) * -ux > 0;
@@ -498,8 +499,8 @@ function topsBOutward(s: Structure, p: Float64Array): Float64Array {
     while (stack.length) { const j = stack.pop()!; if (!after.has(j)) { after.add(j); stack.push(...later(j)); } }
     // (reflected across the middle of the products' headings: b and W swap sides, each still forward)
     let ux = 0, uy = 0;
-    for (const j of later(at)) { const fx = q[2 * j] - q[2 * at], fy = q[2 * j + 1] - q[2 * at + 1], n = Math.hypot(fx, fy) || 1; ux += fx / n; uy += fy / n; }
-    const n = Math.hypot(ux, uy) || 1; ux /= n; uy /= n;
+    for (const j of later(at)) { const fx = q[2 * j] - q[2 * at], fy = q[2 * j + 1] - q[2 * at + 1], n = portable.hypot(fx, fy) || 1; ux += fx / n; uy += fy / n; }
+    const n = portable.hypot(ux, uy) || 1; ux /= n; uy /= n;
     // (the b and the W swap sides; what the W decays to moves with it, unturned, so its own
     // products keep their order)
     const cx = q[2 * at], cy = q[2 * at + 1];
@@ -545,10 +546,10 @@ function flipBranchesToListedOrder(s: Structure, p: Float64Array, wrong: (q: Flo
     // came in on would turn a product leaving level into one leaving upright)
     let ux = 0, uy = 0;
     for (const j of later(v)) {
-      const fx = pos[2 * j] - pos[2 * v], fy = pos[2 * j + 1] - pos[2 * v + 1], n = Math.hypot(fx, fy) || 1;
+      const fx = pos[2 * j] - pos[2 * v], fy = pos[2 * j + 1] - pos[2 * v + 1], n = portable.hypot(fx, fy) || 1;
       ux += fx / n; uy += fy / n;
     }
-    const n = Math.hypot(ux, uy);
+    const n = portable.hypot(ux, uy);
     if (n < 1e-6) { ux = 1; uy = 0; } else { ux /= n; uy /= n; }
     const q = Float64Array.from(pos), cx = pos[2 * v], cy = pos[2 * v + 1];
     for (const j of after(v)) {
@@ -616,7 +617,7 @@ function alignFinalStates(s: Structure, p: Float64Array, rules: ForceRules): voi
     // (within alignSteepest of level), and any leg leaving near level (within alignLevel);
     // a leg thrown off steeply earlier in a chain (a b from a top, an f' from a chargino)
     // keeps its own length
-    const lean = (Math.atan2(Math.abs(y), x) * 180) / Math.PI;
+    const lean = (portable.atan2(Math.abs(y), x) * 180) / Math.PI;
     const lastDecay = s.linesAt[v].every((l) => { const j = other(l, v); return s.time[j] < s.time[v] || s.external[j]; });
     // (radiation keeps its own length: it is given off on the way, not a product of the collision;
     // so does what is left of a beam that passes through a blob, the Pb(*) of an ion collision)
@@ -625,18 +626,18 @@ function alignFinalStates(s: Structure, p: Float64Array, rules: ForceRules): voi
     // (a leg thrown off before the last decay, a chi beside the s that decays on, grows only as
     // long as the line that brought its parent in: the plane is for what the last decays make)
     const before = s.linesAt[v].map((l) => other(l, v)).filter((j) => s.time[j] < s.time[v]);
-    const parentLength = before.length ? before.reduce((sum, j) => sum + Math.hypot(p[2 * v] - p[2 * j], p[2 * v + 1] - p[2 * j + 1]), 0) / before.length : 0;
-    let grow = Math.min((plane - p[2 * v]) / x, lastDecay ? rules.alignStretch : Math.max(1, parentLength / (Math.hypot(x, y) || 1)));
+    const parentLength = before.length ? before.reduce((sum, j) => sum + portable.hypot(p[2 * v] - p[2 * j], p[2 * v + 1] - p[2 * j + 1]), 0) / before.length : 0;
+    let grow = Math.min((plane - p[2 * v]) / x, lastDecay ? rules.alignStretch : Math.max(1, parentLength / (portable.hypot(x, y) || 1)));
     if (grow <= 1) continue;
     // (a leg stops short of another leg's end: two legs heading the same way must not meet)
-    const clear = (g: number) => legs.every((j) => j === i || Math.hypot(p[2 * v] + x * g - p[2 * j], p[2 * v + 1] + y * g - p[2 * j + 1]) >= rules.alignGap * rules.lineLength);
+    const clear = (g: number) => legs.every((j) => j === i || portable.hypot(p[2 * v] + x * g - p[2 * j], p[2 * v + 1] + y * g - p[2 * j + 1]) >= rules.alignGap * rules.lineLength);
     while (grow > 1 && !clear(grow)) grow = Math.max(1, grow - 0.05);
     grown.set(i, grow);
   }
   // each leg by its own factor, as far as it stays clear of the other legs' ends: every final
   // state ends on the plane, so legs leaving at like angles come out alike and a steep one runs
   // longer, as papers draw them (alignStretch keeps it from running away)
-  const clearOf = (i: number, v: number, g: number) => legs.every((j) => j === i || Math.hypot(p[2 * v] + (p[2 * i] - p[2 * v]) * g - p[2 * j], p[2 * v + 1] + (p[2 * i + 1] - p[2 * v + 1]) * g - p[2 * j + 1]) >= rules.alignGap * rules.lineLength);
+  const clearOf = (i: number, v: number, g: number) => legs.every((j) => j === i || portable.hypot(p[2 * v] + (p[2 * i] - p[2 * v]) * g - p[2 * j], p[2 * v + 1] + (p[2 * i + 1] - p[2 * v + 1]) * g - p[2 * j + 1]) >= rules.alignGap * rules.lineLength);
   const own = new Map<number, number>();
   for (const [i, g] of grown) {
     const v = other(s.linesAt[i][0], i);
@@ -647,7 +648,7 @@ function alignFinalStates(s: Structure, p: Float64Array, rules: ForceRules): voi
   // (the legs of one decay grow alike: the two invisibles of an S are the same length)
   const byParent = new Map<number, number[]>();
   for (const i of legs) { const v = other(s.linesAt[i][0], i); (byParent.get(v) ?? byParent.set(v, []).get(v)!).push(i); }
-  const legLength = (i: number) => { const v = other(s.linesAt[i][0], i); return Math.hypot(p[2 * i] - p[2 * v], p[2 * i + 1] - p[2 * v + 1]) || 1; };
+  const legLength = (i: number) => { const v = other(s.linesAt[i][0], i); return portable.hypot(p[2 * i] - p[2 * v], p[2 * i + 1] - p[2 * v + 1]) || 1; };
   const twinName = (i: number) => s.label[i] ?? s.particle[i];
   for (const siblings of byParent.values()) {
     if (siblings.length < 2) continue;
@@ -667,7 +668,7 @@ function alignFinalStates(s: Structure, p: Float64Array, rules: ForceRules): voi
   // (grown in turn, each checked against the ends as they now are, so two legs that both grow
   // do not meet; a leg that would is pulled back until it is clear)
   const start = new Map([...own.keys()].map((i) => [i, [p[2 * i], p[2 * i + 1]] as [number, number]]));
-  const endsClear = (i: number) => legs.every((j) => j === i || Math.hypot(p[2 * i] - p[2 * j], p[2 * i + 1] - p[2 * j + 1]) >= rules.alignGap * rules.lineLength);
+  const endsClear = (i: number) => legs.every((j) => j === i || portable.hypot(p[2 * i] - p[2 * j], p[2 * i + 1] - p[2 * j + 1]) >= rules.alignGap * rules.lineLength);
   for (const [i, g0] of [...own].sort((a, b) => b[1] - a[1])) {
     if (g0 <= 1) continue;
     const v = other(s.linesAt[i][0], i), [x0, y0] = start.get(i)!;

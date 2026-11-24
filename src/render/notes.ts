@@ -4,6 +4,7 @@ import { FeynError } from "../model.ts";
 import type { Diagram } from "../model.ts";
 import type { Rectangle, Scene } from "./scene.ts";
 import { vertexRadius } from "./vertices.ts";
+import * as portable from "../geometry/portable-math.ts";
 
 /**
  * Notes (`note: c "Higgs self-coupling"`, `note: a--b "long-lived" below`): a few words set in
@@ -27,9 +28,9 @@ function drawNote(scene: Scene, d: Diagram, written: string, index: number): voi
   // (plain words are set upright as words; anything with TeX in it as written)
   const tex = /[\\^_$]/.test(words) ? words : `\\text{${words}}`;
   // (away from the diagram's middle, unless a side is asked for)
-  const away = { x: point.x - scene.core.x, y: point.y - scene.core.y }, n = Math.hypot(away.x, away.y);
+  const away = { x: point.x - scene.core.x, y: point.y - scene.core.y }, n = portable.hypot(away.x, away.y);
   const prefer = m[4] ? SIDES[m[4]] : n > 1 ? { x: away.x / n, y: away.y / n } : { x: 0, y: -1 };
-  const turn = (v: Pt, deg: number) => { const t = (deg * Math.PI) / 180; return { x: v.x * Math.cos(t) - v.y * Math.sin(t), y: v.x * Math.sin(t) + v.y * Math.cos(t) }; };
+  const turn = (v: Pt, deg: number) => { const t = (deg * Math.PI) / 180; return { x: v.x * portable.cos(t) - v.y * portable.sin(t), y: v.x * portable.sin(t) + v.y * portable.cos(t) }; };
   const far = scene.theme.unitX * 0.75;
   const spots = [0, 25, -25, 50, -50, 80, -80].flatMap((deg) => [1, 1.35, 1.7].map((k) => ({ spot: { anchor: point, direction: turn(prefer, deg) }, clearance: reach + far * k })));
   // (the words in the diagram's own colour, the arrow in the note colour, a crayon blue)
@@ -70,13 +71,13 @@ function fromBox(box: Rectangle, target: Pt): Pt {
  * and an open arrowhead of two strokes not quite alike.
  */
 function drawHandArrow(scene: Scene, from: Pt, to: Pt, short: number, colour: string, seed: number): void {
-  const len0 = Math.hypot(to.x - from.x, to.y - from.y) || 1;
+  const len0 = portable.hypot(to.x - from.x, to.y - from.y) || 1;
   const end = { x: to.x - ((to.x - from.x) / len0) * short, y: to.y - ((to.y - from.y) / len0) * short };
-  const len = Math.hypot(end.x - from.x, end.y - from.y) || 1, ux = (end.x - from.x) / len, uy = (end.y - from.y) / len;
+  const len = portable.hypot(end.x - from.x, end.y - from.y) || 1, ux = (end.x - from.x) / len, uy = (end.y - from.y) / len;
   // (bowed a little to one side, the same side for the same note)
   const bow = len * 0.16 * (seed % 2 ? -1 : 1);
   const control = { x: (from.x + end.x) / 2 - uy * bow, y: (from.y + end.y) / 2 + ux * bow };
-  const at = (t: number): Pt => ({ x: (1 - t) ** 2 * from.x + 2 * (1 - t) * t * control.x + t * t * end.x, y: (1 - t) ** 2 * from.y + 2 * (1 - t) * t * control.y + t * t * end.y });
+  const at = (t: number): Pt => ({ x: portable.square(1 - t) * from.x + 2 * (1 - t) * t * control.x + t * t * end.x, y: portable.square(1 - t) * from.y + 2 * (1 - t) * t * control.y + t * t * end.y });
   const pts: Pt[] = [];
   const steps = Math.max(12, Math.ceil(len / 4));
   for (let k = 0; k <= steps; k++) {
@@ -85,8 +86,8 @@ function drawHandArrow(scene: Scene, from: Pt, to: Pt, short: number, colour: st
   }
   // the head: two short strokes back from the tip, along the curve's last heading
   const last = pts[pts.length - 1], before = pts[pts.length - 3];
-  const hx = last.x - before.x, hy = last.y - before.y, hn = Math.hypot(hx, hy) || 1;
-  const stroke = (deg: number, length: number) => { const t = (deg * Math.PI) / 180, bx = -hx / hn, by = -hy / hn; return { x: last.x + (bx * Math.cos(t) - by * Math.sin(t)) * length, y: last.y + (bx * Math.sin(t) + by * Math.cos(t)) * length }; };
+  const hx = last.x - before.x, hy = last.y - before.y, hn = portable.hypot(hx, hy) || 1;
+  const stroke = (deg: number, length: number) => { const t = (deg * Math.PI) / 180, bx = -hx / hn, by = -hy / hn; return { x: last.x + (bx * portable.cos(t) - by * portable.sin(t)) * length, y: last.y + (bx * portable.sin(t) + by * portable.cos(t)) * length }; };
   // (one smooth stroke)
   const w = scene.theme.line.stroke * 1.3;
   const head = `M${fmt(stroke(27, 8).x)} ${fmt(stroke(27, 8).y)}L${fmt(last.x)} ${fmt(last.y)}L${fmt(stroke(-24, 7).x)} ${fmt(stroke(-24, 7).y)}`;

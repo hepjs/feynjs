@@ -12,6 +12,7 @@ import { detachInitialStateRadiation, findBeamRails, findExchangeVertices, findI
 import { deflectScatteredLines, levelFusionLines, mirrorTopBottom, relaxRows, slantMarkedLines } from "./rows.ts";
 import type { Rows } from "./rows.ts";
 import { forkHalfAngle, keepEmissionsOffTheirLine, keepFinalStatesOffBeams, keepLegsClear, keepLinesApartAtVertices } from "./spacing.ts";
+import * as portable from "../../geometry/portable-math.ts";
 
 /**
  * Time-ordered layout: time runs left to right, as in every published diagram.
@@ -78,13 +79,13 @@ export function layout(d: Diagram, rules: LayoutRules, rowOverRank: number, mark
  */
 function stageScale(g: Graph, rank: number, deepestRank: number): number {
   if (deepestRank < g.rules.shrinkFromDepth || rank <= 2) return 1;
-  return Math.max(g.rules.shortestStage, Math.pow(g.rules.stageShrink, rank - 2));
+  return Math.max(g.rules.shortestStage, portable.power(g.rules.stageShrink, rank - 2));
 }
 
 /** Give an emitted leg a fixed drawn length along the direction the rows gave it. */
 function placeEmittedLeg(g: Graph, leg: Vertex, attachedTo: Vertex, row: number, length: number): void {
   const run = length, rise = (row - attachedTo.y) * g.rowOverRank;
-  const shrink = length / Math.hypot(run, rise);
+  const shrink = length / portable.hypot(run, rise);
   leg.x = attachedTo.x + run * shrink;
   leg.y = attachedTo.y + (rise * shrink) / g.rowOverRank;
 }
@@ -125,8 +126,8 @@ function entersBlobAsPair(g: Graph, attachedTo: Vertex): boolean {
 function placeLegIntoBlob(g: Graph, leg: Vertex, blob: Vertex, row: number): void {
   const angle = (g.rules.beamAngle * Math.PI) / 180;
   const side = row < blob.y ? -1 : 1;
-  leg.x = blob.x - g.rules.beamLength * Math.cos(angle);
-  leg.y = blob.y + (side * g.rules.beamLength * Math.sin(angle)) / g.rowOverRank;
+  leg.x = blob.x - g.rules.beamLength * portable.cos(angle);
+  leg.y = blob.y + (side * g.rules.beamLength * portable.sin(angle)) / g.rowOverRank;
 }
 
 /** Turn ranks and rows into coordinates. */
@@ -194,7 +195,7 @@ function openForks(g: Graph, rank: Ranks, deepestRank: number): void {
     fanLegs(g, v, incoming, -1, g.rules.beamForkAngle, g.rules.legLength);
     // a decay opens symmetrically about the line that brought the particle in
     const parent = earlierVertices.length === 1 && incoming.length === 0 ? g.diagram.vertices.get(earlierVertices[0])! : undefined;
-    const lean = parent && v.x > parent.x ? (Math.atan2((v.y - parent.y) * g.rowOverRank, v.x - parent.x) * 180) / Math.PI : 0;
+    const lean = parent && v.x > parent.x ? (portable.atan2((v.y - parent.y) * g.rowOverRank, v.x - parent.x) * 180) / Math.PI : 0;
     const flavourDecay = decaysIntoOtherFlavour(g, v, parent, outgoing);
     fanLegs(g, v, outgoing, 1, isSimpleFinalState ? g.rules.beamForkAngle : g.rules.decayForkAngle,
       g.rules.legLength * stageScale(g, vertexRank + 1, deepestRank) * busyVertexStretch(g, v.id) * (flavourDecay ? 1.5 : 1), flavourDecay ? Math.max(-30, Math.min(30, lean)) : 0);
@@ -231,8 +232,8 @@ function fanLegs(g: Graph, vertex: Vertex, legs: Vertex[], direction: 1 | -1, ha
   ordered.forEach((leg, i) => {
     const degrees = -outermost + (2 * outermost * i) / (ordered.length - 1);
     const angle = ((degrees + axis) * Math.PI) / 180;
-    leg.x = vertex.x + direction * length * Math.cos(angle);
-    leg.y = vertex.y + (length * Math.sin(angle)) / g.rowOverRank;
+    leg.x = vertex.x + direction * length * portable.cos(angle);
+    leg.y = vertex.y + (length * portable.sin(angle)) / g.rowOverRank;
   });
 }
 
@@ -265,15 +266,15 @@ function spreadLegsOfLoneVertex(d: Diagram, rowOverRank: number): void {
   if (legs.length < 3 || legs.filter((l) => l.role === "in").length < 2 && legs.length < 4) return;
   const toLeft = legs.filter((l) => l.x < centre.x - 1e-6 || (Math.abs(l.x - centre.x) < 1e-6 && l.role === "in"));
   const toRight = legs.filter((l) => !toLeft.includes(l));
-  const length = Math.max(...legs.map((l) => Math.hypot(l.x - centre.x, (l.y - centre.y) * rowOverRank)));
+  const length = Math.max(...legs.map((l) => portable.hypot(l.x - centre.x, (l.y - centre.y) * rowOverRank)));
   const place = (side: Vertex[], direction: 1 | -1) => {
     const ordered = side.slice().sort((a, b) => a.y - b.y);
     const half = ordered.length === 1 ? 0 : ordered.length === 2 ? 45 : 60;
     ordered.forEach((leg, i) => {
       const degrees = ordered.length === 1 ? 0 : -half + (2 * half * i) / (ordered.length - 1);
       const angle = (degrees * Math.PI) / 180;
-      leg.x = centre.x + direction * length * Math.cos(angle);
-      leg.y = centre.y + (length * Math.sin(angle)) / rowOverRank;
+      leg.x = centre.x + direction * length * portable.cos(angle);
+      leg.y = centre.y + (length * portable.sin(angle)) / rowOverRank;
     });
   };
   place(toLeft, -1);

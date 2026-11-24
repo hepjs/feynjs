@@ -7,6 +7,7 @@ import { lookupParticle } from "../particles/registry.ts";
 import { quarkFromLabel } from "../particles/identify.ts";
 import type { VertexLook } from "../theme.ts";
 import type { LabelSpot, Scene } from "./scene.ts";
+import * as portable from "../geometry/portable-math.ts";
 
 /** Radius a vertex shape covers; lines stop at this distance from its centre. */
 /** How far what is drawn at `v` reaches toward (dx, dy): its radius, or an oval's rim that way. */
@@ -134,7 +135,7 @@ export function labelExternalLeg(scene: Scene, v: Vertex): void {
 function legLabelSpots(end: Pt, direction: Pt): LabelSpot[] {
   const swung = (degrees: number): Pt => {
     const a = (degrees * Math.PI) / 180;
-    return { x: direction.x * Math.cos(a) - direction.y * Math.sin(a), y: direction.x * Math.sin(a) + direction.y * Math.cos(a) };
+    return { x: direction.x * portable.cos(a) - direction.y * portable.sin(a), y: direction.x * portable.sin(a) + direction.y * portable.cos(a) };
   };
   return [0, -40, 40, -75, 75].map((degrees) => ({ anchor: end, direction: swung(degrees) }));
 }
@@ -148,9 +149,9 @@ function gapDirections(angles: number[]): Pt[] {
   });
   // (a forward gap, between the products, comes first when it is wide enough for a label, as
   // papers set a coupling's name; otherwise the widest gap, upward on ties)
-  const forward = (g: { middle: number; gap: number }) => Math.cos(g.middle) > 0.5 && g.gap >= Math.PI / 3;
-  gaps.sort((a, b) => Number(forward(b)) - Number(forward(a)) || b.gap - a.gap || Math.sin(a.middle) - Math.sin(b.middle));
-  return gaps.map((g) => ({ x: Math.cos(g.middle), y: Math.sin(g.middle) }));
+  const forward = (g: { middle: number; gap: number }) => portable.cos(g.middle) > 0.5 && g.gap >= Math.PI / 3;
+  gaps.sort((a, b) => Number(forward(b)) - Number(forward(a)) || b.gap - a.gap || portable.sin(a.middle) - portable.sin(b.middle));
+  return gaps.map((g) => ({ x: portable.cos(g.middle), y: portable.sin(g.middle) }));
 }
 
 /** Direction of the widest gap between the lines at a vertex, preferring upward on ties. */
@@ -161,9 +162,9 @@ function widestGapDirection(angles: number[]): Pt {
     const to = i + 1 < sorted.length ? sorted[i + 1] : sorted[0] + 2 * Math.PI;
     const middle = (from + to) / 2, gap = to - from;
     const isTie = Math.abs(gap - widest) < 1e-6;
-    if (gap > widest + 1e-6 || (isTie && Math.sin(middle) < Math.sin(best))) { widest = gap; best = middle; }
+    if (gap > widest + 1e-6 || (isTie && portable.sin(middle) < portable.sin(best))) { widest = gap; best = middle; }
   });
-  return { x: Math.cos(best), y: Math.sin(best) };
+  return { x: portable.cos(best), y: portable.sin(best) };
 }
 
 /** Coupling label beside an internal vertex, in the widest gap between its lines. */

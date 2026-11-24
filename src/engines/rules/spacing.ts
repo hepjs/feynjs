@@ -3,6 +3,7 @@ import type { Edge } from "../../model.ts";
 import type { Graph } from "./graph.ts";
 import { loopSide } from "./arcs.ts";
 import { isRailEdge } from "./beams.ts";
+import * as portable from "../../geometry/portable-math.ts";
 
 /**
  * Breathing room, as general rules rather than per-diagram fixes. Together with the
@@ -27,7 +28,7 @@ export function keepLinesApartAtVertices(g: Graph): void {
     if (!g.neighbours.has(vertex.id) || isLeg(g, vertex.id)) continue;
     const around = neighboursOf(g, vertex.id);
     if (around.length < 2) continue;
-    const directionTo = (id: string) => Math.atan2((at(id).y - vertex.y) * g.rowOverRank, at(id).x - vertex.x);
+    const directionTo = (id: string) => portable.atan2((at(id).y - vertex.y) * g.rowOverRank, at(id).x - vertex.x);
     for (const legId of around) {
       // the end of a scattering line carries straight on: it is the other lines that leave it
       if (!isLeg(g, legId) || isRailEdge(g, vertex.id, legId)) continue;
@@ -43,9 +44,9 @@ export function keepLinesApartAtVertices(g: Graph): void {
       const awayFromIt = nearest >= 0 ? 1 : -1;
       const swungTo = own + awayFromIt * (least - Math.abs(nearest));
       const leg = at(legId);
-      const length = Math.hypot(leg.x - vertex.x, (leg.y - vertex.y) * g.rowOverRank);
-      leg.x = vertex.x + length * Math.cos(swungTo);
-      leg.y = vertex.y + (length * Math.sin(swungTo)) / g.rowOverRank;
+      const length = portable.hypot(leg.x - vertex.x, (leg.y - vertex.y) * g.rowOverRank);
+      leg.x = vertex.x + length * portable.cos(swungTo);
+      leg.y = vertex.y + (length * portable.sin(swungTo)) / g.rowOverRank;
     }
   }
 }
@@ -66,11 +67,11 @@ export function keepEmissionsOffTheirLine(g: Graph, moveBranchTo: (id: string, x
       for (const n of neighboursOf(g, id)) {
         if (onThisRail.has(n) || at(n).x <= vertex.x) continue;
         const run = at(n).x - vertex.x, rise = (at(n).y - vertex.y) * g.rowOverRank;
-        const angle = Math.atan2(Math.abs(rise), run);
+        const angle = portable.atan2(Math.abs(rise), run);
         if (angle >= least) continue;
         // a level emission leaves on the side away from any loop on the rail
-        const length = Math.hypot(run, rise), side = Math.abs(rise) < 1e-9 ? -loopSide(g) : Math.sign(rise);
-        moveBranchTo(n, vertex.x + length * Math.cos(least), vertex.y + (side * length * Math.sin(least)) / g.rowOverRank);
+        const length = portable.hypot(run, rise), side = Math.abs(rise) < 1e-9 ? -loopSide(g) : Math.sign(rise);
+        moveBranchTo(n, vertex.x + length * portable.cos(least), vertex.y + (side * length * portable.sin(least)) / g.rowOverRank);
       }
     }
   }
@@ -90,7 +91,7 @@ export function forkHalfAngle(g: Graph, lineCount: number, forTwoLines: number):
 function distanceToSegment(px: number, py: number, ax: number, ay: number, bx: number, by: number): number {
   const dx = bx - ax, dy = by - ay;
   const t = Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / (dx * dx + dy * dy || 1)));
-  return Math.hypot(px - (ax + t * dx), py - (ay + t * dy));
+  return portable.hypot(px - (ax + t * dx), py - (ay + t * dy));
 }
 
 /** Shortest distance between segments a-b and c-d (zero when they cross). */
@@ -151,13 +152,13 @@ export function keepLegsClear(g: Graph): void {
     // order to their vertices (a u-channel) are left crossed
     if (nearest.gap === 0 && nearest.isLegLine && nearest.other && crossesOnPurpose(g, leg, nearest.other)) continue;
 
-    const length = Math.hypot(leg.x - pivot.x, (leg.y - pivot.y) * r);
-    const own = Math.atan2((leg.y - pivot.y) * r, leg.x - pivot.x);
-    const toObstacle = Math.atan2(nearest.y - pivot.y * r, nearest.x - pivot.x);
-    const away = Math.sin(own - toObstacle) >= 0 ? 1 : -1;
+    const length = portable.hypot(leg.x - pivot.x, (leg.y - pivot.y) * r);
+    const own = portable.atan2((leg.y - pivot.y) * r, leg.x - pivot.x);
+    const toObstacle = portable.atan2(nearest.y - pivot.y * r, nearest.x - pivot.x);
+    const away = portable.sin(own - toObstacle) >= 0 ? 1 : -1;
     const place = (angle: number, len: number) => {
-      leg.x = pivot.x + len * Math.cos(angle);
-      leg.y = pivot.y + (len * Math.sin(angle)) / r;
+      leg.x = pivot.x + len * portable.cos(angle);
+      leg.y = pivot.y + (len * portable.sin(angle)) / r;
     };
     for (const direction of [away, -away]) {
       for (let turned = step; turned <= Math.PI / 4 && nearest.slack < 0; turned += step) {
@@ -190,7 +191,7 @@ export function keepFinalStatesOffBeams(g: Graph): void {
   const outgoing = [...g.legs].filter((id) => g.neighbours.has(id) && at(id).role === "out")
     .map((id) => ({ id, from: at(neighboursOf(g, id)[0]), end: at(id) }))
     .filter((leg) => leg.end.x > leg.from.x);
-  const rise = (leg: (typeof outgoing)[number]) => Math.atan2(-(leg.end.y - leg.from.y) * r, leg.end.x - leg.from.x);
+  const rise = (leg: (typeof outgoing)[number]) => portable.atan2(-(leg.end.y - leg.from.y) * r, leg.end.x - leg.from.x);
   for (const beam of outgoing.filter((leg) => isBeamLeg(leg.id))) {
     for (const leg of outgoing) {
       if (leg === beam || leg.from === beam.from || isBeamLeg(leg.id)) continue;
@@ -205,9 +206,9 @@ export function keepFinalStatesOffBeams(g: Graph): void {
       const towards = beamIsAbove ? rise(leg) - rise(beam) : rise(beam) - rise(leg);
       if (towards <= tolerance) continue;
       const target = beamIsAbove ? rise(beam) + tolerance : rise(beam) - tolerance;
-      const length = Math.hypot(leg.end.x - leg.from.x, (leg.end.y - leg.from.y) * r);
-      leg.end.x = leg.from.x + length * Math.cos(target);
-      leg.end.y = leg.from.y - (length * Math.sin(target)) / r;
+      const length = portable.hypot(leg.end.x - leg.from.x, (leg.end.y - leg.from.y) * r);
+      leg.end.x = leg.from.x + length * portable.cos(target);
+      leg.end.y = leg.from.y - (length * portable.sin(target)) / r;
     }
   }
 }

@@ -2,6 +2,7 @@ import { fmt } from "../geometry/curve.ts";
 import type { Pt } from "../geometry/curve.ts";
 import { layoutLabel } from "../label/label.ts";
 import type { Theme } from "../theme.ts";
+import * as portable from "../geometry/portable-math.ts";
 
 /**
  * A hadron drawn with its valence quarks (`[bag=proton]`, `[bag=c cbar u dbar]`) and the colour
@@ -85,7 +86,7 @@ function oneCluster(quarks: Quark[]): { at: Pt[]; tubes: Pt[][] } {
     let i = 0, j = 0;
     return quarks.map((x) => (x.anti ? aSlots[j++] : qSlots[i++]));
   };
-  const arm = (from: Pt, angle: number, length = 1) => P(from.x + length * Math.cos(angle), from.y + length * Math.sin(angle));
+  const arm = (from: Pt, angle: number, length = 1) => P(from.x + length * portable.cos(angle), from.y + length * portable.sin(angle));
   if (n === 2 && q === 1) {
     const at = place([P(-1.1, 0)], [P(1.1, 0)]);
     return { at, tubes: [at] };
@@ -125,18 +126,18 @@ export function bagRadius(quarks: Quark[]): number {
  */
 export function bagOutline(quarks: Quark[]): { rx: number; ry: number } {
   const { at } = arrangement(quarks);
-  const round = Math.max(...at.map((p) => Math.hypot(p.x, p.y))) * SPACING + DOT + 3.5;
+  const round = Math.max(...at.map((p) => portable.hypot(p.x, p.y))) * SPACING + DOT + 3.5;
   const rx = Math.max(...at.map((p) => Math.abs(p.x))) * SPACING + DOT + 3.5, ry = Math.max(...at.map((p) => Math.abs(p.y))) * SPACING + DOT + 3.5;
   if (rx < ry * 1.3) return { rx: round, ry: round };
   // (an ellipse through the outermost quarks' rims, a little beyond)
-  const fit = Math.max(...at.map((p) => Math.hypot((p.x * SPACING) / (rx - DOT - 3.5 || 1), (p.y * SPACING) / (ry + DOT) || 0)));
+  const fit = Math.max(...at.map((p) => portable.hypot((p.x * SPACING) / (rx - DOT - 3.5 || 1), (p.y * SPACING) / (ry + DOT) || 0)));
   return { rx: rx * Math.max(1, fit), ry: (ry + DOT) * Math.max(1, fit) };
 }
 
 /** How far the outline reaches from the middle toward (dx, dy). */
 export function bagReach(quarks: Quark[], dx: number, dy: number): number {
-  const { rx, ry } = bagOutline(quarks), n = Math.hypot(dx, dy) || 1;
-  return 1 / Math.sqrt((dx / n / rx) ** 2 + (dy / n / ry) ** 2);
+  const { rx, ry } = bagOutline(quarks), n = portable.hypot(dx, dy) || 1;
+  return 1 / Math.sqrt(portable.square(dx / n / rx) + portable.square(dy / n / ry));
 }
 
 /**

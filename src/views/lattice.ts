@@ -4,6 +4,7 @@ import { layoutLabel } from "../label/label.ts";
 import { FeynError } from "../model.ts";
 import type { Diagram } from "../model.ts";
 import type { Theme } from "../theme.ts";
+import * as portable from "../geometry/portable-math.ts";
 
 /**
  * The lattice view (`view: lattice`): space-time cut into a grid of sites joined by links, as
@@ -189,7 +190,7 @@ function loopPath(corners: Pt[], colour: string, width: number, _key: string, ev
 
 /** An arrowhead half way (or at `at`, a fraction of the way) from `from` to `to`. */
 function arrowAt(from: Pt, to: Pt, colour: string, stroke: number, along = 0.5): string {
-  const len = Math.hypot(to.x - from.x, to.y - from.y) || 1, ux = (to.x - from.x) / len, uy = (to.y - from.y) / len;
+  const len = portable.hypot(to.x - from.x, to.y - from.y) || 1, ux = (to.x - from.x) / len, uy = (to.y - from.y) / len;
   const size = stroke * 3.6, m = { x: from.x + (to.x - from.x) * along, y: from.y + (to.y - from.y) * along };
   const tip = along === 1 ? m : { x: m.x + ux * size * 0.5, y: m.y + uy * size * 0.5 };
   const back = { x: tip.x - ux * size, y: tip.y - uy * size };
@@ -198,7 +199,7 @@ function arrowAt(from: Pt, to: Pt, colour: string, stroke: number, along = 0.5):
 
 /** A curly brace beside the segment `p`–`q`, `gap` toward `side`, its point a little further. */
 function brace(p: Pt, q: Pt, side: Pt, gap: number, stroke: number): string {
-  const len = Math.hypot(q.x - p.x, q.y - p.y), u = { x: (q.x - p.x) / len, y: (q.y - p.y) / len }, depth = 5;
+  const len = portable.hypot(q.x - p.x, q.y - p.y), u = { x: (q.x - p.x) / len, y: (q.y - p.y) / len }, depth = 5;
   const at = (s: number, h: number) => `${fmt(p.x + u.x * s + side.x * (gap + h))} ${fmt(p.y + u.y * s + side.y * (gap + h))}`;
   const curl = Math.min(depth * 0.6, len / 4), mid = len / 2, half = depth / 2;
   return `<path d="M${at(0, 0)}Q${at(0, half)} ${at(curl, half)}L${at(mid - curl, half)}Q${at(mid, half)} ${at(mid, depth)}Q${at(mid, half)} ${at(mid + curl, half)}L${at(len - curl, half)}Q${at(len, half)} ${at(len, 0)}" stroke="currentColor" stroke-width="${fmt(stroke * 0.8)}" stroke-linecap="round"/>`;

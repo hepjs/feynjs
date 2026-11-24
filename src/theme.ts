@@ -1,3 +1,4 @@
+import * as portable from "./geometry/portable-math.ts";
 /**
  * Every number and colour that decides how a diagram looks lives here.
  * Pass a partial theme to `render` to override any of it; the rest keeps its default.
@@ -512,10 +513,10 @@ export function sizedTheme(theme: Theme, size = theme.size): Theme {
   if (!(size > 0) || size === 1) return theme;
   const out: any = { ...theme, size };
   for (const [key, power] of Object.entries(SIZE_POWER)) {
-    if (typeof power === "number") out[key] = (theme as any)[key] * size ** power;
+    if (typeof power === "number") out[key] = (theme as any)[key] * portable.power(size, power);
     else {
       out[key] = { ...(theme as any)[key] };
-      for (const [k, p] of Object.entries(power)) if (typeof out[key][k] === "number") out[key][k] *= size ** p;
+      for (const [k, p] of Object.entries(power)) if (typeof out[key][k] === "number") out[key][k] *= portable.power(size, p);
     }
   }
   return out as Theme;

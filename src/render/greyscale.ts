@@ -1,3 +1,4 @@
+import * as portable from "../geometry/portable-math.ts";
 /**
  * The black-and-white scheme (`colours: bw`): a finished drawing made black, with grey only in
  * its filled shapes (dots, blobs, hadrons, jet cones), all in one grey. Black, white, `none`
@@ -11,9 +12,9 @@ const NAMED: Record<string, string> = {
 
 /** The grey of the same (perceived) lightness as a colour given as r, g, b in 0-255. */
 function grey(r: number, g: number, b: number): string {
-  const lin = (c: number) => { const s = c / 255; return s <= 0.04045 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4; };
+  const lin = (c: number) => { const s = c / 255; return s <= 0.04045 ? s / 12.92 : portable.power((s + 0.055) / 1.055, 2.4); };
   const y = 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
-  const v = Math.round(255 * (y <= 0.0031308 ? 12.92 * y : 1.055 * y ** (1 / 2.4) - 0.055));
+  const v = Math.round(255 * (y <= 0.0031308 ? 12.92 * y : 1.055 * portable.power(y, 1 / 2.4) - 0.055));
   const h = Math.max(0, Math.min(255, v)).toString(16).padStart(2, "0");
   return `#${h}${h}${h}`;
 }

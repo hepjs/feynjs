@@ -2,6 +2,7 @@ import { Curve, fmt, pathFrom } from "../geometry/curve.ts";
 import type { Pt } from "../geometry/curve.ts";
 import type { ObjectContent, EdgeStyle } from "../model.ts";
 import type { LineLook } from "../theme.ts";
+import * as portable from "../geometry/portable-math.ts";
 
 /** A wave of sin(sin x), scaled back to the full amplitude: fuller crests and steeper crossings
  * than a plain sine. A whole number of periods, so both ends meet the vertex on-axis. */
@@ -11,7 +12,7 @@ function wavePoints(c: Curve, look: LineLook): Pt[] {
   const pts: Pt[] = [];
   for (let i = 0; i <= steps; i++) {
     const t = i / steps;
-    pts.push(c.offset(t * c.length, -look.waveAmplitude * Math.sin(Math.sin(2 * Math.PI * n * t)) / Math.sin(1)));
+    pts.push(c.offset(t * c.length, -look.waveAmplitude * portable.sin(portable.sin(2 * Math.PI * n * t)) / portable.sin(1)));
   }
   return pts;
 }
@@ -27,12 +28,12 @@ function coilPoints(c: Curve, look: LineLook): Pt[] {
   const steps = Math.ceil(((t1 - t0) / (2 * Math.PI)) * 28);
   const pts: Pt[] = [];
   // x(theta) = k + pitch*theta/2pi + k*cos(theta) shifted so x(t0)=0 and x(t1)=length
-  const span = (pitch * (t1 - t0)) / (2 * Math.PI) + k * (Math.cos(t1) - Math.cos(t0));
+  const span = (pitch * (t1 - t0)) / (2 * Math.PI) + k * (portable.cos(t1) - portable.cos(t0));
   const scale = c.length / span;
   for (let i = 0; i <= steps; i++) {
     const th = t0 + ((t1 - t0) * i) / steps;
-    const x = ((pitch * (th - t0)) / (2 * Math.PI) + k * (Math.cos(th) - Math.cos(t0))) * scale;
-    pts.push(c.offset(x, -R * Math.sin(th)));
+    const x = ((pitch * (th - t0)) / (2 * Math.PI) + k * (portable.cos(th) - portable.cos(t0))) * scale;
+    pts.push(c.offset(x, -R * portable.sin(th)));
   }
   return pts;
 }
@@ -65,7 +66,7 @@ function jetCone(c: Curve, look: LineLook, o: { from?: number; scale?: number; s
 
 /** How far a jet cone of the given length opens either side of its line, px. */
 function coneHalfWidth(length: number, look: LineLook, scale = 1): number {
-  return Math.min(look.jetMaxHalfWidth * scale, length * Math.tan((look.jetHalfAngle * scale * Math.PI) / 180));
+  return Math.min(look.jetMaxHalfWidth * scale, length * portable.tan((look.jetHalfAngle * scale * Math.PI) / 180));
 }
 
 /**

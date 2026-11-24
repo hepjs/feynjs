@@ -5,6 +5,7 @@ import { particleOfEdge } from "../particles/identify.ts";
 import { halfWidth } from "./lines.ts";
 import type { Scene } from "./scene.ts";
 import { vertexRadius } from "./vertices.ts";
+import * as portable from "../geometry/portable-math.ts";
 
 /**
  * Colour flow, in 't Hooft's double-line notation: a thin coloured line beside every quark
@@ -154,7 +155,7 @@ export interface Join { vertex: Vertex; a: Slot; b: Slot }
 /** The direction a line leaves vertex `v`, in screen radians. */
 function leavingAngle(curve: Curve, leavesFrom: boolean): number {
   const p = curve.at(leavesFrom ? 0 : curve.length);
-  return leavesFrom ? Math.atan2(p.ty, p.tx) : Math.atan2(-p.ty, -p.tx);
+  return leavesFrom ? portable.atan2(p.ty, p.tx) : portable.atan2(-p.ty, -p.tx);
 }
 
 /**
@@ -372,7 +373,7 @@ function turnDistances(scene: Scene, joins: Join[]): Map<string, number> {
     const gap = ((j.b.angle - j.a.angle + 2 * Math.PI) % (2 * Math.PI)) || 2 * Math.PI;
     const offset = Math.max(offsetOf(scene, j.a.edge), offsetOf(scene, j.b.edge));
     // two lines offset beside lines meeting at `gap` cross at offset / tan(gap / 2) from the vertex
-    const meet = gap < Math.PI * 0.9 ? offset / Math.tan(gap / 2) : 0;
+    const meet = gap < Math.PI * 0.9 ? offset / portable.tan(gap / 2) : 0;
     const turn = Math.max(scene.theme.colourFlow.turn, meet + scene.theme.colourFlow.turn * 0.7);
     turnAt.set(endKey(j.vertex.id, j.a.end, j.a.strand), turn);
     turnAt.set(endKey(j.vertex.id, j.b.end, j.b.strand), turn);
@@ -402,7 +403,7 @@ function drawStrands(scene: Scene, d: Diagram, strands: Strand[], joins: Join[],
   const pick = (list: string[], k: number) => scene.resolveColor(list[k % list.length]) ?? list[k % list.length];
   const hueOf = (s: Strand) => {
     const a = scene.position(d.vertices.get(s.edge.from)!), b = scene.position(d.vertices.get(s.edge.to)!);
-    const dx = (b.x - a.x) * s.dir, dy = (b.y - a.y) * s.dir, len = Math.hypot(dx, dy) || 1;
+    const dx = (b.x - a.x) * s.dir, dy = (b.y - a.y) * s.dir, len = portable.hypot(dx, dy) || 1;
     const forward = Math.abs(dx) > len * 0.2 ? dx > 0 : dy > 0;
     return forward ? pick(look.palette, s.line) : pick(look.anti, s.line);
   };
@@ -490,7 +491,7 @@ function onWhite(colour: string, opacity: number): string {
 /** The points of a turn between the end of one strand and the start of the next (neither end included). */
 function turnPoints(leaving: Pt[], joining: Pt[]): Pt[] {
   const p0 = leaving[leaving.length - 1], p3 = joining[0], [c1, c2] = turnControls(leaving, joining);
-  const steps = Math.max(4, Math.ceil(Math.hypot(p3.x - p0.x, p3.y - p0.y) / 2));
+  const steps = Math.max(4, Math.ceil(portable.hypot(p3.x - p0.x, p3.y - p0.y) / 2));
   const pts: Pt[] = [];
   for (let k = 1; k < steps; k++) {
     const t = k / steps, u = 1 - t;
@@ -526,7 +527,7 @@ function evenlySpaced(line: Pt[], owner: Strand[], spacing: number, closed: bool
   const out: (Pt & { owner: Strand })[] = [{ ...path[0], owner: owner[0] }];
   let carried = 0;
   for (let k = 1; k < path.length; k++) {
-    const a = path[k - 1], b = path[k], len = Math.hypot(b.x - a.x, b.y - a.y), o = owner[k % owner.length];
+    const a = path[k - 1], b = path[k], len = portable.hypot(b.x - a.x, b.y - a.y), o = owner[k % owner.length];
     let at = spacing - carried;
     while (at <= len) { out.push({ x: a.x + ((b.x - a.x) * at) / len, y: a.y + ((b.y - a.y) * at) / len, owner: o }); at += spacing; }
     carried = len - (at - spacing);
@@ -542,12 +543,12 @@ function evenlySpaced(line: Pt[], owner: Strand[], spacing: number, closed: bool
  */
 function turnControls(leaving: Pt[], joining: Pt[]): [Pt, Pt] {
   const p0 = leaving[leaving.length - 1], p3 = joining[0];
-  const heading = (a: Pt, b: Pt) => { const n = Math.hypot(b.x - a.x, b.y - a.y) || 1; return { x: (b.x - a.x) / n, y: (b.y - a.y) / n }; };
+  const heading = (a: Pt, b: Pt) => { const n = portable.hypot(b.x - a.x, b.y - a.y) || 1; return { x: (b.x - a.x) / n, y: (b.y - a.y) / n }; };
   const t0 = heading(leaving[Math.max(0, leaving.length - 3)], p0), t3 = heading(p3, joining[Math.min(joining.length - 1, 2)]);
-  const chord = Math.hypot(p3.x - p0.x, p3.y - p0.y);
-  const turn = Math.acos(Math.max(-1, Math.min(1, t0.x * t3.x + t0.y * t3.y)));
+  const chord = portable.hypot(p3.x - p0.x, p3.y - p0.y);
+  const turn = portable.acos(Math.max(-1, Math.min(1, t0.x * t3.x + t0.y * t3.y)));
   // a circular arc turning through `turn` puts its controls (4/3) tan(turn/4) r out, and its chord is 2 r sin(turn/2)
-  const reach = turn < 1e-3 ? chord / 3 : (chord * (2 / 3) * Math.tan(turn / 4)) / Math.sin(Math.min(turn, Math.PI - 1e-3) / 2);
+  const reach = turn < 1e-3 ? chord / 3 : (chord * (2 / 3) * portable.tan(turn / 4)) / portable.sin(Math.min(turn, Math.PI - 1e-3) / 2);
   return [{ x: p0.x + t0.x * reach, y: p0.y + t0.y * reach }, { x: p3.x - t3.x * reach, y: p3.y - t3.y * reach }];
 }
 
@@ -555,7 +556,7 @@ function turnControls(leaving: Pt[], joining: Pt[]): [Pt, Pt] {
 function arrowOn(pts: Pt[], dir: number, length: number, width: number, along = 0.5): string {
   let total = 0;
   const cum = [0];
-  for (let k = 1; k < pts.length; k++) cum.push((total += Math.hypot(pts[k].x - pts[k - 1].x, pts[k].y - pts[k - 1].y)));
+  for (let k = 1; k < pts.length; k++) cum.push((total += portable.hypot(pts[k].x - pts[k - 1].x, pts[k].y - pts[k - 1].y)));
   if (total < length * 2.5) return "";
   const half = total * (dir > 0 ? along : 1 - along);
   let k = 1;

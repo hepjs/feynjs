@@ -6,6 +6,7 @@ import { balance } from "./solve.ts";
 import { readStructure } from "./structure.ts";
 import { FAMILIES } from "./families.ts";
 import type { Sizes } from "./structure.ts";
+import * as portable from "../../geometry/portable-math.ts";
 
 /** One reason a line lies where it does: a family of rules, and how far the line moves without it. */
 export interface LineReason {
@@ -51,7 +52,7 @@ export function whyLines(diagram: Diagram, rules: ForceRules, rowOverRank: numbe
     const without = settle(family.forces, family.neutral);
     s.lines.forEach((_, l) => {
       const [x0, y0] = vector(settled, l), [x1, y1] = vector(without, l);
-      const amount = Math.hypot(x1 - x0, y1 - y0) / rules.lineLength;
+      const amount = portable.hypot(x1 - x0, y1 - y0) / rules.lineLength;
       if (amount > 0.05) why.get(shown[l])!.push({ family: family.name, about: family.about, amount });
     });
   }

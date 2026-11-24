@@ -1,4 +1,5 @@
 import type { Diagram } from "../../model.ts";
+import * as portable from "../../geometry/portable-math.ts";
 
 /**
  * The grid engine: the forces lay the diagram out, then it is rebuilt outward from its first
@@ -48,7 +49,7 @@ export function snapToGrid(d: Diagram, step: number, lineLength: number, rowOver
     // (moved as its nearest placed point moved, so it keeps its place beside it)
     const r = at.get(id)!;
     let near: string | undefined, best = Infinity;
-    for (const [j] of placed) { const q = at.get(j)!, dist = Math.hypot(q.x - r.x, q.y - r.y); if (dist < best) { best = dist; near = j; } }
+    for (const [j] of placed) { const q = at.get(j)!, dist = portable.hypot(q.x - r.x, q.y - r.y); if (dist < best) { best = dist; near = j; } }
     const shift = near ? { x: placed.get(near)!.x - at.get(near)!.x, y: placed.get(near)!.y - at.get(near)!.y } : { x: 0, y: 0 };
     placed.set(id, { x: r.x + shift.x, y: r.y + shift.y });
     queue.push(id);
@@ -67,11 +68,11 @@ export function snapToGrid(d: Diagram, step: number, lineLength: number, rowOver
     const u = queue.shift()!;
     const a = at.get(u)!, from = placed.get(u)!;
     const next = [...new Set(d.edges.flatMap((e) => (e.from === u ? [e.to] : e.to === u ? [e.from] : [])))].filter((v) => !placed.has(v));
-    const raw = new Map(next.map((v) => { const b = at.get(v)!; return [v, Math.atan2(b.y - a.y, b.x - a.x)] as const; }));
+    const raw = new Map(next.map((v) => { const b = at.get(v)!; return [v, portable.atan2(b.y - a.y, b.x - a.x)] as const; }));
     // lines run level: a line leaves on a diagonal only where two or more leave the point the
     // same way (forward, or back), and so must part up and down; an upright line stays upright
-    const forward = next.filter((v) => Math.cos(raw.get(v)!) > Math.cos((3 * Math.PI) / 8));
-    const back = next.filter((v) => Math.cos(raw.get(v)!) < -Math.cos((3 * Math.PI) / 8));
+    const forward = next.filter((v) => portable.cos(raw.get(v)!) > portable.cos((3 * Math.PI) / 8));
+    const back = next.filter((v) => portable.cos(raw.get(v)!) < -portable.cos((3 * Math.PI) / 8));
     // (lines that leave the same way take distinct directions, spread evenly about the way they
     // go together: two at plus and minus one step, three at minus one, level and plus one)
     const spread = new Map<string, number>();
@@ -86,15 +87,15 @@ export function snapToGrid(d: Diagram, step: number, lineLength: number, rowOver
       if (side.length < 2) continue;
       // (a line the forces made exactly level, a quark line in a hadron diagram, stays level;
       // the lines beside it take their own rounded ways)
-      const levelOne = side.find((v) => Math.abs(Math.sin(raw.get(v)!)) < 1e-3 && d.edges.some((e) => ((e.from === u && e.to === v) || (e.to === u && e.from === v)) && e.style.line === "plain"));
+      const levelOne = side.find((v) => Math.abs(portable.sin(raw.get(v)!)) < 1e-3 && d.edges.some((e) => ((e.from === u && e.to === v) || (e.to === u && e.from === v)) && e.style.line === "plain"));
       if (levelOne) {
-        spread.set(levelOne, Math.cos(raw.get(levelOne)!) > 0 ? 0 : Math.PI);
+        spread.set(levelOne, portable.cos(raw.get(levelOne)!) > 0 ? 0 : Math.PI);
         for (const v of side) if (v !== levelOne) spread.set(v, snap(raw.get(v)! / unit));
         continue;
       }
-      const mean = Math.atan2(side.reduce((t, v) => t + Math.sin(raw.get(v)!), 0), side.reduce((t, v) => t + Math.cos(raw.get(v)!), 0));
+      const mean = portable.atan2(side.reduce((t, v) => t + portable.sin(raw.get(v)!), 0), side.reduce((t, v) => t + portable.cos(raw.get(v)!), 0));
       // (in order about the way they go together, which may straddle straight back)
-      const about = (v: string) => Math.atan2(Math.sin(raw.get(v)! - mean), Math.cos(raw.get(v)! - mean));
+      const about = (v: string) => portable.atan2(portable.sin(raw.get(v)! - mean), portable.cos(raw.get(v)! - mean));
       const sorted = side.slice().sort((p, q) => about(p) - about(q));
       // (about the way the parent arrived, where one line brought it: a t arriving at 45 degrees
       // sends its b straight up and its W level; else about the way they go together)
@@ -136,20 +137,20 @@ export function snapToGrid(d: Diagram, step: number, lineLength: number, rowOver
       const length = lineLength;
       // (on a crossing of the grid: a 45 degree step lands on one exactly, a 22.5 degree step on
       // the nearest, a little steeper; never on the point it leaves)
-      let to = { x: from.x + Math.cos(angle) * length, y: from.y + Math.sin(angle) * length };
+      let to = { x: from.x + portable.cos(angle) * length, y: from.y + portable.sin(angle) * length };
       let onGrid = lattice(to);
       // (rounding outward rather than shrink: a diagonal spans two steps each way)
-      if (!iso && Math.hypot(onGrid.x - from.x, onGrid.y - from.y) < 0.9 * length) {
+      if (!iso && portable.hypot(onGrid.x - from.x, onGrid.y - from.y) < 0.9 * length) {
         const away = (c: number, f: number) => f + Math.sign(c - f) * Math.ceil(Math.abs(c - f) / half - 1e-9) * half;
         onGrid = { x: away(to.x, from.x), y: away(to.y, from.y) };
       }
-      if (Math.hypot(onGrid.x - from.x, onGrid.y - from.y) > half / 2) to = onGrid;
+      if (portable.hypot(onGrid.x - from.x, onGrid.y - from.y) > half / 2) to = onGrid;
       // (never on a point already placed: turned a step at a time, either way, until it is clear)
-      const taken = (q: { x: number; y: number }) => [...placed.values()].some((r) => Math.hypot(r.x - q.x, r.y - q.y) < half * 0.6);
+      const taken = (q: { x: number; y: number }) => [...placed.values()].some((r) => portable.hypot(r.x - q.x, r.y - q.y) < half * 0.6);
       for (let k = 1; taken(to) && k <= 6; k++) {
         for (const turn of [k, -k]) {
           const t = angle + turn * unit;
-          const q = lattice({ x: from.x + Math.cos(t) * length, y: from.y + Math.sin(t) * length });
+          const q = lattice({ x: from.x + portable.cos(t) * length, y: from.y + portable.sin(t) * length });
           if (!taken(q)) { to = q; break; }
         }
       }
@@ -214,7 +215,7 @@ export function snapToGrid(d: Diagram, step: number, lineLength: number, rowOver
         };
         const near = (q: { x: number; y: number }, a: { x: number; y: number }, b: { x: number; y: number }) => {
           const vx = b.x - a.x, vy = b.y - a.y, t = Math.max(0, Math.min(1, ((q.x - a.x) * vx + (q.y - a.y) * vy) / ((vx * vx + vy * vy) || 1)));
-          return Math.hypot(q.x - a.x - t * vx, q.y - a.y - t * vy);
+          return portable.hypot(q.x - a.x - t * vx, q.y - a.y - t * vy);
         };
         const blocked = (dir: number) => {
           const end = { x: at.x, y: at.y + dir * lineLength };
@@ -295,7 +296,7 @@ export function snapToGrid(d: Diagram, step: number, lineLength: number, rowOver
  */
 function cascadeWays(d: Diagram, u: string, products: string[], raw: Map<string, number>, arrived: number, side: number, unit: number, placed: Map<string, unknown>): Map<string, number> | undefined {
   // (a decay going somewhere: its parent reached it travelling left or right, not upright)
-  const ahead = Math.sign(Math.round(Math.cos(arrived) * 1e3));
+  const ahead = Math.sign(Math.round(portable.cos(arrived) * 1e3));
   if (products.length < 2 || !ahead || !products.every((v) => hangsFrom(d, u, v, placed))) return undefined;
   const carrier = cascadeCarrier(d, u, products);
   if (carrier === undefined) return undefined;
@@ -307,10 +308,10 @@ function cascadeWays(d: Diagram, u: string, products: string[], raw: Map<string,
   const ways = decaying.length === 0 ? hangingWays(thrownOff.length, unit) : thrownOff.length === 1 ? leaning : undefined;
   if (!ways) return undefined;
   // (away from the middle; a decay on the middle line hangs its products where the forces did)
-  const out = side || Math.sign(thrownOff.reduce((t, v) => t + Math.sin(raw.get(v)!), 0)) || 1;
+  const out = side || Math.sign(thrownOff.reduce((t, v) => t + portable.sin(raw.get(v)!), 0)) || 1;
   // (each way is an angle from straight ahead, turned towards `out`; the products take them in
   // the order the forces left them in, so no two lines cross)
-  const fromAhead = (v: string) => Math.atan2(out * Math.sin(raw.get(v)!), ahead * Math.cos(raw.get(v)!));
+  const fromAhead = (v: string) => portable.atan2(out * portable.sin(raw.get(v)!), ahead * portable.cos(raw.get(v)!));
   const direction = (a: number) => (ahead > 0 ? out * a : Math.PI - out * a);
   const result = new Map<string, number>([[carrier, ahead > 0 ? 0 : Math.PI]]);
   thrownOff.sort((p, q) => fromAhead(p) - fromAhead(q)).forEach((v, i) => result.set(v, direction(ways[i])));
@@ -409,7 +410,7 @@ function roundLoops(d: Diagram, ids: string[], placed: Map<string, { x: number; 
       const inner = ring.filter((v) => arcs.filter(([a, b]) => a === v || b === v).length === 2);
       if (ends.length !== 2) continue;
       const [p, q] = ends.map((v) => placed.get(v)!);
-      const mid = { x: (p.x + q.x) / 2, y: (p.y + q.y) / 2 }, r = Math.hypot(q.x - p.x, q.y - p.y) / 2;
+      const mid = { x: (p.x + q.x) / 2, y: (p.y + q.y) / 2 }, r = portable.hypot(q.x - p.x, q.y - p.y) / 2;
       if (inner.length === 1) {
         const x = inner[0], now = placed.get(x)!;
         const side = Math.sign(now.y - mid.y) || 1;
@@ -441,7 +442,7 @@ function roundLoops(d: Diagram, ids: string[], placed: Map<string, { x: number; 
       const e = edge(a, b);
       if (!e || (e.bend !== undefined && !e.bendIsAutomatic)) continue;
       const [pa, pb] = [placed.get(e.from)!, placed.get(e.to)!];
-      const minor = Math.acos(Math.max(-1, Math.min(1, ((pa.x - c.x) * (pb.x - c.x) + (pa.y - c.y) * (pb.y - c.y)) / ((Math.hypot(pa.x - c.x, pa.y - c.y) * Math.hypot(pb.x - c.x, pb.y - c.y)) || 1))));
+      const minor = portable.acos(Math.max(-1, Math.min(1, ((pa.x - c.x) * (pb.x - c.x) + (pa.y - c.y) * (pb.y - c.y)) / ((portable.hypot(pa.x - c.x, pa.y - c.y) * portable.hypot(pb.x - c.x, pb.y - c.y)) || 1))));
       const ux = pb.x - pa.x, uy = pb.y - pa.y, mx = (pa.x + pb.x) / 2, my = (pa.y + pb.y) / 2;
       // (each side bulges away from the loop's other corners: by the short arc where the circle's
       // centre is on their side of it, the long way round where it is not, an obtuse corner)

@@ -5,6 +5,7 @@ import { expandChains } from "./chains.ts";
 import { FeynError } from "../model.ts";
 import type { Diagram, Edge, EdgeStyle, HadronGroup, Vertex, VertexShape } from "../model.ts";
 import { STYLES, lookupParticle, particleNames } from "../particles/registry.ts";
+import * as portable from "../geometry/portable-math.ts";
 
 const SHAPES: Record<string, VertexShape> = {
   "dot": "dot", "empty dot": "empty", "square dot": "square", "crossed dot": "crossed", "slashed dot": "slashed", "small hatched blob": "smallhatched",
@@ -416,7 +417,7 @@ function sideOf(text: string, line: number): { x: number; y: number } {
     if (!d) throw new FeynError(`a label side is above, below, left or right, or two of them`, line);
     x += d[0]; y += d[1];
   }
-  const n = Math.hypot(x, y) || 1;
+  const n = portable.hypot(x, y) || 1;
   return { x: x / n, y: y / n };
 }
 

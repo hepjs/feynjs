@@ -4,6 +4,7 @@ import { layoutLabel } from "../label/label.ts";
 import { PROPERTIES, particleInfo } from "../particles/properties.ts";
 import type { Diagram, Edge, Vertex } from "../model.ts";
 import type { Theme } from "../theme.ts";
+import * as portable from "../geometry/portable-math.ts";
 
 export class BoundingBox {
   left = Infinity; top = Infinity; right = -Infinity; bottom = -Infinity;
@@ -204,8 +205,8 @@ export class Scene {
       if (bestCost >= 1) {
         const ring = (look: typeof label, reaches: number[], extra: number) => {
           for (const spot of request.spots.slice(0, 4)) for (const reach of reaches) for (let k = 0; k < 16; k++) {
-            const angle = (k * Math.PI) / 8, direction = { x: Math.cos(angle), y: Math.sin(angle) };
-            const turn = Math.acos(Math.max(-1, Math.min(1, direction.x * spot.direction.x + direction.y * spot.direction.y)));
+            const angle = (k * Math.PI) / 8, direction = { x: portable.cos(angle), y: portable.sin(angle) };
+            const turn = portable.acos(Math.max(-1, Math.min(1, direction.x * spot.direction.x + direction.y * spot.direction.y)));
             const candidate = this.boxAt({ anchor: spot.anchor, direction }, request.clearance * reach, look.width, look.ascent, look.descent);
             const cost = this.crowding(candidate.box, request.ignore) + 0.05 * turn + 0.02 * reach + extra;
             if (cost < bestCost) { best = candidate; bestCost = cost; size = look; }

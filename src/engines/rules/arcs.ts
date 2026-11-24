@@ -2,6 +2,7 @@ import type { Edge, Vertex } from "../../model.ts";
 import type { Ranks } from "./columns.ts";
 import { isLeg, neighboursOf } from "./graph.ts";
 import type { Graph } from "./graph.ts";
+import * as portable from "../../geometry/portable-math.ts";
 
 /**
  * Loops that sit on a line, as in penguin and box diagrams: a boson that leaves a quark
@@ -78,9 +79,9 @@ export function placeVerticesOnArcs(g: Graph, rank: Ranks, moveBranch: (id: stri
     for (const n of neighboursOf(g, v.id)) {
       if (feet.includes(n)) continue;
       const branch = g.diagram.vertices.get(n)!;
-      const length = Math.max(Math.hypot(branch.x - v.x, (branch.y - v.y) * g.rowOverRank), g.rules.loopMinRadius * 1.2);
+      const length = Math.max(portable.hypot(branch.x - v.x, (branch.y - v.y) * g.rowOverRank), g.rules.loopMinRadius * 1.2);
       const angle = (g.rules.loopEmissionAngle * Math.PI) / 180;
-      moveBranch(n, v.x + length * Math.cos(angle) - branch.x, v.y + (side * length * Math.sin(angle)) / g.rowOverRank - branch.y);
+      moveBranch(n, v.x + length * portable.cos(angle) - branch.x, v.y + (side * length * portable.sin(angle)) / g.rowOverRank - branch.y);
     }
     for (const e of lines) {
       if (e.bend !== undefined && !e.bendIsAutomatic) continue;
@@ -243,14 +244,14 @@ function aimForkAlongItsLine(g: Graph, fromId: string, vertexId: string): void {
   const from = g.diagram.vertices.get(fromId)!, vertex = g.diagram.vertices.get(vertexId)!;
   const legs = neighboursOf(g, vertexId).filter((n) => isLeg(g, n)).map((n) => g.diagram.vertices.get(n)!);
   if (legs.length < 2) return;
-  const angleOf = (dx: number, dy: number) => Math.atan2(dy * g.rowOverRank, dx);
+  const angleOf = (dx: number, dy: number) => portable.atan2(dy * g.rowOverRank, dx);
   const arriving = angleOf(vertex.x - from.x, vertex.y - from.y);
   const angles = legs.map((leg) => angleOf(leg.x - vertex.x, leg.y - vertex.y));
   const turn = arriving - angles.reduce((sum, a) => sum + a, 0) / angles.length;
   legs.forEach((leg, i) => {
-    const length = Math.hypot(leg.x - vertex.x, (leg.y - vertex.y) * g.rowOverRank);
-    leg.x = vertex.x + length * Math.cos(angles[i] + turn);
-    leg.y = vertex.y + (length * Math.sin(angles[i] + turn)) / g.rowOverRank;
+    const length = portable.hypot(leg.x - vertex.x, (leg.y - vertex.y) * g.rowOverRank);
+    leg.x = vertex.x + length * portable.cos(angles[i] + turn);
+    leg.y = vertex.y + (length * portable.sin(angles[i] + turn)) / g.rowOverRank;
   });
 }
 
@@ -277,7 +278,7 @@ export function placeSpectatorLines(g: Graph): void {
     if (!e.bend) continue;
     const from = g.diagram.vertices.get(e.from)!, to = g.diagram.vertices.get(e.to)!;
     const chord = Math.abs(to.x - from.x);
-    const bulge = ((chord / 2) * Math.tan((Math.abs(e.bend) * Math.PI) / 360)) / g.rowOverRank;
+    const bulge = ((chord / 2) * portable.tan((Math.abs(e.bend) * Math.PI) / 360)) / g.rowOverRank;
     const bulgesUp = (e.bend > 0) === (to.x >= from.x);
     const middle = (from.y + to.y) / 2;
     if (bulgesUp) top = Math.min(top, middle - bulge); else bottom = Math.max(bottom, middle + bulge);

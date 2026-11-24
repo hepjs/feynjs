@@ -3,6 +3,7 @@ import { layoutLabel } from "../label/label.ts";
 import type { Diagram, EdgeStyle } from "../model.ts";
 import { drawLine } from "../render/lines.ts";
 import type { Theme } from "../theme.ts";
+import * as portable from "../geometry/portable-math.ts";
 
 /** Where a final state goes in the lab: its pseudorapidity and azimuth (radians). */
 export interface Direction { id: string; eta: number; phi: number; branch?: number }
@@ -63,8 +64,8 @@ export function eventDirections(d: Diagram, nodes?: Map<string, Direction>, rota
     nodes?.set(at, { id: at, eta, phi, branch: current });
     const kids = later(at).slice();
     if (mirror) kids.reverse();
-    const spread = 0.8 * 0.75 ** depth;
-    kids.forEach((j, i) => fan(j, phi + (i - (kids.length - 1) / 2) * spread, eta + (i - (kids.length - 1) / 2) * 0.35 * 0.7 ** depth, depth + 1, mirror));
+    const spread = 0.8 * portable.power(0.75, depth);
+    kids.forEach((j, i) => fan(j, phi + (i - (kids.length - 1) / 2) * spread, eta + (i - (kids.length - 1) / 2) * 0.35 * portable.power(0.7, depth), depth + 1, mirror));
   };
   let current = 0;
   // (the whole event turned by `rotate:` degrees, 30 by default, so no branch lies on the axes)
@@ -128,9 +129,9 @@ export function drawKinematic(d: Diagram, theme: Theme, projection: "transverse"
   // detector staying put, so what goes straight up and down leans one way forward, one back)
   const tilt = ((options.rotate ?? 30) * Math.PI) / 180;
   const unit = ({ eta, phi }: { eta: number; phi: number }) => {
-    if (projection === "transverse") return [Math.cos(phi) / Math.cosh(eta), -Math.sin(phi) / Math.cosh(eta)];
-    const [x, y] = [Math.tanh(eta), -Math.cos(phi) / Math.cosh(eta)];
-    return [x * Math.cos(tilt) - y * Math.sin(tilt), x * Math.sin(tilt) + y * Math.cos(tilt)];
+    if (projection === "transverse") return [portable.cos(phi) / portable.cosh(eta), -portable.sin(phi) / portable.cosh(eta)];
+    const [x, y] = [portable.tanh(eta), -portable.cos(phi) / portable.cosh(eta)];
+    return [x * portable.cos(tilt) - y * portable.sin(tilt), x * portable.sin(tilt) + y * portable.cos(tilt)];
   };
   const edgeBetween = (a: string, b: string) => d.edges.find((e) => (e.from === a && e.to === b) || (e.from === b && e.to === a));
   // (each label clear of the lines and of the labels placed before it: tried at its line's end,
@@ -141,13 +142,13 @@ export function drawKinematic(d: Diagram, theme: Theme, projection: "transverse"
   const pending: (() => void)[] = [];
   const label = (text: string | undefined, end: { x: number; y: number }, ux: number, uy: number, faint = false) => { if (text) pending.push(() => place(text, end, ux, uy, faint)); };
   const crosses = (bx0: number, by0: number, bx1: number, by1: number) => segments.some(({ a, b }) => {
-    const steps = Math.max(2, Math.ceil(Math.hypot(b.x - a.x, b.y - a.y) / 3));
+    const steps = Math.max(2, Math.ceil(portable.hypot(b.x - a.x, b.y - a.y) / 3));
     for (let k = 0; k <= steps; k++) { const x = a.x + ((b.x - a.x) * k) / steps, y = a.y + ((b.y - a.y) * k) / steps; if (x > bx0 && x < bx1 && y > by0 && y < by1) return true; }
     return false;
   });
   const place = (text: string, end: { x: number; y: number }, ux: number, uy: number, faint: boolean) => {
     const box = layoutLabel(text, theme.fontSize * (faint ? 0.85 : 1), theme.wordLabelScale);
-    const n = Math.hypot(ux, uy) || 1, gap = theme.fontSize * 0.9;
+    const n = portable.hypot(ux, uy) || 1, gap = theme.fontSize * 0.9;
     const at = (out: number, side: number) => {
       const cx = end.x + (ux / n) * out - (uy / n) * side, cy = end.y + (uy / n) * out + (ux / n) * side;
       return { lx: cx - box.width / 2, ly: cy + (box.ascent - box.descent) / 2 };
@@ -184,19 +185,19 @@ export function drawKinematic(d: Diagram, theme: Theme, projection: "transverse"
     const ends = new Map<string, number[][]>();
     for (const { id, chain } of chains) for (const p of chain) ends.set(p, [...(ends.get(p) ?? []), dirOf.get(id)!]);
     // (a particle made at rest, whose products' directions cancel, has no direction: not drawn)
-    const meanOf = (p: string) => { const vs = ends.get(p)!; return [vs.reduce((t, v) => t + v[0], 0) / vs.length, vs.reduce((t, v) => t + v[1], 0) / vs.length]; };
+    const meanOf = (p: string): [number, number] => { const vs = ends.get(p)!; return [vs.reduce((t, v) => t + v[0], 0) / vs.length, vs.reduce((t, v) => t + v[1], 0) / vs.length]; };
     // (nor anything whose final states lie in more than one branch: the gluon before a top pair)
     const branchOf = new Map(dirs.map((x) => [x.id, x.branch]));
     const branchesUnder = new Map<string, Set<number | undefined>>();
     for (const { id, chain } of chains) for (const p of chain) branchesUnder.set(p, new Set([...(branchesUnder.get(p) ?? []), branchOf.get(id)]));
-    for (const c of chains) c.chain = c.chain.filter((p) => Math.hypot(...meanOf(p)) > 0.3 && branchesUnder.get(p)!.size === 1);
+    for (const c of chains) c.chain = c.chain.filter((p) => portable.hypot(...meanOf(p)) > 0.3 && branchesUnder.get(p)!.size === 1);
     const at = new Map<string, { x: number; y: number }>();
     for (const { chain } of chains) chain.forEach((p, k) => {
       if (at.has(p)) return;
       // (along the direction the decays gave it, else the mean of what it ends in)
       const given = nodes.get(p);
       const [mx, my] = given ? unit(given) : meanOf(p);
-      const n = Math.hypot(mx, my) || 1, r = reach * 0.3 * (k + 1);
+      const n = portable.hypot(mx, my) || 1, r = reach * 0.3 * (k + 1);
       at.set(p, { x: (mx / n) * r, y: (my / n) * r });
     });
     for (const { id, chain } of chains) {
@@ -234,8 +235,8 @@ export function drawKinematic(d: Diagram, theme: Theme, projection: "transverse"
     // (a jet's shaded cone, too: its two edges, opening from where it starts to its full width)
     const drawnAs = asSeen ?? outward;
     if (drawnAs.line === "jet") {
-      const len = Math.hypot(end.x - from.x, end.y - from.y) || 1, nx = -(end.y - from.y) / len, ny = (end.x - from.x) / len;
-      const half = Math.min(theme.line.jetMaxHalfWidth * (drawnAs.object === "large" ? 1.6 : 1), len * Math.tan((theme.line.jetHalfAngle * Math.PI) / 180) * 1.6);
+      const len = portable.hypot(end.x - from.x, end.y - from.y) || 1, nx = -(end.y - from.y) / len, ny = (end.x - from.x) / len;
+      const half = Math.min(theme.line.jetMaxHalfWidth * (drawnAs.object === "large" ? 1.6 : 1), len * portable.tan((theme.line.jetHalfAngle * Math.PI) / 180) * 1.6);
       for (const side of [1, -1]) segments.push({ a: from, b: { x: end.x + nx * half * side, y: end.y + ny * half * side } });
     }
     // (any label the author gave: a name, or free text, "tag" and "probe")

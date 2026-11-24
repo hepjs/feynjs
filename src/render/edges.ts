@@ -6,6 +6,7 @@ import { drawLifetime } from "./lifetime.ts";
 import { drawLine, halfWidth } from "./lines.ts";
 import type { LabelSpot, Scene } from "./scene.ts";
 import { crossPath, reachToward, vertexRadius } from "./vertices.ts";
+import * as portable from "../geometry/portable-math.ts";
 
 const attr = (s: string) => s.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
 
@@ -18,7 +19,7 @@ function edgeCurve(scene: Scene, e: Edge, from: Vertex, to: Vertex): Curve {
   if (from !== to) return e.bend ? Curve.arc(a, b, e.bend) : Curve.line(a, b);
   // tadpole: loop away from the middle of the diagram
   let dx = a.x - scene.centre.x, dy = a.y - scene.centre.y;
-  const distance = Math.hypot(dx, dy);
+  const distance = portable.hypot(dx, dy);
   if (distance < 1) { dx = 0; dy = -1; } else { dx /= distance; dy /= distance; }
   return Curve.loop(a, dx, dy, scene.theme.unitX * 0.32);
 }
@@ -29,13 +30,13 @@ function edgeCurve(scene: Scene, e: Edge, from: Vertex, to: Vertex): Curve {
  * own, times `looseness`) out along its angle. An angle not given is the straight line's.
  */
 function leavingAndArriving(a: Pt, b: Pt, angles: { out?: number; in?: number; looseness?: number }): Curve {
-  const straight = Math.atan2(-(b.y - a.y), b.x - a.x);
+  const straight = portable.atan2(-(b.y - a.y), b.x - a.x);
   const out = angles.out !== undefined ? (angles.out * Math.PI) / 180 : straight;
   const into = angles.in !== undefined ? (angles.in * Math.PI) / 180 : straight + Math.PI;
-  const reach = Math.hypot(b.x - a.x, b.y - a.y) * 0.3915 * (angles.looseness ?? 1);
+  const reach = portable.hypot(b.x - a.x, b.y - a.y) * 0.3915 * (angles.looseness ?? 1);
   // (degrees count counter-clockwise with y up; the page's y runs down)
-  const c1 = { x: a.x + Math.cos(out) * reach, y: a.y - Math.sin(out) * reach };
-  const c2 = { x: b.x + Math.cos(into) * reach, y: b.y - Math.sin(into) * reach };
+  const c1 = { x: a.x + portable.cos(out) * reach, y: a.y - portable.sin(out) * reach };
+  const c2 = { x: b.x + portable.cos(into) * reach, y: b.y - portable.sin(into) * reach };
   const pts: Pt[] = [];
   for (let k = 0; k <= 48; k++) {
     const t = k / 48, u = 1 - t;
@@ -117,8 +118,8 @@ function drawMomentumArrow(scene: Scene, text: string, curve: Curve, side: Pt, c
 /** Remember which way the edge leaves each end: used to place leg and coupling labels. */
 function recordEndDirections(scene: Scene, curve: Curve, from: Vertex, to: Vertex, degree: Map<string, number>): void {
   const leaving = curve.at(0), arriving = curve.at(curve.length);
-  scene.recordLineAngle(from.id, Math.atan2(leaving.ty, leaving.tx));
-  scene.recordLineAngle(to.id, Math.atan2(-arriving.ty, -arriving.tx));
+  scene.recordLineAngle(from.id, portable.atan2(leaving.ty, leaving.tx));
+  scene.recordLineAngle(to.id, portable.atan2(-arriving.ty, -arriving.tx));
   if (degree.get(from.id) === 1) scene.legDirection.set(from.id, { x: -leaving.tx, y: -leaving.ty });
   if (degree.get(to.id) === 1) scene.legDirection.set(to.id, { x: arriving.tx, y: arriving.ty });
 }

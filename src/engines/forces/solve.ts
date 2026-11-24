@@ -1,4 +1,5 @@
 import type { Force, Term } from "./forces.ts";
+import * as portable from "../../geometry/portable-math.ts";
 
 /** Steps the last call to `balance` took (for tuning). */
 export let lastSteps = 0;
@@ -45,7 +46,7 @@ export function balance(start: Float64Array, forces: Force[], pinned: boolean[],
   };
   const movedSince = (q: Float64Array) => {
     let most = 0;
-    for (let i = 0; i < n; i += 2) most = Math.max(most, Math.hypot(q[i] - seen[i], q[i + 1] - seen[i + 1]));
+    for (let i = 0; i < n; i += 2) most = Math.max(most, portable.hypot(q[i] - seen[i], q[i + 1] - seen[i + 1]));
     return most;
   };
   // each term's value at the last layout measured (the gradient there needs them again)
@@ -78,7 +79,7 @@ export function balance(start: Float64Array, forces: Force[], pinned: boolean[],
       // way each time, and set off again)
       if (it === 0 && !nudged) {
         nudged = true;
-        for (let k = 0; k < n; k++) if (!pinned[k]) p[k] += 1e-3 * Math.sin(1.7 * k + 0.3);
+        for (let k = 0; k < n; k++) if (!pinned[k]) p[k] += 1e-3 * portable.sin(1.7 * k + 0.3);
         level(p);
         energy = total(p); grad = gradient(p, terms, pinned, values); step = 0.05; it = -1;
         continue;

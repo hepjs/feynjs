@@ -4,6 +4,7 @@ import { drawDiagram } from "../render/render.ts";
 import { splitPanels } from "../render/panels.ts";
 import { themeWith } from "../theme.ts";
 import type { ThemeOverrides } from "../theme.ts";
+import * as portable from "../geometry/portable-math.ts";
 
 /** Measurements of how readable a laid-out diagram is. Zero everywhere means nothing to fix. */
 export interface Quality {
@@ -80,7 +81,7 @@ function measureOne(source: string, theme: ThemeOverrides = {}): Quality {
   for (let i = 0; i < ids.length; i++) {
     for (let j = i + 1; j < ids.length; j++) {
       const a = at(ids[i]), b = at(ids[j]);
-      if (Math.hypot(a.x - b.x, a.y - b.y) < t.fontSize * 0.9) {
+      if (portable.hypot(a.x - b.x, a.y - b.y) < t.fontSize * 0.9) {
         crowdedVertices++;
         problems.push(`${ids[i]} and ${ids[j]} are almost on top of each other`);
       }
@@ -91,7 +92,7 @@ function measureOne(source: string, theme: ThemeOverrides = {}): Quality {
   for (const id of ids) {
     const p = at(id);
     const angles = straight.filter((e) => !e.bend && (e.from === id || e.to === id))
-      .map((e) => at(e.from === id ? e.to : e.from)).map((q) => Math.atan2(q.y - p.y, q.x - p.x));
+      .map((e) => at(e.from === id ? e.to : e.from)).map((q) => portable.atan2(q.y - p.y, q.x - p.x));
     for (let i = 0; i < angles.length; i++) {
       for (let j = i + 1; j < angles.length; j++) {
         const gap = Math.abs(((angles[i] - angles[j] + 3 * Math.PI) % (2 * Math.PI)) - Math.PI) * 180 / Math.PI;
@@ -104,7 +105,7 @@ function measureOne(source: string, theme: ThemeOverrides = {}): Quality {
   let stubs = 0;
   for (const e of straight) {
     const a = at(e.from), b = at(e.to);
-    if (Math.hypot(a.x - b.x, a.y - b.y) < t.unitX * 0.25) {
+    if (portable.hypot(a.x - b.x, a.y - b.y) < t.unitX * 0.25) {
       stubs++;
       problems.push(`${e.from}-${e.to} is a stub`);
     }

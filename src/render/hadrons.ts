@@ -2,6 +2,7 @@ import { layoutLabel } from "../label/label.ts";
 import { fmt } from "../geometry/curve.ts";
 import type { Diagram, HadronGroup } from "../model.ts";
 import type { Scene } from "./scene.ts";
+import * as portable from "../geometry/portable-math.ts";
 
 /** A curly brace from (x, top) to (x, bottom) whose point reaches `depth` px sideways (negative = leftwards). */
 function bracePath(x: number, top: number, bottom: number, depth: number): string {
@@ -96,17 +97,17 @@ function drawHadronCap(scene: Scene, d: Diagram, group: HadronGroup): void {
     const e = d.edges.find((x) => x.from === v.id || x.to === v.id);
     if (!e) continue;
     const from = scene.position(d.vertices.get(e.from === v.id ? e.to : e.from)!), to = scene.position(v);
-    const n = Math.hypot(to.x - from.x, to.y - from.y) || 1;
+    const n = portable.hypot(to.x - from.x, to.y - from.y) || 1;
     ux += (to.x - from.x) / n; uy += (to.y - from.y) / n;
   }
-  const un = Math.hypot(ux, uy) || 1;
+  const un = portable.hypot(ux, uy) || 1;
   ux /= un; uy /= un;
   const mx = ends.reduce((s, p) => s + p.x, 0) / ends.length, my = ends.reduce((s, p) => s + p.y, 0) / ends.length;
   // across the legs: as wide as their spread, and a little more
   const spread = Math.max(...ends.map((p) => Math.abs((p.x - mx) * -uy + (p.y - my) * ux)));
   const rx = spread + scene.theme.fontSize * 0.7, ry = scene.theme.fontSize * 0.6;
   const cx = mx + ux * ry * 0.6, cy = my + uy * ry * 0.6;
-  const angle = (Math.atan2(uy, ux) * 180) / Math.PI + 90;
+  const angle = (portable.atan2(uy, ux) * 180) / Math.PI + 90;
   // (an opaque backing first: a page may draw the cap's fill see-through, and the quark lines it
   // covers must not show through it)
   const shape = `cx="${fmt(cx)}" cy="${fmt(cy)}" rx="${fmt(rx)}" ry="${fmt(ry)}" transform="rotate(${fmt(angle)} ${fmt(cx)} ${fmt(cy)})"`;
@@ -124,7 +125,7 @@ function drawHadronCap(scene: Scene, d: Diagram, group: HadronGroup): void {
  */
 function ellipseObstacle(scene: Scene, cx: number, cy: number, rx: number, ry: number, angle = 0): void {
   const [long, short] = rx >= ry ? [rx, ry] : [ry, rx];
-  const t = (angle * Math.PI) / 180, along = rx >= ry ? { x: Math.cos(t), y: Math.sin(t) } : { x: -Math.sin(t), y: Math.cos(t) };
+  const t = (angle * Math.PI) / 180, along = rx >= ry ? { x: portable.cos(t), y: portable.sin(t) } : { x: -portable.sin(t), y: portable.cos(t) };
   const n = Math.max(1, Math.ceil((long - short) / (short * 0.6)));
   for (let k = 0; k <= n; k++) {
     const off = -(long - short) + (2 * (long - short) * k) / n;

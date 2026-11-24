@@ -28,6 +28,7 @@ import type { Sizes } from "../engines/forces/structure.ts";
 import { layoutLabel } from "../label/label.ts";
 import { Scene } from "./scene.ts";
 import { drawVertexShape, labelCoupling, labelExternalLeg, vertexRadius } from "./vertices.ts";
+import * as portable from "../geometry/portable-math.ts";
 
 export interface RenderOptions {
   /** overrides for any part of the default theme: sizes, colours, layout rules */
@@ -176,7 +177,7 @@ export function layoutDiagram(d: Diagram, theme: Theme, debug?: DebugInfo): void
     run();
     if (!debug || !before) return;
     const moved = new Map<string, number>();
-    for (const v of d.vertices.values()) { const [x, y] = before.get(v.id)!; const far = Math.hypot(v.x - x, v.y * (theme.unitY / theme.unitX) - y); if (far > 0.02) moved.set(v.id, far); }
+    for (const v of d.vertices.values()) { const [x, y] = before.get(v.id)!; const far = portable.hypot(v.x - x, v.y * (theme.unitY / theme.unitX) - y); if (far > 0.02) moved.set(v.id, far); }
     if (moved.size) debug.steps.push({ step, moved });
   };
   const isoGrid = /^iso/i.test((d.directives.grid ?? "").trim());
@@ -198,8 +199,8 @@ function orientDiagram(d: Diagram, rowOverRank: number): void {
     const a = m && d.vertices.get(m[1]), b = m && d.vertices.get(m[2]);
     if (!a || !b) throw new FeynError(`write "${key}: a to b", naming two points of the diagram`);
     // (turned about `a`, in true proportions: a row is not as long as a rank)
-    const angle = Math.atan2((b.y - a.y) * rowOverRank, b.x - a.x);
-    const turn = (key.startsWith("vertical") ? Math.PI / 2 : 0) - angle, cos = Math.cos(turn), sin = Math.sin(turn);
+    const angle = portable.atan2((b.y - a.y) * rowOverRank, b.x - a.x);
+    const turn = (key.startsWith("vertical") ? Math.PI / 2 : 0) - angle, cos = portable.cos(turn), sin = portable.sin(turn);
     const mirrored = key.endsWith("'");
     for (const v of d.vertices.values()) {
       const x = v.x - a.x, y = (v.y - a.y) * rowOverRank;
@@ -248,7 +249,7 @@ function labelSizes(d: Diagram, theme: Theme): Sizes {
     if (!tex) return 0;
     const box = layoutLabel(tex, theme.fontSize * scale, theme.wordLabelScale);
     // (and half the margin labels keep between them, so two labels side by side stay a margin apart)
-    return (Math.hypot(box.width, box.ascent + box.descent) / 2 + theme.labelGap + theme.labelMargin / 3) / theme.unitX;
+    return (portable.hypot(box.width, box.ascent + box.descent) / 2 + theme.labelGap + theme.labelMargin / 3) / theme.unitX;
   };
   const legLabel = new Map<string, number>();
   for (const v of d.vertices.values()) if (v.label) legLabel.set(v.id, reach(v.label, 1));
@@ -295,7 +296,7 @@ export function drawDiagram(d: Diagram, options: RenderOptions = {}): { svg: str
   const sized = sizedTheme(base, sizeFromSwitch(d.directives.size) ?? base.size);
   // (drawn smaller with scale:, its lines thin less than everything else, so they still read)
   const zoom = Number(d.directives.scale) || 1;
-  const thicker = zoom < 1 ? zoom ** -0.5 : 1;
+  const thicker = zoom < 1 ? portable.power(zoom, -0.5) : 1;
   const thinned = thicker === 1 ? sized : { ...sized, line: { ...sized.line, stroke: sized.line.stroke * thicker, heavy: sized.line.heavy * thicker, susy: sized.line.susy * thicker } };
   // (nucleon edges: ink, none, or tinted, a darker red round protons and a lighter grey round neutrons)
   const edges = (d.directives["nucleon edges"] ?? "").trim().toLowerCase();

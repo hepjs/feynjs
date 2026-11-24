@@ -5,6 +5,7 @@ import type { PassThrough } from "./graph.ts";
 import type { Graph } from "./graph.ts";
 import { listedOutcome } from "./cascade.ts";
 import { hasFermionLine, isRailEdge } from "./beams.ts";
+import * as portable from "../../geometry/portable-math.ts";
 
 /** Vertical position of every vertex, in rows (down is positive). */
 export type Rows = Map<string, number>;
@@ -44,14 +45,14 @@ function areBothProduced(rank: Ranks, a: Vertex, b: Vertex): boolean {
  * angle over the first propagator; after that the chains run parallel.
  */
 function branchGap(g: Graph): number {
-  return (2 * Math.tan((g.rules.branchAngle * Math.PI) / 180)) / g.rowOverRank;
+  return (2 * portable.tan((g.rules.branchAngle * Math.PI) / 180)) / g.rowOverRank;
 }
 
 /** How far, in rows, the fork of outgoing legs at a vertex reaches above and below it. */
 function forkHalfHeight(g: Graph, v: Vertex): number {
   const outgoingLegs = neighboursOf(g, v.id).filter((n) => isLeg(g, n) && !isIncomingLeg(g, n));
   if (outgoingLegs.length < 2) return 0;
-  const reach = g.rules.legLength * Math.sin((g.rules.decayForkAngle * Math.PI) / 180);
+  const reach = g.rules.legLength * portable.sin((g.rules.decayForkAngle * Math.PI) / 180);
   return reach / g.rowOverRank;
 }
 
@@ -318,7 +319,7 @@ export function levelFusionLines(g: Graph, rank: Ranks, y: Rows, moveBranch: (id
  * level propagator. Everything that follows it moves with it.
  */
 export function slantMarkedLines(g: Graph, rank: Ranks, y: Rows, moveBranch: (id: string, dy: number) => void): void {
-  const slope = Math.tan((g.rules.markedLineAngle * Math.PI) / 180);
+  const slope = portable.tan((g.rules.markedLineAngle * Math.PI) / 180);
   for (const key of g.marksOnLine.keys()) {
     const [p, q] = key.split("\u0000");
     if (!g.neighbours.has(p) || !g.neighbours.has(q)) continue;

@@ -2,6 +2,7 @@ import { Curve, fmt, pathFrom } from "../geometry/curve.ts";
 import type { Pt } from "../geometry/curve.ts";
 import type { Edge } from "../model.ts";
 import type { Scene } from "./scene.ts";
+import * as portable from "../geometry/portable-math.ts";
 
 let gradients = 0;
 
@@ -44,7 +45,7 @@ function drawLifetimeBand(scene: Scene, curve: Curve, colour: string, half: numb
  */
 function drawLifetimeBrace(scene: Scene, label: string, curve: Curve, side: Pt, gap: number, depth: number): void {
   const a0 = curve.at(0), b0 = curve.at(curve.length);
-  const length = Math.hypot(b0.x - a0.x, b0.y - a0.y);
+  const length = portable.hypot(b0.x - a0.x, b0.y - a0.y);
   if (length < depth * 4) return;
   const u = { x: (b0.x - a0.x) / length, y: (b0.y - a0.y) / length };
   // (outward: across the line, toward `side`)

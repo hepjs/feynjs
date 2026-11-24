@@ -1,5 +1,6 @@
 import { fmt } from "../geometry/curve.ts";
 import type { Pt } from "../geometry/curve.ts";
+import * as portable from "../geometry/portable-math.ts";
 
 /**
  * A nucleus drawn as an atom's core is drawn in textbooks: A small spheres packed in a disc,
@@ -34,39 +35,39 @@ export function nucleusFrom(text: string): { A: number; Z: number } | undefined 
  * -1/6), so the whole grows as A to the sixth on the page, gently.
  */
 function nucleonPlaces(A: number, unit: number): { places: (Pt & { z: number })[]; r: number } {
-  const r = unit * A ** (-1 / 6), R = Math.max(r, ((1.2 / 0.85) * Math.cbrt(A)) * r), inside = Math.max(0, R - r);
+  const r = unit * portable.power(A, -1 / 6), R = Math.max(r, ((1.2 / 0.85) * portable.cbrt(A)) * r), inside = Math.max(0, R - r);
   type P3 = { x: number; y: number; z: number };
   let pts: P3[];
   // (the lightest by hand: a touching pair, a triangle, a tetrahedron turned a little)
   if (A === 1) pts = [{ x: 0, y: 0, z: 0 }];
   else if (A === 2) pts = [{ x: -r * 0.9, y: 0, z: 0 }, { x: r * 0.9, y: 0, z: 0 }];
-  else if (A === 3) pts = [0, 1, 2].map((k) => ({ x: r * 1.04 * Math.cos(-Math.PI / 2 + (2 * Math.PI * k) / 3), y: r * 1.04 * Math.sin(-Math.PI / 2 + (2 * Math.PI * k) / 3), z: 0 }));
+  else if (A === 3) pts = [0, 1, 2].map((k) => ({ x: r * 1.04 * portable.cos(-Math.PI / 2 + (2 * Math.PI * k) / 3), y: r * 1.04 * portable.sin(-Math.PI / 2 + (2 * Math.PI * k) / 3), z: 0 }));
   else {
     // (spread through the ball, a golden angle apart, then pushed apart where they crowd)
     const golden = Math.PI * (3 - Math.sqrt(5));
     pts = Array.from({ length: A }, (_, k) => {
-      const rho = inside * Math.cbrt((k + 0.5) / A), cosT = 1 - (2 * (k + 0.5)) / A, sinT = Math.sqrt(1 - cosT * cosT), phi = k * golden;
-      return { x: rho * sinT * Math.cos(phi), y: rho * sinT * Math.sin(phi), z: rho * cosT };
+      const rho = inside * portable.cbrt((k + 0.5) / A), cosT = 1 - (2 * (k + 0.5)) / A, sinT = Math.sqrt(1 - cosT * cosT), phi = k * golden;
+      return { x: rho * sinT * portable.cos(phi), y: rho * sinT * portable.sin(phi), z: rho * cosT };
     });
     const apart = 2 * r * 0.92;
     for (let round = 0; round < 60; round++) {
       for (let i = 0; i < A; i++) for (let j = i + 1; j < A; j++) {
-        const dx = pts[j].x - pts[i].x, dy = pts[j].y - pts[i].y, dz = pts[j].z - pts[i].z, d = Math.hypot(dx, dy, dz) || 1e-6;
+        const dx = pts[j].x - pts[i].x, dy = pts[j].y - pts[i].y, dz = pts[j].z - pts[i].z, d = portable.hypot(dx, dy, dz) || 1e-6;
         if (d >= apart) continue;
         const push = (apart - d) / 2 / d;
         pts[i] = { x: pts[i].x - dx * push, y: pts[i].y - dy * push, z: pts[i].z - dz * push };
         pts[j] = { x: pts[j].x + dx * push, y: pts[j].y + dy * push, z: pts[j].z + dz * push };
       }
       // (and kept inside the ball)
-      pts = pts.map((q) => { const d = Math.hypot(q.x, q.y, q.z); return d > inside && d > 0 ? { x: (q.x * inside) / d, y: (q.y * inside) / d, z: (q.z * inside) / d } : q; });
+      pts = pts.map((q) => { const d = portable.hypot(q.x, q.y, q.z); return d > inside && d > 0 ? { x: (q.x * inside) / d, y: (q.y * inside) / d, z: (q.z * inside) / d } : q; });
     }
   }
   // (seen a little from above and the side, so no two sit exactly behind one another)
   const tilt = 0.5, turn = 0.4;
   return {
     places: pts.map((q) => {
-      const x1 = q.x * Math.cos(turn) + q.z * Math.sin(turn), z1 = -q.x * Math.sin(turn) + q.z * Math.cos(turn);
-      return { x: x1, y: q.y * Math.cos(tilt) - z1 * Math.sin(tilt), z: q.y * Math.sin(tilt) + z1 * Math.cos(tilt) };
+      const x1 = q.x * portable.cos(turn) + q.z * portable.sin(turn), z1 = -q.x * portable.sin(turn) + q.z * portable.cos(turn);
+      return { x: x1, y: q.y * portable.cos(tilt) - z1 * portable.sin(tilt), z: q.y * portable.sin(tilt) + z1 * portable.cos(tilt) };
     }),
     r,
   };
@@ -81,14 +82,14 @@ function seeded(seed: number): () => number {
 /** How far the nucleus reaches from its middle, in px. */
 export function nucleusRadius(A: number, unit: number): number {
   const { places, r } = nucleonPlaces(A, unit);
-  return Math.max(...places.map((q) => Math.hypot(q.x, q.y))) + r;
+  return Math.max(...places.map((q) => portable.hypot(q.x, q.y))) + r;
 }
 
 /** The SVG of a nucleus of `A` nucleons, `Z` of them protons, at `p`. */
 export function nucleusSvg(p: Pt, A: number, Z: number, unit: number, colours: { proton: string; neutron: string; edge: string; protonEdge?: string; neutronEdge?: string }): string {
   const { places: offsets, r } = nucleonPlaces(A, unit);
   const places = offsets.map((q) => ({ x: p.x + q.x, y: p.y + q.y, z: q.z }));
-  const disc = Math.max(r, ...offsets.map((q) => Math.hypot(q.x, q.y)));
+  const disc = Math.max(r, ...offsets.map((q) => portable.hypot(q.x, q.y)));
   // (which are protons: Z of them, spread evenly from the middle out, so a small nucleus alternates
   // protons and neutrons; mixed a little in a large one, the same every time for the same nucleus)
   const evenly = places.map((_, k) => Math.floor(((k + 1) * Z) / A) > Math.floor((k * Z) / A));

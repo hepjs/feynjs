@@ -4,6 +4,7 @@ import type { LineReason } from "../engines/forces/why.ts";
 import { FAMILIES } from "../engines/forces/families.ts";
 import type { Family } from "../engines/forces/families.ts";
 import type { Scene } from "./scene.ts";
+import * as portable from "../geometry/portable-math.ts";
 
 /** What `debug: on` shows: the engine, what each step after the forces moved, and why each line lies where it does. */
 export interface DebugInfo {
@@ -48,7 +49,7 @@ export function drawDebug(scene: Scene, d: Diagram, info: DebugInfo): void {
     let x = p.x + 3, y = p.y - 3, anchor = "start";
     if (at.length === 1) {
       const o = scene.position(d.vertices.get(at[0].from === v.id ? at[0].to : at[0].from)!);
-      const n = Math.hypot(o.x - p.x, o.y - p.y) || 1, ux = (o.x - p.x) / n, uy = (o.y - p.y) / n;
+      const n = portable.hypot(o.x - p.x, o.y - p.y) || 1, ux = (o.x - p.x) / n, uy = (o.y - p.y) / n;
       // (in along the leg, then off it on the side away from the diagram's middle: the line's
       // mark is on the side toward it)
       const side = (scene.core.x - p.x) * -uy + (scene.core.y - p.y) * ux > 0 ? -1 : 1;
@@ -73,7 +74,7 @@ export function drawDebug(scene: Scene, d: Diagram, info: DebugInfo): void {
     const a = scene.position(d.vertices.get(e.from)!), b = scene.position(d.vertices.get(e.to)!);
     const curve = scene.edgeCurves.get(e);
     const mid = curve ? curve.at(curve.length / 2) : { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
-    const length = Math.hypot(b.x - a.x, b.y - a.y) / line, angle = (Math.atan2(a.y - b.y, b.x - a.x) * 180) / Math.PI;
+    const length = portable.hypot(b.x - a.x, b.y - a.y) / line, angle = (portable.atan2(a.y - b.y, b.x - a.x) * 180) / Math.PI;
     const reasons = info.why?.get(e) ?? [];
     // (the strongest family that does not act on every line, where it moves the line at all;
     // else the strongest of all)
@@ -89,7 +90,7 @@ export function drawDebug(scene: Scene, d: Diagram, info: DebugInfo): void {
     const why = [held, then].filter(Boolean).join("; ");
     const text = `${e.from}–${e.to}, ${nameOf(d, e)}: ${length.toFixed(2)} lines at ${Math.round(angle)}°${why ? `; ${why}` : ""}.`;
     if (!info.why) return;
-    const ln = Math.hypot(b.x - a.x, b.y - a.y) || 1, nx = -(b.y - a.y) / ln, ny = (b.x - a.x) / ln;
+    const ln = portable.hypot(b.x - a.x, b.y - a.y) || 1, nx = -(b.y - a.y) / ln, ny = (b.x - a.x) / ln;
     const side = (scene.core.x - mid.x) * nx + (scene.core.y - mid.y) * ny >= 0 ? 1 : -1;
     const off = small * 1.05 + (e.style.line === "wave" || e.style.line === "coil" ? t.line.waveAmplitude : 0);
     out.push(`<g class="feynjs-debug-line" data-edge="${escape(scene.edgeIds.get(e) ?? `${e.from}--${e.to}`)}" data-family="${family?.name ?? ""}" data-why="${escape(text)}"><title>${escape(text)}</title>`

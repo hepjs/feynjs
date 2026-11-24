@@ -112,7 +112,17 @@ function interactions(d: Diagram, lines: Map<string, Edge[]>, external: Set<stri
 function sortNames(names: Name[]): Name[] {
   // (a particle before its antiparticle: "a muon and an antimuon")
   const key = (n: Name) => `${n.singular.replace(/anti/, "")}${/anti/.test(n.singular) ? "~" : ""}`;
-  return [...names].sort((a, b) => key(a).localeCompare(key(b)));
+  return [...names].sort((a, b) => alphabetical(key(a), key(b)));
+}
+
+/**
+ * Alphabetical regardless of case, then by character: the same in every engine and locale
+ * (a locale-aware comparison follows the reader's language, and engines without ICU compare raw codes).
+ */
+function alphabetical(a: string, b: string): number {
+  const x = a.toLowerCase(), y = b.toLowerCase();
+  if (x !== y) return x < y ? -1 : 1;
+  return a < b ? -1 : a > b ? 1 : 0;
 }
 
 /**

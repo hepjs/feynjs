@@ -4,6 +4,7 @@ import type { Ranks } from "./columns.ts";
 import { edgeJoining, isLeg, isOutgoingLeg, neighboursOf } from "./graph.ts";
 import type { Graph } from "./graph.ts";
 import { isRailEdge } from "./beams.ts";
+import * as portable from "../../geometry/portable-math.ts";
 
 /**
  * Decay cascades, drawn as in the reference diagrams of the ATLAS SUSY group: the
@@ -213,7 +214,7 @@ export function arcDecayChains(
       // head of a chain: it arrives in the direction the layout produced it
       const parent = at(links.parent);
       const rise = (v.y - parent.y) * g.rowOverRank, run = v.x - parent.x;
-      const isProducedLevel = (Math.atan2(Math.abs(rise), run) * 180) / Math.PI < g.rules.levelTolerance;
+      const isProducedLevel = (portable.atan2(Math.abs(rise), run) * 180) / Math.PI < g.rules.levelTolerance;
       if (isProducedLevel) {
         // A level line that emits something recoils: it carries on slightly upward and
         // the emitted particle leaves downward (Higgs-strahlung). With nothing emitted
@@ -237,11 +238,11 @@ export function arcDecayChains(
         leaving.set(v.id, recoiled);
         const length = lengthOf(links.carriesOn), radians = (recoiled.angle * Math.PI) / 180;
         moveBranchTo(g, rank, links.carriesOn,
-          v.x + length * Math.cos(radians), v.y + (side * length * Math.sin(radians)) / g.rowOverRank);
+          v.x + length * portable.cos(radians), v.y + (side * length * portable.sin(radians)) / g.rowOverRank);
         continue;
       }
       const side = Math.sign(rise);
-      arriving = { angle: (Math.atan2(Math.abs(rise), run) * 180) / Math.PI, side, emitSide: side };
+      arriving = { angle: (portable.atan2(Math.abs(rise), run) * 180) / Math.PI, side, emitSide: side };
     }
     // Only supersymmetric cascades arc. Any other line that radiates on its way out
     // (a W emitting a photon) carries straight on.
@@ -258,8 +259,8 @@ export function arcDecayChains(
     leaving.set(v.id, turned);
     const radians = (turned.angle * Math.PI) / 180, length = lengthOf(links.carriesOn);
     moveBranchTo(g, rank, links.carriesOn,
-      v.x + length * Math.cos(radians),
-      v.y + (turned.side * length * Math.sin(radians)) / g.rowOverRank);
+      v.x + length * portable.cos(radians),
+      v.y + (turned.side * length * portable.sin(radians)) / g.rowOverRank);
   }
   return leaving;
 }
@@ -300,8 +301,8 @@ export function placeDecayEmissions(
       const busy = 1 + g.rules.busyVertexStretch * Math.max(0, g.diagram.edges.filter((e) => e.from === links.vertex || e.to === links.vertex).length - 3);
       const length = (g.neighbours.has(id) ? lineLengthInto(id) : legLengthAt(links.rank)) * busy;
       const angle = (Math.min(88, angles[i] + (chain?.emitLevel ? 0 : tilt)) * Math.PI) / 180;
-      const x = vertex.x + length * Math.cos(angle);
-      const y = vertex.y + (awayFromMidline * length * Math.sin(angle)) / g.rowOverRank;
+      const x = vertex.x + length * portable.cos(angle);
+      const y = vertex.y + (awayFromMidline * length * portable.sin(angle)) / g.rowOverRank;
       if (g.neighbours.has(id)) moveBranchTo(g, rank, id, x, y);
       else { const leg = g.diagram.vertices.get(id)!; leg.x = x; leg.y = y; }
     });
