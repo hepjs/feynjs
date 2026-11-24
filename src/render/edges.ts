@@ -7,6 +7,8 @@ import { drawLine, halfWidth } from "./lines.ts";
 import type { LabelSpot, Scene } from "./scene.ts";
 import { crossPath, reachToward, vertexRadius } from "./vertices.ts";
 
+const attr = (s: string) => s.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+
 type PointOnCurve = { x: number; y: number; tx: number; ty: number };
 
 /** The path an edge follows: straight, a circular arc, or a tadpole loop. */
@@ -146,7 +148,10 @@ export function drawEdge(scene: Scene, d: Diagram, e: Edge, degree: Map<string, 
       + `<animate attributeName="stroke-width" values="${fmt(w * 2)};${fmt(w * 9)}" dur="${beat}s" repeatCount="indefinite"/>`
       + `<animate attributeName="opacity" values="0.6;0" dur="${beat}s" repeatCount="indefinite"/></path>`);
   }
-  scene.edges.push(`<g${cssClass}${color ? ` color="${color}"` : ""}>${drawLine(drawn, e.style, theme.line)}</g>`);
+  // (named, with its ends and its particle, so a program or a reader of the SVG can find it)
+  const particle = particleOfEdge(d, e);
+  const names = ` data-edge="${attr(scene.edgeIds.get(e) ?? `${e.from}--${e.to}`)}" data-from="${attr(e.from)}" data-to="${attr(e.to)}"${particle ? ` data-particle="${attr(particle)}"` : ""}`;
+  scene.edges.push(`<g${cssClass}${names}${color ? ` color="${color}"` : ""}>${drawLine(drawn, e.style, theme.line)}</g>`);
   // a long-lived particle's band (and brace, on the side away from its label)
   if (e.lifetime !== undefined) {
     const side = labelSideOf(scene, e, curve.at(curve.length / 2));

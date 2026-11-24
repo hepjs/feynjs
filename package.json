@@ -1,6 +1,6 @@
 {
   "name": "feynjs",
-  "version": "0.9.2",
+  "version": "0.9.3",
   "description": "Feynman diagrams for the web: written as text, laid out automatically, drawn as SVG.",
   "keywords": [
     "feynman",

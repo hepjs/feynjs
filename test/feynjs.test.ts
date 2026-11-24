@@ -730,3 +730,21 @@ test("notes: words in free space with a hand-drawn arrow to a point, a line or a
   assert.equal((two.match(/class="feynjs-note-arrow"/g) ?? []).length, 2);
   assert.throws(() => render(vbf + "\nnote: zz \"nowhere\""), /no "zz"/);
 });
+
+test("every part of a drawing is named: lines by their ends, drawn points by name, and the diagram as data", () => {
+  const svg = render("i1 [e-] -- a -- i2 [e+]\na -- [photon] b [dot]\nb -- f1 [mu-]\nb -- f2 [mu+]\nb -- [photon] f2");
+  assert.match(svg, /data-edge="i1--a" data-from="i1" data-to="a" data-particle="e-"/);
+  assert.match(svg, /data-vertex="b"/);
+  // (a second line between the same points is told apart)
+  assert.match(svg, /data-edge="b--f2#2"/);
+  const meta = /<metadata class="feynjs-model">(.*?)<\/metadata>/.exec(svg);
+  assert.ok(meta, "the SVG holds the diagram as data");
+  const model = JSON.parse(meta[1].replace(/&quot;/g, '"').replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&"));
+  assert.deepEqual(model.unit, { x: defaultTheme.unitX, y: defaultTheme.unitY });
+  const b = model.vertices.find((v: { id: string }) => v.id === "b");
+  assert.equal(b.shape, "dot");
+  // (`at` is where `b at (x, y)` would hold the point: the drawing's place in the source's units)
+  assert.deepEqual(b.at, [Math.round((b.x / model.unit.x) * 100) / 100, Math.round((-b.y / model.unit.y) * 100) / 100 || 0]);
+  assert.equal(model.vertices.find((v: { id: string }) => v.id === "i1").role, "in");
+  assert.deepEqual(model.edges.map((e: { id: string }) => e.id), ["i1--a", "a--i2", "a--b", "b--f1", "b--f2", "b--f2#2"]);
+});

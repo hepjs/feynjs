@@ -120,6 +120,31 @@ parse(source: string): Diagram
 The source as data, before layout: `{ vertices, edges, hadrons, directives }`. Process lines are
 already expanded into edges.
 
+## The drawing's parts, by name
+
+Every SVG feynjs draws names its parts, so a program (a page script, a test, or a language model
+reading the SVG) can find any of them and change the source by name:
+
+| In the SVG | What it is |
+|---|---|
+| `<g data-edge="a--b" data-from="a" data-to="b" data-particle="W+">` | a line, named by its ends (`a--b#2` for a second line between the same points), with its particle when it has one |
+| `<g data-vertex="b">` | the mark drawn at a point (a dot, blob, cross, nucleus and so on) |
+| `<metadata class="feynjs-model">` | the whole diagram as JSON |
+
+The JSON lists every point and every line:
+
+```json
+{ "feynjs": 1, "unit": { "x": 52, "y": 34 },
+  "vertices": [ { "id": "i1", "role": "in", "x": 14.26, "y": -35.75, "at": [0.27, 1.05], "label": "e^-", "particle": "e-" },
+                { "id": "b", "x": 103.99, "y": 0, "at": [2, 0], "shape": "dot" } ],
+  "edges": [ { "id": "a--b", "from": "a", "to": "b", "particle": "gamma", "line": "wave" } ] }
+```
+
+`x` and `y` are where a point is drawn, in the SVG's own units; `at` is the `b at (x, y)` that
+would hold it there. A process (`p p > t tbar`) names the points it makes for you (`pp1`,
+`in1`, ...), and the JSON gives those names too. The [playground](../playground.md) is built on
+this: it says what is under the pointer, and dragging a point writes its `at (x, y)`.
+
 ## Exporting
 
 ### toTikz

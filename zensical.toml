@@ -39,6 +39,7 @@ nav = [
       { "Checking diagrams" = "guide/tools.md" },
     ] },
   ] },
+  { "Playground" = "playground.md" },
   { "Examples" = [
     { "Overview" = "examples/index.md" },
     { "Every line type" = "examples/lines.md" },
@@ -70,6 +71,7 @@ extra_css = ["stylesheets/feynjs.css", "stylesheets/theme.css"]
 extra_javascript = [
   "https://cdn.jsdelivr.net/npm/feynjs@0.9/dist/feynjs.min.js",
   "javascripts/feynjs-init.js",
+  "javascripts/playground.js",
 ]
 
 [project.theme]

@@ -16,6 +16,7 @@ import { describeParsed } from "../tools/describe.ts";
 import { explainParsed } from "../tools/explain.ts";
 import { drawColourFlow } from "./colour-flow.ts";
 import { drawEdge } from "./edges.ts";
+import { particleOfEdge } from "../particles/identify.ts";
 import { drawNotes } from "./notes.ts";
 import { drawHadronGroup } from "./hadrons.ts";
 import { layoutWithForces } from "../engines/forces/layout.ts";
@@ -52,7 +53,7 @@ export interface RenderOptions {
 
 const escapeText = (s: string) => s.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-function assembleSvg(scene: Scene, title: string | undefined, ariaLabel: string, scale: number, description: string, grid = 0, origin = { x: 0, y: 0 }, iso = false, inlineAt?: number): string {
+function assembleSvg(scene: Scene, title: string | undefined, ariaLabel: string, scale: number, description: string, grid = 0, origin = { x: 0, y: 0 }, iso = false, inlineAt?: number, model = ""): string {
   const b = scene.bounds, pad = scene.theme.padding;
   const width = b.right - b.left + 2 * pad, height = b.bottom - b.top + 2 * pad;
   // (`inline: a`: in a line of text, the point `a` sits on the text's baseline, as TikZ's
@@ -87,10 +88,32 @@ function assembleSvg(scene: Scene, title: string | undefined, ariaLabel: string,
     ? `<defs><pattern id="${scene.idPrefix}-hatch" width="${fmt(scene.theme.vertex.hatchSpacing)}" height="${fmt(scene.theme.vertex.hatchSpacing)}" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0V${fmt(scene.theme.vertex.hatchSpacing)}" stroke="currentColor" stroke-width="0.9"/></pattern></defs>`
     : "");
   return `<svg xmlns="http://www.w3.org/2000/svg" class="feynjs" role="img" aria-label="${escapeText(ariaLabel)}" viewBox="${fmt(b.left - pad)} ${fmt(b.top - pad)} ${fmt(width)} ${fmt(height)}" width="${inline ? `${fmt(width * em)}em` : fmt(width * scale)}" height="${inline ? `${fmt(height * em)}em` : fmt(height * scale)}" font-family="${scene.theme.fontFamily}"${inline}>`
-    + (title ? `<title>${escapeText(title)}</title>` : "") + (description ? `<desc>${escapeText(description)}</desc>` : "") + hatching + gridLines
+    + (title ? `<title>${escapeText(title)}</title>` : "") + (description ? `<desc>${escapeText(description)}</desc>` : "") + (model ? `<metadata class="feynjs-model">${escapeText(model)}</metadata>` : "") + hatching + gridLines
     + `<g class="feynjs-edges">${scene.edges.join("")}</g>`
     + `<g class="feynjs-vertices">${scene.vertices.join("")}</g>`
     + `<g class="feynjs-labels">${scene.labels.join("")}</g></svg>`;
+}
+
+/**
+ * The diagram as data, written into the SVG (`<metadata class="feynjs-model">`): every point by
+ * its name, where it is drawn and where `at (x, y)` would put it, and every line by its name,
+ * ends and particle. The names are the ones the drawing's groups carry (`data-vertex`,
+ * `data-edge`), so a program, or a model reading the SVG, can refer to any part and change the
+ * source by name.
+ */
+function diagramModel(d: Diagram, scene: Scene): string {
+  const { unitX, unitY } = scene.theme;
+  const round = (n: number) => Math.round(n * 100) / 100;
+  const vertices = [...d.vertices.values()].map((v) => {
+    const p = scene.position(v);
+    return { id: v.id, ...(v.role ? { role: v.role } : {}), x: round(p.x), y: round(p.y), at: [round(p.x / unitX), round(-p.y / unitY) || 0],
+      ...(v.label ? { label: v.label } : {}), ...(v.particle ? { particle: v.particle } : {}), ...(v.shape && v.shape !== "none" ? { shape: v.shape } : {}) };
+  });
+  const edges = d.edges.map((e) => {
+    const particle = particleOfEdge(d, e);
+    return { id: scene.edgeIds.get(e), from: e.from, to: e.to, ...(particle ? { particle } : {}), line: e.style.line, ...(e.label ? { label: e.label } : {}) };
+  });
+  return JSON.stringify({ feynjs: 1, unit: { x: unitX, y: unitY }, vertices, edges });
 }
 
 /** How far, in px, the mark drawn at a vertex reaches from its centre. */
@@ -284,6 +307,13 @@ export function drawDiagram(d: Diagram, options: RenderOptions = {}): { svg: str
   };
   const colourFlow = (d.directives["colour flow"] ?? d.directives["color flow"] ?? "").trim().toLowerCase();
   scene.colourOnly = colourFlow === "only";
+  // (every line a name of its own, from its ends)
+  const seen = new Map<string, number>();
+  for (const e of d.edges) {
+    const base = `${e.from}--${e.to}`, n = (seen.get(base) ?? 0) + 1;
+    seen.set(base, n);
+    scene.edgeIds.set(e, n === 1 ? base : `${base}#${n}`);
+  }
   const drawn = new Map<Edge, [number, number]>();
   for (const e of d.edges) {
     const step = level && Math.max(level.get(e.from) ?? 0, level.get(e.to) ?? 0);
@@ -340,7 +370,7 @@ export function drawDiagram(d: Diagram, options: RenderOptions = {}): { svg: str
   const inlineId = d.directives.inline?.trim().replace(/^\((.*)\)$/, "$1");
   const inlineVertex = inlineId ? d.vertices.get(inlineId) : undefined;
   if (inlineId && !inlineVertex) throw new FeynError(`inline: names a point of the diagram, such as "inline: a"`);
-  const svg = assembleSvg(scene, d.directives.title, label, (Number(d.directives.scale) || 1) * theme.drawingScale, explainParsed(d), gridStep, origin, /^iso/i.test((d.directives.grid ?? "").trim()), inlineVertex && scene.position(inlineVertex).y);
+  const svg = assembleSvg(scene, d.directives.title, label, (Number(d.directives.scale) || 1) * theme.drawingScale, explainParsed(d), gridStep, origin, /^iso/i.test((d.directives.grid ?? "").trim()), inlineVertex && scene.position(inlineVertex).y, diagramModel(d, scene));
   // (the black-and-white scheme: every colour the drawing uses, made grey)
   // (the kinematic view draws the event instead of the diagram)
   const view = (d.directives.view ?? "").trim().toLowerCase();

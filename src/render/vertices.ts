@@ -79,7 +79,7 @@ export function drawVertexShape(scene: Scene, v: Vertex): void {
       svg = `<circle class="feynjs-bg" ${at} r="${look.blob}" fill="#fff"/><circle ${at} r="${look.blob}" fill="url(#${scene.idPrefix}-hatch)" ${outline}${colorAttr}/>`;
       break;
   }
-  if (svg) scene.vertices.push(svg);
+  if (svg) scene.vertices.push(`<g data-vertex="${v.id.replace(/"/g, "&quot;")}">${svg}</g>`);
   // a pulse: two rings, out of step, growing from the point's rim and fading, behind it
   if (v.pulse !== undefined) {
     const from = Math.max(vertexRadius(v, look), r, 5), to = from * 2.8, beat = scene.theme.pulseSeconds;

@@ -3,6 +3,16 @@
 All notable changes, newest first. Versions follow [semantic versioning](https://semver.org): a
 layout that moves is a change, recorded here.
 
+## 0.9.3 — 2026-11-24
+
+- **Every part of a drawing is named** in the SVG: each line's group carries `data-edge="a--b"`
+  with its ends and particle, each drawn point `data-vertex="b"`, and the SVG holds the whole
+  diagram as JSON (`<metadata class="feynjs-model">`): what a program or a language model needs to
+  refer to a part of the diagram and change the source by name.
+- **The playground**, a page of the docs: write source, see the diagram as you type; point at a
+  part to see its name and source line; drag a point to write its `at (x, y)`; switches, share
+  links, SVG, PNG and TikZ.
+
 ## 0.9.2 — 2026-11-24
 
 - **Dark pages:** the grid behind a grid layout, and the lattice view's grid and sites, are drawn in

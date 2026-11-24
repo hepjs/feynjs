@@ -40,6 +40,8 @@ const escapeXml = (text: string) => text.replace(/&/g, "&amp;").replace(/</g, "&
 /** Everything drawn so far, the space it takes up, and what later steps need to know. */
 export class Scene {
   edges: string[] = [];
+  /** each line's name in the drawing, `a--b` (`a--b#2` for a second line between the same points) */
+  edgeIds = new Map<Edge, string>();
   vertices: string[] = [];
   labels: string[] = [];
   bounds = new BoundingBox();
