@@ -158,10 +158,13 @@ properties: `--feynjs-tooltip-bg`, `--feynjs-tooltip-fg`, `--feynjs-tooltip-acce
 
 ## The label font
 
-Labels are set in New Computer Modern, the face of TeX documents, when the page provides it, and
-fall back to Latin Modern, CMU Serif, STIX Two or Times. To load it, copy `docs/fonts/` and
-this site's `stylesheets/feynjs.css` (see [Zensical setup](../get-started/zensical.md#optional-extras)). The
-`fontFamily` theme setting changes the face.
+Labels are set in the reader's own math font, the one the browser uses for equations (CSS
+`font-family: math`): STIX Two Math on a Mac, Cambria Math on Windows. Nothing is downloaded,
+and italic letters are Unicode's mathematical italics, so every math font draws its own italic
+shapes. Where `math` is not understood (an older browser, an SVG opened in a drawing program),
+the face falls back to STIX Two Math, Cambria Math, New Computer Modern Math, Latin Modern Math,
+then any serif. The `fontFamily` theme setting changes the face; a diagram's layout never depends
+on it.
 
 ## Exporting
 

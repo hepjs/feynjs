@@ -29,7 +29,6 @@ The repository and its packages carry a few things under their own licences, lis
 
 | What | Licence |
 |---|---|
-| New Computer Modern fonts, the label face (in `docs/fonts/` and the Obsidian plugin) | GUST Font License (LPPL-based) |
 | Inter fonts, this site's text face (in `docs/fonts/`) | SIL Open Font License 1.1 |
 | Two Lucide icons, download and triangle-alert, drawn inline | ISC |
 

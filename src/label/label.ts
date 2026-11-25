@@ -94,6 +94,21 @@ function join(a: Node | undefined, b: Node): Node {
   return { t: "group", kids: [a, b] };
 }
 
+/**
+ * A letter in mathematical italic, as Unicode has it (U+1D434 on): the shapes a math font draws
+ * for italic letters, where `font-style: italic` would only slant its upright ones. Latin and
+ * lower-case Greek; anything else (ℓ, an upper-case Greek letter) as it is.
+ */
+export function mathItalic(c: string): string | undefined {
+  const code = c.codePointAt(0)!;
+  if (c === "h") return "\u210E";
+  if (code >= 0x41 && code <= 0x5a) return String.fromCodePoint(0x1d434 + code - 0x41);
+  if (code >= 0x61 && code <= 0x7a) return String.fromCodePoint(0x1d44e + code - 0x61);
+  if (code >= 0x3b1 && code <= 0x3c9) return String.fromCodePoint(0x1d6fc + code - 0x3b1);
+  const variant: Record<string, number> = { "ϵ": 0x1d716, "ϑ": 0x1d717, "ϰ": 0x1d718, "ϕ": 0x1d719, "ϱ": 0x1d71a, "ϖ": 0x1d71b };
+  return variant[c] !== undefined ? String.fromCodePoint(variant[c]) : undefined;
+}
+
 /** Rough advance widths in em for an italic serif; good enough to place labels. */
 function charWidth(c: string, italic: boolean): number {
   if ("ijl′.,:;!|'".includes(c)) return 0.29;
@@ -135,7 +150,9 @@ function lay(n: Node, x: number, y: number, size: number, ctx: Ctx): number {
     case "space": return n.w * size;
     case "char": {
       const w = charWidth(n.c, n.italic) * size;
-      ctx.parts.push(`<text x="${r2(x + w / 2)}" y="${r2(y)}" font-size="${r2(size)}" text-anchor="middle"${n.italic ? ' font-style="italic"' : ""}>${esc(n.c)}</text>`);
+      // (an italic letter as its mathematical italic character; ℓ and the like slanted, as before)
+      const shape = n.italic ? mathItalic(n.c) : undefined;
+      ctx.parts.push(`<text x="${r2(x + w / 2)}" y="${r2(y)}" font-size="${r2(size)}" text-anchor="middle"${n.italic && !shape ? ' font-style="italic"' : ""}>${esc(shape ?? n.c)}</text>`);
       ctx.top = Math.min(ctx.top, y - (isTall(n) ? 0.7 : 0.48) * size);
       ctx.bottom = Math.max(ctx.bottom, y + (/[gjpqyμβγηρφχψζξ]/.test(n.c) ? 0.22 : 0.02) * size);
       return w;

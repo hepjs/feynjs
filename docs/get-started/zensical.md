@@ -102,10 +102,6 @@ neutralino2 > Z neutralino1
 
 ## Optional extras
 
-**The label font.** Labels use New Computer Modern when the page has it. Copy this site's
-`docs/stylesheets/feynjs.css` and `docs/fonts/NewCM10-Book.otf`, `docs/fonts/NewCM10-BookItalic.otf`
-into your `docs/`, and add `extra_css = ["stylesheets/feynjs.css"]`.
-
 **Your own options.** To pass options to every diagram (a download button, say), call `run`
 yourself from a small script listed after feynjs; feynjs leaves what you have drawn alone:
 

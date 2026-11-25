@@ -59,7 +59,8 @@ test("arcs end exactly on their vertices", () => {
 
 test("labels: accents and scripts produce markup with sane width", () => {
   const lb = layoutLabel("\\tilde\\chi^0_1", 15);
-  assert.ok(lb.svg.includes("χ") && lb.svg.includes("<path"));
+  // (an italic letter is set as its mathematical italic: 𝜒, U+1D712)
+  assert.ok(lb.svg.includes("\u{1D712}") && lb.svg.includes("<path"));
   assert.ok(lb.width > 8 && lb.width < 30);
 });
 
@@ -571,7 +572,7 @@ test("modifiers and small elements: double, jet, label colour, ellipsis, small h
   const e = render("i1 [q] -- a -- i2 [qbar]\na -- [Z] h [small hatched blob, label=\\mathcal{M}]\nh -- f1 [mu-]\nh -- [ellipsis] f2\nh -- f3 [mu+]");
   assert.ok(e.includes("ℳ") && e.includes("-hatch"));
   // a leg already named by its end is not labelled twice
-  assert.equal((render("i1 [q] -- a -- i2 [qbar]\na -- [Z] z [Z]").match(/>Z</g) ?? []).length, 1);
+  assert.equal((render("i1 [q] -- a -- i2 [qbar]\na -- [Z] z [Z]").match(/>\u{1D44D}</gu) ?? []).length, 1);
 });
 
 test("colours: bw draws everything in black, white and grey", () => {

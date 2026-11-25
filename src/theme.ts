@@ -427,7 +427,7 @@ export const defaultTheme: Theme = {
   fontSize: 17,
   // New Computer Modern: the current standard TeX face, matching what papers are typeset in.
   // Pages should load it (see docs/stylesheets/feynjs.css); the rest are fallbacks.
-  fontFamily: `'NewComputerModern10','New Computer Modern','Latin Modern Roman','CMU Serif','STIX Two Text','Times New Roman',serif`,
+  fontFamily: `math,'STIX Two Math','Cambria Math','New Computer Modern Math','Latin Modern Math',serif`,
   padding: 6,
   labelGap: 4,
   revealOpacity: 0.16,

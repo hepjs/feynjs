@@ -5,6 +5,12 @@ layout that moves is a change, recorded here.
 
 ## Unreleased
 
+- **Labels in the reader's own math font** (CSS `font-family: math`: STIX Two Math on a Mac,
+  Cambria Math on Windows), falling back to STIX Two Math, Cambria Math, New Computer Modern Math
+  and Latin Modern Math where `math` is not understood. Italic letters are Unicode's
+  mathematical italics (𝑊, 𝜒, 𝜇), so a math font draws its own italic shapes rather than
+  slanting upright ones. Nothing is downloaded: the New Computer Modern files are no longer
+  shipped with the docs site or the Obsidian plugin, nor needed by a site. No layout moves.
 - **A W's superscript stands clear of the W.** An italic W is wider than labels allowed for (0.91
   em, its top right reaching 1.01), so in `W^+`, `W^-` and `W^\pm` the sign touched the letter;
   it is now set 0.08 em further right. The label's box is unchanged, so no layout moves.
