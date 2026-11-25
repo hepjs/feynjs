@@ -79,7 +79,7 @@ function editDistance(a: string, b: string): number {
 }
 
 /** The closest known name to a misspelt one, if any is close enough to be a likely intent. */
-function closestName(word: string, known: string[]): string | undefined {
+export function closestName(word: string, known: string[]): string | undefined {
   const lower = word.toLowerCase();
   let best: string | undefined, bestDistance = Infinity;
   for (const name of known) {

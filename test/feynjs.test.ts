@@ -787,7 +787,7 @@ test("processes through a loop, in braces: g g > {t} > H the top triangle, g g >
   const decayed = parse("g g > {t} > H\nH > b b~");
   assert.deepEqual([...decayed.vertices.values()].filter((v) => v.role === "out").map((v) => v.label).sort(), ["\\bar b", "b"]);
   assert.throws(() => parse("p p > {t} > H"), /partons/);
-  assert.equal(parse("a -- f [ve~]").vertices.get("f")!.label, "\\bar{\\nu_e}");
+  assert.equal(parse("a -- f [ve~]").vertices.get("f")!.label, "\\bar\\nu_e");
 });
 
 test("production modes: ggF > H is the top triangle; VBF > H and VBS > H > W+ W- two quark lines whose bosons fuse", () => {

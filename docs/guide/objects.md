@@ -51,7 +51,7 @@ leg, on a leg long enough to show what is inside.
 | `Jt` | `top jet` | a top-tagged large-R jet: three subjets (the b and the W's two quarks) |
 | `bjet` | `b jet` | a b-jet: a jet with a displaced secondary vertex and its tracks |
 | `dt` | `disappearing track` | a disappearing track: a charged track that stops, its soft decay dotted |
-| `dl` | `displaced lepton` | a displaced lepton: a dotted flight to a displaced vertex, then the lepton |
+| `dislep` | `displaced lepton` | a displaced lepton: a dotted flight to a displaced vertex, then the lepton (`dl` is MadGraph's left down squark) |
 | `hscp` | `heavy charged` | a heavy stable charged particle (an R-hadron, a long-lived stau): a thick, highly ionising track |
 
 Use the name on a leg (`f1 [J]`, which also labels it) or the style on a line

@@ -23,7 +23,7 @@ export const OBJECT_NAMES: { names: string[]; object: JetObject; short: string }
   { names: ["top jet"], object: "top", short: "TOP" },
   { names: ["b jet", "b-jet"], object: "btag", short: "BJ" },
   { names: ["disappearing track"], object: "disappearing", short: "DT" },
-  { names: ["displaced lepton"], object: "displacedlepton", short: "DL" },
+  { names: ["displaced lepton", "dislep"], object: "displacedlepton", short: "DL" },
   { names: ["proton remnant", "dissociated proton", "broken proton"], object: "remnant", short: "PR" },
 ];
 
@@ -73,9 +73,10 @@ function parseContents(list: string[]): ObjectContent[] | undefined {
   return out;
 }
 
-// (short names in any case, lrj or LRJ, except where the word is a particle too: `tau`, `top` and
-// `j` stay particles, TAU, TOP and J are the objects; long names in any case)
-const PARTICLE_WORDS = new Set(["tau", "top", "j"]);
+// (short names in any case, lrj or LRJ, except where the word is a particle too: `tau`, `top`,
+// `j` and `dl` (MadGraph's left down squark) stay particles, TAU, TOP, J and DL are the objects;
+// long names in any case)
+const PARTICLE_WORDS = new Set(["tau", "top", "j", "dl"]);
 const sameShort = (short: string, word: string) => short === word || (!PARTICLE_WORDS.has(word) && short.toLowerCase() === word.toLowerCase());
 const lookupObject = (word: string) => OBJECT_NAMES.find((o) => sameShort(o.short, word) || o.names.includes(word.toLowerCase()));
 const lookupAdjective = (word: string) => OBJECT_ADJECTIVES.find((a) => a.short === word || a.names.includes(word.toLowerCase()));

@@ -2,6 +2,9 @@ import { FeynError } from "../model.ts";
 import { INTERCHANGE_VERSION, interchangeVersion } from "./interchange.ts";
 import type { Edge } from "../model.ts";
 import { splitPanels } from "../render/panels.ts";
+import { closestName } from "../parse/parse.ts";
+import { parseObject } from "../particles/objects.ts";
+import { lookupParticle, particleNames } from "../particles/registry.ts";
 import { isExternal, kindOfLine, linesByVertex, readDiagram } from "./prepare.ts";
 import type { Diagram } from "../model.ts";
 import { unknownCommands } from "../label/label.ts";
@@ -115,6 +118,13 @@ function checkOne(source: string): Finding[] {
   if (incoming.length === 0 && d.edges.length > 0) {
     findings.push({ severity: "warning", rule: "no-incoming", message: "the diagram has no incoming leg" });
   }
+
+  // (a name a process does not know is drawn anyway, as a plain line labelled with the name: say so)
+  for (const name of unknownProcessNames(source)) {
+    // (a guess only for a name long enough to be a misspelling: any one letter is one away from e)
+    const guess = name.length >= 3 ? closestName(name, particleNames()) : undefined;
+    findings.push({ severity: "warning", rule: "unknown-particle", message: `"${name}" in the process is not a particle feynjs knows: it is drawn as a plain line labelled with its name${guess ? ` (did you mean "${guess}"?)` : ""}` });
+  }
   return findings;
 }
 
@@ -150,4 +160,57 @@ function labelFindings(d: Diagram): Finding[] {
   ].filter((t): t is string => !!t);
   const unknown = [...new Set(labels.flatMap(unknownCommands))];
   return unknown.length ? [{ severity: "warning", rule: "label-command", message: `labels draw ${unknown.join(", ")} as ${unknown.length === 1 ? "its" : "their"} letters: feynjs does not set ${unknown.length === 1 ? "that command" : "those commands"}` }] : [];
+}
+
+/**
+ * The names a process (`p p > gluino gluino`, `gluino > q q neutralino1`) uses that are no
+ * particle, detector object or loop feynjs knows, each once, in the order written.
+ */
+function unknownProcessNames(source: string): string[] {
+  const unknown: string[] = [];
+  for (const raw of source.split(/\r?\n/)) {
+    const line = raw.replace(/%.*$/, "").trim();
+    // (only process lines: a ">" not part of "->" (spaces round it or not), no "--", and not a
+    // setting such as `title: H > ZZ`)
+    if (!/(^|[^-])>/.test(line) || /--/.test(line) || /^[\w -]+:/.test(line)) continue;
+    // (a MadGraph loop order at the end, [noborn=QCD]; a production mode at the start, ggF or VBF(W))
+    const text = line.replace(/\[[^\]]*\]\s*$/, "").replace(/^\s*(?:ggf|vbf|vbs)(?:\([^)]*\))?\s*>/i, ">");
+    for (const name of namesInProcess(text)) {
+      const inner = /^\{(.+)\}$/.exec(name)?.[1].trim() ?? name;
+      if (lookupParticle(inner) || isObject(inner) || unknown.includes(inner)) continue;
+      unknown.push(inner);
+    }
+  }
+  return unknown;
+}
+
+/** A detector object's name, `LRJ(2j)` or `SVJ` (and not one that cannot be read). */
+function isObject(name: string): boolean {
+  try { return !!parseObject(name); } catch { return false; }
+}
+
+/** The names in a process line: words between spaces and ">", a decay's `(> ...)` opened, other parentheses kept with their name (`X(ucd)`, `LRJ(2j)`). */
+function namesInProcess(text: string): string[] {
+  const names: string[] = [];
+  let k = 0;
+  while (k < text.length) {
+    // (commas part MadGraph's decays: `p p > t t~, t > b w+`)
+    if (/[\s>),]/.test(text[k])) { k++; continue; }
+    if (text[k] === "(") { k++; continue; }
+    const start = k;
+    while (k < text.length && !/[\s()>,]/.test(text[k])) k++;
+    let name = text.slice(start, k);
+    // (parentheses straight after a name: a decay if they open with ">", else part of the name)
+    if (text[k] === "(" && !/^\(\s*>/.test(text.slice(k))) {
+      let depth = 0;
+      const open = k;
+      for (; k < text.length; k++) {
+        if (text[k] === "(") depth++;
+        if (text[k] === ")" && --depth === 0) { k++; break; }
+      }
+      name += text.slice(open, k);
+    }
+    if (name) names.push(name);
+  }
+  return names;
 }

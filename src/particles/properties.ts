@@ -1,3 +1,6 @@
+import { namedHadrons } from "./hadrons.ts";
+import { resolveParticle } from "./registry.ts";
+
 /**
  * What each built-in particle is, for the reader: its name, electric charge, spin, colour and
  * mass (PDG 2024 values, rounded). Shown when the pointer rests on a particle's label, and
@@ -11,13 +14,20 @@ export interface ParticleProperties {
   /** "triplet" (quarks, squarks), "octet" (gluons, gluinos), or none */
   colour?: "triplet" | "octet";
   mass?: string;
+  /** a hadron's valence quarks, as a reader writes them: "ud̄", "uds" */
+  quarks?: string;
   /** anything else worth a line: "Majorana", "hypothetical", "detector object" */
   note?: string;
 }
 
 const lepton = (name: string, charge: string, mass: string): ParticleProperties => ({ name, charge, spin: "1/2", mass });
 const quark = (name: string, charge: string, mass: string): ParticleProperties => ({ name, charge, spin: "1/2", colour: "triplet", mass });
-const anti = (p: ParticleProperties, name: string): ParticleProperties => ({ ...p, name, charge: p.charge === "0" ? "0" : p.charge?.startsWith("-") ? `+${p.charge.slice(1)}` : `-${p.charge?.replace("+", "")}` });
+const anti = (p: ParticleProperties, name: string): ParticleProperties => ({ ...p, name, charge: flipCharge(p.charge) });
+/** The charge of the antiparticle: "+2/3" to "-2/3"; "0", "±1" and none stay as they are. */
+function flipCharge(charge: string | undefined): string | undefined {
+  if (!charge || charge === "0" || charge.startsWith("±")) return charge;
+  return charge.startsWith("-") ? `+${charge.slice(1)}` : `-${charge.replace("+", "")}`;
+}
 const hypothetical = (p: ParticleProperties): ParticleProperties => ({ ...p, note: p.note ? `${p.note}; hypothetical` : "hypothetical" });
 const object = (name: string, note: string): ParticleProperties => ({ name, note });
 
@@ -70,11 +80,33 @@ export const PROPERTIES: Record<string, ParticleProperties> = {
   "neutralino1": hypothetical({ name: "lightest neutralino", charge: "0", spin: "1/2", note: "Majorana; often the LSP" }),
   "neutralino2": hypothetical({ name: "second neutralino", charge: "0", spin: "1/2", note: "Majorana" }),
   "neutralino3": hypothetical({ name: "third neutralino", charge: "0", spin: "1/2", note: "Majorana" }),
+  "neutralino4": hypothetical({ name: "heaviest neutralino", charge: "0", spin: "1/2", note: "Majorana" }),
   "chargino": hypothetical({ name: "chargino", charge: "±1", spin: "1/2" }), "chargino+": hypothetical({ name: "chargino", charge: "+1", spin: "1/2" }),
-  "chargino-": hypothetical({ name: "chargino", charge: "-1", spin: "1/2" }), "chargino2": hypothetical({ name: "heavier chargino", charge: "±1", spin: "1/2" }),
+  "chargino-": hypothetical({ name: "chargino", charge: "-1", spin: "1/2" }), "chargino1": hypothetical({ name: "lighter chargino", charge: "±1", spin: "1/2" }),
+  "chargino2": hypothetical({ name: "heavier chargino", charge: "±1", spin: "1/2" }),
+  "chargino1+": hypothetical({ name: "lighter chargino", charge: "+1", spin: "1/2" }), "chargino1-": hypothetical({ name: "lighter chargino", charge: "-1", spin: "1/2" }),
+  "chargino2+": hypothetical({ name: "heavier chargino", charge: "+1", spin: "1/2" }), "chargino2-": hypothetical({ name: "heavier chargino", charge: "-1", spin: "1/2" }),
   "gravitino": hypothetical({ name: "gravitino", charge: "0", spin: "3/2" }), "LSP": hypothetical({ name: "lightest supersymmetric particle" }),
+  "NLSP": hypothetical({ name: "next-to-lightest supersymmetric particle" }),
   "higgsino": hypothetical({ name: "higgsino", spin: "1/2" }), "bino": hypothetical({ name: "bino", charge: "0", spin: "1/2" }),
   "wino": hypothetical({ name: "wino", spin: "1/2" }),
+  "higgsino0": hypothetical({ name: "neutral higgsino", charge: "0", spin: "1/2" }),
+  "higgsino+": hypothetical({ name: "charged higgsino", charge: "+1", spin: "1/2" }), "higgsino-": hypothetical({ name: "charged higgsino", charge: "-1", spin: "1/2" }),
+  "higgsino1": hypothetical({ name: "first neutral higgsino", charge: "0", spin: "1/2" }), "higgsino2": hypothetical({ name: "second neutral higgsino", charge: "0", spin: "1/2" }),
+  "wino0": hypothetical({ name: "neutral wino", charge: "0", spin: "1/2" }),
+  "wino+": hypothetical({ name: "charged wino", charge: "+1", spin: "1/2" }), "wino-": hypothetical({ name: "charged wino", charge: "-1", spin: "1/2" }),
+  "stop1": hypothetical({ name: "lighter top squark", charge: "+2/3", spin: "0", colour: "triplet" }),
+  "stop2": hypothetical({ name: "heavier top squark", charge: "+2/3", spin: "0", colour: "triplet" }),
+  "sbottom1": hypothetical({ name: "lighter bottom squark", charge: "-1/3", spin: "0", colour: "triplet" }),
+  "sbottom2": hypothetical({ name: "heavier bottom squark", charge: "-1/3", spin: "0", colour: "triplet" }),
+  "stau1": hypothetical({ name: "lighter tau slepton", charge: "±1", spin: "0" }), "stau2": hypothetical({ name: "heavier tau slepton", charge: "±1", spin: "0" }),
+  "selectronL": hypothetical({ name: "left-handed selectron", charge: "±1", spin: "0" }), "selectronR": hypothetical({ name: "right-handed selectron", charge: "±1", spin: "0" }),
+  "smuonL": hypothetical({ name: "left-handed smuon", charge: "±1", spin: "0" }), "smuonR": hypothetical({ name: "right-handed smuon", charge: "±1", spin: "0" }),
+  // (MadGraph's MSSM names, where feynjs has none of its own)
+  "h2": hypothetical({ name: "heavy CP-even Higgs boson", charge: "0", spin: "0" }),
+  "sve": hypothetical({ name: "electron sneutrino", charge: "0", spin: "0" }), "svm": hypothetical({ name: "muon sneutrino", charge: "0", spin: "0" }),
+  "svt": hypothetical({ name: "tau sneutrino", charge: "0", spin: "0" }),
+  ...mssmSfermions(),
   "J": object("large-R jet", "a wide jet holding a boosted W, Z, Higgs or top"),
   "tauh": object("hadronic tau", "a narrow jet of one or three charged hadrons"),
   "svj": object("semi-visible jet", "a dark shower, partly invisible"),
@@ -84,15 +116,62 @@ export const PROPERTIES: Record<string, ParticleProperties> = {
   "met": object("missing transverse momentum", "what escaped unseen"),
   "Jt": object("top-tagged large-R jet", "a boosted top quark: three subjets in one wide jet"),
   "dt": object("disappearing track", "a charged particle that decays inside the tracker"),
-  "dl": object("displaced lepton", "a lepton from a long-lived particle's decay"),
+  "dislep": object("displaced lepton", "a lepton from a long-lived particle's decay"),
   "hscp": object("heavy stable charged particle", "a slow, highly ionising track (an R-hadron, a long-lived stau)"),
+  ...Object.fromEntries(Object.entries(namedHadrons()).map(([name, hadron]) => [name, hadron.properties])),
 };
+
+/** MadGraph's MSSM squarks by flavour and hand (`ul`, `dr`), and sleptons by hand and charge (`el-`, `mur+`, `ta1-`). */
+function mssmSfermions(): Record<string, ParticleProperties> {
+  const out: Record<string, ParticleProperties> = {};
+  const squarks: [string, string, string][] = [["u", "up", "+2/3"], ["d", "down", "-1/3"], ["c", "charm", "+2/3"], ["s", "strange", "-1/3"]];
+  for (const [q, flavour, charge] of squarks) {
+    out[`${q}l`] = hypothetical({ name: `left-handed ${flavour} squark`, charge, spin: "0", colour: "triplet" });
+    out[`${q}r`] = hypothetical({ name: `right-handed ${flavour} squark`, charge, spin: "0", colour: "triplet" });
+  }
+  for (const [l, name] of [["e", "selectron"], ["mu", "smuon"]]) {
+    for (const [hand, word] of [["l", "left"], ["r", "right"]]) for (const sign of ["-", "+"]) {
+      out[`${l}${hand}${sign}`] = hypothetical({ name: `${word}-handed ${sign === "+" ? `anti${name}` : name}`, charge: `${sign}1`, spin: "0" });
+    }
+  }
+  for (const [k, word] of [["1", "lighter"], ["2", "heavier"]]) for (const sign of ["-", "+"]) {
+    out[`ta${k}${sign}`] = hypothetical({ name: `${word} tau slepton`, charge: `${sign}1`, spin: "0" });
+  }
+  return out;
+}
+
+/** "electron neutrino" to "electron antineutrino", "W boson" stays "W boson" (its antiparticle is named the same). */
+function antiName(name: string): string {
+  const m = /^(.*?)([a-z]+)$/.exec(name);
+  if (!m || /^anti/.test(m[2]) || /boson$/.test(name)) return name;
+  return `${m[1]}anti${m[2]}`;
+}
+
+/** A hadron's quarks the other way round: each quark its antiquark ("ud̄" to "ūd"). */
+const conjugateQuarks = (quarks: string) => quarks.replace(/([udscbt])(\u0304?)/g, (_, q: string, bar: string) => (bar ? q : `${q}\u0304`));
+
+/**
+ * What a particle is, by any of its names: its own, MadGraph's (`w+` is the W+, `t~` the tbar,
+ * `n1` the neutralino1), an antiparticle with a tilde (`ve~`), a hadron by its parts (`K*+`,
+ * `X(ucd)`).
+ */
+export function propertiesOf(name: string | undefined): ParticleProperties | undefined {
+  if (!name) return undefined;
+  if (Object.prototype.hasOwnProperty.call(PROPERTIES, name)) return PROPERTIES[name];
+  const found = resolveParticle(name);
+  if (!found) return undefined;
+  if (found.properties) return found.properties;
+  if (found.key) return PROPERTIES[found.key];
+  const of = found.antiOf !== undefined ? propertiesOf(found.antiOf) : undefined;
+  if (!of) return undefined;
+  return { ...anti(of, antiName(of.name)), ...(of.quarks ? { quarks: conjugateQuarks(of.quarks) } : {}) };
+}
 
 /** One line for a tooltip: "W boson · charge +1 · spin 1 · mass 80.37 GeV". */
 export function particleInfo(name: string): string | undefined {
-  const p = PROPERTIES[name];
+  const p = propertiesOf(name);
   if (!p) return undefined;
   const charge = p.charge?.replace(/^-/, "−");
-  return [p.name, charge && `charge ${charge}`, p.spin && `spin ${p.spin}`, p.colour && `colour ${p.colour}`, p.mass && `mass ${p.mass}`, p.note]
+  return [p.name, p.quarks && `quarks ${p.quarks}`, charge && `charge ${charge}`, p.spin && `spin ${p.spin}`, p.colour && `colour ${p.colour}`, p.mass && `mass ${p.mass}`, p.note]
     .filter(Boolean).join(" · ");
 }
