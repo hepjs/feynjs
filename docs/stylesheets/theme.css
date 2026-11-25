@@ -544,11 +544,12 @@
 .md-typeset .feynjs-explain-dot.feynjs-on { background: var(--feynjs-teach-line); transform: scale(1.25); }
 .md-typeset .feynjs-explain-stage { display: flex; align-items: center; gap: 1.6rem; margin: 1rem 0 0.6rem; }
 .md-typeset .feynjs-explain-stage > .feynman { flex: 1 1 60%; min-width: 0; margin: 0; }
-.md-typeset .feynjs-explain-aside { flex: 0 0 14rem; display: flex; flex-direction: column; gap: 0.5rem; min-height: 7rem; justify-content: center; }
+.md-typeset .feynjs-explain-aside { flex: 0 0 14rem; display: flex; flex-direction: column; gap: 0.5rem; justify-content: flex-start; }
 .md-typeset .feynjs-explain-aside .feynjs-explain-line { align-self: flex-start; font-size: 0.66rem; color: var(--feynjs-teach-line); background: color-mix(in srgb, var(--feynjs-teach-line) 8%, transparent); }
-.md-typeset .feynjs-explain-says { margin: 0; font-size: 0.78rem; line-height: 1.5; color: var(--md-default-fg-color); }
+.md-typeset .feynjs-explain-says { margin: 0; font-size: 0.78rem; line-height: 1.5; height: 4.5em; overflow: hidden; color: var(--md-default-fg-color); }
+.md-typeset .feynjs-explain-aside .feynjs-explain-line { display: inline-block; box-sizing: border-box; height: 1.4rem; line-height: 1.4rem; padding: 0 0.45em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
 .md-typeset .feynjs-explain-aside .feynjs-explain-bar { justify-content: flex-start; margin: 0.2rem 0 0; }
 @media screen and (max-width: 45em) {
   .md-typeset .feynjs-explain-stage { flex-direction: column; align-items: stretch; gap: 0.6rem; }
-  .md-typeset .feynjs-explain-aside { flex: none; min-height: 5.5rem; }
+  .md-typeset .feynjs-explain-aside { flex: none; }
 }

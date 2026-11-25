@@ -351,7 +351,7 @@
       var said = document.createElement("code");
       said.className = "feynjs-explain-line";
       var sentence = function (note) { note = note.charAt(0).toUpperCase() + note.slice(1); return /[.!?…]$/.test(note) ? note : note + "."; };
-      var rest = function () { said.textContent = ""; said.hidden = true; live.textContent = "Point at a line of the source below, or step through it, to see what each line draws."; };
+      var rest = function () { said.textContent = " "; said.style.visibility = "hidden"; live.textContent = "Point at a line of the source below, or step through it, to see what each line draws."; };
       var clear = function () {
         lit.forEach(function (p) { p[0].classList.remove(p[1]); });
         lit = [];
@@ -378,7 +378,7 @@
         if (counter) Array.prototype.forEach.call(counter.children, function (d, j) { d.classList.toggle("feynjs-on", j === k); });
         live.textContent = sentence(line.note);
         said.textContent = line.src;
-        said.hidden = false;
+        said.style.visibility = "visible";
         line.ids.forEach(function (id) {
           all(svg, '[data-vertex="' + id + '"], .feynjs-teach-tag[data-teach="' + id + '"], .feynjs-teach-dot[data-teach="' + id + '"]').forEach(function (el) { light(el, "feynjs-lit-point"); });
         });
