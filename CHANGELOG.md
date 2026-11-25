@@ -5,6 +5,24 @@ layout that moves is a change, recorded here.
 
 ## Unreleased
 
+- **Nuclei in process lines:** a name only a nucleus can have (`2H`, `4He`, `He`, `235U`) makes the
+  line nuclear; element symbols there are nuclei (so `H` is hydrogen), `p` and `n` one nucleon,
+  and labels upright isotopes. `H H > He`, `2H 3H > 4He n`, `235U n > 141Ba 92Kr n n n`.
+- **The reaction picture:** a nuclear process draws as the textbook picture, nuclei at true size,
+  arrows into a burst, products fanned out. A photon breaking a nucleus up, elastic scattering
+  (the nucleus recoiling; `signal: on` for what a detector sees) and an excited nucleus each have
+  their own picture. `view: diagram` draws the diagram instead.
+- **Decay chains:** a nuclear process that decays on draws step by step, emissions branching off
+  each arrow, modes α, β⁻, β⁺, γ (`modes: off`); `chain: curve` along an arc.
+- **Nucleons in brackets,** `C(6p 8n)`, `X(3p 4n)`, and `N=` on a nucleus; `check()` warns when
+  the protons belong to another element.
+- **Notes** in the reaction pictures and chains, pointing at a nucleus, the burst or an arrow.
+- **A nucleus as a target:** a boson meeting a nucleus reaches a third of the way in, over its
+  nucleons; a target nucleus is laid out below what hits it, the line it scatters making a V
+  toward it; element names on legs are upright. On a nucleus: `recoil` (an after-image),
+  `pulse` / `excited` / `Xe*` (a still glow), `emits=gamma`.
+- **`length=1.5` (or `length=2cm`) on any line,** honoured by the force and grid layouts. No
+  approved layout moves.
 - **Nuclei drawn cleaner:** every nucleon one size, so a nucleus grows as A to the third (lead
   about 3.7 times helium across, where nucleons used to shrink as nuclei grew); flat colours,
   protons brick red (`#b8493b`) and neutrons slate (`#5d6b85`), each edged in a dark shade of its
