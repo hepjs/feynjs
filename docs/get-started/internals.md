@@ -81,7 +81,7 @@ The force engine has three parts:
   exchanges.
 - **`forces.ts`**: the forces. Each is a list of terms (`{ points, energy }`), weighted by
   `theme.forces`. `allForces` lists them: line length, even angles, time flow, time order,
-  clearance, upright exchange, mirrored branches, beams starting together, the final plane, light
+  clearance, upright exchange, scattered beams, mirrored branches, beams starting together, the final plane, light
   lines outside, heavy lines carrying on, no converging, hadrons, vacuum arcs and loop shapes.
 - **`solve.ts`**, `balance`: minimises the total energy with Barzilai-Borwein gradient steps and
   central differences. Clearance terms are skipped while their points are far apart and haven't

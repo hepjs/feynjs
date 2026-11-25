@@ -3,6 +3,28 @@
 All notable changes, newest first. Versions follow [semantic versioning](https://semver.org): a
 layout that moves is a change, recorded here.
 
+## Unreleased
+
+- **A scattered beam reads as scattering.** Where an exchange between the beams scatters a line
+  (one point before, one after), the line comes in toward the centre and leaves outward, each by
+  at least 10° (new settings `forces.beamsScatter` and `forces.scatterAngle`). Before, a beam could
+  bend the other way, coming in away from the other beam and leaving toward it, as if attracted:
+  the quark in the bremsstrahlung example did. **28 approved layouts moved**, each reviewed
+  against its original: 12 that broke the rule (the bremsstrahlung example, ATL-PHYS-PUB-2016-009
+  fig. 1(4), EXOT-2010-10 fig. 8, EXOT-2016-03 fig. 1b, EXOT-2018-52 fig. 1a, HDBS-2018-40 fig. aux
+  1a, HIGG-2013-25 fig. 1a, STDM-2011-29 fig. 1a, STDM-2013-02 fig. 1c, TOPQ-2013-12 fig. 1a,
+  TOPQ-2014-17 fig. 1, TOPQ-2016-14 fig. 1b) and 16 that settled again around it, TOPQ-2014-14
+  fig. 2c by 0.92 of a line length, SUSY-2014-05 fig. 2e by 0.5, the rest by less. A u-channel's
+  crossed lines keep their crossing.
+- **A quark exchange leans forward into what it gives off,** as a boson exchange already did:
+  where one point alone along a quark exchange gives something off, the Higgs between two b quarks
+  in b b-bar H, it sits ahead, the quark lines leaning into it (as in HIGG-2015-08 fig. 1b). Not
+  through a loop: an exchange into a quark triangle or box keeps the loop's shape. **21 more
+  approved layouts moved**, each reviewed against its original: HIGG-2015-08 fig. 1b, TOPQ-2014-14
+  fig. 2c by 0.74 of a line length, EXOT-2018-52 fig. 1a by 0.48, the rest by 0.3 or less.
+- **A heavy line along an exchange stands exactly upright:** the neutralino between two charginos
+  in SUSY vector-boson fusion, a gluino between two squarks. A light exchange may still lean.
+
 ## 0.9.5 — 2026-11-25
 
 - **Nuclei in process lines:** a name only a nucleus can have (`2H`, `4He`, `He`, `235U`) makes the

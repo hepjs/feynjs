@@ -574,16 +574,25 @@ export function clearance(s: Structure, rules: ForceRules): Force {
  * it a weight.
  */
 /**
- * Points along a boson exchange between the beams that make something going on forward (the
- * H of vector-boson fusion): they sit a little ahead, the bosons into them leaning forward. A
- * quark line along an exchange stays straight.
+ * Points along an exchange between the beams that make something going on forward (the H of
+ * vector-boson fusion, or of b b-bar H between two b quarks): they sit a little ahead, the lines
+ * into them leaning forward. A quark exchange leans only into a lone such point, and not through a
+ * loop.
  */
 export function exchangePointsAhead(s: Structure): Set<number> {
   const other = (l: number, i: number) => (s.lines[l].a === i ? s.lines[l].b : s.lines[l].a);
-  return new Set(s.spines.flatMap((path) => path.slice(1, -1).filter((v) => {
-    const along = s.linesAt[v].filter((l) => path.includes(other(l, v)));
-    return along.every((l) => !s.lines[l].fermion) && s.linesAt[v].some((l) => !path.includes(other(l, v)) && s.time[other(l, v)] > s.time[v]);
-  })));
+  const onLoop = new Set(s.loops.flatMap((loop) => loop.points));
+  return new Set(s.spines.flatMap((path) => {
+    const giving = (v: number) => s.linesAt[v].some((l) => !path.includes(other(l, v)) && s.time[other(l, v)] > s.time[v]);
+    const middle = path.slice(1, -1).filter(giving);
+    // (a quark exchange too, when one point alone along it gives something off: the Higgs
+    // between two b quarks; not one through a loop, whose box or triangle keeps its shape)
+    const throughLoop = path.some((v) => onLoop.has(v));
+    return middle.filter((v) => {
+      const along = s.linesAt[v].filter((l) => path.includes(other(l, v)));
+      return along.every((l) => !s.lines[l].fermion) || (middle.length === 1 && !throughLoop);
+    });
+  }));
 }
 
 export function uprightExchange(s: Structure, rules: ForceRules): Force {
@@ -643,6 +652,40 @@ export function exchangeFan(s: Structure, rules: ForceRules): Force {
     });
   }
   return { name: "exchange fan", terms };
+}
+
+/**
+ * A beam scattered by an exchange reads as scattering: at each end of an exchange between the
+ * beams where a line passes through (one point before, one after), the line comes in running
+ * toward the other beam and leaves running away from it, each by at least a few degrees. The top
+ * line dips to the exchange and rises after; the bottom line the mirror image. Free while that
+ * holds; a push only when it does not.
+ */
+export function beamsScatter(s: Structure, rules: ForceRules): Force {
+  const other = (l: number, i: number) => (s.lines[l].a === i ? s.lines[l].b : s.lines[l].a);
+  const onLoop = new Set(s.loops.flatMap((loop) => loop.points));
+  const least = portable.sin((rules.scatterAngle * Math.PI) / 180);
+  const terms: Term[] = [];
+  for (const path of s.spines) {
+    if (path.some((v) => s.blob[v] || onLoop.has(v))) continue;
+    for (const [v, partner] of [[path[0], path[path.length - 1]], [path[path.length - 1], path[0]]]) {
+      const off = s.linesAt[v].map((l) => other(l, v)).filter((w) => !path.includes(w));
+      const before = off.filter((w) => s.time[w] < s.time[v]), after = off.filter((w) => s.time[w] > s.time[v]);
+      if (before.length !== 1 || after.length !== 1) continue;
+      const [a, b] = [before[0], after[0]];
+      // (toward the other beam: the sign of the step from this end of the exchange to the other)
+      const toward = (p: Float64Array) => Math.sign(dy(p, v, partner)) || 1;
+      terms.push(limit([a, v, partner], (p) => {
+        const n = portable.hypot(dx(p, a, v), dy(p, a, v)) || 1, short = least - (toward(p) * dy(p, a, v)) / n;
+        return short > 0 ? rules.beamsScatter * portable.square(short) : 0;
+      }));
+      terms.push(limit([v, b, partner], (p) => {
+        const n = portable.hypot(dx(p, v, b), dy(p, v, b)) || 1, short = least + (toward(p) * dy(p, v, b)) / n;
+        return short > 0 ? rules.beamsScatter * portable.square(short) : 0;
+      }));
+    }
+  }
+  return { name: "beams scatter", terms };
 }
 
 /** True when a run of points along an exchange touches a heavy line: a SUSY cascade's spine. */
@@ -1378,6 +1421,14 @@ export function levelTies(s: Structure): Tie[] {
       else if (heavyRun(s, giving.map(({ v }) => v))) for (const { v, off } of giving) if (off.length === 1) lines.push([v, off[0]]);
     }
     const ties: Tie[] = lines.map(([a, b]) => ({ axis: 1 as const, points: [a, b] }));
+    // (a heavy line along an exchange between the beams, the neutralino between two charginos
+    // in SUSY vector-boson fusion: exactly upright, the cascade's spine. Light exchanges may lean)
+    for (const path of s.spines) {
+      for (let k = 1; k < path.length; k++) {
+        const l = s.linesAt[path[k - 1]].find((m) => other(m, path[k - 1]) === path[k]);
+        if (l !== undefined && s.lines[l].heavy && !onLoopPts.has(path[k - 1]) && !onLoopPts.has(path[k])) ties.push({ axis: 0 as const, points: [path[k - 1], path[k]] });
+      }
+    }
     // (a triangle two incoming lines feed stands on its side: the two corners they come into
     // exactly one above the other, so with its point on the level line out of it, one side and
     // the bisector run along the grid)
@@ -2066,5 +2117,5 @@ export function givenOffSideways(s: Structure, rules: ForceRules): Force {
 }
 
 export function allForces(s: Structure, rules: ForceRules): Force[] {
-  return [straightIntoBlob(s, rules), pairsTogether(s, rules), restLevel(s, rules), equalProducts(s, rules), forwardForks(s, rules), lineLength(s, rules), evenAngles(s, rules), timeFlow(s, rules), timeOrder(s, rules), clearance(s, rules), uprightExchange(s, rules), exchangeFan(s, rules), showerFan(s, rules), mirrorBranches(s, rules), beamsStartTogether(s, rules), finalPlane(s, rules), lightOutside(s, rules), heavyCarriesOn(s, rules), givenOffSideways(s, rules), noConverging(s, rules), hadrons(s, rules), vacuumArcs(s, rules), loopShapes(s, rules), nucleusScatter(s)];
+  return [straightIntoBlob(s, rules), pairsTogether(s, rules), restLevel(s, rules), equalProducts(s, rules), forwardForks(s, rules), lineLength(s, rules), evenAngles(s, rules), timeFlow(s, rules), timeOrder(s, rules), clearance(s, rules), uprightExchange(s, rules), beamsScatter(s, rules), exchangeFan(s, rules), showerFan(s, rules), mirrorBranches(s, rules), beamsStartTogether(s, rules), finalPlane(s, rules), lightOutside(s, rules), heavyCarriesOn(s, rules), givenOffSideways(s, rules), noConverging(s, rules), hadrons(s, rules), vacuumArcs(s, rules), loopShapes(s, rules), nucleusScatter(s)];
 }

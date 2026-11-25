@@ -347,6 +347,10 @@ export interface ForceRules {
   mirror: number;
   /** how strongly a line exchanged between two simultaneous vertices stands upright (0: off) */
   uprightExchange: number;
+  /** how firmly a beam scattered by an exchange reads as scattering: in toward the centre, out away from it (0: off) */
+  beamsScatter: number;
+  /** the least angle, in degrees, a scattered beam comes in toward the centre and leaves away from it */
+  scatterAngle: number;
   /** how strongly points not joined by a line keep apart */
   clearance: number;
   /** the clear space every drawn element keeps from elements and lines it is not joined to */
@@ -454,7 +458,7 @@ export const defaultTheme: Theme = {
   colourFlow: { gap: 3.4, width: 2.6, opacity: 0.6, arrowLength: 7, arrowWidth: 6.2, turn: 14, palette: ["#e0241b", "#1f9e4a", "#2f6fdf"], anti: ["#00a7c4", "#c8379f", "#f0b000"] },
   engine: "v2",
   // fitted to the hand-placed reference diagrams by scripts/fit/tune.ts (2026-11-22)
-  forces: { lineLength: 1, legLength: 1.0, length: 20, legGive: 1, alignFinalStates: 1, alignStretch: 1.6, alignSteepest: 60, alignLevel: 20, alignGap: 0.35, evenAngles: 1, timeFlow: 2, shortDiagram: 3, flowFade: 1, longFlow: 0.3, timeOrder: 50, maxLean: 43, clearance: 20, margin: 0.3, vertexPad: 0.08, minAngle: 25, uprightExchange: 0.6, mirror: 2, passThroughEvenness: 0.3, beams: 4, finalPlane: 2, planeFirst: 0, stageShrink: 0.7, smallestStage: 0.45, smallestLegStage: 0.7, lightOutside: 200, heavyCarriesOn: 20, heavyTurn: 12, wideLean: 60, lightFermionLean: 45, offShellFlow: 0.4, emittedFlow: 0.4, givenOffFlow: 0, givenOffLength: 0.75, givenOffTurn: 40, givenOffSide: 6, beamsMirror: 30, susyOpening: 50, susyProductLength: 0.8, susyProductHold: 4, restLevel: 100, equalProducts: 3, deeperFlow: 8, forwardFork: 25, heavyFlow: 22, depthEase: 0.5, noConverging: 20, hadron: 20, hadronSpacing: 0.6, mesonGap: 0.25, baryonGap: 0.35, rail: 40, blobBeamLength: 0.75, blobBeamFlow: 0.2, convergeReach: 1.8, convergeLeeway: 4, settle: 0.8, loop: 20, loopLeg: 1, loopUpright: 6, pairTogether: 20, pairOpening: 16, decayOpening: 40 },
+  forces: { lineLength: 1, legLength: 1.0, length: 20, legGive: 1, alignFinalStates: 1, alignStretch: 1.6, alignSteepest: 60, alignLevel: 20, alignGap: 0.35, evenAngles: 1, timeFlow: 2, shortDiagram: 3, flowFade: 1, longFlow: 0.3, timeOrder: 50, maxLean: 43, clearance: 20, margin: 0.3, vertexPad: 0.08, minAngle: 25, uprightExchange: 0.6, beamsScatter: 40, scatterAngle: 10, mirror: 2, passThroughEvenness: 0.3, beams: 4, finalPlane: 2, planeFirst: 0, stageShrink: 0.7, smallestStage: 0.45, smallestLegStage: 0.7, lightOutside: 200, heavyCarriesOn: 20, heavyTurn: 12, wideLean: 60, lightFermionLean: 45, offShellFlow: 0.4, emittedFlow: 0.4, givenOffFlow: 0, givenOffLength: 0.75, givenOffTurn: 40, givenOffSide: 6, beamsMirror: 30, susyOpening: 50, susyProductLength: 0.8, susyProductHold: 4, restLevel: 100, equalProducts: 3, deeperFlow: 8, forwardFork: 25, heavyFlow: 22, depthEase: 0.5, noConverging: 20, hadron: 20, hadronSpacing: 0.6, mesonGap: 0.25, baryonGap: 0.35, rail: 40, blobBeamLength: 0.75, blobBeamFlow: 0.2, convergeReach: 1.8, convergeLeeway: 4, settle: 0.8, loop: 20, loopLeg: 1, loopUpright: 6, pairTogether: 20, pairOpening: 16, decayOpening: 40 },
   layout: {
     legSpread: 1.25, rowGap: 1.0, legBesideVertexGap: 0.6, tChannelGap: 1.5, legLength: 0.8, vertexInertia: 40, railWeight: 20, spineWeight: 3,
     branchAngle: 27, chainTurn: 16, chainFloor: -4, fermionBendOut: 22, levelEmissionSpread: 16, levelTolerance: 4, recoilAngle: 12, singleEmissionAngle: 40, emissionFan: [82, 45], beamAngle: 52, beamLength: 0.7, markedLineAngle: 28, markLineStretch: 0.7, busyVertexStretch: 0.25, earlyEmissionShortfall: 0.5, earlyEmissionMaxStretch: 2.5, stageShrink: 0.82, shortestStage: 0.6, shrinkFromDepth: 3, scatteredLegReach: 1.3, fusionAdvance: 0.5, fusionResonanceLength: 0.6, beamForkAngle: 45, decayForkAngle: 20,

@@ -202,7 +202,7 @@ Time runs left to right: lines lean the way it runs, and nothing runs back.
 
 ### Incoming
 
-The incoming lines come in mirrored, converging or level; an exchange between them stands upright; a resonance they make at rest runs level.
+The incoming lines come in mirrored, converging or level; a beam an exchange scatters comes in toward the centre and leaves outward; an exchange between them stands upright, exactly so where it is heavy; a resonance they make at rest runs level.
 
 | Setting | Default | What it controls |
 |---|---|---|
@@ -212,6 +212,8 @@ The incoming lines come in mirrored, converging or level; an exchange between th
 | `forces.blobBeamFlow` | `0.2` | how much of the time-flow pull a beam into a blob feels |
 | `forces.restLevel` | `100` | how firmly a resonance the incoming pair makes at rest (an s-channel gluon or photon) runs level |
 | `forces.uprightExchange` | `0.6` | how strongly a line exchanged between two simultaneous vertices stands upright (0: off) |
+| `forces.beamsScatter` | `40` | how firmly a beam scattered by an exchange reads as scattering: in toward the centre, out away from it (0: off) |
+| `forces.scatterAngle` | `10` | the least angle, in degrees, a scattered beam comes in toward the centre and leaves away from it |
 
 ### Decays
 
