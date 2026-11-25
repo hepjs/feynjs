@@ -7,6 +7,12 @@ const outputs = ["dist/feynjs.mjs", "dist/feynjs.min.js", "docs/javascripts/feyn
 await build({ ...common, format: "esm", outfile: outputs[0] });
 await build({ ...common, format: "iife", globalName: "feynjs", minify: true, outfile: outputs[1] });
 await build({ ...common, format: "iife", globalName: "feynjs", minify: true, outfile: outputs[2] });
+// (the TikZ-Feynman reader, feynjs/tikz, built on its own: a page drawing diagrams does not load it;
+// the playground and a program that converts pictures load it when they need it)
+const tikz = { ...common, entryPoints: ["src/tikz.ts"] };
+outputs.push("dist/feynjs-tikz.mjs", "dist/feynjs-tikz.min.js");
+await build({ ...tikz, format: "esm", outfile: outputs[3] });
+await build({ ...tikz, format: "iife", globalName: "feynjsTikz", minify: true, outfile: outputs[4] });
 // (esbuild leaves the letters inside regular expressions as they are: escaped here too, \uXXXX
 // meaning the same in a regular expression as in a string)
 for (const file of outputs) {

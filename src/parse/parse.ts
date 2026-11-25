@@ -3,7 +3,6 @@ import { nucleusFrom } from "../render/nucleus.ts";
 import { OBJECT_NAMES, parseObject } from "../particles/objects.ts";
 import { expandChains } from "./chains.ts";
 import { lengthInLines } from "./lengths.ts";
-import { fromTikzPicture, pictureOptions } from "./tikz-picture.ts";
 import { FeynError } from "../model.ts";
 import type { Diagram, Edge, EdgeStyle, HadronGroup, Vertex, VertexShape } from "../model.ts";
 import { STYLES, lookupParticle, particleNames } from "../particles/registry.ts";
@@ -155,10 +154,20 @@ function stripMath(s: string): string {
   return s.replace(/^\$|\$$/g, "").replace(/^\\\(|\\\)$/g, "");
 }
 
+/**
+ * A TikZ-Feynman picture (\feynmandiagram, \begin{feynman}, \vertex, \diagram*) pasted where
+ * feynjs's own lines go: an error that says how to convert it, once, into feynjs's lines.
+ */
+function refuseTikzPicture(source: string): void {
+  const m = /\\(feynmandiagram|begin\s*\{\s*(?:feynman|tikzpicture)\s*\}|vertex\b|diagram\*?\s*[{[])/.exec(source);
+  if (!m) return;
+  const line = source.slice(0, m.index).split("\n").length;
+  throw new FeynError("this is a TikZ-Feynman picture: convert it to feynjs's lines once, with fromTikz() from \"feynjs/tikz\" or \"feynjs import file.tex\", and draw those", line);
+}
+
 export function parse(source: string): Diagram {
-  // a TikZ-Feynman picture pasted as it is (\feynmandiagram, \begin{feynman}, \vertex, \diagram)
-  // is read as feynjs's own lines first
-  source = fromTikzPicture(source);
+  // (a TikZ-Feynman picture is converted once, not read here: a feynman fence holds feynjs's lines)
+  refuseTikzPicture(source);
   // decay chains ("p p > gluino gluino") are written out as ordinary lines first
   source = expandChains(source);
   const vertices = new Map<string, Vertex>();
@@ -247,18 +256,6 @@ export function parse(source: string): Diagram {
     if (m) every.set(m[1].toLowerCase(), [...(every.get(m[1].toLowerCase()) ?? []), ...parseOpts(m[2].replace(/^\[(.*)\]$/, "$1"))]);
   }
   const ownVertexOpts = new Map<string, Opt[]>();
-  const diagramOptionsLine = (body: string, line: number) => {
-    const options = pictureOptions(body, line);
-    for (const statement of options.switches) {
-      const m = /^([^:]+):\s*(.*)$/.exec(statement)!;
-      directives[m[1]] = m[2];
-    }
-    for (const rule of options.every) {
-      const m = /^([^:]+):\s*(.*)$/.exec(rule)!;
-      every.set(m[1], [...(every.get(m[1]) ?? []), ...parseOpts(m[2])]);
-    }
-    if (options.unused.length) directives.tikz = [directives.tikz?.replace(/^\{|\}$/g, ""), ...options.unused].filter(Boolean).join(", ");
-  };
 
   const written = new Map<Edge, { opts: Opt[]; line: number }>();
   const makeEdge = (from: string, to: string, opts: Opt[], line: number): Edge => {
@@ -412,11 +409,6 @@ export function parse(source: string): Diagram {
           relabel.set(dir[2].slice(0, eq).trim(), stripMath(dir[2].slice(eq + 1).trim()));
         } else if (LISTED.has(key)) directives[key] = directives[key] === undefined ? dir[2].trim() : `${directives[key]}\n${dir[2].trim()}`;
         else directives[key] = dir[2].trim();
-        continue;
-      }
-      // [horizontal=a to b, small]: TikZ-Feynman's options for the whole picture, as switches
-      if (/^\[[\s\S]*\]$/.test(stmt) && matchBracket(stmt, 0, lineNo) === stmt.length - 1) {
-        diagramOptionsLine(stmt.slice(1, -1), lineNo);
         continue;
       }
       // a at (1, 0), a [dot] at (1cm, 2cm), a at (30:1) (an angle and a distance), a at (b)

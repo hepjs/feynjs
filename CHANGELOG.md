@@ -5,6 +5,47 @@ layout that moves is a change, recorded here.
 
 ## Unreleased
 
+- **A paper's TikZ-Feynman pictures, converted once:** `feynjs import paper.tex`, or `fromTikz()`
+  from the new module `feynjs/tikz`, turns every `\feynmandiagram`, `feynman` environment or
+  picture body in a LaTeX file into feynjs's lines, read as TikZ means them: places in cm written
+  out in line lengths, `right=of a` TikZ-Feynman's node distance away, the first `\vertex` at
+  the origin, braced text as the point's label, chains over several lines and groups
+  `a -- {b, c}` joined, edge labels on the left (the new switch `edge labels: left`), other
+  TikZ options listed in a comment. The converter is built on its own (`dist/feynjs-tikz.mjs`,
+  11 KB minified), so the bundle a page loads does not carry it. A picture pasted into a
+  `feynman` block stops with an error that says to convert it.
+- **More of TikZ-Feynman's keys on feynjs's own lines:** places `right=1.5cm of a`,
+  `at (1cm, 2cm)`, `at (30:1)`, `a [dot] at (0, 0)`, `(a)` and anchors (`a.east`); `bend left=60`,
+  `bend right=60`, `looseness` with `half left` and the other bends, `loop, min distance=2cm,
+  out=135, in=45` on a loop, `draw=none`; `[plain, gluon]` and `[plain, boson]` draw the straight
+  line over the coil or wave; `anti majorana` draws its arrows pointing apart;
+  `momentum={[arrow shorten=0.3]q}`, bare `insertion` and `with arrow`,
+  `insertion={[size=5pt]0.3}`; `label=above:\(g\)` on a point, and the quotes `"\(\gamma\)"`
+  and `"..."'` on a line; `size: medium`; TikZ-Feynman's layouts (`layout: spring layout`) drawn
+  by feynjs's own. `\slashed{p}` in labels. No layout moves.
+- **`check()` names what feynjs passes over:** unknown switches (`node distance:`), unknown
+  layouts (`layout: banana`), label commands drawn as their letters (`\frac`), and a name a
+  process does not know (drawn as a plain line carrying its name), with the closest name.
+- **MadGraph's MSSM names**, as its models name them after renaming: `go`, `n1`–`n4`, `x1+` `x1-`
+  `x2+` `x2-`, the squarks `ul` … `sr`, `t1` `t2` `b1` `b2` (each with `~`), the sleptons `el-` …
+  `ta2+`, the sneutrinos `sve` `svm` `svt`, the Higgs bosons `h1` `h2` `h3` (h, H, A), `h+` `h-`,
+  and `vl`, drawn as feynjs's own SUSY names are, with the MadGraph plugin's labels. `dl` is
+  MadGraph's left down squark; the displaced lepton is now `dislep` (or `displaced lepton`, `DL`).
+- **Numbered and charged SUSY names:** `neutralino4`, `chargino1`, `chargino1+` … `chargino2-`,
+  `higgsino0` `higgsino+` `higgsino-` `higgsino1` `higgsino2`, `wino0` `wino+` `wino-`, `stop1`
+  `stop2` `sbottom1` `sbottom2` `stau1` `stau2`, `selectronL/R`, `smuonL/R`, `NLSP`. A bare
+  `neutralino` is now labelled χ̃⁰, without an index; `chargino` keeps χ̃±₁ for now (without the
+  index, four approved layouts would move).
+- **Hadrons by their English names**, with their quarks, charge, spin and mass on hover: `pion`,
+  `kaon`, `K0bar`, `KS`, `KL`, `eta`, `eta'`, `rho`, `omega`, `phi1020`, `jpsi`, `psi2S`,
+  `upsilon`, the D, Ds, B, Bs and Bc mesons, `Lambda`, `Lambda_b`, `Lambda_c`, `Sigma`, `Xi`,
+  `Omega`, `Delta`, `n`, `pbar`. Any of them takes a star (`K*0`), a charge (`kaon+`) or `bar`. A
+  hadron can be written with its quarks, `X(ucd)`, `Pc(uudcc~)`, or with its state in brackets,
+  `psi(2S)`, `X(3872)`. Mesons are dashed, baryons drawn as the proton is; `[bag=...]` takes
+  every one of these names.
+- **MadGraph's names keep their tooltip and charge colour** (`w+`, `t~`, `ta+`, `n1`). `pi+~` is
+  π⁻, and `ve~` is ν̄ₑ with the bar on the ν alone. The MadGraph plugin labels `h1` `h2` `h3` as
+  h, H, A, and keeps the bar on anti-sneutrinos.
 - **Processes as MadGraph writes them:** decays after commas (`p p > t t~, t > b w+, t~ > b~ w-`),
   and a decay in brackets with the decays of what it makes, nested as deep as the chain goes
   (`p p > t t~, (t > b w+, w+ > e+ ve), (t~ > b~ w-, w- > j j)`). They draw the same diagram as

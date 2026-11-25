@@ -1,5 +1,6 @@
 import { FeynError } from "../model.ts";
 import { lengthInCm } from "./lengths.ts";
+import { TIKZ_LAYOUTS } from "./tikz-layouts.ts";
 
 /**
  * A TikZ-Feynman picture pasted as a paper writes it, read as feynjs's own lines before the
@@ -29,8 +30,6 @@ export function fromTikzPicture(source: string): string {
 
 /** TikZ-Feynman's distance between points placed from one another, in cm, at each size. */
 const NODE_DISTANCE: Record<string, number> = { small: 1, medium: 1.5, large: 2 };
-/** TikZ-Feynman's automatic layouts (LuaTeX's graph drawing): feynjs draws them all with its own. */
-export const TIKZ_LAYOUTS = new Set(["layered layout", "spring layout", "spring electrical layout", "tree layout"]);
 const DIAGONAL = 0.707106781;
 
 interface Piece { text: string; start: number }

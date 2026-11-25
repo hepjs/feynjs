@@ -2,12 +2,16 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { check, parse, render, toTikz } from "../src/index.ts";
 import { fromTikzPicture } from "../src/parse/tikz-picture.ts";
+import { fromTikz } from "../src/tikz.ts";
 import { layoutDiagram } from "../src/render/render.ts";
 import { themeWith } from "../src/theme.ts";
 import { layoutLabel } from "../src/label/label.ts";
 
-// TikZ-Feynman's own syntax, read as it is written in papers: a picture pasted whole, and the
-// keys feynjs takes on its own lines.
+// TikZ-Feynman's own syntax: a picture converted once into feynjs's lines (feynjs/tikz's
+// fromTikz), and the keys feynjs takes on its own lines.
+
+// (the one picture in a LaTeX text, as feynjs's lines)
+const conv = (tex: string) => { const pictures = fromTikz(tex); assert.equal(pictures.length, 1); return pictures[0]; };
 
 // (a pasted picture's places are written to a ten-thousandth of a cm)
 const near = (a: number, b: number, why?: string) => assert.ok(Math.abs(a - b) < 1e-4, `${why ?? ""} ${a} is not ${b}`);
@@ -24,21 +28,23 @@ const BHABHA = String.raw`\feynmandiagram [horizontal=a to b] {
   f1 [particle=\(\mu^+\)] -- [fermion] b -- [fermion] f2 [particle=\(\mu^-\)],
 };`;
 
-test("a \\feynmandiagram pasted whole draws as the same diagram written in feynjs's lines", () => {
+test("a \\feynmandiagram converted draws as the same diagram written in feynjs's lines", () => {
   const own = String.raw`horizontal: a to b
 i1 [particle=\(e^-\)] -- [fermion] a -- [fermion] i2 [particle=\(e^+\)]
 a -- [photon] b
 f1 [particle=\(\mu^+\)] -- [fermion] b -- [fermion] f2 [particle=\(\mu^-\)]`;
-  assert.deepEqual(places(BHABHA), places(own));
-  const d = parse(BHABHA);
+  assert.deepEqual(places(conv(BHABHA)), places(own));
+  const d = parse(conv(BHABHA));
   assert.equal(d.vertices.get("i1")!.label, "{e^-}", "the particle text, as TikZ sets it");
   assert.equal(d.directives.horizontal, "a to b");
-  assert.deepEqual(check(BHABHA), []);
-  assert.match(render(BHABHA), /<svg/);
+  assert.deepEqual(check(conv(BHABHA)), []);
+  assert.match(render(conv(BHABHA)), /<svg/);
+  // (a feynman fence holds feynjs's lines: a picture pasted in says how to convert it)
+  assert.throws(() => parse(BHABHA), /line 1: this is a TikZ-Feynman picture: convert it .*fromTikz/);
 });
 
 test("a feynman environment: \\vertex places points in cm, the first with no place at the origin", () => {
-  const d = parse(String.raw`\begin{tikzpicture}
+  const d = parse(conv(String.raw`\begin{tikzpicture}
   \begin{feynman}
     \vertex (a);
     \vertex [right=of a] (b);
@@ -50,7 +56,7 @@ test("a feynman environment: \\vertex places points in cm, the first with no pla
       (b) -- [fermion] (f), (b) -- (g),
     };
   \end{feynman}
-\end{tikzpicture}`);
+\end{tikzpicture}`));
   const at = (id: string) => d.vertices.get(id)!.fixed!;
   assert.deepEqual(at("a"), { x: 0, y: 0 });
   // (TikZ-Feynman's node distance, 1.5cm, at 1.6cm a line; on a diagonal, that far along it)
@@ -65,19 +71,21 @@ test("a feynman environment: \\vertex places points in cm, the first with no pla
 });
 
 test("a chain runs over several lines; groups join every point in them", () => {
-  const d = parse(String.raw`\feynmandiagram [small] {
+  const d = parse(conv(String.raw`\feynmandiagram [small] {
   a -- [fermion]
     b -- {c, d},
   {e, f} -- [gluon] a,
-};`);
+};`));
   assert.deepEqual(d.edges.map((e) => `${e.from}-${e.to}`), ["a-b", "b-c", "b-d", "e-a", "f-a"]);
   assert.equal(d.edges[3].style.line, "coil");
   assert.equal(d.directives.size, "small");
 });
 
-test("an error in a pasted picture names the line it is on", () => {
-  assert.throws(() => parse("\\begin{feynman}\n\\vertex (a);\n\\draw (a) -- (b);\n\\end{feynman}"), /line 3: .*not \\draw/);
-  assert.throws(() => parse("\\feynmandiagram {\n  a -- b,\n  b -- [thick] c,\n};"), /line 3: .*"thick"/);
+test("an error in a picture names the line of the LaTeX file it is on", () => {
+  assert.throws(() => fromTikz("\\begin{feynman}\n\\vertex (a);\n\\draw (a) -- (b);\n\\end{feynman}"), /line 3: .*not \\draw/);
+  assert.throws(() => fromTikz("% a paper\n\n\\begin{feynman}\n\\vertex (a);\n\\draw (a) -- (b);\n\\end{feynman}"), /line 5: .*not \\draw/);
+  // (a key feynjs does not take is found when the lines are drawn)
+  assert.throws(() => parse(conv("\\feynmandiagram {\n  a -- b,\n  b -- [thick] c,\n};")), /"thick"/);
 });
 
 test("feynjs's own lines are not read as TikZ (no picture, nothing rewritten)", () => {
@@ -85,26 +93,38 @@ test("feynjs's own lines are not read as TikZ (no picture, nothing rewritten)", 
   assert.equal(fromTikzPicture(own), own);
 });
 
-test("the picture's options: horizontal, sizes, inline, TikZ layouts; the rest named by check()", () => {
-  const d = parse(String.raw`\begin{tikzpicture}[baseline=(a.base), thick]
+test("the picture's options: horizontal, sizes, inline, TikZ layouts; the rest in a comment", () => {
+  const d = parse(conv(String.raw`\begin{tikzpicture}[baseline=(a.base), thick]
 \feynmandiagram [vertical'=a to b, large, spring layout] { a -- [photon] b };
-\end{tikzpicture}`);
+\end{tikzpicture}`));
   assert.equal(d.directives["vertical'"], "a to b");
   assert.equal(d.directives.size, "large");
   assert.equal(d.directives.inline, "a");
   assert.equal(d.directives.layout, "spring layout");
-  const findings = check(String.raw`\feynmandiagram [layered layout, scale=2] { i [particle=\(e\)] -- [photon] f [particle=\(e\)] };`);
-  assert.ok(findings.some((f) => f.severity === "info" && /layered layout.*feynjs's own/.test(f.message)));
-  assert.ok(findings.some((f) => f.rule === "tikz-option" && /scale=2/.test(f.message)));
-  // ([horizontal=a to b] on a line of its own is the same, in feynjs's lines)
-  const own = parse("[horizontal=a to b, small, tree layout]\na -- b -- c");
-  assert.deepEqual([own.directives.horizontal, own.directives.size, own.directives.layout], ["a to b", "small", "tree layout"]);
-  assert.equal(parse("[inline=(a)]\na -- b").directives.inline, "a");
+  const converted = conv(String.raw`\feynmandiagram [layered layout, scale=2] { i [particle=\(e\)] -- [photon] f [particle=\(e\)] };`);
+  assert.match(converted, /^% TikZ options feynjs does not use: scale=2$/m);
+  assert.ok(check(converted).some((f) => f.severity === "info" && /layered layout.*feynjs's own/.test(f.message)));
   assert.match(render("size: medium\na -- b"), /<svg/);
 });
 
+test("a LaTeX file's pictures, in order; its comments and other text passed over", () => {
+  const tex = String.raw`\documentclass{article}
+% \feynmandiagram { x -- y }; in a comment is no picture
+\begin{document}
+\feynmandiagram { a -- [photon] b };
+\begin{tikzpicture} \draw (0,0) -- (1,1); \end{tikzpicture}
+\begin{tikzpicture}\begin{feynman}\vertex (a);\vertex [right=2cm of a] (b);\diagram* { (a) -- [gluon] (b) };\end{feynman}\end{tikzpicture}
+\end{document}`;
+  const pictures = fromTikz(tex);
+  assert.equal(pictures.length, 2);
+  assert.match(pictures[0], /^a -- \[photon\] b$/m);
+  // (places in line lengths, 1.6cm a line)
+  assert.match(pictures[1], /^b \[right=1\.25 of a\]$/m);
+  assert.deepEqual(fromTikz("no pictures here"), []);
+});
+
 test("\\tikzfeynmanset's every ... /.style is a default for every line of a kind", () => {
-  const d = parse("\\tikzfeynmanset{every photon/.style={blue}}\n\\feynmandiagram { a -- [photon] b -- [fermion] c };");
+  const d = parse(conv("\\tikzfeynmanset{every photon/.style={blue}}\n\\feynmandiagram { a -- [photon] b -- [fermion] c };"));
   assert.equal(d.edges[0].style.color, "blue");
   assert.equal(d.edges[1].style.color, undefined);
 });
@@ -194,10 +214,10 @@ test(`the quotes on a line: "\\(\\gamma\\)" is edge label, "..."' edge label'`, 
   assert.deepEqual([d.edges[1].label, d.edges[1].labelSide], ["Z, W", -1]);
 });
 
-test("a pasted picture's edge labels sit on the left of the line, as TikZ puts them", () => {
+test("a converted picture's edge labels sit on the left of the line, as TikZ puts them", () => {
   // (the label's baseline, and the line's height, in the SVG)
   const labelBelowLine = (svg: string) => Number(/feynjs-labels"><g transform="translate\([-\d.]+ ([-\d.]+)\)/.exec(svg)![1]) > 0;
-  const pasted = (from: string, to: string) => `\\begin{feynman}\n\\vertex (a) at (0,0);\n\\vertex (b) at (3.2,0);\n\\diagram* { (${from}) -- [photon, edge label=x] (${to}) };\n\\end{feynman}`;
+  const pasted = (from: string, to: string) => conv(`\\begin{feynman}\n\\vertex (a) at (0,0);\n\\vertex (b) at (3.2,0);\n\\diagram* { (${from}) -- [photon, edge label=x] (${to}) };\n\\end{feynman}`);
   assert.equal(parse(pasted("a", "b")).directives["edge labels"], "left");
   // (a to b runs rightward, its left above; b to a leftward, its left below, where feynjs alone puts it above)
   assert.equal(labelBelowLine(render(pasted("a", "b"))), false);

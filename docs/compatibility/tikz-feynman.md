@@ -46,11 +46,28 @@ Three changes: the `\feynmandiagram` wrapper goes, `[horizontal=a to b]` becomes
 own, and a new line ends a statement, so a chain is written on one line. Commas still end
 statements too. Labels keep their `\(...\)`. feynjs lays the diagram out itself, as TikZ-Feynman's automatic layout does.
 
-Or paste the picture as it is. feynjs reads `\feynmandiagram [...] { ... };` and the
-`\begin{feynman}` environment (in a `tikzpicture` or not), with its `\vertex` and `\diagram*`
-statements, and draws what the TikZ means:
+## Converting a paper's pictures
 
-```feynman
+A `feynman` block holds feynjs's lines, not LaTeX. To bring a paper's TikZ-Feynman pictures
+over, convert them once, and keep the feynjs lines:
+
+```sh
+npx feynjs import paper.tex > diagrams.feyn
+```
+
+Every picture in the file is converted, in order: `\feynmandiagram [...] { ... };`, the
+`feynman` environment (in a `tikzpicture` or not), or a picture's body alone, its `\vertex` and
+`\diagram*` statements. From JavaScript, the converter is a module of its own, so a page that
+only draws diagrams never loads it:
+
+```js
+import { fromTikz } from "feynjs/tikz";
+const [first, ...rest] = fromTikz(texOfThePaper);  // feynjs's lines, one string per picture
+```
+
+This picture
+
+```latex
 \begin{feynman}
   \vertex (a);
   \vertex [right=of a] (b);
@@ -66,25 +83,45 @@ statements, and draws what the TikZ means:
 \end{feynman}
 ```
 
-A pasted picture is read as TikZ reads it:
+comes out as
 
-- **Places are in cm.** `at (1, 2)` is 1cm across and 2cm up, `at (30:2)` 2cm at 30 degrees,
-  and a line is 1.6cm (the length feynjs writes TikZ code at). `right=of a` is TikZ-Feynman's
-  node distance away: 1.5cm, 1cm with `small`, 2cm with `large`, or `node distance=`; on a
-  diagonal, `above left=of a`, that far along the diagonal.
+```feynman
+edge labels: left
+a at (0, 0)
+b [right=0.9375 of a]
+i1 [above left=0.6629 and 0.6629 of a, particle={{e^-}}]
+i2 [below left=0.6629 and 0.6629 of a, particle={{e^+}}]
+f1 [above right=0.6629 and 0.6629 of b, particle={{\mu^-}}]
+f2 [below right=0.6629 and 0.6629 of b, particle={{\mu^+}}]
+i1 -- [fermion] a -- [fermion] i2
+a -- [photon, edge label=\(\gamma\)] b
+f2 -- [fermion] b -- [fermion] f1
+```
+
+The converter reads the picture as TikZ reads it:
+
+- **Places are in cm,** written out in feynjs's line lengths (a line is 1.6cm, the length feynjs
+  writes TikZ code at). `at (30:2)` is 2cm at 30 degrees. `right=of a` is TikZ-Feynman's node
+  distance away: 1.5cm, 1cm with `small`, 2cm with `large`, or `node distance=`; on a diagonal,
+  `above left=of a`, that far along the diagonal.
 - **The first `\vertex` with no place sits at the origin**, as in TikZ (when the picture places
   points at all); feynjs lays out any other.
-- **The braced text is the point's label,** `\vertex (b) {\(e^-\)};`, set as written: `{\(q\)}`
-  is the letter q, not feynjs's quark, so a line with no style stays plain, as in TikZ.
+- **The braced text is the point's label,** `\vertex (b) {\(e^-\)};`, set as written:
+  `particle={{q}}` is the letter q, not feynjs's quark, so a line with no style stays plain, as
+  in TikZ.
 - **A chain may run over several lines,** up to its comma, and a group joins every point in
   it: `a -- {b, c}` is two lines, `{a, b} -- c` two more.
 - **Edge labels sit on the left of the line's direction,** `edge label'` on the right, as TikZ
-  puts them. (feynjs's own lines choose the side; `edge labels: left` asks for TikZ's.)
+  puts them: the converter writes `edge labels: left`. (feynjs's own lines choose the side.)
 - **The picture's options** become switches: `horizontal=a to b` and the rest, `small`,
-  `medium`, `large`, `inline=(a)`, `baseline=(a.base)`, `every photon/.style={blue}` (and in
-  `\tikzfeynmanset{...}`). TikZ-Feynman's layouts, `layered layout`, `spring layout`,
-  `spring electrical layout` and `tree layout`, are all drawn by feynjs's own; `check()` says
-  so. Other TikZ options (`thick`, `scale=2`) are passed over, and `check()` names them.
+  `medium`, `large`, `inline=(a)`, `baseline=(a.base)`, `every photon/.style={blue}` (and in a
+  `\tikzfeynmanset{...}` before the picture). TikZ-Feynman's layouts, `layered layout`,
+  `spring layout`, `spring electrical layout` and `tree layout`, become `layout:` switches,
+  drawn by feynjs's own; `check()` says so. Other TikZ options (`thick`, `scale=2`) are listed in
+  a comment at the top.
+- **Errors name the line of the LaTeX file,** `line 12: ... not \draw`.
+
+Pasted into a `feynman` block, a picture stops with an error that says to convert it.
 
 With feynjs's particle names, the same diagram is shorter. A name sets the line, the arrow and
 the label:
@@ -99,9 +136,9 @@ f1 [mu-] -- b -- f2 [mu+]
 
 | TikZ-Feynman | feynjs | Notes |
 |---|---|---|
-| `\feynmandiagram [...] { ... };`, `\begin{feynman} ... \end{feynman}`, `\vertex`, `\diagram* { ... }` | the same, pasted whole; or the body alone | read as above |
+| `\feynmandiagram [...] { ... };`, `\begin{feynman} ... \end{feynman}`, `\vertex`, `\diagram* { ... }` | convert once: `feynjs import paper.tex`, or `fromTikz()` | see [Converting a paper's pictures](#converting-a-papers-pictures) |
 | `(a) -- [fermion] (b)`, `a.east` | the same | a name in parentheses is the name; an anchor is the point itself |
-| `a -- {b, c}`, `{a, b} -- c` | the same | every point of the group is joined |
+| `a -- {b, c}`, `{a, b} -- c` | converted: one line to each point | by `feynjs import` or `fromTikz()` |
 | `a -- [fermion] b` and every other line style | the same | `fermion`, `anti fermion`, `photon`, `boson`, `charged boson`, `gluon`, `scalar`, `charged scalar`, `ghost`, `majorana`, `plain` and the `anti` forms; see [Lines and particles](../guide/lines.md) |
 | `[particle=\(e^-\)]` | the same, or `[e-]` | a feynjs particle name also styles the leg's line |
 | `edge label=`, `edge label'=` | the same, or `label=`, `label'=` | `'` puts the label on the right of the line's direction |
@@ -120,11 +157,11 @@ f1 [mu-] -- b -- f2 [mu+]
 | `label=above:\(g\)`, `label=45:\(g\)` (on a vertex) | the same, or `label=g, label side=above` | |
 | `\vertex [right=of a] (b);` | `b [right=of a]` | also `above left=1.5 of a`, `above right=1 and 2 of a`, `right=1.5cm of a` |
 | `\vertex (a) at (0, 0);` | `a at (0, 0)` | in propagator lengths, y up, not cm, unless a unit is given: `a at (1cm, 2cm)`; also `a at (30:1)`, `a [dot] at (0, 0)`; with `layout: manual` it stays exactly there ([by hand](../guide/layout.md#placing-points-by-hand)) |
-| `horizontal=a to b`, `vertical=a to b`, `horizontal'=a to b`, `vertical'=a to b` | `horizontal: a to b`, `vertical: a to b`, `horizontal': a to b`, `vertical': a to b`, or `[horizontal=a to b]` | a line of its own; the primed forms mirror the diagram too |
-| `small`, `medium`, `large` | `size: small`, or `[small]` | |
+| `horizontal=a to b`, `vertical=a to b`, `horizontal'=a to b`, `vertical'=a to b` | `horizontal: a to b`, `vertical: a to b`, `horizontal': a to b`, `vertical': a to b` | a line of its own; the primed forms mirror the diagram too |
+| `small`, `medium`, `large` | `size: small` | |
 | `every photon/.style={blue}` | `every photon: color=blue` | also `every fermion:`, `every dot:`, `every edge:`, `every vertex:` |
-| `baseline=(a.base)`, `inline=(a)` | `inline: a`, or `[inline=(a)]` | a diagram in a line of text (`inline` is small too) |
-| `layered layout`, `spring layout`, `spring electrical layout`, `tree layout` | `layout: spring layout`, or `[spring layout]` | all drawn by feynjs's force layout; `check()` says so |
+| `baseline=(a.base)`, `inline=(a)` | `inline: a` | a diagram in a line of text (`inline` is small too) |
+| `layered layout`, `spring layout`, `spring electrical layout`, `tree layout` | `layout: spring layout` | all drawn by feynjs's force layout; `check()` says so |
 | `[photon, red]` | the same, for `red`, `blue`, `green`, `gray` | any other colour as `color=...` |
 | `%` comment | the same; `#` and `//` too | |
 
@@ -149,11 +186,11 @@ f1 [mu-] -- [fermion, with arrow=0.25, with arrow=0.75, no arrow] b -- f2 [mu+]
 
 ## What feynjs doesn't take
 
-- **Other TikZ commands in a picture:** `\draw`, `\path`, `\node`, `\coordinate`. feynjs stops
-  with an error naming the command; write the lines in `\diagram*`.
+- **Other TikZ commands in a picture:** `\draw`, `\path`, `\node`, `\coordinate`. The converter
+  stops with an error naming the command and its line; write the lines in `\diagram*`.
 - **Other TikZ keys** on a line or a point, such as `thick`, `->`, `opacity`, `draw=red` or
   `xshift`. feynjs stops with an error naming the key. Use `heavy` for a thick line and
-  `color=` for a colour. On the picture, they are passed over, and `check()` names them.
+  `color=` for a colour. On a converted picture, they are listed in a comment.
 - **TikZ's other ways to write a place:** `++(1, 0)`, `($(a)!0.5!(b)$)`, and points named with
   anything but letters, digits, `_` and `'`.
 - **Options for a group,** `{[same layer] b, c}`: they guide TikZ's own layouts, and are passed over.

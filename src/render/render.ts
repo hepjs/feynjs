@@ -29,7 +29,7 @@ import { layoutLabel } from "../label/label.ts";
 import { Scene } from "./scene.ts";
 import { drawVertexShape, labelCoupling, labelExternalLeg, vertexRadius } from "./vertices.ts";
 import * as portable from "../geometry/portable-math.ts";
-import { TIKZ_LAYOUTS } from "../parse/tikz-picture.ts";
+import { TIKZ_LAYOUTS } from "../parse/tikz-layouts.ts";
 
 export interface RenderOptions {
   /** overrides for any part of the default theme: sizes, colours, layout rules */

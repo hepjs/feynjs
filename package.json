@@ -39,6 +39,7 @@
   "jsdelivr": "dist/feynjs.min.js",
   "exports": {
     ".": "./dist/feynjs.mjs",
+    "./tikz": "./dist/feynjs-tikz.mjs",
     "./dist/*": "./dist/*"
   },
   "files": [

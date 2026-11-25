@@ -166,6 +166,19 @@ The diagram as TikZ-Feynman code with every vertex placed where feynjs put it.
 | `unit` | | the length of a propagator, in cm |
 | `theme` | | theme overrides, which change the layout |
 
+### fromTikz
+
+```ts
+import { fromTikz } from "feynjs/tikz";
+fromTikz(tex: string): string[]
+```
+
+Every TikZ-Feynman picture in a LaTeX text (`\feynmandiagram`, the `feynman` environment, or a
+picture's body alone) as feynjs's lines, one string per picture, in order: the one-way step that
+brings a paper's diagrams to feynjs. A module of its own, so a page that only draws diagrams does
+not load it; in a page, `dist/feynjs-tikz.min.js` defines `feynjsTikz.fromTikz`. See
+[TikZ-Feynman](../compatibility/tikz-feynman.md#converting-a-papers-pictures).
+
 ## Particles and styles
 
 ### registerParticle

@@ -8,7 +8,7 @@ import { lookupParticle, particleNames } from "../particles/registry.ts";
 import { isExternal, kindOfLine, linesByVertex, readDiagram } from "./prepare.ts";
 import type { Diagram } from "../model.ts";
 import { unknownCommands } from "../label/label.ts";
-import { TIKZ_LAYOUTS } from "../parse/tikz-picture.ts";
+import { TIKZ_LAYOUTS } from "../parse/tikz-layouts.ts";
 
 /**
  * Something that looks wrong in a diagram (or, as information, is read otherwise than written:
@@ -133,7 +133,7 @@ const SWITCHES = new Set(["horizontal", "horizontal'", "vertical", "vertical'", 
   "size", "title", "layout", "grid", "grid forks", "view", "projection", "rotate", "reconstruct", "show intermediate",
   "show intermediates", "lattice", "wilson loop", "plaquette", "link", "polyakov loop", "site", "boundary", "axes",
   "background", "debug", "final plane", "colour flow", "nucleon edges", "charge colour", "colours", "colors", "reveal",
-  "edge labels", "tikz"]);
+  "edge labels"]);
 const LAYOUTS = new Set(["default", "v1", "v2", "manual", "grid"]);
 
 /** Switches feynjs does not know, and so passes over (`node distance: 2`), and layouts it does not have. */
@@ -145,9 +145,6 @@ function switchFindings(d: Diagram): Finding[] {
   const layout = d.directives.layout?.trim().toLowerCase();
   if (layout && TIKZ_LAYOUTS.has(layout)) findings.push({ severity: "info", rule: "tikz-layout", message: `TikZ-Feynman's ${layout} is drawn by feynjs's own force layout` });
   else if (layout && !LAYOUTS.has(layout)) findings.push({ severity: "warning", rule: "unknown-layout", message: `there is no layout "${layout}": the default is used (feynjs has default, manual, grid and v1)` });
-  // (what a pasted TikZ-Feynman picture asked for that feynjs has no use for)
-  const tikz = d.directives.tikz?.trim().replace(/^\{|\}$/g, "");
-  if (tikz) findings.push({ severity: "warning", rule: "tikz-option", message: `TikZ options feynjs does not use, passed over: ${tikz}` });
   return findings;
 }
 

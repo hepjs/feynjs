@@ -3,6 +3,9 @@
 //   reads standard input when no file is given; a .json file, or JSON on standard input, is a
 //   diagram given as data (see toSource). tikz: --unit is a propagator's length in cm,
 //   --picture writes the tikzpicture alone, without a standalone document round it.
+// feynjs import [file.tex]
+//   every TikZ-Feynman picture in a LaTeX file (\feynmandiagram, the feynman environment, or a
+//   picture's body alone) written as feynjs's lines, one after another, each under a comment
 // feynjs cache [dir]
 //   the LaTeX package's step (as bibtex is for citations): every <job>-feynjs-<n>.feyn the
 //   feynjs package wrote becomes <job>-feynjs-<n>.tex, TikZ-Feynman with every vertex placed
@@ -11,7 +14,7 @@ import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { check, describe, explain, measure, render, toTikz } from "../dist/feynjs.mjs";
 
-const USAGE = "usage: feynjs <render|check|describe|explain|measure|tikz> [file] [--unit cm] [--picture]\n       feynjs cache [dir]";
+const USAGE = "usage: feynjs <render|check|describe|explain|measure|tikz> [file] [--unit cm] [--picture]\n       feynjs import [file.tex]\n       feynjs cache [dir]";
 const args = process.argv.slice(2);
 const command = args[0];
 const flags = readFlags(args.slice(1));
@@ -31,6 +34,7 @@ const commands = {
 
 try {
   if (command === "cache") fillCache(flags.file ?? ".");
+  else if (command === "import") await importPictures(readFileSync(flags.file ?? 0, "utf8"));
   else if (commands[command]) console.log(commands[command](readInput(flags.file)));
   else { console.error(USAGE); process.exit(2); }
 } catch (error) {
@@ -89,4 +93,12 @@ function splitPackageHeader(text) {
   const header = /^%feynjs\b(.*)$/.exec(lines[0] ?? "");
   const unit = header && /unit=([\d.]+)/.exec(header[1]);
   return { source: (header ? lines.slice(1) : lines).join("\n"), unit: unit ? Number(unit[1]) : undefined };
+}
+
+/** Every TikZ-Feynman picture in a LaTeX text, written as feynjs's lines (feynjs/tikz, loaded only here). */
+async function importPictures(tex) {
+  const { fromTikz } = await import("../dist/feynjs-tikz.mjs");
+  const pictures = fromTikz(tex);
+  if (!pictures.length) throw new Error("no TikZ-Feynman picture found (\\feynmandiagram, \\begin{feynman}, or \\vertex and \\diagram*)");
+  console.log(pictures.map((p, k) => (pictures.length > 1 ? `% picture ${k + 1} of ${pictures.length}\n` : "") + p).join("\n\n"));
 }
