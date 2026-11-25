@@ -3,7 +3,7 @@
 All notable changes, newest first. Versions follow [semantic versioning](https://semver.org): a
 layout that moves is a change, recorded here.
 
-## Unreleased
+## 0.9.5 — 2026-11-25
 
 - **Nuclei in process lines:** a name only a nucleus can have (`2H`, `4He`, `He`, `235U`) makes the
   line nuclear; element symbols there are nuclei (so `H` is hydrogen), `p` and `n` one nucleon,

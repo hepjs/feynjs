@@ -176,7 +176,7 @@ latest. Cite the version you used:
 @software{feynjs,
   author  = {Oliver, Jason and Zhu, Pengxuan},
   title   = {feynjs: a JavaScript engine for Feynman diagrams},
-  version = {0.9.4},
+  version = {0.9.5},
   year    = {2026},
   doi     = {10.5281/zenodo.24497762},
   url     = {https://github.com/hepjs/feynjs},

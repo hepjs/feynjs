@@ -1,6 +1,6 @@
 {
   "name": "feynjs",
-  "version": "0.9.4",
+  "version": "0.9.5",
   "description": "A JavaScript engine for Feynman diagrams: written as text, laid out automatically, drawn as SVG for the web and Markdown, and as TikZ-Feynman for LaTeX.",
   "keywords": [
     "feynman",
