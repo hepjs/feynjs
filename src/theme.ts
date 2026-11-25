@@ -366,8 +366,10 @@ export interface Theme {
   unitY: number;
   /** size of particle labels, px */
   fontSize: number;
-  /** face of every label: the diagram's TeX look comes from New Computer Modern */
+  /** face of every label: the reader's own math font (CSS `math`), then named math fonts */
   fontFamily: string;
+  /** the face of a panel's caption, "(a) with a loop": words, not mathematics, so a text face */
+  captionFontFamily: string;
   /** blank margin around the diagram, px */
   padding: number;
   /** size of coupling labels beside vertices, relative to particle labels */
@@ -428,6 +430,7 @@ export const defaultTheme: Theme = {
   // New Computer Modern: the current standard TeX face, matching what papers are typeset in.
   // Pages should load it (see docs/stylesheets/feynjs.css); the rest are fallbacks.
   fontFamily: `math,'STIX Two Math','Cambria Math','New Computer Modern Math','Latin Modern Math',serif`,
+  captionFontFamily: `system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif`,
   padding: 6,
   labelGap: 4,
   revealOpacity: 0.16,

@@ -29,6 +29,7 @@ The repository and its packages carry a few things under their own licences, lis
 
 | What | Licence |
 |---|---|
+| New Computer Modern fonts, this site's name and page titles (in `docs/fonts/`) | GUST Font License (LPPL-based) |
 | Inter fonts, this site's text face (in `docs/fonts/`) | SIL Open Font License 1.1 |
 | Two Lucide icons, download and triangle-alert, drawn inline | ISC |
 

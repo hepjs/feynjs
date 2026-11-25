@@ -5,6 +5,9 @@ layout that moves is a change, recorded here.
 
 ## Unreleased
 
+- **A panel's caption is set in a text face** (`captionFontFamily`, the system's sans-serif by
+  default), not the math font labels use, and carries the class `feynjs-caption` for a page to
+  restyle. The docs site keeps New Computer Modern for its name and page titles.
 - **A paper's TikZ-Feynman pictures, converted once:** `feynjs import paper.tex`, or `fromTikz()`
   from the new module `feynjs/tikz`, turns every `\feynmandiagram`, `feynman` environment or
   picture body in a LaTeX file into feynjs's lines, read as TikZ means them: places in cm written

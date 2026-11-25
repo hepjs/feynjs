@@ -4,6 +4,11 @@
  * text in Inter, brick links and accents. Light and dark schemes share the same parts.
  */
 
+/* New Computer Modern for the site's name and page titles (GUST Font License); diagram labels use the reader's math font */
+@font-face { font-family: "NewComputerModern10"; src: url("../fonts/NewCM10-Book.otf") format("opentype"); font-style: normal; font-display: swap; }
+@font-face { font-family: "NewComputerModern10"; src: url("../fonts/NewCM10-BookItalic.otf") format("opentype"); font-style: italic; font-display: swap; }
+/* a diagram's panel captions in the page's own text face */
+.md-typeset svg.feynjs-panels .feynjs-caption { font-family: var(--md-text-font-family); }
 /* Inter for text (SIL Open Font License; see docs/fonts/Inter-LICENSE.txt) */
 @font-face { font-family: "Inter"; src: url("../fonts/Inter-Regular.otf") format("opentype"); font-weight: 400; font-style: normal; font-display: swap; }
 @font-face { font-family: "Inter"; src: url("../fonts/Inter-Italic.otf") format("opentype"); font-weight: 400; font-style: italic; font-display: swap; }

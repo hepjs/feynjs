@@ -61,7 +61,8 @@ export function composePanels(svgs: string[], captions: string[], theme: Theme, 
       }
       const inner = svgs[i].replace(/^<svg /, `<svg x="${fmt(x)}" y="${fmt(y + (rowHeight - sizes[i].h) / 2)}" `);
       parts.push(inner);
-      parts.push(`<text x="${fmt(x + sizes[i].w / 2)}" y="${fmt(y + rowHeight + captionHeight * 0.75)}" text-anchor="middle" font-size="${theme.fontSize}" fill="currentColor">${escapeText(captions[i])}</text>`);
+      // (a caption is words, set in a text face, and carries a class a page can restyle)
+      parts.push(`<text class="feynjs-caption" x="${fmt(x + sizes[i].w / 2)}" y="${fmt(y + rowHeight + captionHeight * 0.75)}" text-anchor="middle" font-size="${theme.fontSize}" font-family="${theme.captionFontFamily}" fill="currentColor">${escapeText(captions[i])}</text>`);
       x += sizes[i].w + gap;
     }
     totalWidth = Math.max(totalWidth, x - gap);
