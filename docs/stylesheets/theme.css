@@ -490,28 +490,49 @@
   .feynjs-tour .tour-multiplet { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
 }
 
-
-/* a diagram explained line by line (authoring/index.md): each line's note beside it; the parts a
-   line draws pulse in the accent colour while the rest of the diagram dims */
-.md-typeset .feynjs-explain .feynjs-line { display: inline-block; width: 100%; border-radius: 0.2rem; cursor: default; transition: background-color 0.2s; }
-.md-typeset .feynjs-explain .feynjs-line-on { background-color: var(--md-accent-fg-color--transparent); }
-.md-typeset .feynjs-explain .feynjs-src { display: inline-block; }
-.md-typeset .feynjs-explain .feynjs-note { font-family: var(--md-text-font-family); font-size: 0.92em; color: var(--md-default-fg-color--light); }
-.md-typeset .feynjs-explain .feynjs-note-mark { display: none; }
-.md-typeset .feynjs-explain .feynjs-line-on .feynjs-note { color: var(--md-accent-fg-color); }
-.md-typeset .feynjs-explain svg.feynjs [data-edge] { transition: opacity 0.25s; }
-.md-typeset .feynjs-explain.feynjs-explaining svg.feynjs:not(.feynjs-lit-all) [data-edge]:not(.feynjs-lit) { opacity: 0.18; }
-.md-typeset .feynjs-explain svg.feynjs .feynjs-lit,
-.md-typeset .feynjs-explain svg.feynjs.feynjs-lit-all { animation: feynjs-pulse 1.1s ease-in-out infinite; }
-@keyframes feynjs-pulse {
-  0%, 100% { filter: drop-shadow(0 0 0 transparent); }
-  50% { filter: drop-shadow(0 0 0.18rem var(--md-accent-fg-color)); }
+/* a diagram explained line by line (authoring/index.md). Lit, steady: lines blue, points amber,
+   labels teal; the rest dims. Notes beside their lines, under them on a narrow screen. */
+.md-typeset .feynjs-explain, .md-typeset .feynjs-layouts {
+  --feynjs-teach-line: #2f6fdb; --feynjs-teach-point: #d97706; --feynjs-teach-label: #0e9f8e;
 }
-@media (prefers-reduced-motion: reduce) {
-  .md-typeset .feynjs-explain svg.feynjs .feynjs-lit, .md-typeset .feynjs-explain svg.feynjs.feynjs-lit-all { animation: none; filter: drop-shadow(0 0 0.15rem var(--md-accent-fg-color)); }
+[data-md-color-scheme="slate"] .md-typeset .feynjs-explain, [data-md-color-scheme="slate"] .md-typeset .feynjs-layouts {
+  --feynjs-teach-line: #6c9cf2; --feynjs-teach-point: #f0a23b; --feynjs-teach-label: #3cc4b3;
 }
-.md-typeset .feynjs-explain svg.feynjs .feynjs-teach-dot { fill: currentColor; }
+.md-typeset .feynjs-explain .feynjs-line { display: inline-block; width: 100%; border-radius: 0.2rem; cursor: pointer; transition: background-color 0.2s; outline: none; }
+.md-typeset .feynjs-explain .feynjs-line:hover .feynjs-note { text-decoration: underline dotted; text-underline-offset: 0.2em; }
+.md-typeset .feynjs-explain .feynjs-line:focus-visible { box-shadow: inset 0 0 0 1px var(--feynjs-teach-line); }
+.md-typeset .feynjs-line-on { background-color: color-mix(in srgb, var(--feynjs-teach-line) 10%, transparent); }
+.md-typeset .feynjs-src { display: inline-block; min-width: var(--feynjs-src-width, 0); }
+.md-typeset .feynjs-note { font-family: var(--md-text-font-family); font-size: 0.92em; color: var(--md-default-fg-color--light); }
+.md-typeset .feynjs-note-mark { display: none; }
+.md-typeset .feynjs-line-on .feynjs-note { color: var(--feynjs-teach-line); }
+@media screen and (max-width: 45em) {
+  .md-typeset .feynjs-line { white-space: normal; }
+  .md-typeset .feynjs-src { display: block; min-width: 0; white-space: pre; }
+  .md-typeset .feynjs-note { display: block; padding-left: 2ch; white-space: normal; }
+}
+.md-typeset .feynjs-explain svg.feynjs [data-edge], .md-typeset .feynjs-explain svg.feynjs [data-vertex], .md-typeset .feynjs-explain svg.feynjs .feynjs-labels > g { transition: opacity 0.25s, color 0.25s; }
+.md-typeset .feynjs-explaining svg.feynjs [data-edge]:not(.feynjs-lit-line),
+.md-typeset .feynjs-explaining svg.feynjs [data-vertex]:not(.feynjs-lit-point),
+.md-typeset .feynjs-explaining svg.feynjs .feynjs-labels > g:not(.feynjs-lit-label) { opacity: 0.18; }
+.md-typeset .feynjs-explain svg.feynjs .feynjs-lit-line { color: var(--feynjs-teach-line); filter: drop-shadow(0 0 0.12rem var(--feynjs-teach-line)); }
+.md-typeset .feynjs-explain svg.feynjs .feynjs-lit-point { color: var(--feynjs-teach-point); }
+.md-typeset .feynjs-explain svg.feynjs .feynjs-lit-label { color: var(--feynjs-teach-label); }
+.md-typeset .feynjs-explain svg.feynjs .feynjs-teach-dot { fill: currentColor; transition: opacity 0.25s; }
+.md-typeset .feynjs-explain svg.feynjs .feynjs-teach-dot.feynjs-lit-point { fill: var(--feynjs-teach-point); }
+.md-typeset .feynjs-explain svg.feynjs .feynjs-teach-dot--end { opacity: 0; }
+.md-typeset .feynjs-explain svg.feynjs .feynjs-teach-dot--end.feynjs-lit-point { opacity: 1; }
 .md-typeset .feynjs-explain svg.feynjs .feynjs-teach-tag { opacity: 0; transition: opacity 0.25s; }
-.md-typeset .feynjs-explain svg.feynjs .feynjs-teach-tag.feynjs-lit { opacity: 1; animation: none; }
-.md-typeset .feynjs-explain svg.feynjs .feynjs-teach-tag path { fill: none; stroke: var(--md-accent-fg-color); stroke-width: 0.9; stroke-linecap: round; stroke-linejoin: round; }
-.md-typeset .feynjs-explain svg.feynjs .feynjs-teach-tag text { fill: var(--md-accent-fg-color); font-family: var(--md-code-font-family); font-size: 8px; }
+.md-typeset .feynjs-explain svg.feynjs .feynjs-teach-tag.feynjs-lit-point,
+.md-typeset .feynjs-names-rest:not(.feynjs-explaining) svg.feynjs .feynjs-teach-tag { opacity: 1; }
+.md-typeset .feynjs-explain svg.feynjs .feynjs-teach-tag path { fill: none; stroke: var(--feynjs-teach-point); stroke-width: 0.9; stroke-linecap: round; stroke-linejoin: round; }
+.md-typeset .feynjs-explain svg.feynjs .feynjs-teach-tag text { fill: var(--feynjs-teach-point); font-family: var(--md-code-font-family); font-size: 8px; }
+/* the step and play buttons under a worked diagram, and the layout buttons over one */
+.md-typeset .feynjs-explain-bar, .md-typeset .feynjs-layouts-bar { display: flex; align-items: center; justify-content: center; gap: 0.4rem; margin: 0.3rem 0 0.6rem; font-size: 0.62rem; }
+.md-typeset .feynjs-explain-button { font: inherit; padding: 0.15rem 0.55rem; border: 1px solid var(--md-default-fg-color--lightest); border-radius: 1rem; background: var(--md-default-bg-color); color: var(--md-default-fg-color--light); cursor: pointer; }
+.md-typeset .feynjs-explain-button:hover, .md-typeset .feynjs-explain-button:focus-visible { color: var(--feynjs-teach-line); border-color: var(--feynjs-teach-line); }
+.md-typeset .feynjs-explain-button.feynjs-on { color: var(--md-default-bg-color); background: var(--feynjs-teach-line); border-color: var(--feynjs-teach-line); }
+.md-typeset .feynjs-explain-count { min-width: 2.5rem; color: var(--md-default-fg-color--lighter); font-variant-numeric: tabular-nums; }
+.md-typeset .feynjs-explain-live { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.md-typeset .feynjs-layouts .feynman svg { display: block; margin: 0 auto; width: 100%; max-width: 30rem; height: auto; }
+.md-typeset .feynjs-layouts .feynjs-line { display: inline-block; width: 100%; border-radius: 0.2rem; }

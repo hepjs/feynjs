@@ -7,10 +7,11 @@ Point at a line of source to see what it draws.
 
 ## 1. Points and lines
 
-Name the points and join them; feynjs places every point itself. Point at a line of source and
-the points it names are marked.
+Name the points and join them; feynjs places every point itself. Point at a line of source (or
+use the buttons under the diagram) to see what it draws: lines in blue, points in amber, labels
+in teal.
 
-<div class="feynjs-explain" data-points="i1 i2 a b f1 f2" markdown>
+<div class="feynjs-explain" data-points="i1 i2 a b f1 f2" data-names="rest" markdown>
 
 ```feynman
 in: i1 i2
@@ -124,61 +125,27 @@ See [Colour flow](colour-flow.md) and [Detector objects](objects.md).
 
 ## 5. How it's all laid out
 
-An engine places the points; the source stays the same. Pick one with a single switch.
+An engine places the points, and one switch picks it; the rest of the source stays the same.
+Press a button to watch the same diagram move to another layout.
 
-=== "Default"
+<div class="feynjs-layouts" markdown>
 
-    <div class="feynjs-explain" markdown>
+```feynman
+p p > t t~, (t > b w+, w+ > e+ ve), (t~ > b~ w-, w- > j j)
+```
 
-    ```feynman
-    p p > t t~, (t > b w+, w+ > e+ ve), (t~ > b~ w-, w- > j j)
-    ```
+```text
+layout: default
+p p > t t~, (t > b w+, w+ > e+ ve), (t~ > b~ w-, w- > j j)
+```
 
-    ```text
-    p p > t t~, (t > b w+, w+ > e+ ve), (t~ > b~ w-, w- > j j)    % a top pair, each top decayed
-    ```
+</div>
 
-    </div>
-
-    The default balances forces that encode how physicists draw: decays fan out from their
-    parent, the stages of a cascade grow shorter, nothing crosses.
-
-=== "Grid"
-
-    <div class="feynjs-explain" markdown>
-
-    ```feynman
-    layout: grid
-    p p > t t~, (t > b w+, w+ > e+ ve), (t~ > b~ w-, w- > j j)
-    ```
-
-    ```text
-    layout: grid                                                  % every line at a set angle, every point on a grid
-    p p > t t~, (t > b w+, w+ > e+ ve), (t~ > b~ w-, w- > j j)
-    ```
-
-    </div>
-
-    The grid snaps every line to a multiple of 45 degrees, as a diagram drawn on squared paper.
-
-=== "Final plane"
-
-    <div class="feynjs-explain" markdown>
-
-    ```feynman
-    final plane: on
-    p p > t t~, (t > b w+, w+ > e+ ve), (t~ > b~ w-, w- > j j)
-    ```
-
-    ```text
-    final plane: on                                               % everything that leaves, in one column
-    p p > t t~, (t > b w+, w+ > e+ ve), (t~ > b~ w-, w- > j j)
-    ```
-
-    </div>
-
-    The final plane lines up every outgoing particle on the right, as the final state an
-    experiment sees.
+- **Default** balances forces that encode how physicists draw: decays fan out from their parent,
+  the stages of a cascade grow shorter, nothing crosses.
+- **Grid** snaps every line to a multiple of 45 degrees, as a diagram drawn on squared paper.
+- **Final plane** lines up every outgoing particle on the right, as the final state an experiment
+  sees.
 
 Points given `at (x, y)` stay where they are put, and the rest settle round them.
 [Engines](engines.md) covers each engine and its settings.
