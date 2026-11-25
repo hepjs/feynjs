@@ -5,6 +5,8 @@ hide:
   - tags
 ---
 
+<span class="feynjs-no-source" hidden></span>
+
 # feynjs { .feynjs-hidden }
 
 <div class="feynjs-splash" markdown>

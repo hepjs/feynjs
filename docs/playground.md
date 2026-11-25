@@ -4,6 +4,8 @@ hide:
   - toc
 ---
 
+<span class="feynjs-no-source" hidden></span>
+
 # Playground { .feynjs-hidden }
 
 <div data-feynjs-playground></div>

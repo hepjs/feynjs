@@ -556,3 +556,7 @@
 /* a quark-level diagram's process written with hadron names, small, under it (examples/flavour) */
 .md-typeset p.feynjs-as-hadrons { margin: 0.6rem 0 0.2rem; padding-top: 0.5rem; border-top: 1px dashed var(--md-default-fg-color--lightest); font-size: 0.64rem; color: var(--md-default-fg-color--light); }
 .md-typeset p.feynjs-as-hadrons + .feynman svg { max-height: 5.5rem; width: auto; }
+
+/* the pages that are mostly HTML (the home page, the tour, the playground) carry a hidden
+   .feynjs-no-source marker: their source is layout, not something to read, so no "view source" */
+.md-content__inner:has(.feynjs-no-source) > .md-content__button { display: none; }

@@ -3,6 +3,8 @@ hide:
   - toc
 ---
 
+<span class="feynjs-no-source" hidden></span>
+
 # Tour
 
 From the fundamental particles to what a detector sees. Every figure is drawn live by feynjs; the
