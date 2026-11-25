@@ -3,6 +3,7 @@ import type { Pt } from "../geometry/curve.ts";
 import { layoutLabel } from "../label/label.ts";
 import type { Theme } from "../theme.ts";
 import * as portable from "../geometry/portable-math.ts";
+import { QUARKS_BY_NAME, quarksOfHadron } from "../particles/hadrons.ts";
 
 /**
  * A hadron drawn with its valence quarks (`[bag=proton]`, `[bag=c cbar u dbar]`) and the colour
@@ -13,21 +14,14 @@ import * as portable from "../geometry/portable-math.ts";
  */
 export interface Quark { flavour: string; anti: boolean; /** which colourless cluster it is in, in a molecule (`uud + c cbar`) */ group?: number }
 
-/** Hadrons by name, as their valence quarks. */
-const NAMED: Record<string, string> = {
-  proton: "uud", p: "uud", neutron: "udd", n: "udd", antiproton: "ubar ubar dbar", lambda: "uds",
-  "pi+": "u dbar", "pi-": "d ubar", pi0: "u ubar", "K+": "u sbar", "K-": "s ubar", K0: "d sbar",
-  "J/psi": "c cbar", jpsi: "c cbar", upsilon: "b bbar", B0: "d bbar", "B+": "u bbar", D0: "c ubar", "D+": "c dbar", Bs: "s bbar",
-  // (exotics: a charged charmonium-like tetraquark, a hidden-charm pentaquark, the doubly-charmed T_cc)
-  Zc: "c cbar u dbar", "Zc+": "c cbar u dbar", X3872: "c cbar u ubar", Tcc: "c c ubar dbar", Pc: "u u d c cbar",
-};
 
 /**
  * The quarks of a hadron, by name or written out (`uud`, `u dbar`, `c c~ u d~`); a molecule of
  * two colourless clusters, a baryon and a meson say, written with a plus (`udc + u cbar`).
  */
 export function quarksOf(text: string): Quark[] | undefined {
-  const named = NAMED[text.trim()] ?? NAMED[text.trim().replace(/[\\{}^_]/g, "")];
+  // (by name: the table's, or any hadron the particle names know, Sigma+ or K*0)
+  const named = QUARKS_BY_NAME[text.trim()] ?? QUARKS_BY_NAME[text.trim().replace(/[\\{}^_]/g, "")] ?? quarksOfHadron(text.trim());
   const quarks: Quark[] = [];
   (named ?? text).split("+").forEach((part, group, parts) => {
     const src = part.replace(/\s+/g, "");

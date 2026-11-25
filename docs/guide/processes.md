@@ -56,9 +56,11 @@ e- e+ > gamma > mu- mu+
 - **Whatever does not decay leaves the diagram.**
 
 Particle names are feynjs's own, listed in [Particles](../reference/particles.md). MadGraph's
-Standard Model names work too (`t~`, `w+`, `ve`, `ta+`; see [MadGraph](../compatibility/madgraph.md#particle-names)),
-but its SUSY names don't: write `gluino`, not `go`. A name feynjs doesn't know is drawn as a plain
-line carrying that name as its label.
+names work too, the Standard Model's (`t~`, `w+`, `ve`, `ta+`) and the MSSM's (`go`, `n1`, `x1+`,
+`ul`, `t1`, `ta1-`; see [MadGraph](../compatibility/madgraph.md#particle-names)), and hadrons go by
+their English names (`kaon+`, `K*0`, `Lambda_b`, `jpsi`, or `X(ucd)` with its quarks). A name feynjs
+doesn't know is drawn as a plain line carrying that name as its label, and
+[`check`](../reference/api.md#check) warns of it.
 
 To draw a particle with a label of your own, while keeping its line style and properties, add a
 `label:` line. This works in both syntaxes:

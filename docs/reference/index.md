@@ -52,7 +52,7 @@ The whole syntax on one page. The [Components](../guide/index.md) pages explain 
 | `W+(> e+ nu)` | decay this one particle on the spot |
 | `g g > {t} > H`, `g g > {t} > H H`, `H > {W+} > a a` | through a loop of the particle in braces: everything meeting it at a corner of its own (a triangle, a box...), in the process or a decay; MadGraph's `[noborn=QCD]` is a top loop |
 | `ggF > H`, `VBF > H`, `VBS > W+ W+`, `VBS(W) > H > W+ W-`, `VBS(W, H) > W+ H W-` | production modes: the top triangle; two quark lines whose bosons (V, or W or Z) fuse where what is made comes out; three or more made come off what the two exchange (the same boson, or as named), top to bottom |
-| `t~`, `b~`, `ve~`, `ve`, `vm`, `ta-` | MadGraph's names: a tilde for an antiparticle, `ve` `vm` `vt` for neutrinos, `ta` for the tau |
+| `t~`, `b~`, `ve~`, `ve`, `vm`, `ta-` | MadGraph's names: a tilde for an antiparticle, `ve` `vm` `vt` `vl` for neutrinos, `ta` for the tau; and the MSSM's, `go`, `n1`, `x1+`, `ul`, `t1`, `el-`, `ta1-`, `sve`, `h1` ([all](particles.md#madgraphs-mssm-names)) |
 
 ## Line options
 
@@ -109,7 +109,7 @@ v -- [DIS track] f3
 | top jet | `TOP` |
 | b jet | `BJ` |
 | disappearing track | `DT` |
-| displaced lepton | `DL` |
+| displaced lepton, dislep | `DL` (as written: `dl` is MadGraph's left down squark) |
 | proton remnant (a proton that broke up, p*) | `PR` |
 
 Adjective: `displaced` (`DIS`): the object starts at a displaced vertex after a dotted flight.

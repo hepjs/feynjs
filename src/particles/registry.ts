@@ -1,4 +1,6 @@
 import type { EdgeStyle } from "../model.ts";
+import type { ParticleProperties } from "./properties.ts";
+import { hadronNamed, namedHadrons } from "./hadrons.ts";
 
 export interface Particle {
   style: EdgeStyle;
@@ -86,7 +88,8 @@ const P: Record<string, Particle> = {
   "met": { style: { line: "jet", arrow: 0, object: "met" }, label: "E_{\\mathrm{T}}^{\\mathrm{miss}}" },
   "Jt": { style: { line: "jet", arrow: 0, object: "top" }, label: "J_t" },
   "dt": { style: { line: "jet", arrow: 0, object: "disappearing" }, label: "\\text{DT}" },
-  "dl": { style: { line: "jet", arrow: 0, object: "displacedlepton" }, label: "\\ell_{\\mathrm{d}}" },
+  // (a displaced lepton: `dl` is MadGraph's left down squark)
+  "dislep": { style: { line: "jet", arrow: 0, object: "displacedlepton" }, label: "\\ell_{\\mathrm{d}}" },
   "hscp": { style: { line: "jet", arrow: 0, object: "heavycharged" }, label: "\\text{HSCP}" },
   // gauge bosons
   "g": { style: { line: "coil", arrow: 0 }, label: "g" },
@@ -112,39 +115,129 @@ const P: Record<string, Particle> = {
   "slepton": susy("dash", "\\tilde\\ell"), "stau": susy("dash", "\\tilde\\tau"),
   "selectron": susy("dash", "\\tilde e"), "smuon": susy("dash", "\\tilde\\mu"),
   "sneutrino": susy("dash", "\\tilde\\nu"),
-  "neutralino": susy("wave", "\\tilde\\chi^0_1", true), "neutralino1": susy("wave", "\\tilde\\chi^0_1", true),
+  "neutralino": susy("wave", "\\tilde\\chi^0", true), "neutralino1": susy("wave", "\\tilde\\chi^0_1", true),
   "neutralino2": susy("wave", "\\tilde\\chi^0_2", true), "neutralino3": susy("wave", "\\tilde\\chi^0_3", true),
+  "neutralino4": susy("wave", "\\tilde\\chi^0_4", true),
   "chargino": susy("wave", "\\tilde\\chi^\\pm_1", true), "chargino+": susy("wave", "\\tilde\\chi^+_1", true),
-  "chargino-": susy("wave", "\\tilde\\chi^-_1", true), "chargino2": susy("wave", "\\tilde\\chi^\\pm_2", true),
-  "gravitino": susy("wave", "\\tilde G", true), "LSP": susy("wave", "\\tilde\\chi^0_1", true),
+  "chargino-": susy("wave", "\\tilde\\chi^-_1", true), "chargino1": susy("wave", "\\tilde\\chi^\\pm_1", true),
+  "chargino2": susy("wave", "\\tilde\\chi^\\pm_2", true),
+  "chargino1+": susy("wave", "\\tilde\\chi^+_1", true), "chargino1-": susy("wave", "\\tilde\\chi^-_1", true),
+  "chargino2+": susy("wave", "\\tilde\\chi^+_2", true), "chargino2-": susy("wave", "\\tilde\\chi^-_2", true),
+  "gravitino": susy("wave", "\\tilde G", true), "LSP": susy("wave", "\\tilde\\chi^0_1", true), "NLSP": susy("wave", "\\mathrm{NLSP}", true),
   "higgsino": susy("wave", "\\tilde H", true), "bino": susy("wave", "\\tilde B", true), "wino": susy("wave", "\\tilde W", true),
+  "higgsino0": susy("wave", "\\tilde H^0", true), "higgsino+": susy("wave", "\\tilde H^+", true), "higgsino-": susy("wave", "\\tilde H^-", true),
+  "higgsino1": susy("wave", "\\tilde H^0_1", true), "higgsino2": susy("wave", "\\tilde H^0_2", true),
+  "wino0": susy("wave", "\\tilde W^0", true), "wino+": susy("wave", "\\tilde W^+", true), "wino-": susy("wave", "\\tilde W^-", true),
+  "stop1": susy("dash", "\\tilde t_1"), "stop2": susy("dash", "\\tilde t_2"), "sbottom1": susy("dash", "\\tilde b_1"), "sbottom2": susy("dash", "\\tilde b_2"),
+  "stau1": susy("dash", "\\tilde\\tau_1"), "stau2": susy("dash", "\\tilde\\tau_2"),
+  "selectronL": susy("dash", "\\tilde e_L"), "selectronR": susy("dash", "\\tilde e_R"),
+  "smuonL": susy("dash", "\\tilde\\mu_L"), "smuonR": susy("dash", "\\tilde\\mu_R"),
 };
 for (const q of ["u", "d", "s", "c", "b", "t"]) {
   P[q] = f(q);
   P[q + "bar"] = f(`\\bar ${q}`, true);
 }
+// (hadrons: mesons dashed, as the pion is, and baryons in three lines, as the proton is)
+const HADRON_NAMES = new Set<string>();
+for (const [name, hadron] of Object.entries(namedHadrons())) {
+  P[name] = hadron.particle;
+  HADRON_NAMES.add(name);
+}
 
-export function lookupParticle(name: string): Particle | undefined {
-  if (Object.prototype.hasOwnProperty.call(P, name)) return P[name];
-  // (MadGraph's names: bosons in lower case, z, h, w+, w-; neutrinos ve, vm, vt; taus ta-, ta+)
-  const madgraph: Record<string, string> = { z: "Z", h: "H", "w+": "W+", "w-": "W-", ve: "nu_e", vm: "nu_mu", vt: "nu_tau", "ta-": "tau-", "ta+": "tau+" };
-  const alias = madgraph[name];
-  if (alias && Object.prototype.hasOwnProperty.call(P, alias)) return P[alias];
-  // (and an antiparticle with a tilde, t~, b~, ve~: the "bar" name if there is one, else the
-  // particle with its arrow turned and a bar over its label)
+/**
+ * MadGraph's MSSM names (as its models name them after renaming) for particles feynjs has no
+ * name of its own for: the squarks by flavour and hand, the sleptons by hand and charge, the
+ * sneutrinos, the heavy Higgs. Matched only as written, in this case: `dl` is a squark, `DL` the
+ * displaced lepton.
+ */
+const MSSM: Record<string, Particle> = {
+  "h2": dash("H"),
+  "sve": susy("dash", "\\tilde\\nu_{e}"), "svm": susy("dash", "\\tilde\\nu_{\\mu}"), "svt": susy("dash", "\\tilde\\nu_{\\tau}"),
+};
+for (const q of ["u", "d", "c", "s"]) for (const hand of ["l", "r"]) MSSM[q + hand] = susy("dash", `\\tilde ${q}_{${hand.toUpperCase()}}`);
+for (const [lepton, tex] of [["e", "e"], ["mu", "\\mu"]]) {
+  for (const hand of ["l", "r"]) for (const sign of ["-", "+"]) MSSM[`${lepton}${hand}${sign}`] = susy("dash", `\\tilde{${tex}}^${sign}_${hand.toUpperCase()}`);
+}
+for (const k of ["1", "2"]) for (const sign of ["-", "+"]) MSSM[`ta${k}${sign}`] = susy("dash", `\\tilde\\tau^${sign}_${k}`);
+
+/**
+ * Other names for particles feynjs knows, matched only as written: MadGraph's (bosons in lower
+ * case, z, w+, w-; neutrinos ve, vm, vt, vl; taus ta-, ta+; the MSSM's go, n1, x1+, t1, h1...).
+ */
+const ALIASES: Record<string, string> = {
+  z: "Z", h: "H", "w+": "W+", "w-": "W-", ve: "nu_e", vm: "nu_mu", vt: "nu_tau", vl: "nu_l", "ta-": "tau-", "ta+": "tau+",
+  go: "gluino", n1: "neutralino1", n2: "neutralino2", n3: "neutralino3", n4: "neutralino4",
+  "x1+": "chargino1+", "x1-": "chargino1-", "x2+": "chargino2+", "x2-": "chargino2-",
+  t1: "stop1", t2: "stop2", b1: "sbottom1", b2: "sbottom2",
+  h1: "h", h3: "A", "h+": "H+", "h-": "H-",
+  // (the displaced lepton's short name, on a point as on a line)
+  DL: "dislep",
+};
+
+/** Where a name leads: the particle, and what it is filed under for its properties. */
+export interface ResolvedParticle {
+  particle: Particle;
+  /** the name its properties are kept under (`W+` for `w+`, `tbar` for `t~`) */
+  key?: string;
+  /** an antiparticle made with a tilde, of the particle so named (`ve` for `ve~`) */
+  antiOf?: string;
+  /** a hadron named by its parts (`K*+`, `X(ucd)`): its properties, worked out */
+  properties?: ParticleProperties;
+}
+
+const own = (table: Record<string, Particle>, name: string) => Object.prototype.hasOwnProperty.call(table, name);
+
+/** A name as written: in the table, MadGraph's, or a hadron. */
+function resolveAsWritten(name: string): ResolvedParticle | undefined {
+  if (own(P, name)) return { particle: P[name], key: name };
+  if (own(MSSM, name)) return { particle: MSSM[name], key: name };
+  const alias = Object.prototype.hasOwnProperty.call(ALIASES, name) ? ALIASES[name] : undefined;
+  if (alias && own(P, alias)) return { particle: P[alias], key: alias };
+  const hadron = hadronNamed(name);
+  if (hadron) return { particle: hadron.particle, properties: hadron.properties };
+  return undefined;
+}
+
+/**
+ * An antiparticle's label, from its particle's: a bar over a symbol with a subscript, not over
+ * the subscript (`\bar\nu_e`), as papers write it; over the whole of anything else (`\bar{\chi}`,
+ * and a sfermion, `\bar{\tilde u_{L}}`, as the MadGraph plugin writes it).
+ */
+function antiLabel(label: string): string {
+  const m = /^(\\[A-Za-z]+|[A-Za-z])(_.+)$/.exec(label);
+  if (m && !/\\tilde|\\widetilde/.test(label)) return `\\bar${m[1].startsWith("\\") ? "" : " "}${m[1]}${m[2]}`;
+  return `\\bar{${label}}`;
+}
+
+/** What a name stands for, or undefined if it names no particle. */
+export function resolveParticle(name: string): ResolvedParticle | undefined {
+  const written = resolveAsWritten(name);
+  if (written) return written;
+  // (an antiparticle with a tilde, t~, b~, ve~: a charged one is its partner of the other charge,
+  // pi+~ the pi-; else the "bar" name if there is one, else the particle with its arrow turned
+  // and a bar over its label)
   if (name.length > 1 && name.endsWith("~")) {
     const base = name.slice(0, -1);
-    if (Object.prototype.hasOwnProperty.call(P, `${base}bar`)) return P[`${base}bar`];
+    const charge = /(\+\+|--|\+|-)$/.exec(base);
+    const partner = charge && resolveAsWritten(base.slice(0, charge.index) + { "+": "-", "-": "+", "++": "--", "--": "++" }[charge[1]]);
+    if (partner) return partner;
+    if (own(P, `${base}bar`)) return { particle: P[`${base}bar`], key: `${base}bar` };
+    const hadron = hadronNamed(`${base}bar`);
+    if (hadron) return { particle: hadron.particle, properties: hadron.properties };
     const particle = lookupParticle(base);
-    if (particle) return { ...particle, label: `\\bar{${particle.label}}`, anti: !particle.anti };
+    if (particle) return { particle: { ...particle, label: antiLabel(particle.label), anti: !particle.anti }, antiOf: base };
   }
   // (and in any case, Gluino, NEUTRALINO1, Svj, where only one name fits; not single letters,
-  // where case tells particles apart: b and B, t and T)
+  // where case tells particles apart: b and B, t and T; nor hadrons, where it tells Ω from ω)
   if (name.length > 1) {
-    const lower = name.toLowerCase(), fits = Object.keys(P).filter((k) => k.toLowerCase() === lower);
-    if (fits.length === 1) return P[fits[0]];
+    const lower = name.toLowerCase(), fits = Object.keys(P).filter((k) => k.toLowerCase() === lower && !HADRON_NAMES.has(k));
+    if (fits.length === 1) return { particle: P[fits[0]], key: fits[0] };
   }
   return undefined;
+}
+
+export function lookupParticle(name: string): Particle | undefined {
+  return resolveParticle(name)?.particle;
 }
 
 /** Bumped whenever a particle or line style is registered (drawings made before may differ). */
@@ -162,4 +255,4 @@ export function registerLineStyle(name: string, style: EdgeStyle): void {
   registry.version++;
 }
 
-export const particleNames = (): string[] => Object.keys(P);
+export const particleNames = (): string[] => [...Object.keys(P), ...Object.keys(MSSM).filter((name) => !own(P, name))];

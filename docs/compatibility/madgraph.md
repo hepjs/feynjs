@@ -2027,10 +2027,24 @@ MadGraph's Standard Model names work as they are. Where feynjs has a name of its
 
 Every name is in [All particles](../reference/particles.md).
 
-**Not known:** MadGraph's SUSY names (`go`, `n1`, `n2`, `x1+`, `t1`, `b1`, `ul`, ...) and
-`vl`. Use feynjs's names instead: `gluino`, `neutralino1`, `neutralino2`, `chargino+`, `stop`,
-`sbottom`, `squark`, `nu_l`. A name feynjs doesn't know is still drawn, as a plain line with the
-name as its label.
+MadGraph's MSSM names work too, as its models name them after renaming, drawn and labelled as the
+plugin draws them:
+
+| MadGraph | feynjs | Drawn as |
+|---|---|---|
+| `go` | `gluino` | a gluino |
+| `n1` ... `n4` | `neutralino1` ... `neutralino4` | neutralinos |
+| `x1+`, `x1-`, `x2+`, `x2-` | `chargino1+`, `chargino1-`, `chargino2+`, `chargino2-` | charginos |
+| `ul`, `ur`, `dl`, `dr`, `cl`, `cr`, `sl`, `sr` (and `ul~`, ...) | MadGraph's only | squarks, labelled `\tilde u_{L}` |
+| `t1`, `t2`, `b1`, `b2` | `stop1`, `stop2`, `sbottom1`, `sbottom2` | squarks |
+| `el-`, `el+`, `er-`, `mul-`, `mur+`, `ta1-`, `ta2+`, ... | MadGraph's only | sleptons, labelled `\tilde{e}^-_L`, `\tilde\tau^-_1` |
+| `sve`, `svm`, `svt` (and `sve~`, ...) | MadGraph's only | sneutrinos |
+| `h1`, `h2`, `h3`, `h+`, `h-` | `h`, the heavy `H`, `A`, `H+`, `H-` | Higgs bosons, labelled h, H, A |
+| `vl`, `vl~` | `nu_l` | a lepton neutrino, ν_ℓ |
+
+They are matched only as written: `dl` is the left down squark, and the displaced lepton is
+`dislep` (or `DL`). A name feynjs doesn't know is still drawn, as a plain line with the name as its
+label, and [`check`](../reference/api.md#check) warns of it.
 
 ## What feynjs takes
 

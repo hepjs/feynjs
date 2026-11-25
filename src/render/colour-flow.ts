@@ -2,6 +2,7 @@ import { Curve, fmt, pathFrom } from "../geometry/curve.ts";
 import type { Pt } from "../geometry/curve.ts";
 import type { Diagram, Edge, Vertex } from "../model.ts";
 import { particleOfEdge } from "../particles/identify.ts";
+import { propertiesOf } from "../particles/properties.ts";
 import { halfWidth } from "./lines.ts";
 import type { Scene } from "./scene.ts";
 import { vertexRadius } from "./vertices.ts";
@@ -70,9 +71,6 @@ function hadronProblems(d: Diagram, strands: Strand[]): string[] {
 /** 3 for a colour triplet (quarks, squarks, leptoquarks), 8 for an octet (gluons, gluinos), 0 otherwise. */
 type Charge = 0 | 3 | 8;
 
-const TRIPLETS = new Set(["u", "ubar", "d", "dbar", "s", "sbar", "c", "cbar", "b", "bbar", "t", "tbar",
-  "q", "qbar", "q'", "qbar'", "squark", "stop", "sbottom", "LQ", "T", "B"]);
-const OCTETS = new Set(["g", "gluino"]);
 
 /**
  * The colour charge of every line. Named particles say it outright, and a coil is a gluon. A
@@ -85,8 +83,8 @@ function colourCharges(d: Diagram): Map<Edge, Charge> {
   for (const e of d.edges) {
     const name = particleOfEdge(d, e);
     if (e.from === e.to || e.style.line === "none") charge.set(e, 0);
-    else if (name && TRIPLETS.has(name)) charge.set(e, 3);
-    else if (name && OCTETS.has(name)) charge.set(e, 8);
+    else if (name && propertiesOf(name)?.colour === "triplet") charge.set(e, 3);
+    else if (name && propertiesOf(name)?.colour === "octet") charge.set(e, 8);
     else if (!name && e.style.line === "coil") charge.set(e, 8);
     else if (!name && e.style.line === "plain") unknown.add(e);
     else charge.set(e, 0);

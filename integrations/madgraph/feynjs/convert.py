@@ -91,14 +91,18 @@ def tex_label(name):
     m = re.match(r"^ta([12])([+-])$", core)
     if m:
         return "\\tilde\\tau^%s_%s" % (m.group(2), m.group(1))
+    # (an anti-sneutrino, sve~, keeps its bar, as an antisquark does)
     m = re.match(r"^sv([emt])$", core)
     if m:
-        return "\\tilde\\nu_{%s}" % {"e": "e", "m": "\\mu", "t": "\\tau"}[m.group(1)]
+        sneutrino = "\\tilde\\nu_{%s}" % {"e": "e", "m": "\\mu", "t": "\\tau"}[m.group(1)]
+        return "\\bar{%s}" % sneutrino if bar else sneutrino
     m = re.match(r"^(sv|sl|ta|mu|e)(\d?)([lr]?)([+-]?)$", core)
     if m and core.startswith(("sv", "sl")):
         base = "\\tilde\\nu" if m.group(1) == "sv" else "\\tilde\\ell"
-        return "%s_{%s}%s" % (base, m.group(2) or "", "^" + m.group(4) if m.group(4) else "")
-    for higgs, tex in (("h01", "h"), ("h02", "H"), ("a0", "A"), ("h+", "H^+"), ("h-", "H^-")):
+        label = "%s_{%s}%s" % (base, m.group(2) or "", "^" + m.group(4) if m.group(4) else "")
+        return "\\bar{%s}" % label if bar else label
+    # (the Higgs bosons, as the MSSM names them before renaming, h01, h02, a0, and after, h1, h2, h3)
+    for higgs, tex in (("h01", "h"), ("h02", "H"), ("a0", "A"), ("h1", "h"), ("h2", "H"), ("h3", "A"), ("h+", "H^+"), ("h-", "H^-")):
         if core == higgs:
             return tex
     return "\\mathrm{%s}" % name

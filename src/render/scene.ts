@@ -1,7 +1,7 @@
 import type { Curve, Pt } from "../geometry/curve.ts";
 import { fmt } from "../geometry/curve.ts";
 import { layoutLabel } from "../label/label.ts";
-import { PROPERTIES, particleInfo } from "../particles/properties.ts";
+import { particleInfo, propertiesOf } from "../particles/properties.ts";
 import type { Diagram, Edge, Vertex } from "../model.ts";
 import type { Theme } from "../theme.ts";
 import * as portable from "../geometry/portable-math.ts";
@@ -86,7 +86,7 @@ export class Scene {
   /** With charge colouring on, the colour for a particle's charge: none for a neutral or unknown one. */
   colourForCharge(particle: string | undefined): string | undefined {
     if (!this.chargeColour || !particle) return undefined;
-    const charge = PROPERTIES[particle]?.charge;
+    const charge = propertiesOf(particle)?.charge;
     if (!charge || charge === "0") return undefined;
     const { positive, negative, either } = this.theme.chargeColors;
     return charge.startsWith("±") ? either : charge.startsWith("-") ? negative : positive;

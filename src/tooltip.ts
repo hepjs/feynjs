@@ -1,4 +1,4 @@
-import { PROPERTIES } from "./particles/properties.ts";
+import { propertiesOf } from "./particles/properties.ts";
 
 /**
  * A card that shows what a particle is when the pointer rests on its label: the symbol as the
@@ -46,10 +46,10 @@ function setTitleAside(label: SVGGElement): void {
   if (title) { label.dataset.info = title.textContent ?? ""; title.remove(); }
 }
 
-const ROWS: [string, "charge" | "spin" | "colour" | "mass"][] = [["Charge", "charge"], ["Spin", "spin"], ["Colour", "colour"], ["Mass", "mass"]];
+const ROWS: [string, "quarks" | "charge" | "spin" | "colour" | "mass"][] = [["Quarks", "quarks"], ["Charge", "charge"], ["Spin", "spin"], ["Colour", "colour"], ["Mass", "mass"]];
 
 function fill(card: HTMLElement, label: SVGGElement): void {
-  const p = PROPERTIES[label.dataset.particle ?? ""];
+  const p = propertiesOf(label.dataset.particle);
   card.replaceChildren();
   if (!p) return;
   // the header: the symbol as the diagram sets it, beside the name
