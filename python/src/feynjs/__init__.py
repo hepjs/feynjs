@@ -16,7 +16,7 @@ import html
 import itertools
 from pathlib import Path
 
-__version__ = "0.10.0"
+__version__ = "0.10.1"
 
 #: The bundled script, feynjs.min.js.
 SCRIPT = Path(__file__).parent / "static" / "feynjs.min.js"

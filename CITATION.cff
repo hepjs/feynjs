@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 message: "If you use feynjs in your work, please cite it as below."
 title: "feynjs: a JavaScript engine for Feynman diagrams"
-version: 0.10.0
+version: 0.10.1
 date-released: 2026-11-25
 license: MIT
 abstract: >-
@@ -14,9 +14,6 @@ identifiers:
   - type: doi
     value: 10.5281/zenodo.24497761
     description: "All versions: always resolves to the latest"
-  - type: doi
-    value: 10.5281/zenodo.24497762
-    description: "Version 0.10.0"
 repository-code: "https://github.com/hepjs/feynjs"
 url: "https://hepjs.github.io/feynjs/"
 type: software

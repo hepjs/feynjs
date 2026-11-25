@@ -3,7 +3,7 @@
 All notable changes, newest first. Versions follow [semantic versioning](https://semver.org): a
 layout that moves is a change, recorded here.
 
-## Unreleased
+## 0.10.1 — 2026-11-25
 
 - **A Python package, `pip install feynjs`:** the script, bundled; a Sphinx extension
   (`extensions = ["feynjs.sphinx"]`) that serves it and lets a strict build pass; and a Jupyter
