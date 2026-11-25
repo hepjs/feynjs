@@ -23,7 +23,7 @@ export const STYLES: Record<string, EdgeStyle> = {
   "fermion": { line: "plain", arrow: 1 },
   "anti fermion": { line: "plain", arrow: -1 },
   "majorana": { line: "plain", arrow: 2 },
-  "anti majorana": { line: "plain", arrow: 2 },
+  "anti majorana": { line: "plain", arrow: 2, arrowsApart: true },
   "scalar": { line: "dash", arrow: 0 },
   "dashed": { line: "dash", arrow: 0 },
   "charged scalar": { line: "dash", arrow: 1 },

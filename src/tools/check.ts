@@ -3,10 +3,16 @@ import { INTERCHANGE_VERSION, interchangeVersion } from "./interchange.ts";
 import type { Edge } from "../model.ts";
 import { splitPanels } from "../render/panels.ts";
 import { isExternal, kindOfLine, linesByVertex, readDiagram } from "./prepare.ts";
+import type { Diagram } from "../model.ts";
+import { unknownCommands } from "../label/label.ts";
+import { TIKZ_LAYOUTS } from "../parse/tikz-picture.ts";
 
-/** Something that looks wrong in a diagram. `vertex` names where, when it is at a vertex. */
+/**
+ * Something that looks wrong in a diagram (or, as information, is read otherwise than written:
+ * a TikZ-Feynman layout drawn by feynjs's own). `vertex` names where, when it is at a vertex.
+ */
 export interface Finding {
-  severity: "error" | "warning";
+  severity: "error" | "warning" | "info";
   rule: string;
   message: string;
   vertex?: string;
@@ -62,7 +68,7 @@ function checkOne(source: string): Finding[] {
     if (error instanceof FeynError) return [{ severity: "error", rule: "syntax", message: error.message }];
     throw error;
   }
-  const findings: Finding[] = [];
+  const findings: Finding[] = [...switchFindings(d), ...labelFindings(d)];
   const lines = linesByVertex(d);
   // with `arrows: none` the arrows are not drawn, so their directions mean nothing
   const noArrows = d.directives.arrows === "none" || d.directives.arrows === "off";
@@ -110,4 +116,38 @@ function checkOne(source: string): Finding[] {
     findings.push({ severity: "warning", rule: "no-incoming", message: "the diagram has no incoming leg" });
   }
   return findings;
+}
+
+/** Every switch feynjs reads (`in:`, `out:`, `hadron:`, `label:` and `every ...:` are read as they are met). */
+const SWITCHES = new Set(["horizontal", "horizontal'", "vertical", "vertical'", "note", "inline", "arrows", "dots", "scale",
+  "size", "title", "layout", "grid", "grid forks", "view", "projection", "rotate", "reconstruct", "show intermediate",
+  "show intermediates", "lattice", "wilson loop", "plaquette", "link", "polyakov loop", "site", "boundary", "axes",
+  "background", "debug", "final plane", "colour flow", "nucleon edges", "charge colour", "colours", "colors", "reveal",
+  "edge labels", "tikz"]);
+const LAYOUTS = new Set(["default", "v1", "v2", "manual", "grid"]);
+
+/** Switches feynjs does not know, and so passes over (`node distance: 2`), and layouts it does not have. */
+function switchFindings(d: Diagram): Finding[] {
+  const findings: Finding[] = [];
+  for (const key of Object.keys(d.directives)) {
+    if (!SWITCHES.has(key)) findings.push({ severity: "warning", rule: "unknown-switch", message: `"${key}:" is not a feynjs switch, so it changes nothing` });
+  }
+  const layout = d.directives.layout?.trim().toLowerCase();
+  if (layout && TIKZ_LAYOUTS.has(layout)) findings.push({ severity: "info", rule: "tikz-layout", message: `TikZ-Feynman's ${layout} is drawn by feynjs's own force layout` });
+  else if (layout && !LAYOUTS.has(layout)) findings.push({ severity: "warning", rule: "unknown-layout", message: `there is no layout "${layout}": the default is used (feynjs has default, manual, grid and v1)` });
+  // (what a pasted TikZ-Feynman picture asked for that feynjs has no use for)
+  const tikz = d.directives.tikz?.trim().replace(/^\{|\}$/g, "");
+  if (tikz) findings.push({ severity: "warning", rule: "tikz-option", message: `TikZ options feynjs does not use, passed over: ${tikz}` });
+  return findings;
+}
+
+/** Labels holding a command feynjs draws as its letters (`\frac{1}{2}` as "frac12"). */
+function labelFindings(d: Diagram): Finding[] {
+  const labels = [
+    ...d.edges.flatMap((e) => [e.label, e.momentum]),
+    ...[...d.vertices.values()].flatMap((v) => [v.label, v.coupling]),
+    ...d.hadrons.map((h) => h.label),
+  ].filter((t): t is string => !!t);
+  const unknown = [...new Set(labels.flatMap(unknownCommands))];
+  return unknown.length ? [{ severity: "warning", rule: "label-command", message: `labels draw ${unknown.join(", ")} as ${unknown.length === 1 ? "its" : "their"} letters: feynjs does not set ${unknown.length === 1 ? "that command" : "those commands"}` }] : [];
 }

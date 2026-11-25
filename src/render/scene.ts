@@ -82,6 +82,8 @@ export class Scene {
   colourOnly = false;
   /** labels that name a particle carry its properties, for hovering */
   tooltips = false;
+  /** `edge labels: left` (a pasted TikZ-Feynman picture): edge label= on the left of its line, as TikZ puts it */
+  labelsOnLeft = false;
 
   /** With charge colouring on, the colour for a particle's charge: none for a neutral or unknown one. */
   colourForCharge(particle: string | undefined): string | undefined {
@@ -97,6 +99,7 @@ export class Scene {
   constructor(d: Diagram, theme: Theme, idPrefix: string) {
     this.theme = theme;
     this.idPrefix = idPrefix;
+    this.labelsOnLeft = /^left$/i.test((d.directives["edge labels"] ?? "").trim());
     for (const group of d.hadrons) if (group.shape !== "brace") group.legs.forEach((id) => this.legsInsideHadrons.add(id));
     const all = [...d.vertices.values()].map((v) => this.position(v));
     this.centre = { x: all.reduce((s, p) => s + p.x, 0) / all.length, y: all.reduce((s, p) => s + p.y, 0) / all.length };

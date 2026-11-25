@@ -29,6 +29,7 @@ import { layoutLabel } from "../label/label.ts";
 import { Scene } from "./scene.ts";
 import { drawVertexShape, labelCoupling, labelExternalLeg, vertexRadius } from "./vertices.ts";
 import * as portable from "../geometry/portable-math.ts";
+import { TIKZ_LAYOUTS } from "../parse/tikz-picture.ts";
 
 export interface RenderOptions {
   /** overrides for any part of the default theme: sizes, colours, layout rules */
@@ -154,9 +155,10 @@ export function layoutDiagram(d: Diagram, theme: Theme, debug?: DebugInfo): void
   bowParallelEdges(d);
   // the engines: `default` (the forces, v2), `manual` (points given `at (x,y)` stay put, the
   // forces place the rest), `grid` (the forces, then every line on a direction of the grid);
-  // `v1` (the older rules) and `v2` are kept as names
+  // `v1` (the older rules) and `v2` are kept as names; TikZ-Feynman's layouts (`layout: spring
+  // layout`, from a pasted picture) are drawn by the default
   const asked = (d.directives.layout ?? "").trim().toLowerCase();
-  const engine = (["v1", "v2", "manual", "grid"].includes(asked) ? asked : asked === "default" ? "v2" : theme.engine) as Theme["engine"];
+  const engine = (["v1", "v2", "manual", "grid"].includes(asked) ? asked : asked === "default" || TIKZ_LAYOUTS.has(asked) ? "v2" : theme.engine) as Theme["engine"];
   if (engine === "v1") layout(d, theme.layout, theme.unitY / theme.unitX, (v) => markRadiusPx(v, theme) / theme.unitY);
   else {
     // (`final plane: on`: the final states end on one plane first, whatever else wants them

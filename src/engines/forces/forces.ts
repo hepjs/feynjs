@@ -458,7 +458,7 @@ export function clearance(s: Structure, rules: ForceRules): Force {
       facing = Math.abs(off) < 0.25 ? -ny : -off * ny; // above along the middle, else toward it
     } else facing = Math.abs(y / len) > 0.94 ? (mx - cx) * nx : (my - cy) * ny; // outside: away from the midline (across, if upright)
     // (the author's label' is the right of travel, as in TikZ)
-    if (s.labelFlip[l] === 1 && facing < 0) { nx = -nx; ny = -ny; }
+    if ((s.labelFlip[l] === 1 && facing < 0) || s.labelFlip[l] === 2) { nx = -nx; ny = -ny; }
     out[0] = mx + nx * s.linePad[l]; out[1] = my + ny * s.linePad[l];
     return out;
   };

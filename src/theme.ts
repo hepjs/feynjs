@@ -493,7 +493,8 @@ export function themeWith(overrides: ThemeOverrides = {}): Theme {
 }
 
 /** Named optical sizes for the `size:` switch. */
-export const NAMED_SIZES: Record<string, number> = { tiny: 0.55, small: 0.72, normal: 1, large: 1.3 };
+// (medium is TikZ-Feynman's name for its usual size)
+export const NAMED_SIZES: Record<string, number> = { tiny: 0.55, small: 0.72, normal: 1, medium: 1, large: 1.3 };
 
 /**
  * How each measure follows the optical size: a measure scales by size^power. Lengths of lines

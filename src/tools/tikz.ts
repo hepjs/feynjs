@@ -6,6 +6,7 @@ import type { Theme, ThemeOverrides } from "../theme.ts";
 import { splitPanels } from "../render/panels.ts";
 import { colourAsRgb } from "../render/greyscale.ts";
 import type { Panel } from "../render/panels.ts";
+import { CM_PER_LINE_LENGTH } from "../parse/lengths.ts";
 
 export interface TikzOptions {
   theme?: ThemeOverrides;
@@ -42,7 +43,7 @@ function tikzLineStyle(e: Edge, theme: Theme, look: Look): string {
   const charged = arrow === 1 ? "" : arrow === -1 ? "anti " : undefined;
   let key: string;
   switch (line) {
-    case "plain": key = arrow === 2 ? "majorana" : charged === undefined ? "plain" : `${charged}fermion`; break;
+    case "plain": key = arrow === 2 ? (e.style.arrowsApart ? "anti majorana" : "majorana") : charged === undefined ? "plain" : `${charged}fermion`; break;
     case "wave": key = charged === undefined ? "photon" : `${charged}charged boson`; break;
     case "coil": key = "gluon"; break;
     case "dash": key = charged === undefined ? "scalar" : `${charged}charged scalar`; break;
@@ -225,7 +226,7 @@ function standaloneDocument(body: string): string {
  * set side by side.
  */
 export function toTikz(source: string, options: TikzOptions = {}): string {
-  const overrides = options.theme ?? {}, unit = options.unit ?? 1.6;
+  const overrides = options.theme ?? {}, unit = options.unit ?? CM_PER_LINE_LENGTH;
   const panels = splitPanels(source);
   const body = panels.length <= 1 ? panelPicture(source, overrides, unit) : panelsSideBySide(panels, overrides, unit);
   return options.standalone ?? true ? standaloneDocument(body) : body;
