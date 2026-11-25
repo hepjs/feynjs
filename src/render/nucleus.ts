@@ -158,19 +158,28 @@ export function recoiledTo(p: Pt, dir: Pt, R: number): Pt {
 }
 
 /**
- * A nucleus recoiling, as an after-image: two faint copies, the same size, from where it was hit
- * at `p` trailing on toward `dir`, the nucleus itself moved on beyond them, and two short streaks
- * behind, either side of the line that hit it. `one` draws the nucleus at a point.
+ * The rings a recoiling nucleus leaves, as a moving source leaves its waves (the Doppler picture):
+ * each centred where the nucleus was a moment earlier, the older ones further back and wider, so
+ * they bunch ahead of it and spread out behind. `at` is where it is drawn, moved on.
+ */
+export function recoilRings(at: Pt, dir: Pt, R: number): { c: Pt; r: number; opacity: number }[] {
+  return [1, 2, 3].map((k) => ({
+    c: { x: at.x - dir.x * R * 0.34 * k, y: at.y - dir.y * R * 0.34 * k },
+    r: R * (1 + 0.42 * k),
+    opacity: 0.5 - 0.12 * k,
+  }));
+}
+
+/**
+ * A nucleus recoiling: drawn moved on from where it was hit at `p`, toward `dir`, inside the
+ * rings of its motion (see recoilRings), thin lines in the ink's colour, fainter the older they
+ * are. `one` draws the nucleus at a point.
  */
 export function recoilSvg(p: Pt, dir: Pt, R: number, one: (at: Pt) => string, stroke: number): string {
-  const at = (k: number) => ({ x: p.x + dir.x * R * 0.32 * k, y: p.y + dir.y * R * 0.32 * k });
-  const streaks = [-0.55, 0.55].map((o) => {
-    const side = { x: -dir.y * o * R, y: dir.x * o * R }, back = Math.sqrt(1 - o * o) * R + 2;
-    const a = { x: p.x + side.x - dir.x * back, y: p.y + side.y - dir.y * back }, b = { x: a.x - dir.x * R * 0.55, y: a.y - dir.y * R * 0.55 };
-    return `M${fmt(a.x)} ${fmt(a.y)}L${fmt(b.x)} ${fmt(b.y)}`;
-  }).join("");
-  return `<g class="feynjs-recoil"><g opacity="0.14">${one(at(0))}</g><g opacity="0.3">${one(at(1))}</g>${one(at(2))}`
-    + `<path d="${streaks}" fill="none" stroke="currentColor" stroke-opacity="0.4" stroke-width="${fmt(stroke * 0.7)}" stroke-linecap="round"/></g>`;
+  const at = recoiledTo(p, dir, R);
+  const rings = recoilRings(at, dir, R).map(({ c, r, opacity }) =>
+    `<circle cx="${fmt(c.x)}" cy="${fmt(c.y)}" r="${fmt(r)}" fill="none" stroke="currentColor" stroke-opacity="${fmt(opacity)}" stroke-width="${fmt(stroke * 0.6)}"/>`).join("");
+  return `<g class="feynjs-recoil">${rings}${one(at)}</g>`;
 }
 
 /** The numbers 0 ... n-1 in an order fixed by `seed`. */

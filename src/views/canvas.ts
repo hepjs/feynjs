@@ -6,7 +6,7 @@ import type { Diagram } from "../model.ts";
 import { nucleusNamed } from "../parse/chains.ts";
 import { lookupParticle } from "../particles/registry.ts";
 import { drawViewNotes } from "../render/notes.ts";
-import { nucleusSvg, recoilSvg, recoiledTo } from "../render/nucleus.ts";
+import { nucleusSvg, recoilRings, recoilSvg, recoiledTo } from "../render/nucleus.ts";
 import { energyColour, energyGlow, energyLevel } from "../render/vertices.ts";
 import { Scene } from "../render/scene.ts";
 import type { Theme } from "../theme.ts";
@@ -39,13 +39,13 @@ export class Canvas {
     return this.target([...names, `${A}/${Z}`], p, radius);
   }
 
-  /** A nucleus hit at `p`, recoiling toward `dir`: its after-image (see recoilSvg); known to notes where it is drawn, moved on. Returns its id. */
+  /** A nucleus hit at `p`, recoiling toward `dir`: drawn moved on, inside the rings of its motion (see recoilSvg); known to notes where it is drawn. Returns its id. */
   recoiling(p: Pt, dir: Pt, A: number, Z: number, radius: number, names: string[]): number {
     const v = this.theme.vertex, colours = { proton: v.proton, neutron: v.neutron, edge: v.nucleonEdge, protonEdge: v.protonEdge, neutronEdge: v.neutronEdge };
     this.parts.push(recoilSvg(p, dir, radius, (at) => nucleusSvg(at, A, Z, v.nucleusUnit, colours), this.theme.line.stroke));
     const moved = recoiledTo(p, dir, radius);
     for (const q of [p, moved]) { this.grow(q.x - radius, q.y - radius); this.grow(q.x + radius, q.y + radius); this.discs.push({ p: q, r: radius }); }
-    this.grow(p.x - dir.x * radius * 1.7, p.y - dir.y * radius * 1.7);
+    for (const ring of recoilRings(moved, dir, radius)) { this.grow(ring.c.x - ring.r, ring.c.y - ring.r); this.grow(ring.c.x + ring.r, ring.c.y + ring.r); }
     return this.target([...names, `${A}/${Z}`, "recoil"], moved, radius);
   }
 

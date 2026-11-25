@@ -1,5 +1,5 @@
 import { bagRadius, bagReach, bagSvg } from "./bag.ts";
-import { nucleusRadius, nucleusSvg, recoilSvg, recoiledTo } from "./nucleus.ts";
+import { nucleusRadius, nucleusSvg, recoilRings, recoilSvg, recoiledTo } from "./nucleus.ts";
 import { Curve } from "../geometry/curve.ts";
 import { drawLine } from "./lines.ts";
 import type { Pt } from "../geometry/curve.ts";
@@ -124,7 +124,7 @@ function nucleusAt(scene: Scene, v: Vertex, p: Pt): string {
   if (dir) {
     svg = recoilSvg(p, dir, R, one, scene.theme.line.stroke);
     scene.bounds.include(centre.x, centre.y, R + 1);
-    scene.bounds.include(p.x - dir.x * R * 1.7, p.y - dir.y * R * 1.7, 1);
+    for (const ring of recoilRings(centre, dir, R)) scene.bounds.include(ring.c.x, ring.c.y, ring.r + 1);
     scene.addObstaclePoint(centre, R);
   } else svg = one(p);
   if (v.emits) {

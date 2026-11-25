@@ -174,7 +174,7 @@ function drawRecoil(canvas: Canvas, d: Diagram, incoming: Leg[], outgoing: Leg[]
   const target = [...incoming].filter((l) => l.nucleus).sort((a, b) => b.radius - a.radius)[0];
   const projectile = incoming.find((l) => l !== target)!, leaving = outgoing.find((l) => l.key === projectile.key) ?? outgoing[0];
   const R = target.radius, theme = look.theme;
-  // (the nucleus recoils down and to the right, as momentum has it: its after-image, from where it was hit)
+  // (the nucleus recoils down and to the right, as momentum has it, ringed as a moving source is)
   const recoil = unitAt(-40);
   const centre = canvas.recoiling({ x: 0, y: 0 }, recoil, target.nucleus!.A, target.nucleus!.Z, R, [...target.names, ...outgoing.filter((l) => l.key === target.key).flatMap((l) => l.names)]);
   const boxes = new Map([projectile, leaving].map((leg) => [leg.label, layoutLabel(leg.label, look.size, 1)]));

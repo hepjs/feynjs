@@ -131,7 +131,7 @@ Contents: `j` jet, `b` b-tagged jet (with its secondary vertex), `e` electron, `
 | `cone` | this leg is a jet, marked by a small cone in a column at the right, as many papers mark it |
 | `insertion` | a cross on the line |
 | `bag=proton` (or `pi+`, `J/psi`, `Zc`, `Pc`...; or its quarks, `uud`, `c cbar u dbar`), with `motion` to let its flux tubes breathe, `molecule` to draw a pentaquark as a baryon beside a meson (or write the parts with a plus, `uud + c cbar`) | a hadron with its valence quarks, each a dot in its colour charge (red, green, blue; antiquarks in anticolours, so the whole is colourless), bound by colour flux tubes as lattice QCD shows them: straight for a meson, a Y-junction for a baryon, linked junctions for tetra- and pentaquarks |
-| `recoil` (or `recoil=down`, `right`, `30`) | on a nucleus: recoiling, moved on with two faint copies trailing back to where it was hit; away from what hits it unless a way is given |
+| `recoil` (or `recoil=down`, `right`, `30`) | on a nucleus: recoiling, moved on inside rings bunched ahead and spread behind (the Doppler picture); away from what hits it unless a way is given |
 | `pulse`, `excited` (or `pulse=low`, `medium`, `high`, a number, a colour) | on a nucleus: excited, a still warm glow and faint rings round it, amber toward a near-white yellow with more energy (a star, `nucleus=Xe*`, gives it too) |
 | `emits=gamma` | on a nucleus: a short photon radiating out of it, away from what hits it |
 | `nucleus=Pb` (or `208Pb`, `Au`, `O`...; or `nucleus, A=16, Z=8`; `N=` for its neutrons) | a nucleus drawn as its A protons and neutrons packed in a disc, Z of them brick red, the rest slate, every nucleon one size, so as wide as A to the third |

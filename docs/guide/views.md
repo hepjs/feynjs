@@ -394,8 +394,8 @@ Three kinds of process have pictures of their own:
 - a photon breaking a nucleus up (`gamma 2H > p n`, `gamma 16O > 15N p`): no burst, the photon
   reaching into the nucleus, the fragments flying out of it;
 - an elastic scattering, the same in as out (`chi Xe > chi Xe`, `n 12C > n 12C`): what comes in
-  meets the nucleus and leaves deflected, and the nucleus recoils, its after-image trailing back
-  to where it was hit; `signal: on` adds what a detector sees, a few photons of scintillation
+  meets the nucleus and leaves deflected, and the nucleus recoils, ringed as a moving source is
+  in the Doppler picture (rings bunched ahead of it, spread out behind); `signal: on` adds what a detector sees, a few photons of scintillation
   light and the electrons of ionisation;
 - an excited nucleus giving off a photon (`12C* > 12C gamma`): the nucleus glowing, the photon
   radiating out of it.

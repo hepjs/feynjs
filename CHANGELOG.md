@@ -19,7 +19,7 @@ layout that moves is a change, recorded here.
 - **Notes** in the reaction pictures and chains, pointing at a nucleus, the burst or an arrow.
 - **A nucleus as a target:** a boson meeting a nucleus reaches a third of the way in, over its
   nucleons; a target nucleus is laid out below what hits it, the line it scatters making a V
-  toward it; element names on legs are upright. On a nucleus: `recoil` (an after-image),
+  toward it; element names on legs are upright. On a nucleus: `recoil` (rings bunched ahead and spread behind, the Doppler picture),
   `pulse` / `excited` / `Xe*` (a still glow), `emits=gamma`.
 - **`length=1.5` (or `length=2cm`) on any line,** honoured by the force and grid layouts. No
   approved layout moves.

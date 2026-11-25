@@ -252,7 +252,7 @@ signal: on
 
 | Option | Draws |
 |---|---|
-| `recoil` (or `recoil=down`, `right`, `30`...) | the nucleus recoiling: moved on, two faint copies trailing back to where it was hit, and two short streaks behind; away from what hits it unless a way is given |
+| `recoil` (or `recoil=down`, `right`, `30`...) | the nucleus recoiling: moved on, inside thin rings bunched ahead of it and spread out behind, as a moving source's waves are in the Doppler picture; away from what hits it unless a way is given |
 | `pulse` (or `excited`; `pulse=low`, `medium`, `high`, a number, or a colour) | an excited nucleus: a still, warm glow behind it and faint rings round it, amber, warming toward a near-white yellow with more energy; a star after its name (`Xe*`) gives it too |
 | `emits=gamma` | a short photon radiating out of it, from inside, away from what hits it, ending in its name |
 

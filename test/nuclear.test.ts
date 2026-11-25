@@ -189,7 +189,9 @@ test("length= makes a line longer, in line lengths or in cm", () => {
 test("a nucleus's recoil, its energy and what it gives off", () => {
   const recoil = render(DARK_MATTER);
   assert.equal(count(recoil, 'class="feynjs-recoil"'), 1);
-  assert.equal(count(recoil, 'class="feynjs-nucleus"'), 3);
+  // (one nucleus, moved on, inside the three rings of its motion, bunched ahead and spread behind)
+  assert.equal(count(recoil, 'class="feynjs-nucleus"'), 1);
+  assert.equal(count(recoil.split('class="feynjs-recoil"')[1].split('class="feynjs-nucleus"')[0], 'fill="none"'), 3);
   assert.ok(render("a [nucleus=Xe, recoil=down] -- b").includes("feynjs-recoil"));
   // (energy: still, no animation; warmer with more; a colour as written; excited and a star alike)
   const low = render("a -- n [nucleus=Xe, pulse=low]"), high = render("a -- n [nucleus=Xe, pulse=high]");
