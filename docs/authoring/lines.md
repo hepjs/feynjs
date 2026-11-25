@@ -147,7 +147,7 @@ A particle name sets the line style, the label and the colour. A few common ones
 [`registerParticle`](../usage/api.md#registerparticle) adds your own.
 
 Supersymmetric particles are drawn a little bolder and in the SUSY colour (brick red by default,
-`susyColor` in the [theme](../setup/styling.md)); their labels take the same colour.
+`susyColor` in the [theme](../setup/index.md)); their labels take the same colour.
 
 <div class="grid cards feynjs-swatches" markdown>
 

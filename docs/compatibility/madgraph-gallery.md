@@ -1,7 +1,7 @@
 # MadGraph gallery
 
-These diagrams come from feynjs's MadGraph plugin. To draw your own, set it up as in
-[Setup](../setup/index.md#setup-madgraph).
+These diagrams come from feynjs's MadGraph plugin. To draw your own, set it up as in the
+[plugin's instructions](madgraph.md#the-plugin).
 
 ## A gallery, straight from MadGraph
 

@@ -14,7 +14,7 @@ b -- f1 [mu-]
 b -- f2 [mu+]
 ```
 
-The whole syntax on one page. The [Components](index.md) pages explain each part with examples.
+The whole syntax on one page. [How it works](index.md) builds a diagram up a part at a time, and the pages after it explain each part with examples.
 
 ## Edges, as in TikZ-Feynman
 

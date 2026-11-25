@@ -625,7 +625,7 @@ arrow runs against the line. MadGraph's names work too: `t~`, `ve`, `ta-`, `w+`.
 
 #### Supersymmetric partners
 
-Drawn in the SUSY colour, brick red unless the [theme](../setup/styling.md) sets another.
+Drawn in the SUSY colour, brick red unless the [theme](../setup/index.md) sets another.
 
 | Particle | Drawn | Source |
 |---|---|---|
@@ -759,5 +759,5 @@ i2 [gamma] -- a
 b -- f2 [gamma]
 ```
 
-The [Styling](../setup/styling.md) guide covers colour by charge, black and white, and `pulse`, a
+The [Styling](../setup/index.md) guide covers colour by charge, black and white, and `pulse`, a
 glow that runs along a line to draw the eye to it.

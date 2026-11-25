@@ -199,8 +199,8 @@ hadron: \pi^+ = u d [brace]                      % ...braced together as the pio
 
 </div>
 
-Pulses and lifetimes are covered in [Styling](../setup/styling.md), hadrons in [Vertices,
-loops and hadrons](vertices.md).
+[Drawing the eye](emphasis.md) covers pulses, lifetimes and revealing a diagram step by step;
+hadrons are in [Vertices, loops and hadrons](vertices.md#hadrons).
 
 ## 7. How it is pictured
 

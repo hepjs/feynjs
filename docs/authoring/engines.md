@@ -868,4 +868,4 @@ lines are numbered and their lengths and directions given, without reasons.
 
 `feynjs.measure(source)` scores a layout without anyone looking at it: crossings, crowded
 vertices and labels, the smallest angle at a vertex, stub lines. See
-[Checking diagrams](../setup/styling.md#measure).
+[Checking diagrams](../usage/checks.md#measure).

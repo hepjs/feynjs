@@ -86,9 +86,7 @@ d1 -- f1 [q]
 
 In the [process syntax](processes.md), `p p > ...` draws the same beams and blob for you.
 
-### Jets
-
-`[j]` on an outgoing leg is a jet, and `[p*]` or `[jet]` draws it as a shaded cone.
+Jets, `[j]` and the shaded cone of `[jet]`, are [detector objects](objects.md#jets-marked-with-a-cone).
 
 ### Marks on a line
 
@@ -248,29 +246,7 @@ i [chi] -- a -- f [chi]
 a -- [scalar] n [nucleus=Xe*, emits=gamma]
 ```
 
-### Hadrons with their quarks
-
-`bag=proton` draws a hadron with its valence quarks and the colour flux tubes that bind them, as
-lattice QCD shows them: a straight tube between a meson's quark and antiquark, a Y meeting at a
-junction for a baryon, linked junctions for a tetraquark (diquark to antidiquark) and a
-pentaquark. Each quark is a dot in its colour charge, red, green or blue, each antiquark in an
-anticolour, so the whole is colourless. Name it (`proton`, `neutron`, `pi+`, `K+`, `J/psi`, `B0`,
-`Zc`, `X3872`, `Tcc`, `Pc`, or any [hadron's particle name](particles.md#hadrons-and-beams),
-`Sigma+`, `K*0`, `Lambda_b`, `X(ucd)`...) or write its quarks out (`uud`, `u dbar`, `c cbar u dbar`,
-`uudc cbar`). With `motion`, the flux tubes breathe slowly. A pentaquark can be drawn as a
-molecule instead, a baryon beside a meson, each colourless with its own flux tubes: add
-`molecule` (the P_c as a Sigma_c and an anti-D), or write the two parts with a plus,
-`bag=uud + c cbar`.
-
-```feynman
-i [bag=Pc] -- a -- f [J/\psi]
-a -- n [p]
----
-i [bag=Pc, molecule] -- a -- f [J/\psi]
-a -- n [p]
-```
-
-## Loops, boxes and hadrons
+## Loops and boxes
 
 ```feynman
 in: d1 b
@@ -329,7 +305,17 @@ A boson that leaves a fermion line and rejoins it is drawn as an arc over the li
 correction, a self-energy. A vertex on the boson sits at the top of the arc, so a photon or Z can
 leave from there, as in the **penguin** at the top of this page.
 
-### Hadrons
+### Lines that aren't drawn
+
+`a -- [hidden] b` joins two vertices for the layout and draws nothing. Use it to hold a part of a
+diagram in place, or to leave room where a line will be added later.
+
+More loops, penguins, boxes and hadron decays are in [Examples](examples/index.md), under
+*Flavour (B physics and hadrons)*.
+
+## Hadrons
+
+### Legs grouped into a hadron
 
 `hadron:` (or `meson:`, `baryon:`) groups legs into one hadron:
 
@@ -387,10 +373,24 @@ A line that runs from an incoming leg straight to an outgoing leg without taking
 **spectator**. It is drawn level across the diagram, clear of the loops beside it: the `d` quark
 in the penguin above.
 
-### Lines that aren't drawn
+### Hadrons with their quarks
 
-`a -- [hidden] b` joins two vertices for the layout and draws nothing. Use it to hold a part of a
-diagram in place, or to leave room where a line will be added later.
+`bag=proton` draws a hadron with its valence quarks and the colour flux tubes that bind them, as
+lattice QCD shows them: a straight tube between a meson's quark and antiquark, a Y meeting at a
+junction for a baryon, linked junctions for a tetraquark (diquark to antidiquark) and a
+pentaquark. Each quark is a dot in its colour charge, red, green or blue, each antiquark in an
+anticolour, so the whole is colourless. Name it (`proton`, `neutron`, `pi+`, `K+`, `J/psi`, `B0`,
+`Zc`, `X3872`, `Tcc`, `Pc`, or any [hadron's particle name](particles.md#hadrons-and-beams),
+`Sigma+`, `K*0`, `Lambda_b`, `X(ucd)`...) or write its quarks out (`uud`, `u dbar`, `c cbar u dbar`,
+`uudc cbar`). With `motion`, the flux tubes breathe slowly. A pentaquark can be drawn as a
+molecule instead, a baryon beside a meson, each colourless with its own flux tubes: add
+`molecule` (the P_c as a Sigma_c and an anti-D), or write the two parts with a plus,
+`bag=uud + c cbar`.
 
-More loops, penguins, boxes and hadron decays are in [Examples](examples/index.md), under
-*Flavour (B physics and hadrons)*.
+```feynman
+i [bag=Pc] -- a -- f [J/\psi]
+a -- n [p]
+---
+i [bag=Pc, molecule] -- a -- f [J/\psi]
+a -- n [p]
+```

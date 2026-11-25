@@ -20,7 +20,7 @@ hide:
 A JavaScript display engine for *Feynman diagrams*{ .feynjs-accent }
 { .feynjs-punch }
 
-[Learn more](get-started/features.md){ .md-button }
+[Learn more](authoring/index.md){ .md-button }
 [Getting started](get-started/index.md){ .md-button .md-button--primary }
 
 </div>

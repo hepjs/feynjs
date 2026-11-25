@@ -69,7 +69,7 @@ check(source: string): Finding[]
 ```
 
 Structural lint: fermion pairing and flow, unconnected vertices, unlabelled legs. See
-[Checking diagrams](../setup/styling.md#check).
+[Checking diagrams](checks.md#check).
 
 ### describe
 
@@ -78,7 +78,7 @@ describe(source: string): Description
 ```
 
 `{ process, incoming, outgoing, propagators, vertices, loops, pieces, hadrons }`. See
-[Checking diagrams](../setup/styling.md#describe).
+[Checking diagrams](checks.md#describe).
 
 ### measure
 
@@ -87,7 +87,7 @@ measure(source: string, theme?: ThemeOverrides): Quality
 ```
 
 `{ crossings, crowdedVertices, crowdedLabels, smallestAngle, stubs, aspect, problems }`. See
-[Checking diagrams](../setup/styling.md#measure).
+[Checking diagrams](checks.md#measure).
 
 ### explain
 
@@ -96,7 +96,7 @@ explain(source: string): string
 ```
 
 The diagram in plain English, as every SVG carries in its `<desc>`. See
-[Checking diagrams](../setup/styling.md#explain).
+[Checking diagrams](checks.md#explain).
 
 ### parse
 

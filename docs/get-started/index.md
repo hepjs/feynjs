@@ -18,7 +18,7 @@ Pick where you write. Every option draws the same diagrams from the same text.
     extra_javascript = ["https://cdn.jsdelivr.net/npm/feynjs@0.10/dist/feynjs.min.js"]
     ```
 
-    [Set up a site](../setup/index.md#setup-zensical--mkdocs){ .md-button .md-button--primary }
+    [Set up a site](../compatibility/zensical.md){ .md-button .md-button--primary }
 
 -   **Obsidian**
 
@@ -28,7 +28,7 @@ Pick where you write. Every option draws the same diagrams from the same text.
     feynjs-obsidian.zip  →  .obsidian/plugins/feynjs/
     ```
 
-    [Set up Obsidian](../setup/index.md#setup-obsidian){ .md-button .md-button--primary }
+    [Set up Obsidian](../compatibility/obsidian.md){ .md-button .md-button--primary }
 
 -   **A web page**
 
@@ -38,7 +38,7 @@ Pick where you write. Every option draws the same diagrams from the same text.
     <script src="https://cdn.jsdelivr.net/npm/feynjs@0.10/dist/feynjs.min.js"></script>
     ```
 
-    [Use it in a page](../setup/index.md#setup-web-page){ .md-button }
+    [Use it in a page](../compatibility/web.md){ .md-button }
 
 -   **LaTeX**
 
@@ -51,7 +51,7 @@ Pick where you write. Every option draws the same diagrams from the same text.
     \end{feynjs}
     ```
 
-    [Set up LaTeX](../setup/index.md#setup-latex){ .md-button }
+    [Set up LaTeX](../compatibility/latex.md){ .md-button }
 
 -   **JavaScript**
 
@@ -83,7 +83,7 @@ Pick where you write. Every option draws the same diagrams from the same text.
     mg5_aMC --mode=feynjs
     ```
 
-    [Set up MadGraph](../setup/index.md#setup-madgraph){ .md-button }
+    [Set up MadGraph](../compatibility/madgraph.md#the-plugin){ .md-button }
 
 -   **Just try it**
 
@@ -99,5 +99,5 @@ one example.
 
 [Your first diagram](first-diagram.md){ .md-button .md-button--primary }
 [Upgrading](about.md#upgrading){ .md-button }
-[Browser support](about.md#browser-support){ .md-button }
+[Browser support](../compatibility/browsers.md){ .md-button }
 { .feynjs-start-buttons }

@@ -5,45 +5,31 @@ one command turns a process into its diagrams, each laid out as a paper would dr
 model MadGraph can load. feynjs also reads MadGraph's process syntax directly, for writing a single
 diagram by hand.
 
-The plugin is set up in [Setup](../setup/index.md#setup-madgraph), and the [MadGraph
-gallery](madgraph-gallery.md) shows what it draws. This page is about writing MadGraph's
-syntax by hand.
+## The plugin
 
-## Writing MadGraph's syntax by hand
-
-```text title="MadGraph"
-import model sm
-generate p p > t t~, (t > b w+, w+ > e+ ve), (t~ > b~ w-, w- > j j)
-output
-```
-
-```text title="feynjs"
-p p > t t~, (t > b w+, w+ > e+ ve), (t~ > b~ w-, w- > j j)
-```
-
-```feynman
-p p > t t~, (t > b w+, w+ > e+ ve), (t~ > b~ w-, w- > j j)
-```
-
-The process line is the same; the MadGraph commands (`import model`, `generate`, `output`) go.
-Each decay after a comma is read as a decay line of its own, and a decay in brackets comes with the
-decays of what it makes, so the line above draws just as feynjs's own way of writing it does:
-
-```text title="feynjs, written its own way"
-p p > t t~
-t > b w+(> e+ ve)
-t~ > b~ w-(> j j)
-```
-
-Brackets go inside brackets, as deep as the chain goes:
+Download `feynjs-madgraph.zip` from
+the [latest release](https://github.com/hepjs/feynjs/releases/latest), unzip it into MadGraph's
+`PLUGIN` folder (it holds one folder, `feynjs`), and start MadGraph in its mode:
 
 ```text
-p p > t1 t1~, (t1 > t n1, (t > b w+, w+ > e+ ve)), (t1~ > t~ n1, (t~ > b~ w-, w- > j j))
+unzip feynjs-madgraph.zip -d <MG5>/PLUGIN/
+<MG5>/bin/mg5_aMC --mode=feynjs
+MG5_aMC> generate e+ e- > t t~, t > b w+, t~ > b~ w-
+MG5_aMC> feynjs ttbar
 ```
 
-`>` may be written without spaces, `p p>t t~,t>b w+`, after a name ending in `-` too:
-`w->e- ve~` is `w- > e- ve~`. Names need a space between them, as in MadGraph: `e+ e-`, not
-`e+e-`.
+`feynjs DIR` writes each diagram as feynjs source, `DIR/<process>_<n>.feyn`, and a page,
+`DIR/index.html`, that draws them all; `feynjs DIR --svg` writes SVGs too, through Node's `npx`.
+A decay chain, which MadGraph keeps as a production and its decays, comes out as whole diagrams,
+each decay joined on where its particle leaves. Standard Model particles keep their MadGraph names,
+which feynjs reads; a new model's particles are drawn by the line type the model gives them and
+labelled with their TeX names.
+
+The [MadGraph gallery](madgraph-gallery.md) shows what it draws.
+
+## Its syntax, by hand
+
+A process line pasted from MadGraph draws as it is: decays after commas and in brackets, nested as deep as the chain goes, with or without spaces round `>`. The syntax is in [Processes](../authoring/processes.md#madgraphs-decay-chains-on-one-line); below is what carries over and what does not.
 
 ## How it differs from MadGraph
 
@@ -96,22 +82,7 @@ MadGraph's Standard Model names work as they are. Where feynjs has a name of its
 
 Every name is in [All particles](../authoring/particles.md).
 
-MadGraph's MSSM names work too, as its models name them after renaming, drawn and labelled as the
-plugin draws them:
-
-| MadGraph | feynjs | Drawn as |
-|---|---|---|
-| `go` | `gluino` | a gluino |
-| `n1` ... `n4` | `neutralino1` ... `neutralino4` | neutralinos |
-| `x1+`, `x1-`, `x2+`, `x2-` | `chargino1+`, `chargino1-`, `chargino2+`, `chargino2-` | charginos |
-| `ul`, `ur`, `dl`, `dr`, `cl`, `cr`, `sl`, `sr` (and `ul~`, ...) | MadGraph's only | squarks, labelled `\tilde u_{L}` |
-| `t1`, `t2`, `b1`, `b2` | `stop1`, `stop2`, `sbottom1`, `sbottom2` | squarks |
-| `el-`, `el+`, `er-`, `mul-`, `mur+`, `ta1-`, `ta2+`, ... | MadGraph's only | sleptons, labelled `\tilde{e}^-_L`, `\tilde\tau^-_1` |
-| `sve`, `svm`, `svt` (and `sve~`, ...) | MadGraph's only | sneutrinos |
-| `h1`, `h2`, `h3`, `h+`, `h-` | `h`, the heavy `H`, `A`, `H+`, `H-` | Higgs bosons, labelled h, H, A |
-| `vl`, `vl~` | `nu_l` | a lepton neutrino, ν_ℓ |
-
-They are matched only as written: `dl` is the left down squark, and the displaced lepton is
+MadGraph's MSSM names (`go`, `n1`, `x1+`, `ul`, `t1`, `el-`, `sve`, `h2`, ...) work too: the full table is in [All particles](../authoring/particles.md#madgraphs-mssm-names). They are matched only as written: `dl` is the left down squark, and the displaced lepton is
 `dislep` (or `DL`). A name feynjs doesn't know is still drawn, as a plain line with the name as its
 label, and [`check`](../usage/api.md#check) warns of it.
 

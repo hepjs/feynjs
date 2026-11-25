@@ -35,7 +35,7 @@ deep, so `{ line: { stroke: 2 } }` changes the stroke and keeps every other line
 feynjs.render(source, { theme: { line: { stroke: 2 }, susyColor: "#8e44ad" } });
 ```
 
-See [Styling and themes](styling.md) for how to use them, and the colours the site's stylesheet adds.
+See [Styling](index.md) for how to use them, and the colours the site's stylesheet adds.
 
 *Lists the settings in `src/theme.ts`.*
 
