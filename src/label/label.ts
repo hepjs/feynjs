@@ -1,7 +1,7 @@
 /**
  * A small TeX-math subset rendered as plain SVG text, so diagrams need no math engine
  * and exported SVGs stand alone. Supports Greek, sub/superscripts, primes,
- * \tilde \bar \hat (and wide/overline forms), \mathrm/\text, and common symbols.
+ * \tilde \bar \hat (and wide/overline forms), \slashed, \mathrm/\text, and common symbols.
  */
 
 const SYMBOLS: Record<string, string> = {
@@ -26,6 +26,7 @@ type Node =
   | { t: "group"; kids: Node[] }
   | { t: "accent"; kind: "tilde" | "bar" | "hat"; kid: Node }
   | { t: "sqrt"; kid: Node }
+  | { t: "slashed"; kid: Node }
   | { t: "script"; base: Node; sup?: Node; sub?: Node }
   | { t: "space"; w: number };
 
@@ -71,6 +72,7 @@ class P {
       while (this.s[this.i] === " ") this.i++;
       if (name in ACCENTS) return { t: "accent", kind: ACCENTS[name], kid: this.parseArg(upright) };
       if (name === "sqrt") return { t: "sqrt", kid: this.parseArg(upright) };
+      if (name === "slashed") return { t: "slashed", kid: this.parseArg(upright) };
       if (UPRIGHT_CMDS.has(name)) return this.parseArg(true);
       if (PASSTHROUGH.has(name)) return this.s[this.i] === "{" ? this.parseArg(upright) : { t: "group", kids: [] };
       if (name === "quad") return { t: "space", w: 1 };
@@ -127,6 +129,7 @@ function isTall(n: Node): boolean {
   if (n.t === "group") return n.kids.some(isTall);
   if (n.t === "script") return isTall(n.base);
   if (n.t === "accent" || n.t === "sqrt") return true;
+  if (n.t === "slashed") return isTall(n.kid);
   return false;
 }
 
@@ -190,6 +193,16 @@ function lay(n: Node, x: number, y: number, size: number, ctx: Ctx): number {
       ctx.bottom = Math.max(ctx.bottom, y + size * 0.08);
       return lead + w + size * 0.06;
     }
+    case "slashed": {
+      // Feynman's slash: a stroke through the letter, leaning forward, within the letter's height
+      const w = lay(n.kid, x, y, size, ctx);
+      const top = y - (isTall(n.kid) ? 0.72 : 0.56) * size, bottom = y + 0.12 * size;
+      const d = `M${r2(x + w * 0.22)} ${r2(bottom)}L${r2(x + w * 0.88 + size * 0.06)} ${r2(top)}`;
+      ctx.parts.push(`<path d="${d}" fill="none" stroke="currentColor" stroke-width="${r2(size * 0.055)}" stroke-linecap="round"/>`);
+      ctx.top = Math.min(ctx.top, top);
+      ctx.bottom = Math.max(ctx.bottom, bottom);
+      return w;
+    }
     case "script": {
       const w = lay(n.base, x, y, size, ctx);
       const s = size * 0.7;
@@ -231,6 +244,16 @@ export function layoutLabel(tex: string, size: number, wordScale = 1): LabelBox 
   const ctx: Ctx = { parts: [], top: 0, bottom: 0 };
   const width = lay(root, 0, 0, size, ctx);
   return { svg: ctx.parts.join(""), width, ascent: -ctx.top, descent: ctx.bottom, tex: texForTex, size };
+}
+
+/** Commands the labels draw: any other is drawn as its letters (`\frac` as "frac"). */
+const OTHER_COMMANDS = new Set(["sqrt", "slashed", "quad", "to", "rightarrow", "mathcal"]);
+
+/** The commands in a label that it would draw as their letters, as written (`\frac`). */
+export function unknownCommands(tex: string): string[] {
+  const names = [...tex.matchAll(/\\([A-Za-z]+)/g)].map((m) => m[1]);
+  const known = (name: string) => name in SYMBOLS || name in ACCENTS || UPRIGHT_CMDS.has(name) || PASSTHROUGH.has(name) || OTHER_COMMANDS.has(name);
+  return [...new Set(names.filter((name) => !known(name)).map((name) => `\\${name}`))];
 }
 
 /** `\mathcal{M}` as the Unicode script capital (no math font is loaded). */

@@ -2,6 +2,8 @@ import { asMolecule, quarksOf } from "../render/bag.ts";
 import { nucleusFrom } from "../render/nucleus.ts";
 import { OBJECT_NAMES, parseObject } from "../particles/objects.ts";
 import { expandChains } from "./chains.ts";
+import { lengthInLines } from "./lengths.ts";
+import { fromTikzPicture, pictureOptions } from "./tikz-picture.ts";
 import { FeynError } from "../model.ts";
 import type { Diagram, Edge, EdgeStyle, HadronGroup, Vertex, VertexShape } from "../model.ts";
 import { STYLES, lookupParticle, particleNames } from "../particles/registry.ts";
@@ -18,11 +20,13 @@ const BENDS: Record<string, number> = {
 
 interface Opt { key: string; value?: string }
 
-/** Split on a separator at bracket/brace depth zero. */
-function splitTop(s: string, seps: string): string[] {
+/** Split on a separator at bracket/brace depth zero (and, if asked, outside "quotes"). */
+function splitTop(s: string, seps: string, quotes = false): string[] {
   const out: string[] = [];
-  let depth = 0, cur = "";
+  let depth = 0, cur = "", quoted = false;
   for (const ch of s) {
+    if (quotes && ch === '"') quoted = !quoted;
+    if (quoted) { cur += ch; continue; }
     if (ch === "[" || ch === "{" || ch === "(") depth++;
     else if (ch === "]" || ch === "}" || ch === ")") depth--;
     if (depth === 0 && seps.includes(ch)) { out.push(cur); cur = ""; }
@@ -33,14 +37,30 @@ function splitTop(s: string, seps: string): string[] {
 }
 
 function parseOpts(body: string): Opt[] {
-  return splitTop(body, ",").map((raw) => raw.trim()).filter(Boolean).map((raw) => {
+  return splitTop(body, ",", true).map((raw) => raw.trim()).filter(Boolean).map((raw) => {
+    // "\(\gamma\)" and "\(\gamma\)"': TikZ's quotes for a label on the left, or (primed) the right
+    const quoted = /^"([^"]*)"\s*('?)$/.exec(raw);
+    if (quoted) return { key: quoted[2] ? "edge label'" : "edge label", value: stripMath(quoted[1].trim()) };
     const eq = splitTop(raw, "=");
     if (eq.length === 1) return { key: raw.replace(/\s+/g, " ") };
     let value = raw.slice(eq[0].length + 1).trim();
     if (value.startsWith("{") && value.endsWith("}")) value = value.slice(1, -1);
+    // (TikZ-Feynman's own options for an arrow or a cross go first, in brackets:
+    // momentum={[arrow shorten=0.3]q}, insertion={[size=5pt]0.3}; feynjs has its own look)
+    if (value.startsWith("[")) value = value.slice(closingBracket(value) + 1).trim();
     value = value.replace(/^\$|\$$/g, "").replace(/^\\\(|\\\)$/g, "");
     return { key: eq[0].trim().replace(/\s+/g, " "), value };
   });
+}
+
+/** Where the bracket that opens `s` closes (the end, if it never does). */
+function closingBracket(s: string): number {
+  let depth = 0;
+  for (let i = 0; i < s.length; i++) {
+    if (s[i] === "[") depth++;
+    else if (s[i] === "]" && --depth === 0) return i;
+  }
+  return s.length - 1;
 }
 
 /** Edit distance between two short strings. */
@@ -74,12 +94,13 @@ function closestName(word: string, known: string[]): string | undefined {
 
 /**
  * `right=of a`, `above left=1.5 of a`, `above right=1 and 2 of a` (up 1, across 2), as TikZ
- * writes them: an offset from point `a`, in line lengths (y up, as `at` is).
+ * writes them: an offset from point `a`, in line lengths (y up, as `at` is), or in cm
+ * (`right=1.5cm of a`). An anchor is the point itself: `of a.east` is `of a`.
  */
 function relativePlace(key: string, value: string, line: number): { anchor: string; dx: number; dy: number } {
-  const m = /^\s*(?:(-?[\d.]+)(?:\s+and\s+(-?[\d.]+))?\s+)?of\s+([\w']+)\s*$/.exec(value);
+  const m = /^\s*(?:(-?[\d.]+\s*[a-z]*)(?:\s+and\s+(-?[\d.]+\s*[a-z]*))?\s+)?of\s+\(?\s*([\w']+)(?:\.[a-z ]+)?\s*\)?\s*$/.exec(value);
   if (!m) throw new FeynError(`write "${key}=of a" or "${key}=1.5 of a"`, line);
-  const first = m[1] !== undefined ? Number(m[1]) : 1, second = m[2] !== undefined ? Number(m[2]) : first;
+  const first = m[1] !== undefined ? lengthInLines(m[1], line) : 1, second = m[2] !== undefined ? lengthInLines(m[2], line) : first;
   const up = /above/.test(key) ? 1 : /below/.test(key) ? -1 : 0, across = /right/.test(key) ? 1 : /left/.test(key) ? -1 : 0;
   // (with two lengths, the first is up or down and the second across)
   return { anchor: m[3], dx: across * (up ? second : first), dy: up * first };
@@ -135,6 +156,9 @@ function stripMath(s: string): string {
 }
 
 export function parse(source: string): Diagram {
+  // a TikZ-Feynman picture pasted as it is (\feynmandiagram, \begin{feynman}, \vertex, \diagram)
+  // is read as feynjs's own lines first
+  source = fromTikzPicture(source);
   // decay chains ("p p > gluino gluino") are written out as ordinary lines first
   source = expandChains(source);
   const vertices = new Map<string, Vertex>();
@@ -171,7 +195,12 @@ export function parse(source: string): Diagram {
       } else if (o.key === "particle") {
         const p = lookupParticle(o.value);
         if (p) { v.particle = o.value; v.label = p.label; } else v.label = o.value;
-      } else if (o.key === "label") v.coupling = o.value;
+      } else if (o.key === "label") {
+        // (TikZ's label=above:\(g\) gives the side first; feynjs's own is label side=above)
+        const sided = /^\s*((?:above|below)(?: left| right)?|left|right|-?\d+(?:\.\d+)?)\s*:(.*)$/s.exec(o.value);
+        v.coupling = sided ? stripMath(sided[2].trim()) : o.value;
+        if (sided) v.couplingSide = /\d/.test(sided[1]) ? sideAtAngle(Number(sided[1])) : sideOf(sided[1], line);
+      }
       else if (o.key === "label side") v.couplingSide = sideOf(o.value, line);
       else if (o.key === "rim") v.rim = o.value;
       else if (o.key === "size") {
@@ -218,6 +247,18 @@ export function parse(source: string): Diagram {
     if (m) every.set(m[1].toLowerCase(), [...(every.get(m[1].toLowerCase()) ?? []), ...parseOpts(m[2].replace(/^\[(.*)\]$/, "$1"))]);
   }
   const ownVertexOpts = new Map<string, Opt[]>();
+  const diagramOptionsLine = (body: string, line: number) => {
+    const options = pictureOptions(body, line);
+    for (const statement of options.switches) {
+      const m = /^([^:]+):\s*(.*)$/.exec(statement)!;
+      directives[m[1]] = m[2];
+    }
+    for (const rule of options.every) {
+      const m = /^([^:]+):\s*(.*)$/.exec(rule)!;
+      every.set(m[1], [...(every.get(m[1]) ?? []), ...parseOpts(m[2])]);
+    }
+    if (options.unused.length) directives.tikz = [directives.tikz?.replace(/^\{|\}$/g, ""), ...options.unused].filter(Boolean).join(", ");
+  };
 
   const written = new Map<Edge, { opts: Opt[]; line: number }>();
   const makeEdge = (from: string, to: string, opts: Opt[], line: number): Edge => {
@@ -251,6 +292,10 @@ export function parse(source: string): Diagram {
     let style: EdgeStyle = { line: "plain", arrow: 0 };
     const e: Edge = { from, to, style, styled: false };
     let autoLabel: string | undefined;
+    // (a straight line and a wave or coil together, [plain, gluon] or [boson, plain], is TikZ's
+    // way to draw a SUSY partner: the straight line over the wave, feynjs's overlay)
+    const keys = new Set(opts.filter((o) => o.value === undefined).map((o) => o.key));
+    const overlaid = keys.has("plain") && [...keys].some((k) => k !== "plain" && k in STYLES && (STYLES[k].line === "wave" || STYLES[k].line === "coil"));
     for (const o of opts) {
       if (o.value === undefined) {
         // after a style or particle, heavy / dashed / dotted modify it instead of replacing it:
@@ -260,8 +305,14 @@ export function parse(source: string): Diagram {
         else if (e.styled && o.key === "double") style = { ...style, doubled: true };
         else if (e.styled && o.key === "jet") style = { ...style, jetCone: true };
         else if (e.styled && (o.key === "dashed" || o.key === "dotted")) style = { ...style, line: STYLES[o.key].line };
-        else if (o.key in STYLES) { style = { ...style, ...STYLES[o.key] }; e.styled = true; }
+        else if (overlaid && o.key === "plain") style = { ...style, overlay: true };
+        else if (o.key in STYLES) { style = { ...style, ...STYLES[o.key], ...(overlaid ? { overlay: true } : {}) }; e.styled = true; }
         else if (o.key in BENDS) e.bend = BENDS[o.key];
+        // (bare, TikZ-Feynman's cross and arrow sit halfway along)
+        else if (o.key === "insertion") e.insertions = [...(e.insertions ?? []), 0.5];
+        else if (o.key === "with arrow" || o.key === "with reversed arrow") style = { ...style, arrowsAt: [...(style.arrowsAt ?? []), { at: 0.5, dir: o.key === "with arrow" ? 1 : -1 }] };
+        // (TikZ's loop: a line from a point back to itself is one already)
+        else if (o.key === "loop") continue;
         else if (o.key === "red" || o.key === "blue" || o.key === "green" || o.key === "gray") style.color = o.key;
         else if (o.key === "overlay") style.overlay = true;
         else if (o.key === "radiation" || o.key === "isr" || o.key === "fsr") e.radiation = true;
@@ -300,6 +351,15 @@ export function parse(source: string): Diagram {
       else if (o.key === "color" || o.key === "colour") style.color = o.value;
       else if (o.key === "label color" || o.key === "label colour") e.labelColor = o.value;
       else if (o.key === "bend") e.bend = Number(o.value);
+      else if (o.key === "bend left" || o.key === "bend right") {
+        const k = Number(o.value);
+        if (!Number.isFinite(k)) throw new FeynError(`${o.key} is a number of degrees, such as 60`, line);
+        e.bend = o.key === "bend left" ? k : -k;
+      }
+      // (how far a loop reaches out from its point: TikZ's min distance)
+      else if (o.key === "min distance") e.loopReach = lengthInLines(o.value, line);
+      // (draw=none: there, holding its points, but not drawn, as feynjs's invisible line)
+      else if (o.key === "draw" && o.value.trim() === "none") { style = { ...style, ...STYLES.invisible }; e.styled = true; }
       else if (o.key === "pulse") e.pulse = o.value;
       else if (o.key === "lifetime") e.lifetime = o.value;
       else throw new FeynError(`unknown edge option "${o.key}"`, line);
@@ -354,8 +414,25 @@ export function parse(source: string): Diagram {
         else directives[key] = dir[2].trim();
         continue;
       }
-      const at = /^([\w']+)\s+at\s*\(\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*\)$/.exec(stmt);
-      if (at) { vertex(at[1]).fixed = { x: Number(at[2]), y: Number(at[3]) }; continue; }
+      // [horizontal=a to b, small]: TikZ-Feynman's options for the whole picture, as switches
+      if (/^\[[\s\S]*\]$/.test(stmt) && matchBracket(stmt, 0, lineNo) === stmt.length - 1) {
+        diagramOptionsLine(stmt.slice(1, -1), lineNo);
+        continue;
+      }
+      // a at (1, 0), a [dot] at (1cm, 2cm), a at (30:1) (an angle and a distance), a at (b)
+      const at = /^([\w']+)(\s*\[.*\])?\s+at\s*\(([^()]*)\)$/s.exec(stmt);
+      if (at) {
+        const v = vertex(at[1]);
+        if (at[2]) {
+          const opts = parseOpts(at[2].trim().slice(1, -1));
+          applyVertexOpts(v, opts, lineNo);
+          ownVertexOpts.set(v.id, [...(ownVertexOpts.get(v.id) ?? []), ...opts]);
+        }
+        const other = /^\s*([A-Za-z_][\w']*)(?:\.[a-z ]+)?\s*$/.exec(at[3]);
+        if (other) placedFrom.set(v.id, { anchor: other[1], dx: 0, dy: 0, line: lineNo });
+        else v.fixed = placeAt(at[3], lineNo);
+        continue;
+      }
 
       // chain: node (-- [opts]? node)*
       // (a -- inside brackets or braces belongs to a name or label, H^{--} or [H--]: put it back)
@@ -369,11 +446,12 @@ export function parse(source: string): Diagram {
           edgeOpts = parseOpts(part.slice(1, close));
           part = part.slice(close + 1).trim();
         }
-        const m = /^([A-Za-z_][\w']*)\s*(\[.*\])?$/s.exec(part);
+        // (a name may be written as TikZ writes it, (a), and with an anchor, a.east, which is a itself)
+        const m = /^(?:\(\s*([A-Za-z_][\w']*)(?:\.[a-z ]+)?\s*\)|([A-Za-z_][\w']*)(?:\.[a-z]+)?)\s*(\[.*\])?$/s.exec(part);
         if (!m) throw new FeynError(`cannot read "${partRaw.trim() || stmt}"`, lineNo);
-        const v = vertex(m[1]);
-        if (m[2]) {
-          const opts = parseOpts(m[2].slice(1, -1));
+        const v = vertex(m[1] ?? m[2]);
+        if (m[3]) {
+          const opts = parseOpts(m[3].slice(1, -1));
           applyVertexOpts(v, opts, lineNo);
           ownVertexOpts.set(v.id, [...(ownVertexOpts.get(v.id) ?? []), ...opts]);
         }
@@ -408,6 +486,25 @@ function matchBracket(s: string, start: number, line: number): number {
 }
 
 const SIDES: Record<string, [number, number]> = { above: [0, -1], below: [0, 1], left: [-1, 0], right: [1, 0] };
+
+/** A place written `at (x, y)` or `at (angle:distance)`, in line lengths (or cm, `1.5cm`), y up. */
+function placeAt(inside: string, line: number): { x: number; y: number } {
+  const polar = /^\s*(-?[\d.]+)\s*:\s*(.+?)\s*$/.exec(inside);
+  if (polar) {
+    const angle = (Number(polar[1]) * Math.PI) / 180, distance = lengthInLines(polar[2], line);
+    if (!Number.isFinite(angle)) throw new FeynError(`write "at (30:1)": an angle in degrees and a distance`, line);
+    return { x: distance * portable.cos(angle), y: distance * portable.sin(angle) };
+  }
+  const xy = inside.split(",");
+  if (xy.length !== 2) throw new FeynError(`write "at (x, y)", "at (1cm, 2cm)" or "at (30:1)"`, line);
+  return { x: lengthInLines(xy[0], line), y: lengthInLines(xy[1], line) };
+}
+
+/** A side at an angle, in degrees counter-clockwise from the right (TikZ's label=45:...), as a unit vector (y down). */
+function sideAtAngle(degrees: number): { x: number; y: number } {
+  const angle = (degrees * Math.PI) / 180;
+  return { x: portable.cos(angle), y: -portable.sin(angle) };
+}
 
 /** `above`, `below left`, ... as a unit vector (y down). */
 function sideOf(text: string, line: number): { x: number; y: number } {

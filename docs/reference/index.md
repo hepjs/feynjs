@@ -146,6 +146,8 @@ Contents: `j` jet, `b` b-tagged jet (with its secondary vertex), `e` electron, `
 | `every photon: color=blue`, `every fermion: heavy`, `every dot: size=1.5`, `every edge: ...`, `every vertex: ...` | defaults for every line or point of a kind (by its style or particle word, or what it is drawn as); its own settings still win |
 | `label: particle = text` | draw that particle with a label of your own, everywhere it appears |
 | `meson: name = leg leg`, `baryon:`, `hadron:` | a hadron as an ellipse; add `[brace]` for a brace, `[cap]` for a thin cap across the legs |
+| `edge labels: left` | every `edge label=` on the left of its line's direction, as TikZ-Feynman puts it (a pasted TikZ-Feynman picture asks for it); `edge label'=` stays on the right |
+| `[horizontal=a to b, small]` | TikZ-Feynman's options for the picture, on a line of their own: as the switches they name |
 | `arrows: none` | no fermion arrows |
 | `dots: all` | a dot on every vertex |
 | `scale: 1.5` | draw larger (a zoom) |
@@ -176,5 +178,5 @@ Contents: `j` jet, `b` b-tagged jet (with its secondary vertex), `e` electron, `
 ## Labels
 
 Greek letters, `^` and `_` with braces, primes, `\tilde \bar \hat` (and `\widetilde \overline
-\widehat`), `\mathrm{}` and `\text{}`, and `\ell \pm \mp \to \times \cdot \dagger \infty \partial
+\widehat`), `\slashed{p}`, `\mathrm{}` and `\text{}`, and `\ell \pm \mp \to \times \cdot \dagger \infty \partial
 \hbar \neq`. Braces around a label that holds a comma: `label={\gamma, Z}`.

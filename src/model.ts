@@ -4,6 +4,8 @@ export type LineKind = "plain" | "wave" | "coil" | "dash" | "dot" | "double" | "
 export interface EdgeStyle {
   line: LineKind;
   arrow: 0 | 1 | -1 | 2;
+  /** a Majorana line's two arrows pointing apart, away from its middle (`anti majorana`) */
+  arrowsApart?: boolean;
   /** straight line drawn over a wave/coil (gauginos, gluino) */
   overlay?: boolean;
   /** colour class: "susy" lines are red */
@@ -100,6 +102,8 @@ export interface Edge {
    * clockwise from the right, as in TikZ), bowing out further with `looseness`
    */
   angles?: { out?: number; in?: number; looseness?: number };
+  /** how far a loop from a point back to itself reaches out, in line lengths (TikZ's `min distance`) */
+  loopReach?: number;
   /** signed bend angle in degrees; positive bends to the left of travel */
   bend?: number;
   /** true when the bend was chosen by feynjs, so the layout may still change it */

@@ -16,12 +16,47 @@ type PointOnCurve = { x: number; y: number; tx: number; ty: number };
 function edgeCurve(scene: Scene, e: Edge, from: Vertex, to: Vertex): Curve {
   const a = scene.position(from), b = scene.position(to);
   if (from !== to && e.angles && (e.angles.out !== undefined || e.angles.in !== undefined)) return leavingAndArriving(a, b, e.angles);
+  // (a bend with a looseness is drawn as TikZ draws it: leaving and arriving that far off the straight line)
+  if (from !== to && e.bend && e.angles?.looseness !== undefined) return bentLoosely(a, b, e.bend, e.angles.looseness);
   if (from !== to) return e.bend ? Curve.arc(a, b, e.bend) : Curve.line(a, b);
   // tadpole: loop away from the middle of the diagram
   let dx = a.x - scene.centre.x, dy = a.y - scene.centre.y;
   const distance = portable.hypot(dx, dy);
   if (distance < 1) { dx = 0; dy = -1; } else { dx /= distance; dy /= distance; }
+  // (or as TikZ draws a loop, when the author says which way it leaves and comes back, or how far it reaches)
+  if (e.loopReach !== undefined || e.angles?.out !== undefined || e.angles?.in !== undefined) return loopAsTikz(scene, a, e, { x: dx, y: dy });
   return Curve.loop(a, dx, dy, scene.theme.unitX * 0.32);
+}
+
+/**
+ * `bend left=30, looseness=1.5` as TikZ draws it: leaving 30 degrees left of the straight line
+ * and arriving 30 degrees left of it from the other end, the controls `looseness` times as far out.
+ */
+function bentLoosely(a: Pt, b: Pt, bend: number, looseness: number): Curve {
+  const straight = (portable.atan2(-(b.y - a.y), b.x - a.x) * 180) / Math.PI;
+  return leavingAndArriving(a, b, { out: straight + bend, in: straight + 180 - bend, looseness });
+}
+
+/**
+ * A loop from a point back to itself as TikZ draws one: a cubic leaving at `out` degrees and
+ * coming back from `in`, each control `min distance` out (TikZ's loop, its chord being nothing).
+ * An angle not given is 45 degrees to the side of the way feynjs would turn the loop; with no
+ * `min distance`, the loop reaches as far as feynjs's own round one.
+ */
+function loopAsTikz(scene: Scene, p: Pt, e: Edge, away: Pt): Curve {
+  const facing = (portable.atan2(-away.y, away.x) * 180) / Math.PI;
+  const out = e.angles?.out ?? (e.angles?.in !== undefined ? e.angles.in + 90 : facing + 45);
+  const into = e.angles?.in ?? out - 90;
+  // (a control 1.2 line lengths out reaches about as far as feynjs's round loop, 0.64 across)
+  const reach = (e.loopReach ?? 1.2) * scene.theme.unitX;
+  const toward = (degrees: number) => ({ x: p.x + portable.cos((degrees * Math.PI) / 180) * reach, y: p.y - portable.sin((degrees * Math.PI) / 180) * reach });
+  const c1 = toward(out), c2 = toward(into);
+  const pts: Pt[] = [];
+  for (let k = 0; k <= 48; k++) {
+    const t = k / 48, u = 1 - t;
+    pts.push({ x: (u * u * u + t * t * t) * p.x + 3 * u * u * t * c1.x + 3 * u * t * t * c2.x, y: (u * u * u + t * t * t) * p.y + 3 * u * u * t * c1.y + 3 * u * t * t * c2.y });
+  }
+  return new Curve(pts);
 }
 
 /**
@@ -73,6 +108,8 @@ function labelSideOf(scene: Scene, e: Edge, middle: PointOnCurve): Pt {
   }
   // the author's label' puts it on the right of travel, as TikZ-Feynman does
   if (e.labelSide === -1) sign = 1;
+  // (and with `edge labels: left`, a pasted TikZ-Feynman picture's, edge label= on the left, as TikZ puts it)
+  else if (e.labelSide === 1 && scene.labelsOnLeft) sign = -1;
   return { x: rightOfTravel.x * sign, y: rightOfTravel.y * sign };
 }
 
@@ -181,8 +218,11 @@ export function drawEdge(scene: Scene, d: Diagram, e: Edge, degree: Map<string, 
   const labelColor = e.labelColor ? scene.resolveColor(e.labelColor) : color;
   if (e.label && e.label !== legName) scene.requestLabel(e.label, edgeLabelSpots(curve, labelSide), labelClearance, labelColor, 1, false, e.style.cls ? `feynjs-${e.style.cls}` : undefined, e.particle);
   if (e.momentum) {
-    // (away from the label; `momentum'` on the label's side)
-    const side = e.momentumOtherSide ? labelSide : { x: -labelSide.x, y: -labelSide.y };
+    // (away from the label; `momentum'` on the label's side; with `edge labels: left`, as TikZ
+    // puts them: momentum= on the left of travel, momentum'= on the right)
+    const left = { x: middle.ty, y: -middle.tx };
+    const side = scene.labelsOnLeft ? (e.momentumOtherSide ? { x: -left.x, y: -left.y } : left)
+      : e.momentumOtherSide ? labelSide : { x: -labelSide.x, y: -labelSide.y };
     drawMomentumArrow(scene, e.momentum, curve, side, lineHalfWidth + theme.labelGap + 3, e.momentumReversed);
   }
 }

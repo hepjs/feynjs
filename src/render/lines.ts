@@ -301,8 +301,9 @@ export function drawLine(c: Curve, style: EdgeStyle, look: LineLook): string {
   const arrowLook = style.heavy ? { ...look, arrowLength: look.arrowLength * 1.45, arrowWidth: look.arrowWidth * 1.6 } : look;
   if (style.arrow === 1 || style.arrow === -1) out.push(arrowHead(c, mid, style.arrow, arrowLook));
   else if (style.arrow === 2 && style.line === "plain" && c.length > 4 * look.arrowLength) {
-    // Majorana: two arrows pointing at each other
-    out.push(arrowHead(c, mid - c.length * 0.2, 1, look), arrowHead(c, mid + c.length * 0.2, -1, look));
+    // Majorana: two arrows pointing at each other (or apart, an anti Majorana line)
+    const inward = style.arrowsApart ? -1 : 1;
+    out.push(arrowHead(c, mid - c.length * 0.2, inward, look), arrowHead(c, mid + c.length * 0.2, -inward as 1 | -1, look));
   }
   // arrows at chosen places too (`with arrow=0.3`)
   for (const a of style.arrowsAt ?? []) out.push(arrowHead(c, Math.min(c.length - look.arrowLength / 2, Math.max(look.arrowLength / 2, c.length * a.at)), a.dir, arrowLook));

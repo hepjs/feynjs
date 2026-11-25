@@ -181,7 +181,9 @@ export function readStructure(d: Diagram, sizes?: Sizes, vertexPad = 0.08): Stru
   const inHadron = new Set(hadrons.flatMap((h) => h.legs));
   const pad = ids.map((id, i) => (external[i] && !inHadron.has(i) ? sizes?.legLabel.get(id) ?? vertexPad : vertexPad));
   const linePad = d.edges.map((_, k) => sizes?.edgeLabel[k] ?? 0);
-  const labelFlip = d.edges.map((e) => (e.labelSide === -1 ? -1 : 1));
+  // (2: on the left of travel, as a pasted TikZ-Feynman picture's edge label= is, `edge labels: left`)
+  const onLeft = /^left$/i.test((d.directives["edge labels"] ?? "").trim());
+  const labelFlip = d.edges.map((e) => (e.labelSide === -1 ? -1 : onLeft && e.labelSide === 1 ? 2 : 1));
   // (a nucleus is a blob too: an ion passes through it and gives off what collides)
   const blob = ids.map((id) => ["blob", "hatched", "nucleus"].includes(d.vertices.get(id)!.shape));
   const markRadius = ids.map((id, i) => sizes?.markRadius?.get(id) ?? (blob[i] ? sizes?.blobRadius ?? 0 : 0));
