@@ -28,7 +28,8 @@ it decays.
     hadron: \bar{B}^0 = f1 f2 [brace]
     ```
 
-    ```text
+    ````markdown
+    ```feynman
     in: i1 i2
     out: f1 f2
     f1 [\bar{d}] -- [fermion] a
@@ -42,6 +43,7 @@ it decays.
     hadron: B^0 = i1 i2 [brace]
     hadron: \bar{B}^0 = f1 f2 [brace]
     ```
+    ````
 
     As hadrons, `B0 > B0bar`:
     { .feynjs-as-hadrons }
@@ -68,7 +70,8 @@ it decays.
     hadron: \bar{K}^{*0} = s d2 [brace]
     ```
 
-    ```text
+    ````markdown
+    ```feynman
     layout: v1
     in: b d1
     out: y s d2
@@ -79,6 +82,7 @@ it decays.
     hadron: \bar{B}^0 = b d1 [brace]
     hadron: \bar{K}^{*0} = s d2 [brace]
     ```
+    ````
 
     As hadrons, `B0bar > K*0bar gamma`:
     { .feynjs-as-hadrons }
@@ -102,7 +106,8 @@ it decays.
     meson: \pi^+ = u d
     ```
 
-    ```text
+    ````markdown
+    ```feynman
     in: u d
     out: mu nu
     u [u] -- [fermion] a -- [fermion] d [\bar{d}]
@@ -110,6 +115,7 @@ it decays.
     mu [mu+] -- [fermion] b -- [fermion] nu [nu_mu]
     meson: \pi^+ = u d
     ```
+    ````
 
     As hadrons, `pi+ > mu+ vm`:
     { .feynjs-as-hadrons }
@@ -137,7 +143,8 @@ it decays.
     hadron: K^{*0} = d2 s [brace]
     ```
 
-    ```text
+    ````markdown
+    ```feynman
     % B0 -> K*0 mu mu through a W box: two W rungs between the quark line and the lepton line
     in: d1 b
     out: d2 s mu1 mu2
@@ -149,6 +156,7 @@ it decays.
     hadron: B^0 = d1 b [brace]
     hadron: K^{*0} = d2 s [brace]
     ```
+    ````
 
     As hadrons, `B0 > K*0 mu+ mu-`:
     { .feynjs-as-hadrons }
@@ -173,7 +181,8 @@ it decays.
     meson: D_s^+ = s c3
     ```
 
-    ```text
+    ````markdown
+    ```feynman
     % Bc+ -> J/psi Ds+: a spectator charm quark and a W emitted from the b line
     in: c1 b
     out: c2 cbar s c3
@@ -185,6 +194,7 @@ it decays.
     meson: J/\psi = c2 cbar
     meson: D_s^+ = s c3
     ```
+    ````
 
     As hadrons, `Bc+ > jpsi Ds+`:
     { .feynjs-as-hadrons }
@@ -213,7 +223,8 @@ it decays.
     hadron: D_s^{(*)+} = dt db
     ```
 
-    ```text
+    ````markdown
+    ```feynman
     in: bt bb
     out: dt db jt jb
     jb [particle={c}]
@@ -229,6 +240,7 @@ it decays.
     hadron: J/\psi = jt jb
     hadron: D_s^{(*)+} = dt db
     ```
+    ````
 
     As hadrons, `Bc+ > jpsi Ds+`:
     { .feynjs-as-hadrons }

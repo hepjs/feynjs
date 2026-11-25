@@ -16,9 +16,11 @@ Nuclear reactions, written as a process line and drawn as the textbook picture; 
     2H 3H > 4He n
     ```
 
-    ```text
+    ````markdown
+    ```feynman
     2H 3H > 4He n
     ```
+    ````
 
     The reaction a fusion reactor runs on.
 
@@ -28,9 +30,11 @@ Nuclear reactions, written as a process line and drawn as the textbook picture; 
     235U n > 141Ba 92Kr n n n
     ```
 
-    ```text
+    ````markdown
+    ```feynman
     235U n > 141Ba 92Kr n n n
     ```
+    ````
 
     A slow neutron splits the nucleus; three neutrons carry the chain on.
 
@@ -40,9 +44,11 @@ Nuclear reactions, written as a process line and drawn as the textbook picture; 
     p p > 2H e+ ve
     ```
 
-    ```text
+    ````markdown
+    ```feynman
     p p > 2H e+ ve
     ```
+    ````
 
     Two protons make a deuteron, a positron and a neutrino: how the Sun starts.
 
@@ -52,9 +58,11 @@ Nuclear reactions, written as a process line and drawn as the textbook picture; 
     gamma 2H > p n
     ```
 
-    ```text
+    ````markdown
+    ```feynman
     gamma 2H > p n
     ```
+    ````
 
     A photon reaches into the deuteron and breaks it apart.
 
@@ -65,10 +73,12 @@ Nuclear reactions, written as a process line and drawn as the textbook picture; 
     chi Xe > chi Xe
     ```
 
-    ```text
+    ````markdown
+    ```feynman
     signal: on
     chi Xe > chi Xe
     ```
+    ````
 
     What a direct-detection experiment looks for: a recoiling nucleus, its scintillation light and ionisation electrons.
 
@@ -79,10 +89,12 @@ Nuclear reactions, written as a process line and drawn as the textbook picture; 
     238U > 234Th 4He, 234Th > 234Pa e- ve~, 234Pa > 234U e- ve~
     ```
 
-    ```text
+    ````markdown
+    ```feynman
     chain: curve
     238U > 234Th 4He, 234Th > 234Pa e- ve~, 234Pa > 234U e- ve~
     ```
+    ````
 
     An alpha decay, then two beta decays, each named over its arrow.
 
@@ -100,7 +112,8 @@ Nuclear reactions, written as a process line and drawn as the textbook picture; 
     c2 -- [photon] c
     ```
 
-    ```text
+    ````markdown
+    ```feynman
     in: g1 c1
     out: g2 c2
     c1 [crossed dot]
@@ -111,6 +124,7 @@ Nuclear reactions, written as a process line and drawn as the textbook picture; 
     c1 -- [photon] d
     c2 -- [photon] c
     ```
+    ````
 
     <small>ATLAS, [HION-2016-05](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/HION-2016-05/), figure 1a, part 1</small>
 

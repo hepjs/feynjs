@@ -22,13 +22,15 @@ supersymmetry, and extra dimensions.
     b -- f2 [chibar]
     ```
 
-    ```text
+    ````markdown
+    ```feynman
     i1 [q] -- g1 -- a -- i2 [qbar]
     g1 -- f0 [g]
     a [dot, label=g_q] -- [Z', label=Z'] b [dot, label=g_\chi]
     b -- f1 [chi]
     b -- f2 [chibar]
     ```
+    ````
 
 -   **Dark-photon cascade**
 
@@ -51,7 +53,8 @@ supersymmetry, and extra dimensions.
     d -- qb [q]
     ```
 
-    ```text
+    ````markdown
+    ```feynman
     % ATLAS-CONF-2011-076 Fig. 1, written with defaults only
     q1 [q] -- a -- [squark] c
     q2 [qbar] -- b -- [squark] d
@@ -69,6 +72,7 @@ supersymmetry, and extra dimensions.
     f -- fd2 [f_d]
     d -- qb [q]
     ```
+    ````
 
 -   **A leptoquark, from ATLAS**
 
@@ -80,13 +84,15 @@ supersymmetry, and extra dimensions.
     q -- [fermion, label'={q}] v
     ```
 
-    ```text
+    ````markdown
+    ```feynman
     in: lq
     out: l q
     lq -- [charged scalar, label={LQ}] v [label=\sqrt{\beta}\lambda]
     v -- [fermion, label'={l}] l
     q -- [fermion, label'={q}] v
     ```
+    ````
 
     <small>ATLAS, [EXOT-2015-19](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/EXOT-2015-19/), figure 1</small>
 
@@ -106,7 +112,8 @@ supersymmetry, and extra dimensions.
     qd [\bar q_d] -- [fermion] w
     ```
 
-    ```text
+    ````markdown
+    ```feynman
     in: i1 i2
     out: la lb qc qd
     i1 [q_a] -- [fermion] a
@@ -119,6 +126,7 @@ supersymmetry, and extra dimensions.
     w -- [fermion] qc [q_c]
     qd [\bar q_d] -- [fermion] w
     ```
+    ````
 
     <small>ATLAS, [EXOT-2012-24](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/EXOT-2012-24/), figure 1</small>
 
@@ -139,7 +147,8 @@ supersymmetry, and extra dimensions.
     b -- f2 [gluino]
     ```
 
-    ```text
+    ````markdown
+    ```feynman
     in: i1 i2
     out: f1 f2
     i1 [q] -- a -- f1 [squark]
@@ -147,6 +156,7 @@ supersymmetry, and extra dimensions.
     a -- [gluino] b
     b -- f2 [gluino]
     ```
+    ````
 
 -   **Slepton pair**
 
@@ -161,7 +171,8 @@ supersymmetry, and extra dimensions.
     d -- f4 [neutralino]
     ```
 
-    ```text
+    ````markdown
+    ```feynman
     i1 [q] -- a -- i2 [qbar]
     a -- [gamma] b
     b -- [slepton] c
@@ -171,6 +182,7 @@ supersymmetry, and extra dimensions.
     d -- f3 [l]
     d -- f4 [neutralino]
     ```
+    ````
 
 -   **Four-stage SUSY cascade**
 
@@ -194,7 +206,8 @@ supersymmetry, and extra dimensions.
     d2 -- f10 [q]
     ```
 
-    ```text
+    ````markdown
+    ```feynman
     i1 [p] -- pp [blob] -- i2 [p]
     pp -- [gluino] d1
     pp -- [gluino] d2
@@ -213,6 +226,7 @@ supersymmetry, and extra dimensions.
     d2 -- f9 [q]
     d2 -- f10 [q]
     ```
+    ````
 
 -   **Stop pairs, from ATLAS**
 
@@ -236,7 +250,8 @@ supersymmetry, and extra dimensions.
     n2 -- [fermion] x
     ```
 
-    ```text
+    ````markdown
+    ```feynman
     in: g1 g2
     out: t1 n1 n2 t2
     x [blob]
@@ -255,6 +270,7 @@ supersymmetry, and extra dimensions.
     x -- [fermion] n1
     n2 -- [fermion] x
     ```
+    ````
 
     <small>ATLAS, [SUSY-2023-22](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/SUSY-2023-22/), figure 1d</small>
 
@@ -285,7 +301,8 @@ supersymmetry, and extra dimensions.
     d2 -- [photon] bo
     ```
 
-    ```text
+    ````markdown
+    ```feynman
     in: p1 p2
     out: l1 la lb bo l2
     pp [blob]
@@ -309,6 +326,7 @@ supersymmetry, and extra dimensions.
     zv -- [plain] lb
     d2 -- [photon] bo
     ```
+    ````
 
     <small>ATLAS, [SUSY-2018-36](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/SUSY-2018-36/), figure 1a</small>
 
@@ -330,7 +348,8 @@ supersymmetry, and extra dimensions.
     b -- f2 [gamma]
     ```
 
-    ```text
+    ````markdown
+    ```feynman
     in: i1 i2
     out: f1 f2
     i1 [g] -- a
@@ -339,6 +358,7 @@ supersymmetry, and extra dimensions.
     b -- f1 [gamma]
     b -- f2 [gamma]
     ```
+    ````
 
     In the Randall–Sundrum model the graviton's excitations are heavy and couple to everything; a resonance in two photons is its cleanest sign.
 
@@ -352,13 +372,15 @@ supersymmetry, and extra dimensions.
     f1 [tbar] -- b -- f2 [t]
     ```
 
-    ```text
+    ````markdown
+    ```feynman
     in: i1 i2
     out: f1 f2
     i1 [q] -- a -- i2 [qbar]
     a -- [gluon, heavy, label=g_{\mathrm{KK}}] b
     f1 [tbar] -- b -- f2 [t]
     ```
+    ````
 
     The gluon's first excitation couples most strongly to the top quark.
 
@@ -374,7 +396,8 @@ supersymmetry, and extra dimensions.
     b -- f2 [W-]
     ```
 
-    ```text
+    ````markdown
+    ```feynman
     in: i1 i2
     out: f1 f2
     i1 [g] -- a
@@ -383,6 +406,7 @@ supersymmetry, and extra dimensions.
     b -- f1 [W+]
     b -- f2 [W-]
     ```
+    ````
 
     <small>ATLAS, [EXOT-2013-01](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/EXOT-2013-01/), auxiliary figure 1a</small>
 

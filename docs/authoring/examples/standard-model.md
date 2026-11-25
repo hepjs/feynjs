@@ -17,9 +17,11 @@ The textbook diagrams, from QED to the Higgs boson, each with its source.
     e- e+ > gamma > mu- mu+
     ```
 
-    ```text
+    ````markdown
+    ```feynman
     e- e+ > gamma > mu- mu+
     ```
+    ````
 
     The photon in the s channel. At higher energies a Z joins it, as in Drell–Yan below.
 
@@ -29,9 +31,11 @@ The textbook diagrams, from QED to the Higgs boson, each with its source.
     e- gamma > e- > e- gamma
     ```
 
-    ```text
+    ````markdown
+    ```feynman
     e- gamma > e- > e- gamma
     ```
+    ````
 
     e⁻γ → e⁻γ: the electron absorbs the photon, then emits one...
 
@@ -45,13 +49,15 @@ The textbook diagrams, from QED to the Higgs boson, each with its source.
     a -- [gluon] b
     ```
 
-    ```text
+    ````markdown
+    ```feynman
     in: i1 i2
     out: f1 f2
     i1 [q] -- a -- f1 [q]
     i2 [g] -- b -- f2 [g]
     a -- [gluon] b
     ```
+    ````
 
     ...or exchanges a gluon with it, through the three-gluon vertex.
 
@@ -69,11 +75,13 @@ The textbook diagrams, from QED to the Higgs boson, each with its source.
     f1 [l-] -- b -- f2 [l+]
     ```
 
-    ```text
+    ````markdown
+    ```feynman
     i1 [q] -- a -- i2 [qbar]
     a -- [photon, label={\gamma^*, Z}] b
     f1 [l-] -- b -- f2 [l+]
     ```
+    ````
 
     A photon or a Z in the s channel. One label names both, in braces because it holds a comma.
 
@@ -83,9 +91,11 @@ The textbook diagrams, from QED to the Higgs boson, each with its source.
     u dbar > W+ > e+ nu_e
     ```
 
-    ```text
+    ````markdown
+    ```feynman
     u dbar > W+ > e+ nu_e
     ```
+    ````
 
     The charged current: a u quark and a d̄ antiquark make a W⁺, which decays to a positron and
     a neutrino.
@@ -100,13 +110,15 @@ The textbook diagrams, from QED to the Higgs boson, each with its source.
     a -- [fermion, label=\nu_e] b
     ```
 
-    ```text
+    ````markdown
+    ```feynman
     in: i1 i2
     out: f1 f2
     i1 [e-] -- a -- f1 [W-]
     i2 [e+] -- b -- f2 [W+]
     a -- [fermion, label=\nu_e] b
     ```
+    ````
 
     ...and through a neutrino exchanged. The two cancel at high energy, keeping the
     cross-section from growing, as LEP2 measured.
@@ -125,7 +137,8 @@ The textbook diagrams, from QED to the Higgs boson, each with its source.
     d -- f4 [l-]
     ```
 
-    ```text
+    ````markdown
+    ```feynman
     in: i1 i2
     out: f1 f2 f3 f4
     i1 [q] -- a -- f1 [q]
@@ -136,6 +149,7 @@ The textbook diagrams, from QED to the Higgs boson, each with its source.
     d -- f3 [l+]
     d -- f4 [l-]
     ```
+    ````
 
 </div>
 
@@ -151,11 +165,13 @@ The textbook diagrams, from QED to the Higgs boson, each with its source.
     f1 [t] -- b -- f2 [tbar]
     ```
 
-    ```text
+    ````markdown
+    ```feynman
     i1 [g] -- a -- i2 [g]
     a -- [gluon] b
     f1 [t] -- b -- f2 [tbar]
     ```
+    ````
 
     Gluon fusion makes about 90% of top pairs at the LHC, through three diagrams. The first goes
     through the three-gluon vertex.
@@ -166,9 +182,11 @@ The textbook diagrams, from QED to the Higgs boson, each with its source.
     t > b W+(> l+ nu_l)
     ```
 
-    ```text
+    ````markdown
+    ```feynman
     t > b W+(> l+ nu_l)
     ```
+    ````
 
     The top decays almost always to a b quark and a W. `W+(> l+ nu_l)` decays the W on the
     spot, here to a lepton and its neutrino.
@@ -184,7 +202,8 @@ The textbook diagrams, from QED to the Higgs boson, each with its source.
     a -- f2 [t]
     ```
 
-    ```text
+    ````markdown
+    ```feynman
     in: i1 i2
     out: f2 f1
     i1 [g] -- a
@@ -192,6 +211,7 @@ The textbook diagrams, from QED to the Higgs boson, each with its source.
     b -- [boson] f1 [W-]
     a -- f2 [t]
     ```
+    ````
 
 </div>
 
@@ -226,7 +246,8 @@ The textbook diagrams, from QED to the Higgs boson, each with its source.
     g g > {t} > Z H
     ```
 
-    ```text
+    ````markdown
+    ```feynman
     --- (a) gluon fusion
     ggF > H
     --- (b) vector-boson fusion
@@ -250,6 +271,7 @@ The textbook diagrams, from QED to the Higgs boson, each with its source.
     --- (f) ZH from gluons
     g g > {t} > Z H
     ```
+    ````
 
     Gluon fusion alone makes nearly nine in ten. `ggF` and `VBF` name the gluon-fusion loop and the
     two forward quark lines.
@@ -260,9 +282,11 @@ The textbook diagrams, from QED to the Higgs boson, each with its source.
     H > {W} > a a
     ```
 
-    ```text
+    ````markdown
+    ```feynman
     H > {W} > a a
     ```
+    ````
 
     The photons (`a`, as MadGraph writes them) couple to the Higgs only through a loop. The W
     loop dominates...
@@ -273,9 +297,11 @@ The textbook diagrams, from QED to the Higgs boson, each with its source.
     g g > {t} > H H
     ```
 
-    ```text
+    ````markdown
+    ```feynman
     g g > {t} > H H
     ```
+    ````
 
     ...the box does not, and the two interfere destructively.
 
@@ -296,7 +322,8 @@ The textbook diagrams, from QED to the Higgs boson, each with its source.
     i2 [gamma] -- c
     ```
 
-    ```text
+    ````markdown
+    ```feynman
     % a photon vertex with a photon loop around it
     in: i1 i2
     out: f1
@@ -304,6 +331,7 @@ The textbook diagrams, from QED to the Higgs boson, each with its source.
     a -- [photon, half left] d
     i2 [gamma] -- c
     ```
+    ````
 
 -   **Vacuum polarisation**
 
@@ -314,12 +342,14 @@ The textbook diagrams, from QED to the Higgs boson, each with its source.
     b -- f1 [gamma]
     ```
 
-    ```text
+    ````markdown
+    ```feynman
     i1 [gamma] -- a
     a -- [fermion, half left] b
     b -- [fermion, half left] a
     b -- f1 [gamma]
     ```
+    ````
 
 </div>
 
@@ -356,7 +386,8 @@ Figures from ATLAS publications, written as a few lines of feynjs; the link unde
     d2 -- [fermion] n2
     ```
 
-    ```text
+    ````markdown
+    ```feynman
     in: i1 i2
     out: o1 n1 e1 n2 e2 o2
     i1 [particle={q}]
@@ -380,6 +411,7 @@ Figures from ATLAS publications, written as a few lines of feynjs; the link unde
     e2 -- [fermion] d2
     d2 -- [fermion] n2
     ```
+    ````
 
     <small>ATLAS, [STDM-2022-06](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/STDM-2022-06/), figure 1a</small>
 
@@ -395,7 +427,8 @@ Figures from ATLAS publications, written as a few lines of feynjs; the link unde
     b -- [gluon] c
     ```
 
-    ```text
+    ````markdown
+    ```feynman
     in: i1 i2
     out: f1 f2 f3 f4
     i1 [g] -- [gluon] a
@@ -404,6 +437,7 @@ Figures from ATLAS publications, written as a few lines of feynjs; the link unde
     f4 [\bar t] -- [fermion, color=blue] d -- [fermion, color=blue] c -- [fermion, color=blue] f3 [t]
     b -- [gluon] c
     ```
+    ````
 
     <small>ATLAS, [TOPQ-2018-05](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/TOPQ-2018-05/), figure 1a</small>
 
@@ -421,7 +455,8 @@ Figures from ATLAS publications, written as a few lines of feynjs; the link unde
     k2 -- f2 [H]
     ```
 
-    ```text
+    ````markdown
+    ```feynman
     in: i1 i2
     out: f1 f2
     i1 [g] -- t1
@@ -432,6 +467,7 @@ Figures from ATLAS publications, written as a few lines of feynjs; the link unde
     k1 -- f1 [H]
     k2 -- f2 [H]
     ```
+    ````
 
     <small>ATLAS, [HDBS-2019-04](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/HDBS-2019-04/), figure 1a</small>
 
