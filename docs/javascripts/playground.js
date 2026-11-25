@@ -128,7 +128,7 @@
         <div class="pg-body">
           <div class="pg-editor"><textarea class="pg-source" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="feynjs source"></textarea><div class="pg-status"></div></div>
           <div class="pg-stage"><div class="pg-drawing" aria-live="polite"></div><div class="pg-hover"></div><div class="pg-hint"></div></div>
-          <div class="pg-palette" aria-label="Line to draw with">${PALETTE_GROUPS.map(([head, names]) => `<div class="pg-palette-head">${head}</div>` + names.map((p) => `<button type="button" class="pg-chip${p === PALETTE[0] ? " pg-active" : ""}" draggable="true" data-style="${p}" title="${p}: click to draw with it, or drop it on a line; write [${p}] in the source"><span class="pg-chip-line"></span><span class="pg-chip-name">${p}</span></button>`).join("")).join("")}<a class="pg-palette-more" href="../guide/particles/" title="Every particle name feynjs knows">All particles →</a></div>
+          <div class="pg-palette" aria-label="Line to draw with">${PALETTE_GROUPS.map(([head, names]) => `<div class="pg-palette-head">${head}</div>` + names.map((p) => `<button type="button" class="pg-chip${p === PALETTE[0] ? " pg-active" : ""}" draggable="true" data-style="${p}" title="${p}: click to draw with it, or drop it on a line; write [${p}] in the source"><span class="pg-chip-line"></span><span class="pg-chip-name">${p}</span></button>`).join("")).join("")}<a class="pg-palette-more" href="../authoring/particles/" title="Every particle name feynjs knows">All particles →</a></div>
         </div>
       </div>
       <details class="pg-model"><summary>The diagram as data: what a program, or an AI, sees</summary><pre><code></code></pre></details>

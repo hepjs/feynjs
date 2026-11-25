@@ -3,14 +3,6 @@ hide:
   - navigation
   - toc
   - tags
-tags:
-  - Feynman diagram
-  - JavaScript
-  - SVG
-  - TikZ-Feynman
-  - MadGraph
-  - particle physics
-  - HEP
 ---
 
 # feynjs { .feynjs-hidden }
@@ -28,7 +20,7 @@ tags:
 A JavaScript display engine for *Feynman diagrams*{ .feynjs-accent }
 { .feynjs-punch }
 
-[Learn more](features.md){ .md-button }
+[Learn more](get-started/features.md){ .md-button }
 [Getting started](get-started/index.md){ .md-button .md-button--primary }
 
 </div>

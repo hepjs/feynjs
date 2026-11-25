@@ -1,4 +1,4 @@
-// Writes the force layout's settings into docs/reference/theme.md, family by family, from the
+// Writes the force layout's settings into docs/setup/theme.md, family by family, from the
 // code: each setting's default from the theme, its words from the comment above it in ForceRules,
 // its family from src/engines/forces/families.ts. Run by `npm run docs`, so the page never drifts.
 import { readFileSync, writeFileSync } from "node:fs";
@@ -28,9 +28,9 @@ for (const family of FAMILIES) {
   for (const key of family.settings) section.push(`| \`forces.${key}\` | \`${defaultTheme.forces[key]}\` | ${cell(words.get(key) ?? "")} |`);
   section.push("");
 }
-const page = new URL("../docs/reference/theme.md", import.meta.url);
+const page = new URL("../docs/setup/theme.md", import.meta.url);
 const text = readFileSync(page, "utf8");
 const from = text.indexOf("## Layout v2 forces"), to = text.indexOf("## Layout v1 rules");
-if (from < 0 || to < 0) throw new Error("docs/reference/theme.md: no forces section to replace");
+if (from < 0 || to < 0) throw new Error("docs/setup/theme.md: no forces section to replace");
 writeFileSync(page, text.slice(0, from) + section.join("\n") + "\n" + text.slice(to));
 console.log(`wrote ${FAMILIES.reduce((n, f) => n + f.settings.length, 0)} settings in ${FAMILIES.length} families`);

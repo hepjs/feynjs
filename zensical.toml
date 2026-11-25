@@ -12,50 +12,59 @@ repo_name = "hepjs/feynjs"
 edit_uri = "edit/main/docs/"
 
 nav = [
-  { "Features" = "features.md" },
+  { "Home" = "index.md" },
   { "Get started" = [
     { "Get started" = "get-started/index.md" },
-    { "Setup" = "get-started/setup.md" },
+    { "Features" = "get-started/features.md" },
     { "Your first diagram" = "get-started/first-diagram.md" },
     { "About" = "get-started/about.md" },
-    { "Contributing" = "get-started/contributing.md" },
-    { "Internals" = "get-started/internals.md" },
+    { "Guides" = [
+      { "Contributing" = "get-started/guides/contributing.md" },
+      { "Internals" = "get-started/guides/internals.md" },
+    ] },
   ] },
-  { "Guide" = [
-    { "Overview" = "guide/index.md" },
-    { "Writing diagrams" = "guide/syntax.md" },
-    { "Syntax at a glance" = "guide/syntax-at-a-glance.md" },
-    { "Processes" = "guide/processes.md" },
-    { "Lines, particles and labels" = "guide/lines.md" },
-    { "All particles and line types" = "guide/particles.md" },
-    { "Vertices, loops and hadrons" = "guide/vertices.md" },
-    { "Colour flow" = "guide/colour-flow.md" },
-    { "Detector objects" = "guide/objects.md" },
-    { "Engines" = "guide/engines.md" },
-    { "Views" = "guide/views.md" },
-    { "Styling, export and checks" = "guide/styling.md" },
-    { "Theme settings" = "guide/theme.md" },
-    { "JavaScript API" = "guide/api.md" },
-    { "Command line" = "guide/cli.md" },
-    { "Hand-over format" = "guide/interchange.md" },
-    { "Coming from TikZ-Feynman" = "guide/tikz-feynman.md" },
-    { "Coming from MadGraph" = "guide/madgraph.md" },
+  { "Usage" = [
+    { "Command line" = "usage/cli.md" },
+    { "JavaScript API" = "usage/api.md" },
+    { "Hand-over format" = "usage/interchange.md" },
   ] },
-  { "Examples" = [
-    { "Overview" = "examples/index.md" },
-    { "Tour" = "examples/tour.md" },
-    { "The Standard Model" = "examples/standard-model.md" },
-    { "Diboson" = "examples/diboson.md" },
-    { "V + jets" = "examples/vjets.md" },
-    { "Top quarks" = "examples/top.md" },
-    { "Higgs" = "examples/higgs.md" },
-    { "Flavour physics" = "examples/flavour.md" },
-    { "Nuclear and heavy ions" = "examples/nuclear.md" },
-    { "Beyond the Standard Model" = "examples/bsm.md" },
-    { "Supersymmetry" = "examples/susy.md" },
-    { "Stop production, step by step" = "examples/stop.md" },
-    { "Extra dimensions" = "examples/kaluza-klein.md" },
-    { "MadGraph gallery" = "examples/madgraph-gallery.md" },
+  { "Setup" = [
+    { "Basics" = "setup/index.md" },
+    { "Styling, export and checks" = "setup/styling.md" },
+    { "Theme settings" = "setup/theme.md" },
+  ] },
+  { "Authoring" = [
+    { "How it works" = "authoring/index.md" },
+    { "Writing diagrams" = "authoring/syntax.md" },
+    { "Lines, particles and labels" = "authoring/lines.md" },
+    { "All particles and line types" = "authoring/particles.md" },
+    { "Processes" = "authoring/processes.md" },
+    { "Vertices, loops and hadrons" = "authoring/vertices.md" },
+    { "Colour flow" = "authoring/colour-flow.md" },
+    { "Detector objects" = "authoring/objects.md" },
+    { "Engines" = "authoring/engines.md" },
+    { "Views" = "authoring/views.md" },
+    { "Syntax at a glance" = "authoring/syntax-at-a-glance.md" },
+    { "Examples" = [
+      { "Overview" = "authoring/examples/index.md" },
+      { "Tour" = "authoring/examples/tour.md" },
+      { "The Standard Model" = "authoring/examples/standard-model.md" },
+      { "Diboson" = "authoring/examples/diboson.md" },
+      { "V + jets" = "authoring/examples/vjets.md" },
+      { "Top quarks" = "authoring/examples/top.md" },
+      { "Higgs" = "authoring/examples/higgs.md" },
+      { "Flavour physics" = "authoring/examples/flavour.md" },
+      { "Nuclear and heavy ions" = "authoring/examples/nuclear.md" },
+      { "Beyond the Standard Model" = "authoring/examples/bsm.md" },
+      { "Supersymmetry" = "authoring/examples/susy.md" },
+      { "Stop production, step by step" = "authoring/examples/stop.md" },
+      { "Extra dimensions" = "authoring/examples/kaluza-klein.md" },
+    ] },
+  ] },
+  { "Compatibility" = [
+    { "TikZ-Feynman" = "compatibility/tikz-feynman.md" },
+    { "MadGraph" = "compatibility/madgraph.md" },
+    { "MadGraph gallery" = "compatibility/madgraph-gallery.md" },
   ] },
   { "Playground" = "playground.md" },
 ]
@@ -136,6 +145,11 @@ toggle.name = "Switch to light mode"
 # [[project.extra.social]]
 # icon = "fontawesome/brands/mastodon"
 # link = "https://fosstodon.org/@user"
+
+# each docs folder's .meta.yml gives its pages their shared front matter (the section's tag)
+[project.plugins.meta]
+
+[project.plugins.tags]
 
 [project.markdown_extensions]
 abbr = {}

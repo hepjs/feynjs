@@ -34,6 +34,7 @@
     // (the tour's small figures without download buttons)
     feynjs.run({ querySelector: ".feynjs-tour div.feynman:not([data-processed])" });
     feynjs.run({ querySelector: "div.feynman:not([data-processed])", download: true });
+    explain();
   };
   // the time-order row plays: each step of the diagram appears in turn, and as a vertex is
   // reached it punches and sends out a ripple, as the logo's vertices do. It plays when the row
@@ -219,6 +220,97 @@
         new IntersectionObserver(function (seen) { if (seen[0].isIntersecting && !document.hidden) start(); else stop(); }, { threshold: 0.1 }).observe(splash);
       } else start();
       document.addEventListener("visibilitychange", function () { if (document.hidden) stop(); else if (splash.isConnected) start(); });
+    });
+  };
+  // a worked diagram explained line by line (.feynjs-explain: a diagram, then its source with a
+  // note after each line's %). The note sits beside its line; pointing at a line (or tapping it)
+  // pulses the parts of the diagram it draws and dims the rest. When the block first comes into
+  // view it plays through its lines once. The % stays in the code, so a copy is still valid source.
+  var partsOf = function (svg, src) {
+    var s = src.replace(/\[[^\]]*\]/g, " ").trim();
+    var edgesAt = function (id) { return Array.prototype.slice.call(svg.querySelectorAll('[data-edge][data-from="' + id + '"], [data-edge][data-to="' + id + '"]')); };
+    var m = /^(in|out)\s*:\s*(.*)$/.exec(s);
+    if (m) return m[2].split(/\s+/).filter(Boolean).reduce(function (all, id) { return all.concat(edgesAt(id)); }, []);
+    if (s.indexOf("--") >= 0) {
+      var ids = s.split("--").map(function (t) { return t.trim().split(/\s+/)[0]; });
+      var found = [];
+      for (var i = 0; i + 1 < ids.length; i++) {
+        var a = ids[i], b = ids[i + 1];
+        found = found.concat(Array.prototype.slice.call(svg.querySelectorAll('[data-edge="' + a + "--" + b + '"], [data-edge="' + b + "--" + a + '"]')));
+      }
+      return found;
+    }
+    var v = /^([A-Za-z_][\w']*)$/.exec(s);
+    if (v) return Array.prototype.slice.call(svg.querySelectorAll('[data-vertex="' + v[1] + '"]')).concat(edgesAt(v[1]));
+    return null;  // (a process line or a switch: it shapes the whole diagram)
+  };
+  var explain = function () {
+    document.querySelectorAll(".feynjs-explain:not([data-explained])").forEach(function (box) {
+      var svg = box.querySelector("svg.feynjs"), code = box.querySelector("pre code");
+      if (!svg || !code) return;
+      box.setAttribute("data-explained", "");
+      var lit = [], steps = [];
+      var clear = function () {
+        lit.forEach(function (el) { el.classList.remove("feynjs-lit"); });
+        lit = [];
+        svg.classList.remove("feynjs-lit-all");
+        box.classList.remove("feynjs-explaining");
+        code.querySelectorAll(".feynjs-line-on").forEach(function (l) { l.classList.remove("feynjs-line-on"); });
+      };
+      Array.prototype.forEach.call(code.querySelectorAll(':scope > span[id^="__span"]'), function (line) {
+        var anchor = line.querySelector("a");
+        var text = line.textContent.replace(/\n$/, "");
+        var cut = text.indexOf("%");
+        var src = cut < 0 ? text : text.slice(0, cut), note = cut < 0 ? "" : text.slice(cut + 1).trim();
+        if (!note) return;
+        line.textContent = "";
+        if (anchor) line.appendChild(anchor);
+        var code_ = document.createElement("span");
+        code_.className = "feynjs-src";
+        code_.textContent = src.replace(/\s+$/, "");
+        line.appendChild(code_);
+        var chip = document.createElement("span");
+        chip.className = "feynjs-note";
+        var mark = document.createElement("span");
+        mark.className = "feynjs-note-mark";
+        mark.textContent = "  % ";
+        chip.appendChild(mark);
+        chip.appendChild(document.createTextNode(note));
+        line.appendChild(chip);
+        line.appendChild(document.createTextNode("\n"));
+        line.classList.add("feynjs-line");
+        var parts = partsOf(svg, src);
+        var on = function () {
+          clear();
+          box.classList.add("feynjs-explaining");
+          line.classList.add("feynjs-line-on");
+          if (parts === null || !parts.length) svg.classList.add("feynjs-lit-all");
+          else parts.forEach(function (el) { el.classList.add("feynjs-lit"); lit.push(el); });
+        };
+        steps.push(on);
+        line.addEventListener("mouseenter", function () { box.dataset.touched = "1"; on(); });
+        line.addEventListener("mouseleave", clear);
+        line.addEventListener("click", function () { box.dataset.touched = "1"; on(); });
+      });
+      // (the notes in one column, just past the longest line of source)
+      var widest = 0;
+      code.querySelectorAll(".feynjs-src").forEach(function (el) { widest = Math.max(widest, el.textContent.length); });
+      code.querySelectorAll(".feynjs-src").forEach(function (el) { el.style.minWidth = (widest + 3) + "ch"; });
+      if (!steps.length || !("IntersectionObserver" in window)) return;
+      if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      var seen = new IntersectionObserver(function (e) {
+        if (!e[0].isIntersecting) return;
+        seen.disconnect();
+        var k = 0;
+        var next = function () {
+          if (box.dataset.touched) return;
+          if (k >= steps.length) { clear(); return; }
+          steps[k++]();
+          setTimeout(next, 1400);
+        };
+        setTimeout(next, 500);
+      }, { threshold: 0.6 });
+      seen.observe(box);
     });
   };
   if (window.document$ && window.document$.subscribe) window.document$.subscribe(go);

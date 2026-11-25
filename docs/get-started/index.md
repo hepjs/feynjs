@@ -1,15 +1,6 @@
 ---
 hide:
   - toc
-tags:
-  - get started
-  - setup
-  - Zensical
-  - MkDocs
-  - Obsidian
-  - LaTeX
-  - JavaScript
-  - MadGraph
 ---
 
 # Get started
@@ -27,7 +18,7 @@ Pick where you write. Every option draws the same diagrams from the same text.
     extra_javascript = ["https://cdn.jsdelivr.net/npm/feynjs@0.10/dist/feynjs.min.js"]
     ```
 
-    [Set up a site](setup.md#setup-zensical--mkdocs){ .md-button .md-button--primary }
+    [Set up a site](../setup/index.md#setup-zensical--mkdocs){ .md-button .md-button--primary }
 
 -   **Obsidian**
 
@@ -37,7 +28,7 @@ Pick where you write. Every option draws the same diagrams from the same text.
     feynjs-obsidian.zip  →  .obsidian/plugins/feynjs/
     ```
 
-    [Set up Obsidian](setup.md#setup-obsidian){ .md-button .md-button--primary }
+    [Set up Obsidian](../setup/index.md#setup-obsidian){ .md-button .md-button--primary }
 
 -   **A web page**
 
@@ -47,7 +38,7 @@ Pick where you write. Every option draws the same diagrams from the same text.
     <script src="https://cdn.jsdelivr.net/npm/feynjs@0.10/dist/feynjs.min.js"></script>
     ```
 
-    [Use it in a page](setup.md#setup-web-page){ .md-button }
+    [Use it in a page](../setup/index.md#setup-web-page){ .md-button }
 
 -   **LaTeX**
 
@@ -60,7 +51,7 @@ Pick where you write. Every option draws the same diagrams from the same text.
     \end{feynjs}
     ```
 
-    [Set up LaTeX](setup.md#setup-latex){ .md-button }
+    [Set up LaTeX](../setup/index.md#setup-latex){ .md-button }
 
 -   **JavaScript**
 
@@ -72,7 +63,7 @@ Pick where you write. Every option draws the same diagrams from the same text.
     const svg = render("g g > {t} > H");
     ```
 
-    [The API](../guide/api.md){ .md-button }
+    [The API](../usage/api.md){ .md-button }
 
 -   **The command line**
 
@@ -82,7 +73,7 @@ Pick where you write. Every option draws the same diagrams from the same text.
     npx feynjs render diagram.feyn > diagram.svg
     ```
 
-    [The commands](../guide/cli.md){ .md-button }
+    [The commands](../usage/cli.md){ .md-button }
 
 -   **MadGraph**
 
@@ -92,7 +83,7 @@ Pick where you write. Every option draws the same diagrams from the same text.
     mg5_aMC --mode=feynjs
     ```
 
-    [Set up MadGraph](setup.md#setup-madgraph){ .md-button }
+    [Set up MadGraph](../setup/index.md#setup-madgraph){ .md-button }
 
 -   **Just try it**
 

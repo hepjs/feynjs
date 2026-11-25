@@ -1,13 +1,3 @@
----
-tags:
-  - tutorial
-  - first diagram
-  - quick start
-  - s-channel
-  - t-channel
-  - errors
----
-
 # Your first diagram
 
 ```feynman
@@ -25,9 +15,9 @@ f1 [mu-] -- b -- f2 [mu+]
 ````
 
 feynjs turns a few lines of text into a Feynman diagram, drawn as SVG. To draw these yourself, put
-them in a `feynman` block on a [Zensical site](setup.md#setup-zensical--mkdocs) or in an [Obsidian note](setup.md#setup-obsidian),
+them in a `feynman` block on a [Zensical site](../setup/index.md#setup-zensical--mkdocs) or in an [Obsidian note](../setup/index.md#setup-obsidian),
 or paste them into the [playground](../playground.md). To install feynjs for your own code, see
-[Setup](setup.md#setup-javascript--command-line).
+[Setup](../setup/index.md#setup-javascript--command-line).
 
 !!! note "Early days"
     feynjs is at version 0.9. The syntax described here is stable enough to write diagrams
@@ -92,7 +82,7 @@ a -- [gamma] b
 ```
 ````
 
-Add a gluon loop, a Higgs, a cascade of decays: the [components](../guide/index.md) cover each one.
+Add a gluon loop, a Higgs, a cascade of decays: the [components](../authoring/index.md) cover each one.
 
 ## When something is wrong
 
@@ -104,10 +94,10 @@ feynjs: line 2: unclosed [
 
 `feynjs.check(source)` (or `feynjs check diagram.feyn`) finds physics slips the drawing would
 hide: fermion lines that don't pair up at a vertex, arrows that don't flow through, legs with no
-particle name. See [Checking diagrams](../guide/styling.md#checking-diagrams).
+particle name. See [Checking diagrams](../setup/styling.md#checking-diagrams).
 
 ## Next
 
-- [Write edges, as in TikZ-Feynman](../guide/syntax.md): the full syntax, step by step.
-- [Write processes, as in MadGraph](../guide/processes.md): name the process and its decays.
-- [Examples](../examples/index.md): hundreds of diagrams with their source.
+- [Write edges, as in TikZ-Feynman](../authoring/syntax.md): the full syntax, step by step.
+- [Write processes, as in MadGraph](../authoring/processes.md): name the process and its decays.
+- [Examples](../authoring/examples/index.md): hundreds of diagrams with their source.

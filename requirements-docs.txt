@@ -1,2 +1,2 @@
 # The docs site's tool, pinned so the site builds the same everywhere: pip install -r requirements-docs.txt
-zensical==0.0.57
+zensical==0.1.3
