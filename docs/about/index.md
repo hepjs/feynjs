@@ -10,11 +10,9 @@
 
 <div markdown>
 
-I'm **Jason Oliver**, an experimental particle physicist at Adelaide University, Australia, on
-the ATLAS experiment at CERN. I've worked on searches for supersymmetry, on the Higgs boson, and
-on the systems that select collisions as they happen. More and more of my time goes into how a
-collaboration finds and shares what it knows: ATLAS's web pages, and a search built on OpenSearch
-that people and AI assistants can both use. feynjs comes from the same place.
+I'm **Jason Oliver**, a particle physicist at Adelaide University on the ATLAS experiment at
+CERN. These days I work on how a collaboration shares what it knows, from ATLAS's web pages to a
+search, built on OpenSearch, for people and AI assistants alike. feynjs comes from the same place.
 
 [ORCID](https://orcid.org/0000-0002-0713-6627){ .md-button }
 [GitHub](https://github.com/joliverHEP){ .md-button }
