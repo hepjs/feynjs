@@ -5,7 +5,7 @@ In ``conf.py``::
     extensions = ["feynjs.sphinx"]
 
 The extension serves the bundled script with the site (nothing is loaded from the network) and
-tells Sphinx that ``feynman`` blocks are plain text, so it does not warn that it cannot highlight
+tells Sphinx that ``feynman`` (and ``feynjs``) blocks are plain text, so it does not warn that it cannot highlight
 them. Then::
 
     .. code-block:: feynman
@@ -24,6 +24,7 @@ def setup(app):
     from pygments.lexers.special import TextLexer
 
     app.add_lexer("feynman", TextLexer)
+    app.add_lexer("feynjs", TextLexer)
     app.connect("builder-inited", _serve_script)
     app.add_js_file("feynjs.min.js")
     return {"version": __version__, "parallel_read_safe": True, "parallel_write_safe": True}

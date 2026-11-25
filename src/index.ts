@@ -101,7 +101,7 @@ let diagramCounter = 0;
 
 /**
  * Replace every matching element's text with its rendered diagram. Safe to call repeatedly.
- * By default: elements with the class `feynman`, and the ```feynman code blocks Markdown tools
+ * By default: elements with the class `feynman`, and the ```feynman (or ```feynjs) code blocks Markdown tools
  * write (`<pre><code class="language-feynman">`, from GitHub Pages, Hugo, Jekyll, markdown-it;
  * Sphinx's `<div class="highlight-feynman">` from a reST code-block or a MyST fence).
  */
@@ -120,11 +120,13 @@ export function run(options: RunOptions = {}): void {
     block.replaceWith(holder);
   };
   if (!querySelector) {
-    root.querySelectorAll<HTMLElement>("pre > code.language-feynman, .language-feynman > pre > code").forEach((code) => {
+    // (```feynjs is the same as ```feynman)
+    root.querySelectorAll<HTMLElement>("pre > code.language-feynman, .language-feynman > pre > code, pre > code.language-feynjs, .language-feynjs > pre > code").forEach((code) => {
       const pre = code.parentElement!, wrapper = pre.parentElement;
-      replace(wrapper && wrapper.classList.contains("language-feynman") && !wrapper.classList.contains("feynman") ? wrapper : pre, code.textContent ?? "");
+      const wrapped = wrapper && (wrapper.classList.contains("language-feynman") || wrapper.classList.contains("language-feynjs")) && !wrapper.classList.contains("feynman");
+      replace(wrapped ? wrapper! : pre, code.textContent ?? "");
     });
-    root.querySelectorAll<HTMLElement>(".highlight-feynman > .highlight > pre").forEach((pre) => {
+    root.querySelectorAll<HTMLElement>(".highlight-feynman > .highlight > pre, .highlight-feynjs > .highlight > pre").forEach((pre) => {
       replace(pre.parentElement!.parentElement!, pre.textContent ?? "");
     });
   }

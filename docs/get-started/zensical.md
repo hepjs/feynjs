@@ -28,6 +28,7 @@ A docs site: every `feynman` block in your Markdown becomes a diagram.
         [project.markdown_extensions]
         pymdownx.superfences.custom_fences = [
           { name = "feynman", class = "feynman", format = "pymdownx.superfences.fence_div_format" },
+          { name = "feynjs", class = "feynman", format = "pymdownx.superfences.fence_div_format" },
         ]
         ```
 
@@ -38,6 +39,9 @@ A docs site: every `feynman` block in your Markdown becomes a diagram.
           - pymdownx.superfences:
               custom_fences:
                 - name: feynman
+                  class: feynman
+                  format: !!python/name:pymdownx.superfences.fence_div_format
+                - name: feynjs
                   class: feynman
                   format: !!python/name:pymdownx.superfences.fence_div_format
         ```

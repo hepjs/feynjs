@@ -3,6 +3,8 @@
 A diagram is written as edges, line by line. Several diagrams can share one block as panels, and
 switches set options for a whole diagram.
 
+In a page or a note, a diagram is a ```` ```feynman ```` code block; ```` ```feynjs ```` works the same.
+
 ## Edges, as in TikZ-Feynman
 
 ```feynman

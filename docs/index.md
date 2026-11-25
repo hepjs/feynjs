@@ -257,9 +257,11 @@ a few lines you can read, edit and keep.
 A stop pair, each stop decaying to a top and a neutralino
 ```
 
-```text title="It writes"
+````markdown title="It writes"
+```feynman
 p p > t1 t1~, (t1 > t n1), (t1~ > t~ n1)
 ```
+````
 
 [The skills](https://github.com/hepjs/feynjs/tree/main/skills){ .md-button }
 

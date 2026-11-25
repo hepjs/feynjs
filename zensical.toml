@@ -184,6 +184,7 @@ pymdownx.smartsymbols = {}
 pymdownx.superfences.custom_fences = [
   { name = "mermaid", class = "mermaid", format = "pymdownx.superfences.fence_code_format" },
   { name = "feynman", class = "feynman", format = "pymdownx.superfences.fence_div_format" },
+  { name = "feynjs", class = "feynman", format = "pymdownx.superfences.fence_div_format" },
 ]
 pymdownx.tabbed.alternate_style = true
 pymdownx.tabbed.combine_header_slug = true

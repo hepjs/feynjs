@@ -8,6 +8,8 @@ layout that moves is a change, recorded here.
 - **A Python package, `pip install feynjs`:** the script, bundled; a Sphinx extension
   (`extensions = ["feynjs.sphinx"]`) that serves it and lets a strict build pass; and a Jupyter
   display, `feynjs.Diagram("...")`. Published to PyPI with each release.
+- **```feynjs works as ```feynman does,** in a page (the script), in Sphinx and in Zensical or
+  MkDocs (a second custom fence); Obsidian already took both.
 - **Sphinx:** a `feynman` code block from reST or MyST Markdown (`<div class="highlight-feynman">`) is drawn
   by the script, as Markdown's fences already are. No approved layout moves.
 
