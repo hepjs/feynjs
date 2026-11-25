@@ -442,3 +442,6 @@
 .md-typeset .grid.cards.feynjs-mg div.feynman { flex: 1; margin: 0; display: flex; align-items: center; justify-content: center; }
 .md-typeset .grid.cards.feynjs-mg div.feynman svg.feynjs { max-width: 100%; max-height: 8rem; height: auto; }
 .md-typeset .feynjs-mg-count { margin: 0.2rem 0 0; font-size: 0.64rem; color: var(--md-default-fg-color--light); }
+
+/* the names-and-syntax page: a card's source wraps rather than scrolling out of sight */
+.md-typeset .grid.cards.feynjs-demo pre > code { white-space: pre-wrap; word-break: break-word; }

@@ -49,6 +49,7 @@ nav = [
   ] },
   { "Examples" = [
     { "Overview" = "examples/index.md" },
+    { "Names and syntax" = "examples/names-and-syntax.md" },
     { "Every line type" = "examples/lines.md" },
     { "Standard Model vertices" = "examples/sm-vertices.md" },
     { "Standard Model processes" = "examples/sm-processes.md" },

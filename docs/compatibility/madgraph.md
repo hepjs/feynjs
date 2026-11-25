@@ -1984,9 +1984,9 @@ Brackets go inside brackets, as deep as the chain goes:
 p p > t1 t1~, (t1 > t n1, (t > b w+, w+ > e+ ve)), (t1~ > t~ n1, (t~ > b~ w-, w- > j j))
 ```
 
-`>` may be written without spaces, `p p>t t~,t>b w+`, except after a name ending in `-`: `w->`
-would be an arrow, so write `w- > e- ve~` (or `w- >e- ve~`). Names need a space between them, as
-in MadGraph: `e+ e-`, not `e+e-`.
+`>` may be written without spaces, `p p>t t~,t>b w+`, after a name ending in `-` too:
+`w->e- ve~` is `w- > e- ve~`. Names need a space between them, as in MadGraph: `e+ e-`, not
+`e+e-`.
 
 ## How it differs from MadGraph
 
@@ -2066,7 +2066,7 @@ label, and [`check`](../reference/api.md#check) warns of it.
 | `a b > x > c d` | yes: one particle between two `>`, drawn as the line between |
 | `p p > t t~, t > b w+` | yes: each decay after a comma is a decay line, as `t > b w+` on a line of its own |
 | `(t > b w+, w+ > e+ ve)` | yes: the decay and the decays of what it makes, as `t > b w+(> e+ ve)`; brackets nest |
-| `p p>t t~`, with no spaces round `>` | yes; but `w->` is an arrow, so write `w- >` |
+| `p p>t t~`, with no spaces round `>` | yes, `w->e- ve~` too |
 | `psi(2S)`, `X(3872)` | yes: brackets that do not start with `>` are part of the name |
 | `g g > h [noborn=QCD]` | yes: through a top loop, the top triangle; the partons must be named, not `p p` |
 | `[QCD]`, `[virt=QCD]`, `[QED]` | yes: the tree is drawn as it is |

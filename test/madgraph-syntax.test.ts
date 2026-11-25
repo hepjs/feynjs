@@ -74,3 +74,9 @@ test("a name with brackets that do not start with \">\" is one name: a hadron's 
   // (spaces inside are an object's alone: a decay with its ">" left out still says so)
   assert.throws(() => parse("p p > Z(e+ e-)"), /write a decay as "Z\(> products\)"/);
 });
+
+test("a name's own \"-\" before \">\" is its charge: e+ e->z>mu+ mu-, w->e- ve~", async () => {
+  const { describe } = await import("../src/index.ts");
+  assert.deepEqual(describe("e+ e->z>mu+ mu-").incoming, ["e+", "e-"]);
+  assert.deepEqual(describe("p p>w- w+,w->e- ve~").outgoing, ["e-", "ve~", "w+"]);
+});

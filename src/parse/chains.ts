@@ -209,7 +209,8 @@ const stripComment = (line: string) => line.replace(/%.*$/, "").trim();
 
 /**
  * A ">" written without spaces, as MadGraph allows (p p>t t~): one outside square brackets, and
- * not the end of an arrow, "->", on a line that is not a switch (title: a>b stays a title).
+ * not the end of an arrow, "->", on a line that is not a switch (title: a>b stays a title). A
+ * "-" straight after a name is its charge, not an arrow's: e+ e->z, w->e- ve~.
  */
 function hasCloseArrow(line: string): boolean {
   const text = line.replace(/(^|\s)(%|\/\/|#).*$/, "");
@@ -218,9 +219,14 @@ function hasCloseArrow(line: string): boolean {
   for (let k = 0; k < text.length; k++) {
     if (text[k] === "[") depth++;
     else if (text[k] === "]") depth--;
-    else if (text[k] === ">" && depth === 0 && text[k - 1] !== "-") return true;
+    else if (text[k] === ">" && depth === 0 && !isArrowEnd(text, k)) return true;
   }
   return false;
+}
+
+/** The ">" at k ends an arrow, "->", unless its "-" is a name's charge (e-, w-: a letter or digit before it). */
+function isArrowEnd(text: string, k: number): boolean {
+  return text[k - 1] === "-" && !/[A-Za-z0-9~]/.test(text[k - 2] ?? "");
 }
 
 /** Split at each top-level comma, one not inside brackets of any kind (VBS(W, H), [a, b], {t}). */
@@ -297,14 +303,15 @@ const writtenItems = (items: Item[]): string => items.map((p) => (p.decay ? `${p
 function splitSegments(text: string, line: number): Item[][] {
   const segments: Item[][] = [[]];
   let k = 0;
-  // a name runs to a space, a bracket or a ">" (not an arrow's, "->"); brackets that do not open a
+  // a name runs to a space, a bracket or a ">" (not an arrow's, "->"; a name's own "-", e->z, is
+  // its charge); brackets that do not open a
   // decay are part of it, a hadron's state or an object's contents: psi(2S), X(3872), LRJ(1b W(2j))
   // (spaces inside are an object's alone: Z(e+ e-) is a decay with its ">" left out)
   const opensDecay = (at: number) => /^\(\s*>/.test(text.slice(at));
   const readName = () => {
     const start = k;
     for (;;) {
-      while (k < text.length && !/[\s()]/.test(text[k]) && !(text[k] === ">" && text[k - 1] !== "-")) k++;
+      while (k < text.length && !/[\s()]/.test(text[k]) && !(text[k] === ">" && !isArrowEnd(text, k))) k++;
       if (text[k] !== "(" || k === start || opensDecay(k)) return text.slice(start, k);
       const open = k;
       k = closingBracket(text, open, line) + 1;

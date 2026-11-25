@@ -108,9 +108,9 @@ Without brackets, `p p > t t~, t > b w+, t~ > b~ w-` is the process and two deca
 go as deep as the chain does:
 `p p > t1 t1~, (t1 > t n1, (t > b w+, w+ > e+ ve)), (t1~ > t~ n1, (t~ > b~ w-, w- > j j))`.
 
-`>` needs no spaces round it: `p p>t t~,t>b w+` is the same as `p p > t t~, t > b w+`. The one
-exception is after a name ending in `-`, since `->` is an arrow: write `w- > e- ve~`, not
-`w->e- ve~`. Names need a space between them: `e+ e-`, not `e+e-`.
+`>` needs no spaces round it: `p p>t t~,t>b w+` is the same as `p p > t t~, t > b w+`, and
+`w->e- ve~` is `w- > e- ve~` (a name's `-` is its charge). Names need a space between them:
+`e+ e-`, not `e+e-`.
 
 A name may carry brackets of its own, a hadron's state or content, and the whole is one name:
 
