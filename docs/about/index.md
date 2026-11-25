@@ -2,6 +2,9 @@
 
 <p class="feynjs-belief">Growing the field means learning how to share and work together at greater scales.</p>
 
+feynjs exists so that a Feynman diagram is as easy to write and share as a sentence, wherever
+physicists write: in a web page, a notebook, a note or a paper.
+
 ## Who makes it
 
 <div class="feynjs-person" markdown>
@@ -11,8 +14,9 @@
 <div markdown>
 
 I'm **Jason Oliver**, a particle physicist at Adelaide University on the ATLAS experiment at
-CERN. These days I work on how a collaboration shares what it knows, from ATLAS's web pages to a
-search, built on OpenSearch, for people and AI assistants alike. feynjs comes from the same place.
+CERN. I work on searches for new particles, on the Higgs boson and on tracking, and on how a
+collaboration shares what it knows: ATLAS's web pages, and a search built on OpenSearch for people
+and AI assistants alike.
 
 [ORCID](https://orcid.org/0000-0002-0713-6627){ .md-button }
 [GitHub](https://github.com/joliverHEP){ .md-button }
