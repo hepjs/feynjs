@@ -282,6 +282,25 @@ test("initial-state radiation into a blob: one quark line, one arrow, straight",
   assert.notEqual(gu.edges.find((e) => e.to === "x")!.style.arrow, 0);
 });
 
+test("a beam an exchange scatters comes in toward the centre and leaves outward", () => {
+  // (bremsstrahlung: the electron, on top, dips to the photon exchange and rises after it; the
+  // quark, below, rises to it and falls after it)
+  const d = parse(readFileSync("examples/bremsstrahlung.feyn", "utf8"));
+  layoutDiagram(d, { ...defaultTheme, engine: "v2" });
+  const at = (id: string) => d.vertices.get(id)!;
+  // (degrees upward on the page: y grows downward)
+  const rise = (a: string, b: string) => (Math.atan2(at(a).y - at(b).y, at(b).x - at(a).x) * 180) / Math.PI;
+  assert.ok(rise("a", "b") < -5 && rise("b", "f1") > 5, `the electron: in ${rise("a", "b").toFixed(0)} deg, out ${rise("b", "f1").toFixed(0)} deg`);
+  assert.ok(rise("i2", "c") > 5 && rise("c", "f2") < -5, `the quark: in ${rise("i2", "c").toFixed(0)} deg, out ${rise("c", "f2").toFixed(0)} deg`);
+});
+
+test("a heavy line along an exchange stands exactly upright: the neutralino between two charginos", () => {
+  const d = parse(readFileSync("validation/atlas/SUSY-2014-05/fig_02e.feyn", "utf8"));
+  layoutDiagram(d, { ...defaultTheme, engine: "v2" });
+  const [c1, c2] = [d.vertices.get("c1")!, d.vertices.get("c2")!];
+  assert.ok(Math.abs(c1.x - c2.x) < 1e-6, `the neutralino leans by ${Math.abs(c1.x - c2.x)}`);
+});
+
 test("a crossed box: the incoming gluons cross, not the lines beyond them", () => {
   const src = readFileSync("validation/atlas/EXOT-2014-10/fig_01c.feyn", "utf8");
   const d = parse(src);
