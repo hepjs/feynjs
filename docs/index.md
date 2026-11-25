@@ -5,7 +5,7 @@ hide:
   - tags
 ---
 
-<span class="feynjs-no-source" data-page="home" hidden></span>
+<div class="feynjs-no-source" data-page="home" hidden></div>
 
 # feynjs { .feynjs-hidden }
 

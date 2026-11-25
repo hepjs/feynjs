@@ -308,6 +308,7 @@
    the whole banner: the JavaScript engine at work. As the social card is. */
 .md-main:has(.feynjs-splash) { overflow-x: clip; }
 .md-content__inner:has(.feynjs-splash) { margin-top: 0; padding-top: 0; }
+.md-main__inner:has(.feynjs-splash) { margin-top: 0; }
 .md-content__inner:has(.feynjs-splash)::before { display: none; }
 .md-typeset .feynjs-splash {
   position: relative; overflow: hidden; box-sizing: border-box;
