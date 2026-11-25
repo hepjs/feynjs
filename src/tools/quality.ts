@@ -64,7 +64,10 @@ function measureOne(source: string, theme: ThemeOverrides = {}): Quality {
   // (two legs whose order the author listed in `in:` or `out:` cross on purpose: a u-channel's
   // final states, or its beams. The crossing is the one asked for when the drawing keeps the
   // listed order, the first listed above; otherwise the two crossed by accident, and it counts)
-  const listedLeg = (g: Edge) => [g.from, g.to].map((id) => d.vertices.get(id)!).find((v) => v.declaredOrder !== undefined && (v.role === "in" || v.role === "out"));
+  // (a leg: one end listed in `in:` or `out:`, the other a point inside the diagram; a line from an
+  // incoming leg straight to an outgoing one, a spectator quark, is no leg, and its crossings count)
+  const external = (id: string) => { const r = d.vertices.get(id)!.role; return r === "in" || r === "out"; };
+  const listedLeg = (g: Edge) => (external(g.from) && external(g.to) ? undefined : [g.from, g.to].map((id) => d.vertices.get(id)!).find((v) => v.declaredOrder !== undefined && (v.role === "in" || v.role === "out")));
   const askedFor = (e: Edge, f: Edge) => {
     const a = listedLeg(e), b = listedLeg(f);
     return !!a && !!b && a.role === b.role && (a.declaredOrder! - b.declaredOrder!) * (at(a.id).y - at(b.id).y) > 0;
