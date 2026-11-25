@@ -229,8 +229,8 @@
   // Pointing at a line, tapping it, or moving to it with the keyboard lights what it draws, in
   // three steady colours: lines blue, points amber, labels teal; the rest dims. A process line
   // (e- e+ > gamma > mu- mu+) lights its stages in turn. Each block has step buttons and dots, and
-  // steps slowly through its lines over and over while in view: pointing pauses it, a click or a
-  // key stops it. The % stays in the code, so a copy is
+  // steps slowly through its lines over and over while in view: pointing, a click or a key only
+  // pauses it, and it carries on a little after. The % stays in the code, so a copy is
   // still valid source.
   var idsOf = function (src) {
     var s = src.replace(/\[[^\]]*\]/g, " ").trim();
@@ -422,12 +422,10 @@
         el.setAttribute("tabindex", "0");
         var k = lines.length;
         lines.push({ el: el, note: note, src: src.trim(), ids: idsOf(src), edges: edgesOf(svg, src), stages: stagesOf(src.trim()) });
-        var touch = function () { box.dataset.touched = "1"; stop(); };
         el.addEventListener("mouseenter", function () { stop(); show(k); });
-        el.addEventListener("mouseleave", function () { if (document.activeElement !== el) clear(); });
-        el.addEventListener("click", function () { touch(); show(k); });
-        el.addEventListener("focus", function () { touch(); show(k); });
-        el.addEventListener("blur", clear);
+        el.addEventListener("click", function () { stop(); show(k); later(); });
+        el.addEventListener("focus", function () { stop(); show(k); });
+        el.addEventListener("blur", function () { later(); });
         el.addEventListener("keydown", function (e) {
           var to = e.key === "ArrowDown" ? k + 1 : e.key === "ArrowUp" ? k - 1 : -1;
           if (to >= 0 && to < lines.length) { e.preventDefault(); lines[to].el.focus(); }
@@ -448,15 +446,21 @@
         var b = document.createElement("button");
         b.type = "button"; b.className = cls; b.innerHTML = html;
         b.setAttribute("aria-label", title); b.title = title;
-        b.addEventListener("click", function () { box.dataset.touched = "1"; stop(); act(); });
+        b.addEventListener("click", function () { stop(); act(); later(); });
         return b;
       };
       var stop = function () { clearTimeout(playing); playing = null; };
-      // (slowly through every line, then the summary a while, then round again, while in view)
-      var STEP = 3000, REST = 2500, inView = false;
+      // (slowly through every line, then the summary a while, then round again, while in view;
+      // whatever the reader does only pauses it: it carries on from the next line a little after)
+      var STEP = 3000, REST = 2500, PAUSE = 5000, inView = false;
+      var later = function () {
+        stop();
+        if (!inView || still) return;
+        playing = setTimeout(function () { run(current < 0 ? 0 : current + 1); }, PAUSE);
+      };
       var run = function (k) {
         stop();
-        if (box.dataset.touched || !inView) return;
+        if (!inView) return;
         if (k >= lines.length) { clear(); playing = setTimeout(function () { run(0); }, REST); return; }
         show(k);
         playing = setTimeout(function () { run(k + 1); }, lines[k].stages ? Math.max(STEP, 1000 * lines[k].stages.length + 800) : STEP);
@@ -480,19 +484,16 @@
       aside.appendChild(live);
       aside.appendChild(bar);
       stage.appendChild(aside);
-      if (!("IntersectionObserver" in window)) return;
-      if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      var still = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (!("IntersectionObserver" in window) || still) return;
       // (pointing pauses the loop; it picks up again a little after the pointer leaves)
-      box.addEventListener("mouseleave", function () {
-        if (box.dataset.touched) return;
-        clear(); stop();
-        playing = setTimeout(function () { run(0); }, REST);
-      });
+      box.addEventListener("mouseleave", function () { if (document.activeElement && box.contains(document.activeElement)) return; later(); });
+      // (it plays once a quarter of the block is on screen, so a tall block starts too)
       new IntersectionObserver(function (e) {
         inView = e[0].isIntersecting;
         if (!inView) { stop(); clear(); return; }
-        if (!box.dataset.touched && !playing) playing = setTimeout(function () { run(0); }, 800);
-      }, { threshold: 0.6 }).observe(box);
+        if (!playing) playing = setTimeout(function () { run(current < 0 ? 0 : current); }, 800);
+      }, { threshold: 0.25 }).observe(box);
     });
   };
   // The layouts of one diagram (.feynjs-layouts): buttons for the default, the grid and the final
@@ -556,7 +557,7 @@
       var buttons = ENDS.map(function (e, k) {
         var b = document.createElement("button");
         b.type = "button"; b.className = "feynjs-explain-button"; b.textContent = e.name;
-        b.addEventListener("click", function () { holder.dataset.touched = "1"; clearTimeout(timer); go(k); });
+        b.addEventListener("click", function () { pausedUntil = Date.now() + 6000; go(k); });
         bar.appendChild(b);
         return b;
       });
@@ -584,12 +585,19 @@
         };
         requestAnimationFrame(step);
       };
-      var loop = function () { timer = setTimeout(function () { if (!holder.dataset.touched) go((state + 1) % ENDS.length, loop); }, 2600); };
+      // (round the three while in view; a button press only pauses it)
+      var pausedUntil = 0;
+      var loop = function () {
+        timer = setTimeout(function () {
+          if (Date.now() < pausedUntil || running) { loop(); return; }
+          go((state + 1) % ENDS.length, loop);
+        }, 2600);
+      };
       mark(0);
       show(ends[0], 0);
       if (!still && "IntersectionObserver" in window) {
         new IntersectionObserver(function (seen) {
-          if (seen[0].isIntersecting) { if (!timer && !running && !holder.dataset.touched) loop(); }
+          if (seen[0].isIntersecting) { if (!timer && !running) loop(); }
           else { clearTimeout(timer); timer = null; }
         }, { threshold: 0.5 }).observe(box);
       }
