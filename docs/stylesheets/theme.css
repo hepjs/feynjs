@@ -553,3 +553,6 @@
   .md-typeset .feynjs-explain-stage { flex-direction: column; align-items: stretch; gap: 0.6rem; }
   .md-typeset .feynjs-explain-aside { flex: none; }
 }
+/* a quark-level diagram's process written with hadron names, small, under it (examples/flavour) */
+.md-typeset p.feynjs-as-hadrons { margin: 0.6rem 0 0.2rem; padding-top: 0.5rem; border-top: 1px dashed var(--md-default-fg-color--lightest); font-size: 0.64rem; color: var(--md-default-fg-color--light); }
+.md-typeset p.feynjs-as-hadrons + .feynman svg { max-height: 5.5rem; width: auto; }

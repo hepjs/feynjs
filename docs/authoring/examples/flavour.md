@@ -38,6 +38,14 @@ Quarks changing flavour inside hadrons: mixing boxes, penguins, the decays of B,
     hadron: \bar{B}^0 = f1 f2 [brace]
     ```
 
+    As hadrons, `B0 > B0bar`:
+    { .feynjs-as-hadrons }
+
+    ```feynman
+    size: small
+    B0 > B0bar
+    ```
+
     Two W bosons exchanged between the quark lines: the box that turns a B⁰ into a B̄⁰. The top
     quark dominates the loop.
 
@@ -67,6 +75,14 @@ Quarks changing flavour inside hadrons: mixing boxes, penguins, the decays of B,
     hadron: \bar{K}^{*0} = s d2 [brace]
     ```
 
+    As hadrons, `B0bar > K*0bar gamma`:
+    { .feynjs-as-hadrons }
+
+    ```feynman
+    size: small
+    B0bar > K*0bar gamma
+    ```
+
     The photon leaves the W in the loop, and the d̄ is a spectator. This one is drawn with the
     older layout engine, `layout: v1`, which sends the photon up clear of the loop.
 
@@ -88,6 +104,14 @@ Quarks changing flavour inside hadrons: mixing boxes, penguins, the decays of B,
     a -- [W+] b
     mu [mu+] -- [fermion] b -- [fermion] nu [nu_mu]
     meson: \pi^+ = u d
+    ```
+
+    As hadrons, `pi+ > mu+ vm`:
+    { .feynjs-as-hadrons }
+
+    ```feynman
+    size: small
+    pi+ > mu+ vm
     ```
 
     The u and d̄ annihilate into a W⁺. Helicity suppression makes μ⁺ν<sub>μ</sub> win over
@@ -121,6 +145,14 @@ Quarks changing flavour inside hadrons: mixing boxes, penguins, the decays of B,
     hadron: K^{*0} = d2 s [brace]
     ```
 
+    As hadrons, `B0 > K*0 mu+ mu-`:
+    { .feynjs-as-hadrons }
+
+    ```feynman
+    size: small
+    B0 > K*0 mu+ mu-
+    ```
+
 -   **Penguin: a loop on the quark line**
 
     ```feynman
@@ -151,6 +183,14 @@ Quarks changing flavour inside hadrons: mixing boxes, penguins, the decays of B,
     hadron: K^{*0} = d2 s [brace]
     ```
 
+    As hadrons, `B0 > K*0 mu+ mu-`:
+    { .feynjs-as-hadrons }
+
+    ```feynman
+    size: small
+    B0 > K*0 mu+ mu-
+    ```
+
 -   **Meson decay with hadron ellipses**
 
     ```feynman
@@ -177,6 +217,14 @@ Quarks changing flavour inside hadrons: mixing boxes, penguins, the decays of B,
     meson: B_c^+ = c1 b
     meson: J/\psi = c2 cbar
     meson: D_s^+ = s c3
+    ```
+
+    As hadrons, `Bc+ > jpsi Ds+`:
+    { .feynjs-as-hadrons }
+
+    ```feynman
+    size: small
+    Bc+ > jpsi Ds+
     ```
 
 -   **A line that changes particle (mixing)**
@@ -259,6 +307,14 @@ Figures from ATLAS publications, each written as a few lines of feynjs and laid 
     hadron: K^{*0} = d2 s [brace]
     ```
 
+    As hadrons, `B0 > K*0 mu+ mu-`:
+    { .feynjs-as-hadrons }
+
+    ```feynman
+    size: small
+    B0 > K*0 mu+ mu-
+    ```
+
     <small>ATLAS, [BPHY-2013-02](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/BPHY-2013-02/), auxiliary figure 1a</small>
 
 -   **B⁰ → K*μμ · b**
@@ -305,6 +361,14 @@ Figures from ATLAS publications, each written as a few lines of feynjs and laid 
     mu2 -- [fermion] m
     hadron: B^0 = d1 b [brace]
     hadron: K^{*0} = d2 s [brace]
+    ```
+
+    As hadrons, `B0 > K*0 mu+ mu-`:
+    { .feynjs-as-hadrons }
+
+    ```feynman
+    size: small
+    B0 > K*0 mu+ mu-
     ```
 
     <small>ATLAS, [BPHY-2013-02](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/BPHY-2013-02/), auxiliary figure 1b</small>
@@ -355,6 +419,14 @@ Figures from ATLAS publications, each written as a few lines of feynjs and laid 
     hadron: K^{*0} = d2 sb [brace]
     ```
 
+    As hadrons, `B0 > K*0 mu+ mu-`:
+    { .feynjs-as-hadrons }
+
+    ```feynman
+    size: small
+    B0 > K*0 mu+ mu-
+    ```
+
     <small>ATLAS, [BPHY-2013-02](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/BPHY-2013-02/), auxiliary figure 1c</small>
 
 -   **B<sub>c</sub> → J/ψ D<sub>s</sub> · a**
@@ -393,6 +465,14 @@ Figures from ATLAS publications, each written as a few lines of feynjs and laid 
     hadron: D_s^{(*)+} = dt db
     ```
 
+    As hadrons, `Bc+ > jpsi Ds+`:
+    { .feynjs-as-hadrons }
+
+    ```feynman
+    size: small
+    Bc+ > jpsi Ds+
+    ```
+
     <small>ATLAS, [BPHY-2018-08](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/BPHY-2018-08/), figure 1a</small>
 
 -   **B<sub>c</sub> → J/ψ D<sub>s</sub> · b**
@@ -423,6 +503,14 @@ Figures from ATLAS publications, each written as a few lines of feynjs and laid 
     meson: D_s^{(*)+} = s1 c3
     ```
 
+    As hadrons, `Bc+ > jpsi Ds+`:
+    { .feynjs-as-hadrons }
+
+    ```feynman
+    size: small
+    Bc+ > jpsi Ds+
+    ```
+
     <small>ATLAS, [BPHY-2018-08](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/BPHY-2018-08/), figure 1b</small>
 
 -   **B<sub>c</sub> → J/ψ D<sub>s</sub> · c**
@@ -451,6 +539,14 @@ Figures from ATLAS publications, each written as a few lines of feynjs and laid 
     meson: B_c^+ = b1 c1
     meson: D_s^{(*)+} = s1 c2
     meson: J/\psi = cb c3
+    ```
+
+    As hadrons, `Bc+ > jpsi Ds+`:
+    { .feynjs-as-hadrons }
+
+    ```feynman
+    size: small
+    Bc+ > jpsi Ds+
     ```
 
     <small>ATLAS, [BPHY-2018-08](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/BPHY-2018-08/), figure 1c</small>
@@ -489,6 +585,14 @@ Figures from ATLAS publications, each written as a few lines of feynjs and laid 
     meson: = b2b b2a [hatched]
     ```
 
+    As hadrons, `g g > jpsi jpsi`:
+    { .feynjs-as-hadrons }
+
+    ```feynman
+    size: small
+    g g > jpsi jpsi
+    ```
+
     <small>ATLAS, [BPHY-2015-02](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/BPHY-2015-02/), figure 1a</small>
 
 -   **J/ψ pairs · b**
@@ -519,6 +623,14 @@ Figures from ATLAS publications, each written as a few lines of feynjs and laid 
     t -- [gluon] g3
     meson: J/\psi = a1 a2
     meson: J/\psi = c1 c2
+    ```
+
+    As hadrons, `g g > jpsi jpsi`:
+    { .feynjs-as-hadrons }
+
+    ```feynman
+    size: small
+    g g > jpsi jpsi
     ```
 
     <small>ATLAS, [BPHY-2015-02](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/BPHY-2015-02/), figure 1b</small>
@@ -557,6 +669,14 @@ Figures from ATLAS publications, each written as a few lines of feynjs and laid 
     meson: = b1 b2 [hatched]
     ```
 
+    As hadrons, `g g > jpsi jpsi`:
+    { .feynjs-as-hadrons }
+
+    ```feynman
+    size: small
+    g g > jpsi jpsi
+    ```
+
     <small>ATLAS, [BPHY-2015-02](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/BPHY-2015-02/), figure 1c</small>
 
 -   **J/ψ pairs · d**
@@ -587,6 +707,14 @@ Figures from ATLAS publications, each written as a few lines of feynjs and laid 
     a2 -- [fermion] m2 [hatched blob] -- [fermion] c2 -- [fermion] b2 -- [fermion] a2
     ```
 
+    As hadrons, `g g > jpsi jpsi`:
+    { .feynjs-as-hadrons }
+
+    ```feynman
+    size: small
+    g g > jpsi jpsi
+    ```
+
     <small>ATLAS, [BPHY-2015-02](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/BPHY-2015-02/), figure 1d</small>
 
 -   **H → meson + γ**
@@ -609,6 +737,14 @@ Figures from ATLAS publications, each written as a few lines of feynjs and laid 
     qj [\bar q_j] -- [fermion] w -- [fermion, label=\bar q_j] v
     w -- [photon] y [\gamma]
     meson: \mathcal{M} = qi qj [cap]
+    ```
+
+    As hadrons, `H > jpsi gamma`:
+    { .feynjs-as-hadrons }
+
+    ```feynman
+    size: small
+    H > jpsi gamma
     ```
 
     <small>ATLAS, [HDBS-2018-52](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/HDBS-2018-52/), figure 1</small>
