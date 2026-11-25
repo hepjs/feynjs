@@ -45,8 +45,8 @@ export const FAMILIES: Family[] = [
   },
   {
     name: "incoming", letter: "I", colour: "#0e9f8e",
-    about: "the incoming lines come in mirrored, converging or level; an exchange between them stands upright; a resonance they make at rest runs level",
-    forces: ["beams start together", "straight into blob", "rest level", "upright exchange", "exchange fan"],
+    about: "the incoming lines come in mirrored, converging or level; an exchange between them stands upright; a resonance they make at rest runs level; a line scattered off a nucleus comes in toward it and leaves away",
+    forces: ["beams start together", "straight into blob", "rest level", "upright exchange", "exchange fan", "nucleus scatter"],
     settings: ["beams", "beamsMirror", "blobBeamLength", "blobBeamFlow", "restLevel", "uprightExchange"],
   },
   {

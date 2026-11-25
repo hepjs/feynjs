@@ -40,6 +40,8 @@ export const STYLES: Record<string, EdgeStyle> = {
   "double": { line: "double", arrow: 0 },
   "heavy": { line: "plain", arrow: 1, heavy: true },
   "proton": { line: "triple", arrow: 0 },
+  // a nucleus's path: a plain line with no arrow, which is no fermion's
+  "ion": { line: "plain", arrow: 0, cls: "ion" },
   "jet": { line: "jet", arrow: 0 },
   // three dots where a leg would be: "and more" (h -> l l + X)
   "ellipsis": { line: "ellipsis", arrow: 0 },

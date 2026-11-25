@@ -44,6 +44,8 @@ export class Scene {
   /** each line's name in the drawing, `a--b` (`a--b#2` for a second line between the same points) */
   edgeIds = new Map<Edge, string>();
   vertices: string[] = [];
+  /** drawn over the points: a line reaching into a nucleus, over its nucleons */
+  over: string[] = [];
   labels: string[] = [];
   /** hadron shapes as drawn (braces, ellipses, caps), in px, for exports that redraw them (toTikz) */
   shapes: (
@@ -146,6 +148,11 @@ export class Scene {
 
   addObstaclePoint(p: Pt, radius: number, kind?: string): void {
     this.obstacles.push({ x: p.x, y: p.y, radius, kind });
+  }
+
+  /** A label drawn already, by a view of its own: notes keep clear of it as of any other. */
+  addLabelBox(box: Rectangle): void {
+    this.labelBoxes.push(box);
   }
 
   /**

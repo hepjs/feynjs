@@ -1,5 +1,7 @@
 import { bagRadius, bagReach, bagSvg } from "./bag.ts";
-import { nucleusRadius, nucleusSvg } from "./nucleus.ts";
+import { nucleusRadius, nucleusSvg, recoilSvg, recoiledTo } from "./nucleus.ts";
+import { Curve } from "../geometry/curve.ts";
+import { drawLine } from "./lines.ts";
 import type { Pt } from "../geometry/curve.ts";
 import { fmt } from "../geometry/curve.ts";
 import type { Vertex } from "../model.ts";
@@ -70,7 +72,7 @@ export function drawVertexShape(scene: Scene, v: Vertex): void {
     // (the same grey as the decay vertices: one kind of point, as papers shade them)
     case "blob": svg = `<circle class="feynjs-collision" ${at} r="${look.blob}" fill="${color ?? look.smallBlobFill}" ${outline}/>`; break;
     case "bag": svg = bagSvg(p, v.bag?.quarks ?? [], scene.theme, !!v.bag?.motion); break;
-    case "nucleus": svg = nucleusSvg(p, v.nucleus?.A ?? 1, v.nucleus?.Z ?? 0, look.nucleusUnit, { proton: look.proton, neutron: look.neutron, edge: look.nucleonEdge, protonEdge: look.protonEdge, neutronEdge: look.neutronEdge }); break;
+    case "nucleus": svg = nucleusAt(scene, v, p); break;
     case "smallhatched":
       scene.usesHatching = true;
       svg = `<circle class="feynjs-bg" ${at} r="${look.smallBlob * 1.6}" fill="#fff"/><circle ${at} r="${look.smallBlob * 1.6}" fill="url(#${scene.idPrefix}-hatch)" ${outline}${colorAttr}/>`;
@@ -82,7 +84,8 @@ export function drawVertexShape(scene: Scene, v: Vertex): void {
   }
   if (svg) scene.vertices.push(`<g data-vertex="${v.id.replace(/"/g, "&quot;")}">${svg}</g>`);
   // a pulse: two rings, out of step, growing from the point's rim and fading, behind it
-  if (v.pulse !== undefined) {
+  // (on a nucleus, its energy instead: a still glow and rings, drawn with the nucleus)
+  if (v.pulse !== undefined && v.shape !== "nucleus") {
     const from = Math.max(vertexRadius(v, look), r, 5), to = from * 2.8, beat = scene.theme.pulseSeconds;
     const colour = scene.resolveColor(v.pulse || undefined) ?? scene.theme.pulseColor;
     const ring = (delay: number) => `<circle class="feynjs-pulse" ${at} r="${fmt(from)}" fill="none" stroke="${colour}" stroke-width="${fmt(scene.theme.line.stroke * 1.4)}" opacity="0">`
@@ -93,6 +96,84 @@ export function drawVertexShape(scene: Scene, v: Vertex): void {
   }
   if (v.shape !== "none") scene.addObstaclePoint(p, Math.max(vertexRadius(v, look), r));
   scene.bounds.include(p.x, p.y, Math.max(vertexRadius(v, look), v.shape === "none" ? 0 : r) + 1);
+}
+
+/**
+ * A nucleus as drawn at its point, with what it may carry: its energy (`pulse`, `excited`, or a
+ * star, `Xe*`), a still warm glow and faint rings round it; its recoil (`recoil`), the nucleus
+ * moved on with faint copies trailing back to where it was hit; and what it gives off (`emits=gamma`),
+ * a short line out of it, away from what hits it.
+ */
+function nucleusAt(scene: Scene, v: Vertex, p: Pt): string {
+  const look = scene.theme.vertex, R = nucleusRadius(v.nucleus?.A ?? 1, look.nucleusUnit);
+  const colours = { proton: look.proton, neutron: look.neutron, edge: look.nucleonEdge, protonEdge: look.protonEdge, neutronEdge: look.neutronEdge };
+  const one = (at: Pt) => nucleusSvg(at, v.nucleus?.A ?? 1, v.nucleus?.Z ?? 0, look.nucleusUnit, colours);
+  // (away from what hits it: against the lines that meet it, on average; up and to the right with none)
+  const angles = scene.lineAngles.get(v.id) ?? [];
+  const sum = angles.reduce((s, a) => ({ x: s.x - portable.cos(a), y: s.y - portable.sin(a) }), { x: 0, y: 0 }), n = portable.hypot(sum.x, sum.y);
+  const away = n > 1e-6 ? { x: sum.x / n, y: sum.y / n } : { x: Math.SQRT1_2, y: -Math.SQRT1_2 };
+  let svg = "";
+  const dir = v.recoil !== undefined ? recoilDirection(v.recoil) ?? away : undefined;
+  // (the nucleus where it is drawn: moved on, if it recoils)
+  const centre = dir ? recoiledTo(p, dir, R) : p;
+  if (v.pulse !== undefined) {
+    const glow = energyGlow(centre, R, scene.resolveColor(energyColour(v.pulse)) ?? energyColour(v.pulse), energyLevel(v.pulse), scene.theme.line.stroke);
+    scene.edges.unshift(glow.svg);
+    scene.bounds.include(centre.x, centre.y, glow.reach + 1);
+  }
+  if (dir) {
+    svg = recoilSvg(p, dir, R, one, scene.theme.line.stroke);
+    scene.bounds.include(centre.x, centre.y, R + 1);
+    scene.bounds.include(p.x - dir.x * R * 1.7, p.y - dir.y * R * 1.7, 1);
+    scene.addObstaclePoint(centre, R);
+  } else svg = one(p);
+  if (v.emits) {
+    // (a short line out of it, from inside, ending in its name; turned off the recoil's way when it has one)
+    const turn = v.recoil !== undefined ? -0.8 : 0;
+    const u = { x: away.x * portable.cos(turn) - away.y * portable.sin(turn), y: away.x * portable.sin(turn) + away.y * portable.cos(turn) };
+    const particle = lookupParticle(v.emits), from = { x: p.x + u.x * R * 0.6, y: p.y + u.y * R * 0.6 }, to = { x: p.x + u.x * (R + scene.theme.unitX * 0.75), y: p.y + u.y * (R + scene.theme.unitX * 0.75) };
+    scene.over.push(`<g class="feynjs-emitted" data-particle="${v.emits.replace(/"/g, "&quot;")}">${drawLine(Curve.line(from, to), { ...(particle?.style ?? { line: "wave", arrow: 0 }), arrow: 0 }, scene.theme.line)}</g>`);
+    scene.addObstacleCurve(Curve.line(from, to), scene.theme.line.waveAmplitude);
+    scene.bounds.include(to.x, to.y, 2);
+    scene.requestLabel(particle?.label ?? v.emits, legLabelSpots(to, u), scene.theme.labelGap + 1, undefined, 1, true);
+  }
+  return svg;
+}
+
+/** Where a recoil goes, as written: `down`, `up`, `left`, `right`, or an angle (degrees, anticlockwise from the right); undefined, away from what hits it. */
+function recoilDirection(written: string): Pt | undefined {
+  const words: Record<string, Pt> = { down: { x: 0, y: 1 }, up: { x: 0, y: -1 }, left: { x: -1, y: 0 }, right: { x: 1, y: 0 } };
+  if (words[written.trim().toLowerCase()]) return words[written.trim().toLowerCase()];
+  const degrees = Number(written);
+  if (!written.trim() || !Number.isFinite(degrees)) return undefined;
+  const a = (degrees * Math.PI) / 180;
+  return { x: portable.cos(a), y: -portable.sin(a) };
+}
+
+/** How much energy `pulse=` says: 1 (low, and `pulse` alone), 2 (medium), 3 (high), or a number between. */
+export function energyLevel(written: string): number {
+  const word: Record<string, number> = { low: 1, medium: 2, high: 3 };
+  const n = word[written.trim().toLowerCase()] ?? Number(written);
+  return Number.isFinite(n) && written.trim() ? Math.max(1, Math.min(3, n)) : 1.4;
+}
+
+/** The colour of a nucleus's energy: amber, warming toward a hot near-white yellow with more (`pulse=high`), or as written (`pulse=#ffaa00`). */
+export function energyColour(written: string): string {
+  const level = written.trim().toLowerCase();
+  if (level && !/^(low|medium|high|[\d.]+)$/.test(level)) return written.trim();
+  // (soft amber at 1, golden at 2, near-white yellow at 3)
+  const stops = [[0xe6, 0x9a, 0x3c], [0xf4, 0xc4, 0x3f], [0xff, 0xf3, 0xb0]], t = energyLevel(written) - 1;
+  const [lo, hi] = t < 1 ? [stops[0], stops[1]] : [stops[1], stops[2]], f = t < 1 ? t : t - 1;
+  return `#${lo.map((c, k) => Math.round(c + (hi[k] - c) * f).toString(16).padStart(2, "0")).join("")}`;
+}
+
+/** A nucleus's energy, still: a soft glow behind it and two or three faint rings round it, more for more energy. */
+export function energyGlow(p: Pt, R: number, colour: string, level: number, stroke: number): { svg: string; reach: number } {
+  const rings = level >= 2 ? 3 : 2, gap = R * 0.22 + 2;
+  const circle = (r: number, attrs: string) => `<circle cx="${fmt(p.x)}" cy="${fmt(p.y)}" r="${fmt(r)}" ${attrs}/>`;
+  const svg = `<g class="feynjs-energy">${circle(R * 1.12 + 1, `fill="${colour}" fill-opacity="0.32"`)}${circle(R * 1.3 + 2, `fill="${colour}" fill-opacity="0.14"`)}`
+    + Array.from({ length: rings }, (_, k) => circle(R + gap * (k + 1) + 1, `fill="none" stroke="${colour}" stroke-width="${fmt(stroke * 0.8)}" stroke-opacity="${fmt(0.6 - k * 0.17)}"`)).join("") + `</g>`;
+  return { svg, reach: R + gap * rings + 2 };
 }
 
 /** Label of an external leg: continues the line outward, coloured like its particle. */
@@ -128,7 +209,9 @@ export function labelExternalLeg(scene: Scene, v: Vertex): void {
     scene.requestLabel(v.label, legLabelSpots(base, { x: 1, y: 0 }), scene.theme.labelGap + 1, color, 1, true, cls, v.particle);
     return;
   }
-  scene.requestLabel(v.label, legLabelSpots(scene.position(v), direction), scene.theme.labelGap + 1, color, 1, true, cls, v.particle);
+  // (a leg that ends in a nucleus is named clear of the nucleus, not of its middle)
+  const reach = v.shape === "nucleus" ? vertexRadius(v, scene.theme.vertex) : 0;
+  scene.requestLabel(v.label, legLabelSpots(scene.position(v), direction), scene.theme.labelGap + 1 + reach, color, 1, true, cls, v.particle);
 }
 
 /** Places a leg label may go, best first: straight on from the line, then swung to either side. */

@@ -8,6 +8,8 @@ tags:
   - lattice QCD
   - Wilson loop
   - plaquette
+  - nuclear reaction
+  - decay chain
 ---
 
 # Views
@@ -38,6 +40,9 @@ the left; with it, the event as the detector sees it, looking along the beam.
   goes, as the detector records it.
 - `view: lattice` draws space-time cut into sites and links, as lattice QCD does. It needs no
   diagram, only its own switches.
+- `view: reaction`, the picture a nuclear process line is drawn as unless `view: diagram` asks
+  for its diagram, draws a nuclear reaction as textbooks do: the nuclei coming in, a burst, and
+  what it makes flying out; or a decay chain, step by step.
 
 ## The kinematic view
 
@@ -342,4 +347,128 @@ plaquette: (0,1)
 plaquette: (3,1) [color=orange, label=U_{\mu\nu}(y)]
 link: (5,0) to (5,1)
 site: (1,3) [color=blue, label=\psi(x)]
+```
+
+## The reaction picture
+
+A [nuclear process line](vertices.md#nuclei-in-a-process) is drawn as the textbook cartoon of a
+reaction (`view: reaction` names it; `view: diagram` draws the diagram instead): what comes in on
+the left, each nucleus with an arrow into the middle; a burst there; and what is made fanned out
+on the right, each with an arrow away from the burst, a lepton's plain, every one named on its
+outer side. A photon among what is made comes out of the nucleus that gives it off.
+
+```feynman
+2H 3H > 4He n
+---
+235U n > 141Ba 92Kr n n n
+```
+
+```text
+2H 3H > 4He n
+---
+235U n > 141Ba 92Kr n n n
+```
+
+The nuclei are drawn at their true sizes, one nucleon as large in all of them. Every arrow is the
+same length, the legs on both sides the same angle apart, the picture even about the burst; the
+arrows grow only as much as large neighbours, and their names, need to clear each other.
+
+```feynman
+2H p > 3He gamma
+---
+p p > 2H e+ ve
+---
+4He 4He 4He > 12C
+```
+
+```text
+2H p > 3He gamma
+---
+p p > 2H e+ ve
+---
+4He 4He 4He > 12C
+```
+
+Three kinds of process have pictures of their own:
+
+- a photon breaking a nucleus up (`gamma 2H > p n`, `gamma 16O > 15N p`): no burst, the photon
+  reaching into the nucleus, the fragments flying out of it;
+- an elastic scattering, the same in as out (`chi Xe > chi Xe`, `n 12C > n 12C`): what comes in
+  meets the nucleus and leaves deflected, and the nucleus recoils, its after-image trailing back
+  to where it was hit; `signal: on` adds what a detector sees, a few photons of scintillation
+  light and the electrons of ionisation;
+- an excited nucleus giving off a photon (`12C* > 12C gamma`): the nucleus glowing, the photon
+  radiating out of it.
+
+```feynman
+gamma 2H > p n
+---
+n 12C > n 12C
+---
+12C* > 12C gamma
+```
+
+```text
+gamma 2H > p n
+---
+n 12C > n 12C
+---
+12C* > 12C gamma
+```
+
+### Decay chains
+
+A nuclear process that decays on, by later `>` lines or after commas, is drawn as a decay chain:
+each nucleus in turn, joined by arrows, and what each step gives off (the alpha as a small helium
+nucleus, the beta as its electron and antineutrino) branching off its arrow, small and to one side.
+Each arrow is named with its mode, α, β⁻, β⁺ or γ, where what it gives off tells it.
+
+```feynman
+238U > 234Th 4He
+234Th > 234Pa e- ve~
+234Pa > 234U e- ve~
+```
+
+```text
+238U > 234Th 4He
+234Th > 234Pa e- ve~
+234Pa > 234U e- ve~
+```
+
+| Switch | Draws |
+|---|---|
+| `chain: straight` | the chain left to right (the default) |
+| `chain: curve` | the chain along a gentle arc, so a long one fits |
+| `modes: off` | no α, β⁻, β⁺, γ over the arrows |
+
+```feynman
+chain: curve
+238U > 234Th 4He, 234Th > 234Pa e- ve~, 234Pa > 234U e- ve~
+note: 238U--234Th "alpha decay"
+note: 234Pa "short-lived" below
+```
+
+```text
+chain: curve
+238U > 234Th 4He, 234Th > 234Pa e- ve~, 234Pa > 234U e- ve~
+note: 238U--234Th "alpha decay"
+note: 234Pa "short-lived" below
+```
+
+### Notes
+
+`note:` lines work in these pictures as in any diagram, pointing at a nucleus or particle by name
+(`4He`, `n`, `e-`; the first where there are several), at the burst (`burst`), or at an arrow
+between two (`238U--234Th`, `2H--burst`).
+
+```feynman
+2H 3H > 4He n
+note: burst "fusion"
+note: n "14.1 MeV" below
+```
+
+```text
+2H 3H > 4He n
+note: burst "fusion"
+note: n "14.1 MeV" below
 ```

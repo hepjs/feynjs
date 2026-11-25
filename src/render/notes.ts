@@ -17,6 +17,21 @@ export function drawNotes(scene: Scene, d: Diagram): void {
   notes.forEach((text, k) => drawNote(scene, d, text, k));
 }
 
+/**
+ * Notes in a view that draws on its own (a reaction, a decay chain, a grid of nuclei): the same
+ * words and hand-drawn arrows, each pointing at whatever `targetOf` finds for its target, which
+ * may be any name the view knows (`4He`, `e-`, `burst`, `238U--234Th`, `(2, 1)`).
+ */
+export function drawViewNotes(scene: Scene, notes: string | undefined, targetOf: (target: string) => { point: Pt; reach: number } | undefined): void {
+  (notes ?? "").split("\n").filter((n) => n.trim()).forEach((written, index) => {
+    const m = /^\s*(\([^)]*\)|[^\s"{]+?(?:\s*--\s*[^\s"{]+)?)\s+(?:"([^"]*)"|\{(.*)\})\s*(above|below|left|right)?\s*$/.exec(written);
+    if (!m) throw new FeynError(`write a note as: note: 4He "words" (a nucleus or particle by name), or note: 238U--234Th "words" below (an arrow between two)`);
+    const target = targetOf(m[1].trim());
+    if (!target) throw new FeynError(`a note points at something drawn: a nucleus or particle by name (4He, e-), the burst, or an arrow between two (238U--234Th): no "${m[1].trim()}"`);
+    placeNote(scene, target.point, target.reach, m[2] ?? m[3] ?? "", m[4], index);
+  });
+}
+
 const SIDES: Record<string, Pt> = { above: { x: 0, y: -1 }, below: { x: 0, y: 1 }, left: { x: -1, y: 0 }, right: { x: 1, y: 0 } };
 
 /** One note: `target "text" [side]`, the target a point or a line `a--b`, the text in quotes or braces. */
@@ -24,12 +39,16 @@ function drawNote(scene: Scene, d: Diagram, written: string, index: number): voi
   const m = /^\s*([\w']+(?:\s*--\s*[\w']+)?)\s+(?:"([^"]*)"|\{(.*)\})\s*(above|below|left|right)?\s*$/.exec(written);
   if (!m) throw new FeynError(`write a note as: note: a "words" (a point), or note: a--b "words" below (a line)`);
   const { point, reach } = targetOf(scene, d, m[1].replace(/\s+/g, ""));
-  const words = m[2] ?? m[3] ?? "";
+  placeNote(scene, point, reach, m[2] ?? m[3] ?? "", m[4], index);
+}
+
+/** A note's words set near `point`, clear of what is drawn, and its arrow to it. */
+function placeNote(scene: Scene, point: Pt, reach: number, words: string, side: string | undefined, index: number): void {
   // (plain words are set upright as words; anything with TeX in it as written)
   const tex = /[\\^_$]/.test(words) ? words : `\\text{${words}}`;
   // (away from the diagram's middle, unless a side is asked for)
   const away = { x: point.x - scene.core.x, y: point.y - scene.core.y }, n = portable.hypot(away.x, away.y);
-  const prefer = m[4] ? SIDES[m[4]] : n > 1 ? { x: away.x / n, y: away.y / n } : { x: 0, y: -1 };
+  const prefer = side ? SIDES[side] : n > 1 ? { x: away.x / n, y: away.y / n } : { x: 0, y: -1 };
   const turn = (v: Pt, deg: number) => { const t = (deg * Math.PI) / 180; return { x: v.x * portable.cos(t) - v.y * portable.sin(t), y: v.x * portable.sin(t) + v.y * portable.cos(t) }; };
   const far = scene.theme.unitX * 0.75;
   const spots = [0, 25, -25, 50, -50, 80, -80].flatMap((deg) => [1, 1.35, 1.7].map((k) => ({ spot: { anchor: point, direction: turn(prefer, deg) }, clearance: reach + far * k })));

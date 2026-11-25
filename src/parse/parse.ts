@@ -1,10 +1,10 @@
 import { asMolecule, quarksOf } from "../render/bag.ts";
-import { nucleusFrom } from "../render/nucleus.ts";
+import { elementSymbol, nucleusFrom, uprightElement } from "../render/nucleus.ts";
 import { OBJECT_NAMES, parseObject } from "../particles/objects.ts";
 import { expandChains } from "./chains.ts";
 import { lengthInLines } from "./lengths.ts";
 import { FeynError } from "../model.ts";
-import type { Diagram, Edge, EdgeStyle, HadronGroup, Vertex, VertexShape } from "../model.ts";
+import type { DecayStep, Diagram, Edge, EdgeStyle, HadronGroup, Vertex, VertexShape } from "../model.ts";
 import { STYLES, lookupParticle, particleNames } from "../particles/registry.ts";
 import * as portable from "../geometry/portable-math.ts";
 
@@ -134,7 +134,13 @@ function edgeKinds(e: Edge, opts: Opt[]): string[] {
 /** A nucleus with both its numbers: from `A=` and `Z=`, else its symbol, else the leg's name (`[Pb, nucleus]`). */
 function wholeNucleus(v: Vertex): void {
   const named = v.label ? nucleusFrom(v.label) : undefined;
-  const A = v.nucleus?.A ?? named?.A, Z = v.nucleus?.Z ?? named?.Z;
+  // (`N=`, its neutrons, with its protons makes its mass number: [nucleus=C, N=8] is carbon-14)
+  const Z = v.nucleus?.Z ?? named?.Z, N = v.nucleus?.N;
+  // (a bare symbol's usual mass number gives way to the neutrons written: nucleus=C is carbon-12
+  // until N=8 says otherwise)
+  const usual = Z !== undefined ? nucleusFrom(elementSymbol(Z))?.A : undefined;
+  const A = N !== undefined && Z !== undefined && (v.nucleus?.A === undefined || v.nucleus.A === usual) ? Z + N : v.nucleus?.A ?? named?.A;
+  if (N !== undefined && A !== undefined && Z !== undefined && A !== Z + N) throw new FeynError(`the nucleus at ${v.id} has Z=${Z} and N=${N}, which make A=${Z + N}, not ${A}`);
   if (A === undefined || Z === undefined) throw new FeynError(`the nucleus at ${v.id} needs its numbers: write nucleus=Pb (or 208Pb), or A= and Z=`);
   if (Z > A || A < 1) throw new FeynError(`the nucleus at ${v.id} has Z=${Z} protons in A=${A} nucleons: Z cannot be more than A`);
   v.nucleus = { A, Z };
@@ -169,7 +175,8 @@ export function parse(source: string): Diagram {
   // (a TikZ-Feynman picture is converted once, not read here: a feynman fence holds feynjs's lines)
   refuseTikzPicture(source);
   // decay chains ("p p > gluino gluino") are written out as ordinary lines first
-  source = expandChains(source);
+  const found: { nuclear?: boolean; decayChain?: DecayStep[] } = {};
+  source = expandChains(source, found);
   const vertices = new Map<string, Vertex>();
   const edges: Edge[] = [];
   const directives: Record<string, string> = {};
@@ -194,12 +201,15 @@ export function parse(source: string): Diagram {
         else if (o.key === "cone") v.coneMark = true;
         else if (o.key === "pulse") v.pulse = "";
         else if (o.key === "nucleus") { v.shape = "nucleus"; v.nucleus = { ...(v.nucleus ?? {}) }; }
+        else if (o.key === "recoil") v.recoil = "";
+        // (an excited nucleus: its glow, as `pulse` alone gives it)
+        else if (o.key === "excited") v.pulse = "";
         else if (o.key === "motion") v.bag = { quarks: v.bag?.quarks ?? [], motion: true, molecule: v.bag?.molecule };
         else if (o.key === "molecule") v.bag = { quarks: v.bag?.quarks ? asMolecule(v.bag.quarks) : [], motion: v.bag?.motion, molecule: true };
         else {
           const p = lookupParticle(o.key);
           if (p) { v.particle = o.key; v.label = p.label; }
-          else v.label = stripMath(o.key); // free-form TeX label
+          else v.label = uprightElement(o.key) ?? stripMath(o.key); // free-form TeX label (an element's symbol upright)
         }
       } else if (o.key === "particle") {
         const p = lookupParticle(o.value);
@@ -219,11 +229,15 @@ export function parse(source: string): Diagram {
       }
       else if (o.key === "color" || o.key === "colour") v.color = o.value;
       else if (o.key === "shape" && o.value in SHAPES) v.shape = SHAPES[o.value];
-      else if (o.key === "pulse") v.pulse = o.value;
+      else if (o.key === "pulse" || o.key === "excited") v.pulse = o.value;
+      else if (o.key === "recoil") v.recoil = o.value;
+      else if (o.key === "emits") v.emits = o.value;
       else if (o.key === "nucleus") {
         const n = nucleusFrom(o.value);
         if (!n) throw new FeynError(`unknown nucleus "${o.value}": write a symbol such as Pb, Au or 208Pb, or give A= and Z=`, line);
         v.shape = "nucleus";
+        // (a star, Xe*, is an excited nucleus: it glows)
+        if (/\*\s*$/.test(o.value) && v.pulse === undefined) v.pulse = "";
         v.nucleus = { ...n, ...Object.fromEntries(Object.entries(v.nucleus ?? {}).filter(([, k]) => k !== undefined)) };
       }
       else if (o.key === "bag") {
@@ -232,7 +246,7 @@ export function parse(source: string): Diagram {
         v.shape = "bag";
         v.bag = { quarks: v.bag?.molecule ? asMolecule(quarks) : quarks, motion: v.bag?.motion, molecule: v.bag?.molecule };
       }
-      else if (o.key === "A" || o.key === "Z") {
+      else if (o.key === "A" || o.key === "Z" || o.key === "N") {
         const k = Number(o.value);
         if (!(Number.isInteger(k) && k >= 0 && k <= 300)) throw new FeynError(`${o.key} is a whole number up to 300`, line);
         v.shape = "nucleus";
@@ -359,6 +373,12 @@ export function parse(source: string): Diagram {
       else if (o.key === "draw" && o.value.trim() === "none") { style = { ...style, ...STYLES.invisible }; e.styled = true; }
       else if (o.key === "pulse") e.pulse = o.value;
       else if (o.key === "lifetime") e.lifetime = o.value;
+      // (a line's own length, a share of the usual one or a length in cm: `length=1.5`, `length=2cm`)
+      else if (o.key === "length") {
+        const k = lengthInLines(o.value, line);
+        if (!(k > 0)) throw new FeynError(`a line's length is more than nothing, such as length=1.5 or length=2cm`, line);
+        e.length = k;
+      }
       else throw new FeynError(`unknown edge option "${o.key}"`, line);
     }
     if (e.label === undefined && autoLabel) e.label = autoLabel;
@@ -465,7 +485,7 @@ export function parse(source: string): Diagram {
   placeFromOthers(vertices, placedFrom);
   for (const v of vertices.values()) if (v.shape === "nucleus") wholeNucleus(v);
   if (relabel.size) relabelParticles(vertices, edges, relabel);
-  return { vertices, edges, hadrons, directives };
+  return { vertices, edges, hadrons, directives, ...(found.nuclear ? { nuclear: true } : {}), ...(found.decayChain ? { decayChain: found.decayChain } : {}) };
 }
 
 function matchBracket(s: string, start: number, line: number): number {

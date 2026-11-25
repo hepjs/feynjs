@@ -17,11 +17,57 @@ export const ELEMENTS: Record<string, [number, number]> = {
 };
 
 /**
+ * Every element up to plutonium, in order of Z, each with its most common isotope's A (or its
+ * longest lived, where none is stable): the ones above, which colliders use, keep theirs.
+ */
+const PERIODIC = ("H1 He4 Li7 Be9 B11 C12 N14 O16 F19 Ne20 Na23 Mg24 Al27 Si28 P31 S32 Cl35 Ar40 K39 Ca40 Sc45 Ti48 V51 Cr52 "
+  + "Mn55 Fe56 Co59 Ni58 Cu63 Zn64 Ga69 Ge74 As75 Se80 Br79 Kr84 Rb85 Sr88 Y89 Zr90 Nb93 Mo98 Tc98 Ru102 Rh103 Pd106 Ag107 "
+  + "Cd114 In115 Sn120 Sb121 Te130 I127 Xe132 Cs133 Ba138 La139 Ce140 Pr141 Nd142 Pm145 Sm152 Eu153 Gd158 Tb159 Dy164 Ho165 "
+  + "Er166 Tm169 Yb174 Lu175 Hf180 Ta181 W184 Re187 Os192 Ir193 Pt195 Au197 Hg202 Tl205 Pb208 Bi209 Po209 At210 Rn222 Fr223 "
+  + "Ra226 Ac227 Th232 Pa231 U238 Np237 Pu239").split(" ").map((s) => /^([A-Z][a-z]?)(\d+)$/.exec(s)!);
+PERIODIC.forEach(([, symbol, A], k) => { if (!(symbol in ELEMENTS)) ELEMENTS[symbol] = [k + 1, Number(A)]; });
+
+/**
+ * The protons and neutrons written in a nucleus's brackets, `2p 2n` (`He(2p 2n)`, `X(3p 4n)`):
+ * only counts of `p` and `n`, in any order; undefined for anything else (a hadron's quarks or state).
+ */
+export function nucleonCount(text: string): { Z: number; N: number } | undefined {
+  const tokens = text.trim().split(/\s+/);
+  if (!tokens.every((t) => /^\d+[pn]$/.test(t))) return undefined;
+  const sum = (kind: string) => tokens.filter((t) => t.endsWith(kind)).reduce((s, t) => s + Number(t.slice(0, -1)), 0);
+  return { Z: sum("p"), N: sum("n") };
+}
+
+/** An element's symbol from its Z (`Pb` for 82; `n` for none, a lone neutron). */
+export function elementSymbol(Z: number): string {
+  return Z === 0 ? "n" : PERIODIC[Z - 1]?.[1] ?? `Z${Z}`;
+}
+
+/**
+ * An element written as a leg's name, `Xe`, `208Pb`, `4He`, `Xe*`, set upright as element symbols
+ * are: `\mathrm{Xe}`, `^{208}\mathrm{Pb}`. Undefined for anything else (a lone capital, which so
+ * often names a particle, `X`, `Y`, `K`, stays as it is unless it carries a mass number).
+ */
+export function uprightElement(text: string): string | undefined {
+  const m = /^(\d+)?([A-Z][a-z]?)(\*)?$/.exec(text.trim());
+  if (!m || !Object.prototype.hasOwnProperty.call(ELEMENTS, m[2]) || (m[2].length === 1 && !m[1])) return undefined;
+  return `${m[1] ? `^{${m[1]}}` : ""}\\mathrm{${m[2]}}${m[3] ? "^*" : ""}`;
+}
+
+/** How a nucleus is written in a label: its mass number up front, `^{4}\mathrm{He}`; a lone proton or neutron, a deuteron, by its letter. */
+export function isotopeLabel(A: number, symbol: string): string {
+  if ((symbol === "p" || symbol === "n") && A === 1) return `\\mathrm{${symbol}}`;
+  if (symbol === "d" || symbol === "D") return `\\mathrm{${symbol}}`;
+  return `^{${A}}\\mathrm{${symbol}}`;
+}
+
+/**
  * A nucleus from how it is written: a symbol (`Pb`), a mass number and a symbol (`208Pb`,
  * `^{208}Pb`), or nothing (then `A` and `Z` must be given).
  */
 export function nucleusFrom(text: string): { A: number; Z: number } | undefined {
-  const m = /^\s*(?:\^?\{?(\d+)\}?)?\s*([A-Za-z]{1,2})\s*$/.exec(text.replace(/\\mathrm\{(\w+)\}/, "$1"));
+  // (a star after it, Xe*, is the nucleus excited: the same nucleus)
+  const m = /^\s*(?:\^?\{?(\d+)\}?)?\s*([A-Za-z]{1,2})\s*(?:\^?\{?\*\}?)?\s*$/.exec(text.replace(/\\mathrm\{(\w+)\}/, "$1"));
   if (!m || !(m[2] in ELEMENTS)) return undefined;
   const [Z, A] = ELEMENTS[m[2]];
   return { Z, A: m[1] ? Number(m[1]) : A };
@@ -104,6 +150,27 @@ export function nucleusSvg(p: Pt, A: number, Z: number, unit: number, colours: {
     return `<circle cx="${fmt(q.x)}" cy="${fmt(q.y)}" r="${fmt(r)}" fill="${fill}"${stroke}/>`;
   }).join("");
   return `<g class="feynjs-nucleus">${spheres}</g>`;
+}
+
+/** Where a nucleus hit at `p` is drawn, recoiling toward `dir`: moved on by two thirds of its radius. */
+export function recoiledTo(p: Pt, dir: Pt, R: number): Pt {
+  return { x: p.x + dir.x * R * 0.64, y: p.y + dir.y * R * 0.64 };
+}
+
+/**
+ * A nucleus recoiling, as an after-image: two faint copies, the same size, from where it was hit
+ * at `p` trailing on toward `dir`, the nucleus itself moved on beyond them, and two short streaks
+ * behind, either side of the line that hit it. `one` draws the nucleus at a point.
+ */
+export function recoilSvg(p: Pt, dir: Pt, R: number, one: (at: Pt) => string, stroke: number): string {
+  const at = (k: number) => ({ x: p.x + dir.x * R * 0.32 * k, y: p.y + dir.y * R * 0.32 * k });
+  const streaks = [-0.55, 0.55].map((o) => {
+    const side = { x: -dir.y * o * R, y: dir.x * o * R }, back = Math.sqrt(1 - o * o) * R + 2;
+    const a = { x: p.x + side.x - dir.x * back, y: p.y + side.y - dir.y * back }, b = { x: a.x - dir.x * R * 0.55, y: a.y - dir.y * R * 0.55 };
+    return `M${fmt(a.x)} ${fmt(a.y)}L${fmt(b.x)} ${fmt(b.y)}`;
+  }).join("");
+  return `<g class="feynjs-recoil"><g opacity="0.14">${one(at(0))}</g><g opacity="0.3">${one(at(1))}</g>${one(at(2))}`
+    + `<path d="${streaks}" fill="none" stroke="currentColor" stroke-opacity="0.4" stroke-width="${fmt(stroke * 0.7)}" stroke-linecap="round"/></g>`;
 }
 
 /** The numbers 0 ... n-1 in an order fixed by `seed`. */

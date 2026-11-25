@@ -59,7 +59,13 @@ export interface Vertex {
   declaredOrder?: number;
   fixed?: { x: number; y: number };
   /** a nucleus drawn as packed protons and neutrons (`[nucleus=Pb]`, `[nucleus, A=208, Z=82]`) */
-  nucleus?: { A?: number; Z?: number };
+  nucleus?: { A?: number; Z?: number; N?: number };
+  /** a nucleus recoiling (`[nucleus=Xe, recoil]`, `recoil=down`, `recoil=30`): drawn moved on, faint copies trailing back; "" away from what hits it */
+  recoil?: string;
+  /** a nucleus at the end of a line, neither coming in nor going out: what the line acts on, laid out as a field is */
+  target?: boolean;
+  /** what a nucleus gives off on its own (`[nucleus=Xe*, emits=gamma]`): a short line out of it, away from what hits it */
+  emits?: string;
   /** a hadron drawn as a bag of its valence quarks (`[bag=proton]`, `[bag=c cbar u dbar]`), turning slowly with `motion` */
   bag?: { quarks: { flavour: string; anti: boolean; group?: number }[]; motion?: boolean; molecule?: boolean };
   /** particle key given on the vertex, used to style the attached edge */
@@ -115,6 +121,8 @@ export interface Edge {
   radiation?: boolean;
   /** an animated glow along the line, to draw the eye to it (`[gluino, pulse]`); "" for the default colour */
   pulse?: string;
+  /** how long the line is, as a share of the usual length (`length=1.5`, `length=2cm`): the layout honours it */
+  length?: number;
   /**
    * a particle that lives a while (`[lifetime]`): a band under the line, fading in along it; with
    * a value (`lifetime={c\tau}`), a brace beside it carrying that label
@@ -137,7 +145,17 @@ export interface Diagram {
   edges: Edge[];
   hadrons: HadronGroup[];
   directives: Record<string, string>;
+  /** drawn from a nuclear process line (`2H 3H > 4He n`): drawn as the reaction, unless `view: diagram` */
+  nuclear?: boolean;
+  /** a nuclear process that decays on, step by step (`238U > 234Th 4He`, `234Th > 234Pa e- ve~`): drawn as a decay chain */
+  decayChain?: DecayStep[];
 }
+
+/** A nucleus as a decay chain draws it: its numbers, its label, and the name it was written by. */
+export interface ChainNucleus { A: number; Z: number; label: string; name: string }
+
+/** One step of a decay chain: the nucleus that decays, the one it leaves, and what it gives off (a nucleus, or a particle by name). */
+export interface DecayStep { parent: ChainNucleus; daughter: ChainNucleus; given: { nucleus?: ChainNucleus; particle?: string; label: string }[] }
 
 export class FeynError extends Error {
   line?: number;

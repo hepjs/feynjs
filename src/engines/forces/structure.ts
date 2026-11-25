@@ -29,6 +29,8 @@ export interface Structure {
   hidden: boolean[];
   /** true for a point drawn as a blob (the pp collision, a shaded vertex) */
   blob: boolean[];
+  /** which points are nuclei: a line scattered off one reads as scattering */
+  nucleus?: boolean[];
   /**
    * for a point on an incoming quark that gives off radiation on its way to annihilate with
    * the other incoming quark (q -> q g, then q qbar -> Z'), the point where they annihilate,
@@ -118,6 +120,8 @@ export interface Line {
   wavy: boolean;
   /** true for a dashed line that is not SUSY (a scalar: H, a, h0) */
   dashed?: boolean;
+  /** its length as a share of the usual one, as written (`length=1.5`) */
+  stretch?: number;
   /** the bend the author gave the line, if any (positive bulges left of travel from a to b) */
   bend?: number;
   /**
@@ -163,13 +167,15 @@ export function readStructure(d: Diagram, sizes?: Sizes, vertexPad = 0.08): Stru
     const a = index.get(e.from)!, b = index.get(e.to)!;
     linesAt[a].push(lines.length);
     linesAt[b].push(lines.length);
-    lines.push({ a, b, leg: false, fermion: e.style.line === "plain" && e.style.cls !== "susy", heavy: e.style.cls === "susy", wavy: e.style.line === "wave" || e.style.line === "coil", dashed: e.style.line === "dash" && e.style.cls !== "susy", bend: e.bend !== undefined && !e.bendIsAutomatic ? e.bend : undefined });
+    lines.push({ a, b, leg: false, fermion: e.style.line === "plain" && e.style.cls !== "susy", heavy: e.style.cls === "susy", wavy: e.style.line === "wave" || e.style.line === "coil", dashed: e.style.line === "dash" && e.style.cls !== "susy", bend: e.bend !== undefined && !e.bendIsAutomatic ? e.bend : undefined, ...(e.length !== undefined ? { stretch: e.length } : {}) });
   }
   const external = ids.map((_, i) => linesAt[i].length === 1);
   for (const line of lines) line.leg = external[line.a] || external[line.b];
   d.edges.forEach((e, l) => { const name = `${e.particle ?? ""} ${e.label ?? ""}`; if (name.includes("*") && !name.includes("(*)")) lines[l].offShell = true; });
   d.edges.forEach((e, l) => { if (lines[l].fermion) lines[l].mass = massOf(lines[l].leg ? particleOfEdge(d, e) ?? e.label : e.particle ?? e.label); });
-  const field = ids.map((id, i) => external[i] && d.vertices.get(id)!.shape === "crossed");
+  // (and so is a nucleus at the end of a line that is no leg in or out, a target: a dark-matter
+  // mediator's, a photon's, which the line meets from above)
+  const field = ids.map((id, i) => external[i] && (d.vertices.get(id)!.shape === "crossed" || !!d.vertices.get(id)!.target));
   const first = orderInTime(d, ids, lines, linesAt, external, new Map(), field);
   const hadrons = d.hadrons.map((h) => ({
     legs: h.legs.map((id) => index.get(id)).filter((i): i is number => i !== undefined),
@@ -186,6 +192,7 @@ export function readStructure(d: Diagram, sizes?: Sizes, vertexPad = 0.08): Stru
   const labelFlip = d.edges.map((e) => (e.labelSide === -1 ? -1 : onLeft && e.labelSide === 1 ? 2 : 1));
   // (a nucleus is a blob too: an ion passes through it and gives off what collides)
   const blob = ids.map((id) => ["blob", "hatched", "nucleus"].includes(d.vertices.get(id)!.shape));
+  const nucleus = ids.map((id) => d.vertices.get(id)!.shape === "nucleus");
   const markRadius = ids.map((id, i) => sizes?.markRadius?.get(id) ?? (blob[i] ? sizes?.blobRadius ?? 0 : 0));
   const radiatesInto = ids.map((id) => {
     const w = radiationTarget(d, id);
@@ -193,7 +200,7 @@ export function readStructure(d: Diagram, sizes?: Sizes, vertexPad = 0.08): Stru
   });
   const hidden = d.edges.map((e) => e.style.line === "none");
   const particle = ids.map((id, i) => (external[i] ? d.vertices.get(id)!.particle ?? particleOfEdge(d, d.edges[linesAt[i][0]]) : undefined));
-  const s: Structure = { ids, index, lines, linesAt, external, time: first, spines: [], pad, linePad, labelFlip, blob, radiatesInto, blobRadius: sizes?.blobRadius ?? 0, markRadius, hidden,
+  const s: Structure = { ids, index, lines, linesAt, external, time: first, spines: [], pad, linePad, labelFlip, blob, nucleus, radiatesInto, blobRadius: sizes?.blobRadius ?? 0, markRadius, hidden,
     hadrons, hadronPad: sizes?.hadronPad ?? 0.15, hadronMin: sizes?.hadronMin ?? 0.3, pairs: [], loops: [], particle, label: ids.map((id, i) => (external[i] ? d.vertices.get(id)!.label ?? d.edges[linesAt[i][0]].label : undefined)),
     lineLabel: d.edges.map((e) => e.particle ?? e.label), field,
     order: ids.map((id) => d.vertices.get(id)!.declaredOrder ?? -1) };

@@ -172,7 +172,11 @@ export function drawEdge(scene: Scene, d: Diagram, e: Edge, degree: Map<string, 
   // lines stop at the rim of blobs
   // (to the rim of what is drawn there, in the direction the line meets it)
   const leaving = full.at(0), arriving = full.at(full.length);
-  const curve = full.slice(reachToward(from, theme.vertex, leaving.tx, leaving.ty), full.length - reachToward(to, theme.vertex, -arriving.tx, -arriving.ty));
+  // (a photon, a mediator, any boson meeting a nucleus reaches a third of the way into it, drawn
+  // over its nucleons, so it reads as acting on it, not touching it)
+  const into = (v: typeof from) => v.shape === "nucleus" && ["wave", "coil", "dash", "dot"].includes(e.style.line);
+  const reach = (v: typeof from, tx: number, ty: number) => (into(v) ? vertexRadius(v, theme.vertex) * 0.7 : reachToward(v, theme.vertex, tx, ty));
+  const curve = full.slice(reach(from, leaving.tx, leaving.ty), full.length - reach(to, -arriving.tx, -arriving.ty));
   // a leg marked as ending in a jet (`f1 [q, jet]`) gets a jet cone round its line
   if ((from.jetCone || to.jetCone) && !e.style.jetCone) e.style = { ...e.style, jetCone: true };
   // a jet or other detector object opens away from its vertex, whichever way the line was written
@@ -189,7 +193,7 @@ export function drawEdge(scene: Scene, d: Diagram, e: Edge, degree: Map<string, 
   // (named, with its ends and its particle, so a program or a reader of the SVG can find it)
   const particle = particleOfEdge(d, e);
   const names = ` data-edge="${attr(scene.edgeIds.get(e) ?? `${e.from}--${e.to}`)}" data-from="${attr(e.from)}" data-to="${attr(e.to)}"${particle ? ` data-particle="${attr(particle)}"` : ""}${e.style.object ? ` data-object="${attr(e.style.object)}"` : ""}`;
-  scene.edges.push(`<g${cssClass}${names}${color ? ` color="${color}"` : ""}>${drawLine(drawn, e.style, theme.line)}</g>`);
+  (into(from) || into(to) ? scene.over : scene.edges).push(`<g${cssClass}${names}${color ? ` color="${color}"` : ""}>${drawLine(drawn, e.style, theme.line)}</g>`);
   // a long-lived particle's band (and brace, on the side away from its label)
   if (e.lifetime !== undefined) {
     const side = labelSideOf(scene, e, curve.at(curve.length / 2));
