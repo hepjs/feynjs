@@ -1,0 +1,11 @@
+# what a build leaves: LaTeX's files, the diagram sources it writes and their drawings
+*.aux
+*.log
+*.nav
+*.out
+*.snm
+*.toc
+*.vrb
+*.pdf
+*-feynjs-*.feyn
+*-feynjs-*.tex

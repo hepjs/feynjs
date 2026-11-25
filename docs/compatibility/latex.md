@@ -51,6 +51,32 @@ With `--shell-escape` and `feynjs` installed, LaTeX does the middle step itself,
 Each drawing records the checksum of the source it was drawn from, so an edited diagram is noticed
 (a warning, and the box again) until it is drawn again.
 
+## In Beamer slides
+
+The package works in Beamer as in any document. A frame that holds a `feynjs` environment takes
+`[fragile]`, as for any verbatim text; `\feynjsfile` is not verbatim, so it works in a plain frame
+and inside overlay commands, which is how a slide is built up step by step:
+
+```latex
+\begin{frame}[fragile]{Drell--Yan}
+  \centering
+  \begin{feynjs}
+  q qbar > Z > mu- mu+
+  \end{feynjs}
+\end{frame}
+
+\begin{frame}{Higgs production, step by step}
+  \centering
+  \only<1>{\feynjsfile{higgs-1.feyn}}%   g g > {t} > H
+  \only<2>{\feynjsfile{higgs-2.feyn}}%   ... H > Z Z
+  \only<3>{\feynjsfile{higgs-3.feyn}}%   ... Z > l+ l-
+\end{frame}
+```
+
+`\feynjsset{unit=1.1}` draws the diagrams that follow smaller, to sit two to a slide in
+`columns`. A whole talk, with its build steps, is in the repository:
+[integrations/latex/examples/beamer](https://github.com/hepjs/feynjs/tree/main/integrations/latex/examples/beamer).
+
 ## Overleaf, arXiv and journals
 
 These run neither Node.js nor shell escape. Run `feynjs cache` once on your own machine and upload

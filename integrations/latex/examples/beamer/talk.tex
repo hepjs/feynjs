@@ -1,0 +1,68 @@
+% A Beamer talk with feynjs diagrams. Build it with:
+%   pdflatex talk && feynjs cache . && pdflatex talk
+% or in one run, with feynjs installed: pdflatex --shell-escape talk
+\documentclass{beamer}
+\usepackage{feynjs}
+\usetheme{default}
+\setbeamertemplate{navigation symbols}{}
+\title{Feynman diagrams in Beamer}
+\subtitle{laid out by feynjs, drawn by TikZ-Feynman}
+\date{}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+% A diagram written in the slide: the frame takes [fragile], as for any verbatim text.
+\begin{frame}[fragile]{Drell--Yan}
+  \centering
+  \begin{feynjs}
+  q qbar > Z > mu- mu+
+  \end{feynjs}
+
+  \medskip
+  A quark and an antiquark annihilate into a \(Z\), which decays to two muons.
+\end{frame}
+
+% Two diagrams side by side, smaller, in columns.
+\begin{frame}[fragile]{Top pairs from gluons}
+  \feynjsset{unit=1.1}
+  \begin{columns}
+    \begin{column}{0.48\textwidth}
+      \centering
+      \begin{feynjs}
+      g g > g > t tbar
+      \end{feynjs}
+
+      \small \(s\) channel
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \centering
+      \begin{feynjs}
+      i1 [g] -- a -- f1 [t]
+      i2 [g] -- b -- f2 [tbar]
+      a -- [fermion, label=t] b
+      \end{feynjs}
+
+      \small \(t\) channel
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% Building a slide up step by step: each step's diagram in a file of its own, shown with \only.
+% (\feynjsfile is not verbatim, so it works inside overlay commands and needs no [fragile].)
+\begin{frame}{Higgs production, step by step}
+  \centering
+  \only<1>{\feynjsfile{higgs-1.feyn}}%
+  \only<2>{\feynjsfile{higgs-2.feyn}}%
+  \only<3>{\feynjsfile{higgs-3.feyn}}
+
+  \medskip
+  \only<1>{Gluon fusion: through a top loop.}%
+  \only<2>{The Higgs decays to two \(Z\) bosons.}%
+  \only<3>{Each \(Z\) decays to two leptons.}
+\end{frame}
+
+\end{document}

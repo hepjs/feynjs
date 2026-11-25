@@ -46,3 +46,6 @@ should hold HTML instead, a `raw` block works too, in reST or MyST:
 
 The diagrams take the page's text colour, so they follow a theme's light and dark modes. Tested
 with Sphinx 9 and MyST-Parser, in the default theme.
+
+A small project with diagrams in both reST and MyST Markdown, ready to build, is in the
+repository: [integrations/sphinx](https://github.com/hepjs/feynjs/tree/main/integrations/sphinx).
