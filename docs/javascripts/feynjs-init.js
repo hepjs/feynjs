@@ -228,9 +228,9 @@
   // note after each line's %). The note sits beside its line (under it on a narrow screen).
   // Pointing at a line, tapping it, or moving to it with the keyboard lights what it draws, in
   // three steady colours: lines blue, points amber, labels teal; the rest dims. A process line
-  // (e- e+ > gamma > mu- mu+) lights its stages in turn. Each block has step buttons and dots, and
-  // steps slowly through its lines over and over while in view: pointing, a click or a key only
-  // pauses it, and it carries on a little after. The % stays in the code, so a copy is
+  // (e- e+ > gamma > mu- mu+) lights its stages in turn. Each block steps slowly through its lines
+  // over and over while in view, the text beside the diagram changing with it: pointing, a click
+  // or a key only pauses it, and it carries on a little after. The % stays in the code, so a copy is
   // still valid source.
   var idsOf = function (src) {
     var s = src.replace(/\[[^\]]*\]/g, " ").trim();
@@ -437,18 +437,6 @@
       var widest = 0;
       all(code, ".feynjs-src").forEach(function (el) { widest = Math.max(widest, el.textContent.length); });
       all(code, ".feynjs-src").forEach(function (el) { el.style.setProperty("--feynjs-src-width", (widest + 3) + "ch"); });
-      // the controls: back and on (Lucide's chevrons), and a dot for each step, the current one
-      // filled, any one a button to it; the note read aloud
-      var bar = document.createElement("div");
-      bar.className = "feynjs-explain-bar";
-      var chevron = function (d) { return '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + d + '"/></svg>'; };
-      var button = function (html, title, act, cls) {
-        var b = document.createElement("button");
-        b.type = "button"; b.className = cls; b.innerHTML = html;
-        b.setAttribute("aria-label", title); b.title = title;
-        b.addEventListener("click", function () { stop(); act(); later(); });
-        return b;
-      };
       var stop = function () { clearTimeout(playing); playing = null; };
       // (slowly through every line, then the summary a while, then round again, while in view;
       // whatever the reader does only pauses it: it carries on from the next line a little after)
@@ -465,13 +453,6 @@
         show(k);
         playing = setTimeout(function () { run(k + 1); }, lines[k].stages ? Math.max(STEP, 1000 * lines[k].stages.length + 800) : STEP);
       };
-      bar.appendChild(button(chevron("m15 18-6-6 6-6"), "Previous line", function () { show(Math.max(0, current - 1)); }, "feynjs-explain-step"));
-      var dots = document.createElement("span");
-      dots.className = "feynjs-explain-dots";
-      lines.forEach(function (line, k) { dots.appendChild(button("", "Line " + (k + 1) + ": " + line.note, function () { show(k); }, "feynjs-explain-dot")); });
-      bar.appendChild(dots);
-      bar.appendChild(button(chevron("m9 18 6-6-6-6"), "Next line", function () { show(Math.min(lines.length - 1, current + 1)); }, "feynjs-explain-step"));
-      counter = dots;
       // (the diagram and, beside it, what the lit line does: its source and a sentence)
       var diagram = box.querySelector("div.feynman");
       var stage = document.createElement("div");
@@ -482,7 +463,6 @@
       aside.className = "feynjs-explain-aside";
       aside.appendChild(said);
       aside.appendChild(live);
-      aside.appendChild(bar);
       stage.appendChild(aside);
       var still = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       if (!("IntersectionObserver" in window) || still) return;

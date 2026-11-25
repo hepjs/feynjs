@@ -536,19 +536,12 @@
 .md-typeset .feynjs-layouts .feynman svg { display: block; margin: 0 auto; width: 100%; max-width: 30rem; height: auto; }
 .md-typeset .feynjs-layouts .feynjs-line { display: inline-block; width: 100%; border-radius: 0.2rem; }
 .md-typeset .feynjs-explain-bar { gap: 0.5rem; }
-.md-typeset .feynjs-explain-step { display: inline-flex; padding: 0.15rem; border: 0; border-radius: 50%; background: none; color: var(--md-default-fg-color--lighter); cursor: pointer; }
-.md-typeset .feynjs-explain-step:hover, .md-typeset .feynjs-explain-step:focus-visible { color: var(--md-default-fg-color); }
-.md-typeset .feynjs-explain-dots { display: inline-flex; gap: 0.4rem; align-items: center; }
-.md-typeset .feynjs-explain-dot { width: 0.36rem; height: 0.36rem; padding: 0; border: 0; border-radius: 50%; background: var(--md-default-fg-color--lightest); cursor: pointer; transition: background-color 0.2s, transform 0.2s; }
-.md-typeset .feynjs-explain-dot:hover, .md-typeset .feynjs-explain-dot:focus-visible { background: var(--md-default-fg-color--lighter); }
-.md-typeset .feynjs-explain-dot.feynjs-on { background: var(--feynjs-teach-line); transform: scale(1.25); }
 .md-typeset .feynjs-explain-stage { display: flex; align-items: center; gap: 1.6rem; margin: 1rem 0 0.6rem; }
 .md-typeset .feynjs-explain-stage > .feynman { flex: 1 1 60%; min-width: 0; margin: 0; }
 .md-typeset .feynjs-explain-aside { flex: 0 0 14rem; display: flex; flex-direction: column; gap: 0.5rem; justify-content: flex-start; }
 .md-typeset .feynjs-explain-aside .feynjs-explain-line { align-self: flex-start; font-size: 0.66rem; color: var(--feynjs-teach-line); background: color-mix(in srgb, var(--feynjs-teach-line) 8%, transparent); }
 .md-typeset .feynjs-explain-says { margin: 0; font-size: 0.78rem; line-height: 1.5; height: 4.5em; overflow: hidden; color: var(--md-default-fg-color); }
 .md-typeset .feynjs-explain-aside .feynjs-explain-line { display: inline-block; box-sizing: border-box; height: 1.4rem; line-height: 1.4rem; padding: 0 0.45em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
-.md-typeset .feynjs-explain-aside .feynjs-explain-bar { justify-content: flex-start; margin: 0.2rem 0 0; }
 @media screen and (max-width: 45em) {
   .md-typeset .feynjs-explain-stage { flex-direction: column; align-items: stretch; gap: 0.6rem; }
   .md-typeset .feynjs-explain-aside { flex: none; }
