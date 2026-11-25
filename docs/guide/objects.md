@@ -62,7 +62,7 @@ Use the name on a leg (`f1 [J]`, which also labels it) or the style on a line
 On a line, an object is written like a line style: adjectives, then the object, then what is drawn
 inside it, as counts. `[LRJ 2j 1e]` is a large-R jet holding two jets and an electron;
 `[DIS J]` is a displaced jet. Long and short names are the same: `[large R jet 2j 1e]` and
-`[LRJ(2j, 1e)]` draw the same thing. See [Syntax at a glance](../reference/index.md#detector-objects)
+`[LRJ(2j, 1e)]` draw the same thing. See [Syntax at a glance](syntax-at-a-glance.md#detector-objects)
 for every name.
 
 ```feynman
@@ -281,5 +281,5 @@ f4 [b, cone]          a b quark that becomes a jet
 ## Tuning
 
 `line.largeJetScale`, `line.narrowJetScale`, `line.trackWidth` and `line.objectLegStretch` in the
-[theme](../reference/theme.md#lines-line) set the sizes; `line.jetColor` the colour of every cone.
+[theme](theme.md#lines-line) set the sizes; `line.jetColor` the colour of every cone.
 Hover over an object's label to see what it is.

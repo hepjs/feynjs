@@ -47,7 +47,7 @@ deep, so `{ line: { stroke: 2 } }` changes the stroke and keeps every other line
 feynjs.render(source, { theme: { line: { stroke: 2 }, susyColor: "#8e44ad" } });
 ```
 
-See [Styling and themes](../guide/styling.md) for how to use them, and the colours the site's stylesheet adds.
+See [Styling and themes](styling.md) for how to use them, and the colours the site's stylesheet adds.
 
 *Lists the settings in `src/theme.ts`.*
 
@@ -282,7 +282,7 @@ A loop keeps its shape: a half circle over a line, or a regular polygon, upright
 
 ## Layout v1 rules: `layout`
 
-The rule-based layout, the default engine. Lengths are in ranks (across) and rows (down). Which rule uses each setting is listed in [Layout rules](internals.md#layout-rules).
+The rule-based layout, the default engine. Lengths are in ranks (across) and rows (down). Which rule uses each setting is listed in [Layout rules](../get-started/internals.md#layout-rules).
 
 | Setting | Default | What it controls |
 |---|---|---|

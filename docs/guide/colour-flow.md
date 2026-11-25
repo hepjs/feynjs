@@ -140,7 +140,7 @@ A gluon so always shows a colour and an anticolour. Where a gluon passes colour 
 its two colour lines cross over: each quark's colour goes on to the other.
 
 The colours come from `colourFlow.palette` and the anticolours from `colourFlow.anti` in the
-[theme](../reference/theme.md#colour-flow-colourflow). The same section sets the gap beside the lines, the stroke width and the arrows. The lines
+[theme](theme.md#colour-flow-colourflow). The same section sets the gap beside the lines, the stroke width and the arrows. The lines
 are drawn in a group with the class `feynjs-colour-flow`, so a stylesheet can fade or hide them.
 
 ```css

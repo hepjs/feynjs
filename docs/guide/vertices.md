@@ -275,7 +275,7 @@ lattice QCD shows them: a straight tube between a meson's quark and antiquark, a
 junction for a baryon, linked junctions for a tetraquark (diquark to antidiquark) and a
 pentaquark. Each quark is a dot in its colour charge, red, green or blue, each antiquark in an
 anticolour, so the whole is colourless. Name it (`proton`, `neutron`, `pi+`, `K+`, `J/psi`, `B0`,
-`Zc`, `X3872`, `Tcc`, `Pc`, or any [hadron's particle name](../reference/particles.md#hadrons-and-beams),
+`Zc`, `X3872`, `Tcc`, `Pc`, or any [hadron's particle name](particles.md#hadrons-and-beams),
 `Sigma+`, `K*0`, `Lambda_b`, `X(ucd)`...) or write its quarks out (`uud`, `u dbar`, `c cbar u dbar`,
 `uudc cbar`). With `motion`, the flux tubes breathe slowly. A pentaquark can be drawn as a
 molecule instead, a baryon beside a meson, each colourless with its own flux tubes: add

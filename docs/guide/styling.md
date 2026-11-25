@@ -54,7 +54,7 @@ feynjs.render(source, {
 feynjs.run({ theme: { line: { stroke: 1.8 } } });
 ```
 
-All of them, with their defaults, are in [Theme settings](../reference/theme.md).
+All of them, with their defaults, are in [Theme settings](theme.md).
 
 ### Size
 
@@ -123,7 +123,7 @@ svg.feynjs .feynjs-blob { fill: rgba(11, 128, 195, 0.15); }
 `charge colour: on` colours each line whose particle is known by the sign of its electric charge:
 positive in orange, negative in blue, a "±" charge in purple. Neutral lines keep their usual
 colour. A particle is known when it is named on the line, on its external leg, or by a quark's
-label (`[\bar{b}]`). The colours are `chargeColors` in the [theme](../reference/theme.md).
+label (`[\bar{b}]`). The colours are `chargeColors` in the [theme](theme.md).
 The diagram at the top of this page uses it.
 
 ### Colour schemes
@@ -298,7 +298,7 @@ warning: external leg "f2" has no particle label  [unlabelled-leg]
 
 A drawing can look right and still be wrong. feynjs reads a diagram as well as drawing it, and
 three tools report what it finds. Each takes the same source as `render`, and each runs
-[from a shell](../reference/cli.md) too.
+[from a shell](cli.md) too.
 
 ### check
 

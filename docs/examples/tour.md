@@ -1,6 +1,5 @@
 ---
 hide:
-  - navigation
   - toc
 tags:
   - particle names
@@ -15,7 +14,7 @@ tags:
 # Tour
 
 From the fundamental particles to what a detector sees. Every figure is drawn live by feynjs; the
-code under a line is the name that draws it. [All particles and line types](../reference/particles.md)
+code under a line is the name that draws it. [All particles and line types](../guide/particles.md)
 lists every name.
 
 <div class="feynjs-tour" markdown>
@@ -30,7 +29,7 @@ Every vertex of the Standard Model, by force and by how many bosons meet, with i
 photon and the Z mix the U(1)<sub>Y</sub> and SU(2)<sub>L</sub> fields, so the electroweak rows are
 drawn after symmetry breaking.
 
-<div class="tour-forces"><span></span><span class="tour-head">two fermions and a boson</span><span class="tour-head">three bosons</span><span class="tour-head">four bosons</span><span class="tour-row"><b>Electromagnetic</b><span>U(1)<sub>EM</sub></span></span><div><figure><div class="feynman">v [dot, label=eQ_f]
+<div class="tour-forces"><span class="tour-head">two fermions and a boson</span><span class="tour-head">three bosons</span><span class="tour-head">four bosons</span><span class="tour-row"><b>Electromagnetic</b><span>U(1)<sub>EM</sub></span></span><div><figure><div class="feynman">v [dot, label=eQ_f]
 i1 [gamma] -- v
 v -- [fermion] f1 [f]
 v -- [anti fermion] f2 [\bar f]</div><figcaption><span>f f̄ γ</span></figcaption></figure></div><div></div><div></div><span class="tour-row"><b>Weak</b><span>SU(2)<sub>L</sub> × U(1)<sub>Y</sub></span></span><div><figure><div class="feynman">v [dot, label=g/2c_W]

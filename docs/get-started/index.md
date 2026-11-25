@@ -72,7 +72,7 @@ Pick where you write. Every option draws the same diagrams from the same text.
     const svg = render("g g > {t} > H");
     ```
 
-    [The API](../reference/api.md){ .md-button }
+    [The API](../guide/api.md){ .md-button }
 
 -   **The command line**
 
@@ -82,7 +82,7 @@ Pick where you write. Every option draws the same diagrams from the same text.
     npx feynjs render diagram.feyn > diagram.svg
     ```
 
-    [The commands](../reference/cli.md){ .md-button }
+    [The commands](../guide/cli.md){ .md-button }
 
 -   **MadGraph**
 

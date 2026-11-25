@@ -25,7 +25,7 @@ b -- f1 [mu-]
 b -- f2 [mu+]
 ```
 
-The whole syntax on one page. The [Components](../guide/index.md) pages explain each part with examples.
+The whole syntax on one page. The [Components](index.md) pages explain each part with examples.
 
 ## Edges, as in TikZ-Feynman
 
@@ -48,7 +48,7 @@ The whole syntax on one page. The [Components](../guide/index.md) pages explain 
 | `a b > c d` | particles meeting at a point |
 | `a b > g > c d` | through an intermediate line `g` |
 | `t > b W+` | how a particle decays (every later `>` line) |
-| `2H 3H > 4He n`, `H H > He`, `235U n > 141Ba 92Kr n n n` | a nuclear process (a name in it can only be a nucleus: an isotope, `4He`, or an element no particle is called, `He`): every element's symbol is a nucleus (`H` is hydrogen), `p` and `n` one proton and one neutron; drawn as the [reaction picture](../guide/views.md#the-reaction-picture), or, with `view: diagram`, each leg ending in its nucleus on a plain line, meeting at a blob |
+| `2H 3H > 4He n`, `H H > He`, `235U n > 141Ba 92Kr n n n` | a nuclear process (a name in it can only be a nucleus: an isotope, `4He`, or an element no particle is called, `He`): every element's symbol is a nucleus (`H` is hydrogen), `p` and `n` one proton and one neutron; drawn as the [reaction picture](views.md#the-reaction-picture), or, with `view: diagram`, each leg ending in its nucleus on a plain line, meeting at a blob |
 | `C(6p 8n)`, `X(3p 4n)` | a nucleus with its protons and neutrons written: an element's isotope, or a nucleus of its own named as written; `check()` warns when the protons are another element's |
 | `238U > 234Th 4He, 234Th > 234Pa e- ve~` | a nuclear process that decays on: drawn as a decay chain |
 | `12C* > 12C gamma` | a star: the nucleus excited |
@@ -68,7 +68,7 @@ The whole syntax on one page. The [Components](../guide/index.md) pages explain 
 | `scalar` (`dashed`), `charged scalar`, `anti charged scalar` | dashed lines |
 | `ghost` (`dotted`) | a dotted line |
 | `double`, `heavy`, `proton`, `jet` | two strokes, a thick line, three lines, a cone |
-| `large jet`, `tau jet`, `semi-visible jet`, `emerging jet`, `displaced jet`, `lepton jet`, `missing energy` | [detector objects](../guide/objects.md) |
+| `large jet`, `tau jet`, `semi-visible jet`, `emerging jet`, `displaced jet`, `lepton jet`, `missing energy` | [detector objects](objects.md) |
 | `susy`, `susy fermion`, `susy gluon` | SUSY-coloured lines |
 | `hidden` | not drawn (layout v1 still spaces for it; v2 ignores it) |
 | `invisible` | not drawn, but holds the layout together in both engines |
@@ -177,7 +177,7 @@ Contents: `j` jet, `b` b-tagged jet (with its secondary vertex), `e` electron, `
 | `signal: on` | in an elastic scattering's picture, what a detector sees: scintillation photons and ionisation electrons |
 | `view: lattice` | draw space-time as a lattice instead of the diagram: `lattice: 8x6` (sites across by up), `wilson loop: (1,1) to (4,4)`, `plaquette: (5,1)`, `link: (5,4) to (6,4)`, `polyakov loop: 7`, `site: (1,1) [label=\psi]`, `boundary: periodic`, `axes: off`; each may be written many times, and takes `[label=...]` and `[color=...]` |
 | `background: grid` | a light grey grid behind the drawing, every half line length (on by default with `layout: grid`) |
-| `debug: on` | a faint grid, each point's name, and each line marked with the family of rules that shapes it most (decays, mass, incoming...: measured, by settling the diagram again without each); under the drawing, each family once, with the lines it holds, and the steps after the forces that moved it ([Why a line is where it is](../guide/engines.md#why-a-line-is-where-it-is)) |
+| `debug: on` | a faint grid, each point's name, and each line marked with the family of rules that shapes it most (decays, mass, incoming...: measured, by settling the diagram again without each); under the drawing, each family once, with the lines it holds, and the steps after the forces that moved it ([Why a line is where it is](engines.md#why-a-line-is-where-it-is)) |
 | `final plane: on` | the decays laid out as a tree: every final state on one vertical plane, every decay forking about level, the branches of a decay mirrored with equal room (by default each decay follows its parent's direction) |
 | `colour flow: on` | draw colour flow beside quarks and gluons |
 | `nucleon edges: ink` (or `none`, `tinted`) | how nuclei's nucleons are edged: in ink, not at all, or each in a dark shade of its own colour (the default) |

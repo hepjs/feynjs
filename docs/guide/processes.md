@@ -60,12 +60,12 @@ e- e+ > gamma > mu- mu+
 - **A name may carry brackets**, `psi(2S)`, `X(3872)`, `Pc(uudcc~)`. Brackets that start with
   `>` are a decay on the spot.
 
-Particle names are feynjs's own, listed in [Particles](../reference/particles.md). MadGraph's
+Particle names are feynjs's own, listed in [Particles](particles.md). MadGraph's
 names work too, the Standard Model's (`t~`, `w+`, `ve`, `ta+`) and the MSSM's (`go`, `n1`, `x1+`,
 `ul`, `t1`, `ta1-`; see [MadGraph](madgraph.md#particle-names)), and hadrons go by
 their English names (`kaon+`, `K*0`, `Lambda_b`, `jpsi`, or `X(ucd)` with its quarks). A name feynjs
 doesn't know is drawn as a plain line carrying that name as its label, and
-[`check`](../reference/api.md#check) warns of it.
+[`check`](api.md#check) warns of it.
 
 To draw a particle with a label of your own, while keeping its line style and properties, add a
 `label:` line. This works in both syntaxes:

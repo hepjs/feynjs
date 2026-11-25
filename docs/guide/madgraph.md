@@ -104,7 +104,7 @@ MadGraph's Standard Model names work as they are. Where feynjs has a name of its
 | `j` | the same | a jet |
 | `l+`, `l-` | the same | charged leptons, labelled ℓ |
 
-Every name is in [All particles](../reference/particles.md).
+Every name is in [All particles](particles.md).
 
 MadGraph's MSSM names work too, as its models name them after renaming, drawn and labelled as the
 plugin draws them:
@@ -123,7 +123,7 @@ plugin draws them:
 
 They are matched only as written: `dl` is the left down squark, and the displaced lepton is
 `dislep` (or `DL`). A name feynjs doesn't know is still drawn, as a plain line with the name as its
-label, and [`check`](../reference/api.md#check) warns of it.
+label, and [`check`](api.md#check) warns of it.
 
 ## What feynjs takes
 

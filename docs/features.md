@@ -251,7 +251,7 @@ Z > l+ l-
     - [`debug: on`](guide/engines.md#why-a-line-is-where-it-is): why each line lies where it does
     - [Views](guide/views.md): the event in the detector, or a lattice
     - [Styling and export](guide/styling.md): sizes, dark mode, black and white; SVG, PNG, TikZ
-    - [Theme settings](reference/theme.md): every length, angle and colour
+    - [Theme settings](guide/theme.md): every length, angle and colour
 
 -   **Use it in**
 
@@ -259,7 +259,7 @@ Z > l+ l-
     - [Obsidian](get-started/setup.md#setup-obsidian): the same block, in your notes
     - [Any web page](get-started/setup.md#setup-web-page): one script tag
     - [LaTeX](get-started/setup.md#setup-latex): papers, on Overleaf and arXiv too
-    - [JavaScript](reference/api.md) and the [command line](reference/cli.md)
+    - [JavaScript](guide/api.md) and the [command line](guide/cli.md)
 
 -   **Tools**
 
@@ -267,6 +267,6 @@ Z > l+ l-
     - [TikZ-Feynman](guide/tikz-feynman.md): its keys in, its code out
     - [MadGraph](guide/madgraph.md): draw every diagram a process generates
     - [Checking diagrams](guide/styling.md#checking-diagrams): lint, describe in words, score a layout
-    - [Data in and out](reference/interchange.md): every part named, for programs and AI
+    - [Data in and out](guide/interchange.md): every part named, for programs and AI
 
 </div>

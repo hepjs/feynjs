@@ -117,7 +117,7 @@ the balance, then snaps loops, arcs and vacuum pairs into their exact shapes.
 
 It was reviewed figure by figure against some 500 published diagrams and is frozen: its layouts
 change only when a change is reviewed and approved again (see
-[Testing](../reference/contributing.md#the-validation-set-and-the-approved-layouts)).
+[Testing](../get-started/contributing.md#the-validation-set-and-the-approved-layouts)).
 
 ### The conventions it follows
 
@@ -351,7 +351,7 @@ A pin holds in the default layout too, so one or two pins are also the heaviest 
 
 `layout: v1` places vertices in columns by time, then settles their heights with a list of
 named rules: forks open at set angles, cascades arc, loops sit over their lines. It is fast and
-predictable, and kept as it was. Every rule is listed in [Layout rules](../reference/internals.md#layout-rules).
+predictable, and kept as it was. Every rule is listed in [Layout rules](../get-started/internals.md#layout-rules).
 
 ```feynman
 --- layout: default
@@ -814,7 +814,7 @@ From lightest touch to heaviest:
    many more steps; a mediator to a nucleus, say, gets room for the nucleus.
 4. **Pin a vertex.** `v at (2, 1)` fixes `v` in place, in propagator lengths with y up. The rest
    of the diagram is still laid out around it ([Placing points by hand](#placing-points-by-hand)).
-5. **Tune the rules.** Every angle, length and weight is a [theme setting](../reference/theme.md),
+5. **Tune the rules.** Every angle, length and weight is a [theme setting](theme.md),
    so you can change one for a whole page, or for one diagram:
 
 ```js
@@ -860,7 +860,7 @@ c -- f3 [nu]
 
 The reasons are measured, not written by hand. The force layout's rules come in seven families:
 spacing, time, incoming, decays, mass, hadrons and loops (each family's settings are listed in the
-[theme reference](../reference/theme.md#layout-v2-forces-forces)). The diagram is settled again with
+[theme reference](theme.md#layout-v2-forces-forces)). The diagram is settled again with
 each family left out in turn. A family is a reason for a line when leaving it out changes that
 line, and the number in brackets is by how much: how far the line moves, in line lengths. The
 families a line depends on most come first. After them come the steps that run once the forces have settled,
@@ -872,7 +872,7 @@ holds it. Hover over a mark to see its line's length and direction and every fam
 with how much. Every SVG carries the same in each mark's `data-why` attribute, and the family in
 `data-family`.
 
-Use it to find which rule to [steer](#steering-it) or [tune](../reference/theme.md). A diagram with
+Use it to find which rule to [steer](#steering-it) or [tune](theme.md). A diagram with
 `debug: on` takes longer to draw, a tenth of a second or so, so take it out once the layout is
 right. The [rule engine (v1)](#the-rule-engine-v1) is not measured: its
 lines are numbered and their lengths and directions given, without reasons.

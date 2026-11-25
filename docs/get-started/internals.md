@@ -153,8 +153,8 @@ One line in `src/particles/registry.ts`, using the helpers there:
 "sneutrino": susy("dash", "\\tilde\\nu"),
 ```
 
-Then add it to the [Particles](particles.md) page, which is kept by hand. A particle needed by one page only can be added
-at run time with [`registerParticle`](api.md#registerparticle) instead.
+Then add it to the [Particles](../guide/particles.md) page, which is kept by hand. A particle needed by one page only can be added
+at run time with [`registerParticle`](../guide/api.md#registerparticle) instead.
 
 ### Add a line style
 
@@ -175,7 +175,7 @@ at run time with [`registerParticle`](api.md#registerparticle) instead.
 
 A `name: value` line is stored in `diagram.directives` by the parser. Read it where it matters
 (drawing switches in `src/render/edge-styles.ts`, layout switches in `src/render/render.ts`), and
-add it to [Panels and switches](../guide/syntax.md#panels-and-switches) and [Syntax at a glance](index.md).
+add it to [Panels and switches](../guide/syntax.md#panels-and-switches) and [Syntax at a glance](../guide/syntax-at-a-glance.md).
 
 ### Change the layout
 

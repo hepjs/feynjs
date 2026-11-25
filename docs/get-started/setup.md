@@ -136,7 +136,7 @@ One tab for each place you can write a diagram. Each draws the same diagrams fro
     document$.subscribe(() => feynjs.run({ download: true }));
     ```
 
-    `run` takes every option in the [JavaScript API](../reference/api.md#run).
+    `run` takes every option in the [JavaScript API](../guide/api.md#run).
 
     ### Next
 
@@ -322,7 +322,7 @@ One tab for each place you can write a diagram. Each draws the same diagrams fro
     text, so it carries no script.
 
     The same source is drawn only once: `render` keeps the last 256 diagrams, so a page that redraws
-    often is cheap. Every function and option is in the [JavaScript API](../reference/api.md).
+    often is cheap. Every function and option is in the [JavaScript API](../guide/api.md).
 
     ### From the command line
 
@@ -334,20 +334,20 @@ One tab for each place you can write a diagram. Each draws the same diagrams fro
     feynjs measure diagram.feyn                # layout quality, as JSON
     ```
 
-    With no file, `feynjs` reads standard input. See [Command line](../reference/cli.md).
+    With no file, `feynjs` reads standard input. See [Command line](../guide/cli.md).
 
     ### For programs and AI tools
 
     Every SVG feynjs draws names its parts: each line is a `<g data-edge="a--b">`, each point's mark a
     `<g data-vertex="b">`, and `<metadata class="feynjs-model">` holds the whole diagram as JSON. A
     page script, a test or a language model can find any part and change the source by name. See
-    [the drawing's parts, by name](../reference/api.md#the-drawings-parts-by-name).
+    [the drawing's parts, by name](../guide/api.md#the-drawings-parts-by-name).
 
-    ### Reference
+    ### Further reading
 
-    - [JavaScript API](../reference/api.md): every function feynjs exports, with its options.
-    - [Command line](../reference/cli.md): every command, from SVG to TikZ-Feynman code and lint reports.
-    - [Theme settings](../reference/theme.md): every size, colour and layout weight, with its default.
+    - [JavaScript API](../guide/api.md): every function feynjs exports, with its options.
+    - [Command line](../guide/cli.md): every command, from SVG to TikZ-Feynman code and lint reports.
+    - [Theme settings](../guide/theme.md): every size, colour and layout weight, with its default.
 
 === "LaTeX"
 
@@ -414,7 +414,7 @@ One tab for each place you can write a diagram. Each draws the same diagrams fro
 
     ### Without the package
 
-    `feynjs tikz diagram.feyn` (or [`toTikz`](../reference/api.md) from code) writes one diagram as
+    `feynjs tikz diagram.feyn` (or [`toTikz`](../guide/api.md) from code) writes one diagram as
     TikZ-Feynman code to paste in by hand. See [TikZ-Feynman](../guide/tikz-feynman.md) for what carries over.
 
 === "MadGraph"

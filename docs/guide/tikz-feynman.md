@@ -165,7 +165,7 @@ f1 [mu-] -- b -- f2 [mu+]
 | `[photon, red]` | the same, for `red`, `blue`, `green`, `gray` | any other colour as `color=...` |
 | `%` comment | the same; `#` and `//` too | |
 
-The full list of options is in [Syntax at a glance](../reference/index.md). Several of these keys
+The full list of options is in [Syntax at a glance](syntax-at-a-glance.md). Several of these keys
 in one diagram:
 
 ```feynman
@@ -305,4 +305,4 @@ From JavaScript it is `toTikz(source)`. The diagram at the top of this page come
 
 Plain TikZ-Feynman has no jets, hadron braces or SUSY lines drawn over a wave, so those come out
 as the nearest TikZ-Feynman lines. The options, standalone documents and the propagator length
-are in [Exporting](styling.md#exporting) and [toTikz](../reference/api.md#totikz).
+are in [Exporting](styling.md#exporting) and [toTikz](api.md#totikz).

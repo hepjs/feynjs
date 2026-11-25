@@ -163,8 +163,8 @@ double wave.
 ### Particles
 
 A particle name sets the line style, the label and the colour. A few common ones are below; the
-[Particles reference](../reference/particles.md) lists all of them, and
-[`registerParticle`](../reference/api.md#registerparticle) adds your own.
+[Particles reference](particles.md) lists all of them, and
+[`registerParticle`](api.md#registerparticle) adds your own.
 
 Supersymmetric particles are drawn a little bolder and in the SUSY colour (brick red by default,
 `susyColor` in the [theme](styling.md)); their labels take the same colour.

@@ -109,7 +109,7 @@ the browser, so a diagram comes out the same in every browser.
 
 The npm package and the `feynjs` command need Node 20 or later (`engines` in `package.json`).
 `render` needs no browser: it returns the SVG as a string, the same in Node as on a page. See
-[Use feynjs from code](setup.md#setup-javascript--command-line) and [Command line](../reference/cli.md).
+[Use feynjs from code](setup.md#setup-javascript--command-line) and [Command line](../guide/cli.md).
 
 ### Any page charset
 

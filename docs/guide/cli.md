@@ -37,10 +37,10 @@ output. Installed with the package (`npx feynjs ...`), or run from a checkout as
 | `render` | the SVG | 1 on a mistake in the source |
 | `tikz` | TikZ-Feynman code | 1 on a mistake |
 | `check` | one line per finding, or `no problems found` | 1 if any finding is an error |
-| `describe` | the [description](../guide/styling.md#describe) as JSON | 1 on a mistake |
+| `describe` | the [description](styling.md#describe) as JSON | 1 on a mistake |
 | `explain` | the diagram in plain English | 1 on a mistake |
-| `measure` | the [layout score](../guide/styling.md#measure) as JSON | 1 on a mistake |
-| `import [file.tex]` | every TikZ-Feynman picture in a LaTeX file, as feynjs's lines (each under a comment when there are several): see [TikZ-Feynman](../guide/tikz-feynman.md#converting-a-papers-pictures) | 1 on a mistake |
+| `measure` | the [layout score](styling.md#measure) as JSON | 1 on a mistake |
+| `import [file.tex]` | every TikZ-Feynman picture in a LaTeX file, as feynjs's lines (each under a comment when there are several): see [TikZ-Feynman](tikz-feynman.md#converting-a-papers-pictures) | 1 on a mistake |
 | `cache [dir]` | each `*-feynjs-*.feyn` a LaTeX document left in `dir` (default `.`) drawn as TikZ-Feynman code beside it, skipping those already drawn: see [LaTeX](../get-started/setup.md#setup-latex) | 1 on a mistake |
 
 ```sh

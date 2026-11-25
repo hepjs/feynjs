@@ -109,7 +109,7 @@ papers draw it, is one of the most useful things you can send.
 - **Name functions for what they do** (`labelExternalLeg`, `spreadKeepingOrder`). A module's
   top-level function reads as a list of named steps.
 - **No magic numbers.** A size, gap, angle or colour belongs in `src/theme.ts`, with a comment
-  saying what it controls, so users can override it and the [theme reference](theme.md)
+  saying what it controls, so users can override it and the [theme reference](../guide/theme.md)
   documents it.
 - **Defaults come from practice.** A layout or style default should match how the diagram is
   drawn in published papers. Point to the examples.
@@ -175,7 +175,7 @@ TeX installation with TikZ-Feynman.
 |---|---|
 | `src/` | the library ([Architecture](internals.md#architecture)) |
 | `test/` | unit tests |
-| `examples/` | example diagrams, `.feyn` files: the gallery and the preview sheet |
+| `examples/` | example diagrams, `.feyn` files: the preview sheet |
 | `validation/` | diagrams from ATLAS papers transcribed as feynjs source, and the approved layouts |
 | `scripts/` | the build, and approving the layout baseline |
 | `docs/` | this site |
@@ -308,8 +308,8 @@ Two pages list what is in the code. For now they are kept by hand in this reposi
 
 | Page | Lists |
 |---|---|
-| `reference/particles.md` | the particles in `src/particles/registry.ts` |
-| `reference/theme.md` | the settings in `src/theme.ts` |
+| `guide/particles.md` | the particles in `src/particles/registry.ts` |
+| `guide/theme.md` | the settings in `src/theme.ts` |
 
 Adding a particle or a theme setting means updating its page too. The example pages
 (`docs/examples/`) are grouped by subject; a new example goes on the page of its subject.

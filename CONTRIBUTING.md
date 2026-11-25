@@ -1,7 +1,7 @@
 # Contributing to feynjs
 
 Thank you for helping. The full guide is on the docs site, under Reference: Contributing
-(`docs/reference/contributing.md`). This is the short version.
+(`docs/get-started/contributing.md`). This is the short version.
 
 ## How a diagram is made
 
@@ -31,7 +31,7 @@ source text ──parse──▶ Diagram ──layout──▶ positions ──r
 3. Look at what moved, against the papers the diagrams come from, one diagram at a time. If the
    change is meant, approve the new layouts (`npm run build && npm run approve-layouts`) and say
    in the pull request which moved and why.
-4. Describe new syntax in `docs/guide/` and `docs/reference/`, and add a line to `CHANGELOG.md`.
+4. Describe new syntax in `docs/guide/`, and add a line to `CHANGELOG.md`.
 
 ```bash
 npm ci

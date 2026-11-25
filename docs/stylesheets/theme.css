@@ -468,15 +468,17 @@
 .feynjs-tour .tour-table { display: grid; grid-template-columns: 8rem repeat(3, 1fr) 1fr 1fr; gap: 1.1rem 1.4rem; margin: 1rem 0 1.5rem; }
 .feynjs-tour .tour-sep { border-left: 1px solid var(--md-default-fg-color--lightest); padding-left: 1.4rem; }
 .feynjs-tour .tour-tall { grid-column: 6; grid-row: 2 / span 4; justify-content: center; }
-.feynjs-tour .tour-forces { display: grid; grid-template-columns: 8rem max-content max-content minmax(0, 1fr); gap: 0 1.6rem; margin: 1rem 0 1.5rem; }
-.feynjs-tour .tour-forces > div, .feynjs-tour .tour-forces > .tour-row { border-top: 1px solid var(--md-default-fg-color--lightest); padding: .9rem 0; }
-.feynjs-tour .tour-forces > div { display: flex; flex-wrap: wrap; gap: .6rem 1rem; align-items: center; }
-.feynjs-tour .tour-forces figure { width: 5.2rem; }
-.feynjs-tour .tour-forces > .tour-row { display: flex; flex-direction: column; justify-content: center; align-self: stretch; }
+.feynjs-tour .tour-forces { display: grid; grid-template-columns: max-content max-content minmax(0, 1fr); gap: 0 1.8rem; margin: 1rem 0 1.5rem; }
+.feynjs-tour .tour-forces > .tour-row { grid-column: 1 / -1; border-top: 1px solid var(--md-default-fg-color--lightest); padding: .7rem 0 .1rem; }
+.feynjs-tour .tour-forces > div { padding: .2rem 0 .9rem; }
+.feynjs-tour .tour-forces > div { display: flex; flex-wrap: wrap; gap: .6rem .8rem; align-items: center; }
+.feynjs-tour .tour-forces figure { width: 4.6rem; }
+.feynjs-tour .tour-forces > .tour-row { display: flex; gap: .6rem; align-items: baseline; }
+.feynjs-tour .tour-forces > .tour-head { padding-bottom: .3rem; text-align: left; }
 .feynjs-tour .tour-multiplet { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.6rem 2rem; margin: 1rem 0 1.5rem; }
 .feynjs-tour .tour-small { max-width: 26rem; gap: 1rem 1.4rem; }
 .feynjs-tour .tour-flow { display: grid; grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr)); gap: 1.1rem 1.4rem; margin: 1rem 0 1.5rem; align-items: end; }
-.feynjs-tour .tour-flow.tour-decays { grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: 1.8rem 2rem; }
+.feynjs-tour .tour-flow.tour-decays { grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: 1.8rem 2rem; }
 .feynjs-tour .tour-flow.tour-jets { grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr)); }
 .feynjs-tour .tour-decays svg { max-height: 11rem; }
 .feynjs-tour .tour-nuclei { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 1rem 1.3rem; margin: 1rem 0 1.5rem; }

@@ -423,8 +423,8 @@ them for a particular one: `neutralino1` to `neutralino4`, `chargino1`, `chargin
 ### MadGraph's MSSM names
 
 MadGraph's MSSM names, as its models name them after renaming, draw as the names above do, with
-the labels the [MadGraph plugin](../guide/madgraph.md) gives them. They are matched only as
-written: `dl` is the left down squark, and `DL` the [displaced lepton](../guide/objects.md).
+the labels the [MadGraph plugin](madgraph.md) gives them. They are matched only as
+written: `dl` is the left down squark, and `DL` the [displaced lepton](objects.md).
 
 ```feynman
 --- go
@@ -551,7 +551,7 @@ d -- f5 [neutralino1]
 Each row of the tables below is one line between two points, `a` and `b`, beside its source.
 Write a **style** (`fermion`, `gluon`, ...) for a bare line, or a **particle** (`e-`, `W+`,
 `gluino`, ...) for a line that comes with its arrow and label, and add **options** after either.
-The [Lines and particles](../guide/lines.md) guide explains them, and the
+The [Lines and particles](lines.md) guide explains them, and the
 [Particles](#all-particles) reference lists all 105 names.
 
 ### Generic styles
@@ -641,7 +641,7 @@ arrow runs against the line. MadGraph's names work too: `t~`, `ve`, `ta-`, `w+`.
 
 #### Supersymmetric partners
 
-Drawn in the SUSY colour, brick red unless the [theme](../guide/styling.md) sets another.
+Drawn in the SUSY colour, brick red unless the [theme](styling.md) sets another.
 
 | Particle | Drawn | Source |
 |---|---|---|
@@ -668,7 +668,7 @@ Drawn in the SUSY colour, brick red unless the [theme](../guide/styling.md) sets
 | **b-jet** | <div class="feynman">a -- [bjet] b</div> | `a -- [bjet] b` |
 
 Large-R jets, hadronic taus, missing energy and the other things a detector sees are on
-[a page of their own](../guide/objects.md).
+[a page of their own](objects.md).
 
 ### Arrows
 
@@ -713,7 +713,7 @@ A mass or mixing insertion, a cross in a ring, a given fraction of the way along
 | **Label on the right of the line** | <div class="feynman">a -- [fermion, label'=p] b</div> | `a -- [fermion, label'=p] b` |
 | **A particle's label replaced** | <div class="feynman">a -- [W+, label=W^{+*}] b</div> | `a -- [W+, label=W^{+*}] b` |
 
-The [Labels and notes](../guide/lines.md#labels) guide lists the TeX that labels understand.
+The [Labels and notes](lines.md#labels) guide lists the TeX that labels understand.
 
 ### Bending
 
@@ -775,5 +775,5 @@ i2 [gamma] -- a
 b -- f2 [gamma]
 ```
 
-The [Styling](../guide/styling.md) guide covers colour by charge, black and white, and `pulse`, a
+The [Styling](styling.md) guide covers colour by charge, black and white, and `pulse`, a
 glow that runs along a line to draw the eye to it.
