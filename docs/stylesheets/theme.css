@@ -493,10 +493,10 @@
 /* a diagram explained line by line (authoring/index.md). Lit, steady: lines blue, points amber,
    labels teal; the rest dims. Notes beside their lines, under them on a narrow screen. */
 .md-typeset .feynjs-explain, .md-typeset .feynjs-layouts {
-  --feynjs-teach-line: #5a7aa8; --feynjs-teach-point: #b58a4c; --feynjs-teach-label: #5a948b;
+  --feynjs-teach-line: #3d6fc2; --feynjs-teach-point: #c87d22; --feynjs-teach-label: #1f9283;
 }
 [data-md-color-scheme="slate"] .md-typeset .feynjs-explain, [data-md-color-scheme="slate"] .md-typeset .feynjs-layouts {
-  --feynjs-teach-line: #8ea6c9; --feynjs-teach-point: #c9a675; --feynjs-teach-label: #86b5ad;
+  --feynjs-teach-line: #7ba0e0; --feynjs-teach-point: #e0a04f; --feynjs-teach-label: #52bcae;
 }
 .md-typeset .feynjs-explain .feynjs-line { display: inline-block; width: 100%; border-radius: 0.2rem; cursor: pointer; transition: background-color 0.2s; outline: none; }
 .md-typeset .feynjs-explain .feynjs-line:hover .feynjs-note { text-decoration: underline dotted; text-underline-offset: 0.2em; }
