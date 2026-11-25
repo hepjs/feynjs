@@ -32,6 +32,16 @@ nav = [
     { "Styling, export and checks" = "guide/styling.md" },
     { "Coming from TikZ-Feynman" = "guide/tikz-feynman.md" },
     { "Coming from MadGraph" = "guide/madgraph.md" },
+    { "Reference" = [
+      { "Syntax at a glance" = "reference/index.md" },
+      { "All particles and line types" = "reference/particles.md" },
+      { "Theme settings" = "reference/theme.md" },
+      { "JavaScript API" = "reference/api.md" },
+      { "Command line" = "reference/cli.md" },
+      { "Hand-over format" = "reference/interchange.md" },
+      { "Contributing" = "reference/contributing.md" },
+      { "Internals" = "reference/internals.md" },
+    ] },
   ] },
   { "Examples" = [
     { "Overview" = "examples/index.md" },
@@ -41,16 +51,6 @@ nav = [
     { "Stop production" = "examples/stop.md" },
     { "Gallery" = "examples/gallery.md" },
     { "MadGraph gallery" = "examples/madgraph-gallery.md" },
-  ] },
-  { "Reference" = [
-    { "Syntax at a glance" = "reference/index.md" },
-    { "All particles and line types" = "reference/particles.md" },
-    { "Theme settings" = "reference/theme.md" },
-    { "JavaScript API" = "reference/api.md" },
-    { "Command line" = "reference/cli.md" },
-    { "Hand-over format" = "reference/interchange.md" },
-    { "Contributing" = "reference/contributing.md" },
-    { "Internals" = "reference/internals.md" },
   ] },
   { "Playground" = "playground.md" },
 ]
