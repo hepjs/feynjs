@@ -27,7 +27,7 @@ Pick where you write. Every option draws the same diagrams from the same text.
     extra_javascript = ["https://cdn.jsdelivr.net/npm/feynjs@0.9/dist/feynjs.min.js"]
     ```
 
-    [Set up a site](zensical.md){ .md-button .md-button--primary }
+    [Set up a site](setup.md#setup-zensical--mkdocs){ .md-button .md-button--primary }
 
 -   **Obsidian**
 
@@ -37,7 +37,7 @@ Pick where you write. Every option draws the same diagrams from the same text.
     feynjs-obsidian.zip  →  .obsidian/plugins/feynjs/
     ```
 
-    [Set up Obsidian](obsidian.md){ .md-button .md-button--primary }
+    [Set up Obsidian](setup.md#setup-obsidian){ .md-button .md-button--primary }
 
 -   **A web page**
 
@@ -47,7 +47,7 @@ Pick where you write. Every option draws the same diagrams from the same text.
     <script src="https://cdn.jsdelivr.net/npm/feynjs@0.9/dist/feynjs.min.js"></script>
     ```
 
-    [Use it in a page](../developers/index.md){ .md-button }
+    [Use it in a page](setup.md#setup-web-page){ .md-button }
 
 -   **LaTeX**
 
@@ -60,7 +60,7 @@ Pick where you write. Every option draws the same diagrams from the same text.
     \end{feynjs}
     ```
 
-    [Set up LaTeX](../compatibility/latex.md){ .md-button }
+    [Set up LaTeX](setup.md#setup-latex){ .md-button }
 
 -   **JavaScript**
 
@@ -92,7 +92,7 @@ Pick where you write. Every option draws the same diagrams from the same text.
     mg5_aMC --mode=feynjs
     ```
 
-    [Set up MadGraph](../compatibility/madgraph.md){ .md-button }
+    [Set up MadGraph](setup.md#setup-madgraph){ .md-button }
 
 -   **Just try it**
 
@@ -107,6 +107,6 @@ one example.
 { .feynjs-start-next }
 
 [Your first diagram](first-diagram.md){ .md-button .md-button--primary }
-[Upgrading](upgrading.md){ .md-button }
-[Browser support](browser-support.md){ .md-button }
+[Upgrading](about.md#upgrading){ .md-button }
+[Browser support](about.md#browser-support){ .md-button }
 { .feynjs-start-buttons }

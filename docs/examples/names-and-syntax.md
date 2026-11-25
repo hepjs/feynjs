@@ -52,7 +52,7 @@ the chain goes, draws as the whole diagram. Spaces round `>` are optional.
 
 </div>
 
-More in [Write processes, as in MadGraph](../guide/processes.md) and [MadGraph](../compatibility/madgraph.md).
+More in [Write processes, as in MadGraph](../guide/processes.md) and [MadGraph](../guide/madgraph.md).
 
 ## Superpartners, by any name
 
@@ -277,4 +277,4 @@ f1 [particle={{\mu^+}}] -- [fermion] b -- [fermion] f2 [particle={{\mu^-}}]
 ```
 
 From JavaScript it is `fromTikz()` from `feynjs/tikz`, a module of its own that a page drawing
-diagrams never loads. More in [TikZ-Feynman](../compatibility/tikz-feynman.md#converting-a-papers-pictures).
+diagrams never loads. More in [TikZ-Feynman](../guide/tikz-feynman.md#converting-a-papers-pictures).

@@ -120,7 +120,7 @@ i2 [q] -- b -- f2 [q]
 a -- [gluon] b
 ```
 
-Beside the same diagram with `colour flow: off`, in two [panels](panels.md) joined by `---[to]`,
+Beside the same diagram with `colour flow: off`, in two [panels](syntax.md#panels-and-switches) joined by `---[to]`,
 it shows a vertex becoming its colour lines.
 
 ## What carries colour

@@ -75,4 +75,4 @@ or two vertices with `layout: manual` and `v at (x, y)`. Look at the SVG before 
 - Arrows follow the written direction (`a -- [fermion] b` points a to b); antiparticle legs
   (`i2 [e+]`) already know theirs.
 - A loop on a quark inside a hadron diagram may need two pins (`layout: manual`) to open up.
-- Full syntax: docs/guide/syntax.md, processes.md, loops-hadrons.md, layout.md.
+- Full syntax: docs/guide/syntax.md, processes.md, vertices.md, layout.md.

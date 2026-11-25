@@ -37,7 +37,7 @@ render(source: string, options?: RenderOptions): string
 ```
 
 The diagram as SVG markup. Throws `FeynError` on a mistake in the source. Lines of `---` split
-the source into [panels](../guide/panels.md). The last 256 diagrams drawn are remembered, so
+the source into [panels](../guide/syntax.md#panels-and-switches). The last 256 diagrams drawn are remembered, so
 drawing the same source again costs nothing.
 
 | Option | Default | Meaning |
@@ -80,7 +80,7 @@ check(source: string): Finding[]
 ```
 
 Structural lint: fermion pairing and flow, unconnected vertices, unlabelled legs. See
-[Checking diagrams](../guide/tools.md#check).
+[Checking diagrams](../guide/styling.md#check).
 
 ### describe
 
@@ -89,7 +89,7 @@ describe(source: string): Description
 ```
 
 `{ process, incoming, outgoing, propagators, vertices, loops, pieces, hadrons }`. See
-[Checking diagrams](../guide/tools.md#describe).
+[Checking diagrams](../guide/styling.md#describe).
 
 ### measure
 
@@ -98,7 +98,7 @@ measure(source: string, theme?: ThemeOverrides): Quality
 ```
 
 `{ crossings, crowdedVertices, crowdedLabels, smallestAngle, stubs, aspect, problems }`. See
-[Checking diagrams](../guide/tools.md#measure).
+[Checking diagrams](../guide/styling.md#measure).
 
 ### explain
 
@@ -107,7 +107,7 @@ explain(source: string): string
 ```
 
 The diagram in plain English, as every SVG carries in its `<desc>`. See
-[Checking diagrams](../guide/tools.md#explain).
+[Checking diagrams](../guide/styling.md#explain).
 
 ### parse
 
@@ -122,7 +122,7 @@ already expanded into edges.
 
 `render`, `check`, `describe`, `explain`, `measure` and `toTikz` each take the source as text, or
 the diagram as data: `{ incoming, outgoing, vertices, edges, switches }`. `toSource(data)` returns
-the source it is drawn from, in the [hand-over format](../developers/interchange.md);
+the source it is drawn from, in the [hand-over format](interchange.md);
 `INTERCHANGE_VERSION` is the version of that format this feynjs reads.
 
 ## The drawing's parts, by name
@@ -177,7 +177,7 @@ Every TikZ-Feynman picture in a LaTeX text (`\feynmandiagram`, the `feynman` env
 picture's body alone) as feynjs's lines, one string per picture, in order: the one-way step that
 brings a paper's diagrams to feynjs. A module of its own, so a page that only draws diagrams does
 not load it; in a page, `dist/feynjs-tikz.min.js` defines `feynjsTikz.fromTikz`. See
-[TikZ-Feynman](../compatibility/tikz-feynman.md#converting-a-papers-pictures).
+[TikZ-Feynman](../guide/tikz-feynman.md#converting-a-papers-pictures).
 
 ## Particles and styles
 
