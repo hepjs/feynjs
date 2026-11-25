@@ -244,6 +244,35 @@ v -- f2 [H]
 </div>
 </div>
 
+<div class="feynjs-row" markdown>
+<div class="feynjs-row-text" markdown>
+
+### Skills for AI assistants
+
+Ask an assistant for a diagram in plain words, and it writes feynjs: two skills in the repository
+teach it the syntax, how physicists lay diagrams out, and the physics to check. What comes back is
+a few lines you can read, edit and keep.
+
+```text title="You ask"
+A stop pair, each stop decaying to a top and a neutralino
+```
+
+```text title="It writes"
+p p > t1 t1~, (t1 > t n1), (t1~ > t~ n1)
+```
+
+[The skills](https://github.com/hepjs/feynjs/tree/main/skills){ .md-button }
+
+</div>
+<div class="feynjs-row-diagram" markdown>
+
+```feynman
+p p > t1 t1~, (t1 > t n1), (t1~ > t~ n1)
+```
+
+</div>
+</div>
+
 <div class="feynjs-row feynjs-row--anywhere" markdown>
 <div class="feynjs-row-text" markdown>
 
