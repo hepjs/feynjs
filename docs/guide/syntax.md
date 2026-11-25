@@ -61,7 +61,7 @@ Options for a vertex go in square brackets right after its name.
 | `f1 [\tilde\chi^0_1]` | an external leg with any TeX label |
 | `v [dot]` | a vertex drawn as a dot; see [Vertices and blobs](vertices.md) for the other shapes |
 | `v [dot, label=\kappa_\lambda]` | a coupling label beside the vertex |
-| `v at (2, 1)` | fix a vertex in place by hand (in propagator lengths, y up); see [Placing points by hand](layout.md#placing-points-by-hand) |
+| `v at (2, 1)` | fix a vertex in place by hand (in propagator lengths, y up); see [Placing points by hand](engines.md#placing-points-by-hand) |
 
 ### Lines
 
@@ -210,7 +210,7 @@ A line `name: value` sets something for the whole diagram (or panel).
 | `scale: 1.5` | the whole diagram 1.5 times larger, as a zoom |
 | `size: small` | an optical size: `small`, `tiny`, `large` or any number (1 is normal); see [Styling](styling.md#size) |
 | `title: ...` | a title, shown as a tooltip and read by screen readers |
-| `layout: v1` | lay out with the older rule engine instead of the force engine ([Layout engines](layout.md#the-rule-engine-v1)) |
+| `layout: v1` | lay out with the older rule engine instead of the force engine ([Engines](engines.md#the-rule-engine-v1)) |
 | `colour flow: on` | draw the colour lines beside quarks and gluons ([Colour flow](colour-flow.md)) |
 | `charge colour: on` | colour charged lines by the sign of their charge ([Styling](styling.md#colour-by-charge)) |
 | `reveal: 2` | draw the first two steps in time as usual and the rest faint and grey ([Step by step](#step-by-step)) |

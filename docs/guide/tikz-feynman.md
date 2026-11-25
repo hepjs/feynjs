@@ -156,7 +156,7 @@ f1 [mu-] -- b -- f2 [mu+]
 | `[dot]`, `[empty dot]`, `[square dot]`, `[crossed dot]`, `[blob]` | the same | more shapes in [Vertices, blobs and nuclei](vertices.md) |
 | `label=above:\(g\)`, `label=45:\(g\)` (on a vertex) | the same, or `label=g, label side=above` | |
 | `\vertex [right=of a] (b);` | `b [right=of a]` | also `above left=1.5 of a`, `above right=1 and 2 of a`, `right=1.5cm of a` |
-| `\vertex (a) at (0, 0);` | `a at (0, 0)` | in propagator lengths, y up, not cm, unless a unit is given: `a at (1cm, 2cm)`; also `a at (30:1)`, `a [dot] at (0, 0)`; with `layout: manual` it stays exactly there ([by hand](layout.md#placing-points-by-hand)) |
+| `\vertex (a) at (0, 0);` | `a at (0, 0)` | in propagator lengths, y up, not cm, unless a unit is given: `a at (1cm, 2cm)`; also `a at (30:1)`, `a [dot] at (0, 0)`; with `layout: manual` it stays exactly there ([by hand](engines.md#placing-points-by-hand)) |
 | `horizontal=a to b`, `vertical=a to b`, `horizontal'=a to b`, `vertical'=a to b` | `horizontal: a to b`, `vertical: a to b`, `horizontal': a to b`, `vertical': a to b` | a line of its own; the primed forms mirror the diagram too |
 | `small`, `medium`, `large` | `size: small` | |
 | `every photon/.style={blue}` | `every photon: color=blue` | also `every fermion:`, `every dot:`, `every edge:`, `every vertex:` |
@@ -183,6 +183,82 @@ i1 [e-] -- [fermion, momentum=p_1] a -- [fermion, momentum'=p_2] i2 [e+]
 a -- [photon, reversed momentum=k, insertion=0.5] b
 f1 [mu-] -- [fermion, with arrow=0.25, with arrow=0.75, no arrow] b -- f2 [mu+]
 ```
+
+### The keys in use
+
+The keys TikZ-Feynman users reach for work on feynjs's lines: quoted labels, `bend left=60`,
+`label=below:...` on a point, `[plain, gluon]` for a gluino, and places in cm or as an angle
+and a distance.
+
+<div class="grid cards feynjs-demo" markdown>
+
+-   **A gluino pair:** `[plain, gluon]` and a quoted label
+
+    ```feynman
+    in: g1 g2
+    out: f1 f2
+    g1 [g] -- a
+    g2 [g] -- a
+    a -- [gluon, "\(g^*\)"] b
+    b -- [plain, gluon] f1 [\tilde g]
+    b -- [plain, gluon] f2 [\tilde g]
+    ```
+
+    ```text
+    in: g1 g2
+    out: f1 f2
+    g1 [g] -- a
+    g2 [g] -- a
+    a -- [gluon, "\(g^*\)"] b
+    b -- [plain, gluon] f1 [\tilde g]
+    b -- [plain, gluon] f2 [\tilde g]
+    ```
+
+-   **A self-energy:** `bend left=60`, and `label=below:` on a point
+
+    ```feynman
+    i [e-] -- a -- [fermion] b -- f [e-]
+    a -- [photon, bend left=60, "\(\gamma\)"] b
+    a [dot, label=below:\(e\)]
+    b [dot]
+    ```
+
+    ```text
+    i [e-] -- a -- [fermion] b -- f [e-]
+    a -- [photon, bend left=60, "\(\gamma\)"] b
+    a [dot, label=below:\(e\)]
+    b [dot]
+    ```
+
+-   **Places as TikZ writes them:** in cm, and as an angle and a distance
+
+    ```feynman
+    i1 [e-] -- a -- i2 [e+]
+    a -- [photon] b
+    b -- f1 [mu-]
+    b -- f2 [mu+]
+    a at (0, 0)
+    b [right=1.6cm of a]
+    i1 at (150:1)
+    i2 at (210:1)
+    f1 at (25:2.1)
+    f2 at (-25:2.1)
+    ```
+
+    ```text
+    i1 [e-] -- a -- i2 [e+]
+    a -- [photon] b
+    b -- f1 [mu-]
+    b -- f2 [mu+]
+    a at (0, 0)
+    b [right=1.6cm of a]
+    i1 at (150:1)
+    i2 at (210:1)
+    f1 at (25:2.1)
+    f2 at (-25:2.1)
+    ```
+
+</div>
 
 ## What feynjs doesn't take
 

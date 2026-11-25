@@ -11,7 +11,7 @@ tags:
   - TikZ-Feynman
 ---
 
-# Layout engines
+# Engines
 
 ```feynman
 --- layout: default

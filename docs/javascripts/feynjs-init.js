@@ -31,6 +31,8 @@
     stepByStep();
     twoEngines();
     water();
+    // (the tour's small figures without download buttons)
+    feynjs.run({ querySelector: ".feynjs-tour div.feynman:not([data-processed])" });
     feynjs.run({ querySelector: "div.feynman:not([data-processed])", download: true });
   };
   // the time-order row plays: each step of the diagram appears in turn, and as a vertex is

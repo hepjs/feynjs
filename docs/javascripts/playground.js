@@ -32,7 +32,7 @@
       "Slepton pair": "i1 [q] -- a -- i2 [qbar]\na -- [gamma] b\nb -- [slepton] c\nb -- [slepton] d\nc -- f1 [l]\nc -- f2 [neutralino]\nd -- f3 [l]\nd -- f4 [neutralino]"
     },
     "Flavour physics": {
-      "B⁰ → K*⁰ μ⁺μ⁻ penguin": "in: d1 b\nout: d2 s mu1 mu2\nd1 [d] -- [fermion] d2 [d]\ns [\\bar{s}] -- [fermion] l2 -- [fermion, label={\\bar{u}, \\bar{c}, \\bar{t}}] l1 -- [fermion] b [\\bar{b}]\nl1 -- [boson, label=W^-] x -- [boson] l2\nx -- [photon, label={\\gamma, Z^0}] v\nv -- [fermion] mu1 [\\mu^-]\nmu2 [\\mu^+] -- [fermion] v\nhadron: B^0 = d1 b [brace]\nhadron: K^{*0} = d2 s [brace]",
+      "B⁰ → K*⁰ μ⁺μ⁻ penguin": "in: d1 b\nout: d2 s mu1 mu2\nd1 [d] -- [fermion] d2 [d]\ns [\\bar{s}] -- [fermion] l2 -- [fermion, label={\\bar{u}, \\bar{c}, \\bar{t}}] l1 -- [fermion] b [\\bar{b}]\nl1 -- [boson, label=W^+] x -- [boson] l2\nx -- [photon, label={\\gamma, Z^0}] v\nv -- [fermion] mu1 [\\mu^-]\nmu2 [\\mu^+] -- [fermion] v\nhadron: B^0 = d1 b [brace]\nhadron: K^{*0} = d2 s [brace]",
       "Bc⁺ → J/ψ Ds⁺": "in: c1 b\nout: c2 cbar s c3\nc1 [c] -- [fermion] c2 [c]\ncbar [\\bar{c}] -- [fermion] v -- [fermion] b [\\bar{b}]\nv -- [boson, label=W] w\ns [\\bar{s}] -- [fermion] w -- [fermion] c3 [c]\nmeson: B_c^+ = c1 b\nmeson: J/\\psi = c2 cbar\nmeson: D_s^+ = s c3",
       "Bc⁺ → J/ψ Ds⁽*⁾⁺, annihilation": "in: b1 c1\nout: s1 c2 cb c3\nw1 -- [fermion] b1 [\\bar b]\nc1 [c] -- [fermion] w1\nw1 -- [boson, label=W] w2\ns1 [\\bar s] -- [fermion] w2 -- [fermion] c3 [c]\ncb [\\bar c] -- [fermion] vc -- [fermion] c2 [c]\nmeson: B_c^+ = b1 c1\nmeson: D_s^{(*)+} = s1 c2\nmeson: J/\\psi = cb c3"
     },

@@ -77,7 +77,7 @@ Every diagram on this page is drawn live, by your browser, as the page loads.
     out: d2 s mu1 mu2
     d1 [d] -- [fermion] d2 [d]
     s [\bar{s}] -- [fermion] l2 -- [fermion, label={\bar{u}, \bar{c}, \bar{t}}] l1 -- [fermion] b [\bar{b}]
-    l1 -- [boson, label=W^-] x -- [boson] l2
+    l1 -- [boson, label=W^+] x -- [boson] l2
     x -- [photon, label={\gamma, Z^0}] v
     v -- [fermion] mu1 [\mu^-]
     mu2 [\mu^+] -- [fermion] v
@@ -247,8 +247,8 @@ Z > l+ l-
 
 -   **Lay out and style**
 
-    - [Layout engines](guide/layout.md): forces, a grid, or points pinned by hand
-    - [`debug: on`](guide/layout.md#why-a-line-is-where-it-is): why each line lies where it does
+    - [Engines](guide/engines.md): forces, a grid, or points pinned by hand
+    - [`debug: on`](guide/engines.md#why-a-line-is-where-it-is): why each line lies where it does
     - [Views](guide/views.md): the event in the detector, or a lattice
     - [Styling and export](guide/styling.md): sizes, dark mode, black and white; SVG, PNG, TikZ
     - [Theme settings](reference/theme.md): every length, angle and colour

@@ -448,5 +448,50 @@
 .md-typeset .grid.cards.feynjs-mg div.feynman svg.feynjs { max-width: 100%; max-height: 8rem; height: auto; }
 .md-typeset .feynjs-mg-count { margin: 0.2rem 0 0; font-size: 0.64rem; color: var(--md-default-fg-color--light); }
 
-/* the names-and-syntax page: a card's source wraps rather than scrolling out of sight */
+/* demo cards (guide/lines.md, guide/tikz-feynman.md): a card's source wraps rather than scrolling out of sight */
 .md-typeset .grid.cards.feynjs-demo pre > code { white-space: pre-wrap; word-break: break-word; }
+
+/* The tour (examples/tour.md): figures on the page itself, no boxes; each at the size feynjs
+   draws it, so a line is as long in one table as in the next, shrunk only to fit its column */
+.feynjs-tour figure { margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; }
+.feynjs-tour .feynman { margin: 0; }
+.feynjs-tour p:empty { display: none; }
+.feynjs-tour .feynman svg { display: block; max-width: 100%; height: auto; }
+.feynjs-tour figcaption { margin-top: .25rem; font-size: .62rem; line-height: 1.35; color: var(--md-default-fg-color--light); text-align: center; }
+.feynjs-tour figcaption code { font-size: .62rem; padding: 0 .25em; }
+.feynjs-tour figcaption b { display: block; font-weight: 600; color: var(--md-default-fg-color); font-size: .66rem; }
+.feynjs-tour figcaption span { display: block; }
+.feynjs-tour .tour-head { white-space: nowrap; font-size: .56rem; letter-spacing: .08em; text-transform: uppercase; color: var(--md-default-fg-color--lighter); text-align: center; align-self: end; }
+.feynjs-tour .tour-row { font-size: .66rem; color: var(--md-default-fg-color--light); align-self: center; }
+.feynjs-tour .tour-row b { display: block; color: var(--md-default-fg-color); font-weight: 600; }
+.feynjs-tour .tour-label { grid-column: 1 / -1; font-size: .56rem; letter-spacing: .08em; text-transform: uppercase; color: var(--md-default-fg-color--lighter); margin-top: .6rem; }
+.feynjs-tour .tour-table { display: grid; grid-template-columns: 8rem repeat(3, 1fr) 1fr 1fr; gap: 1.1rem 1.4rem; margin: 1rem 0 1.5rem; }
+.feynjs-tour .tour-sep { border-left: 1px solid var(--md-default-fg-color--lightest); padding-left: 1.4rem; }
+.feynjs-tour .tour-tall { grid-column: 6; grid-row: 2 / span 4; justify-content: center; }
+.feynjs-tour .tour-forces { display: grid; grid-template-columns: 8rem max-content max-content minmax(0, 1fr); gap: 0 1.6rem; margin: 1rem 0 1.5rem; }
+.feynjs-tour .tour-forces > div, .feynjs-tour .tour-forces > .tour-row { border-top: 1px solid var(--md-default-fg-color--lightest); padding: .9rem 0; }
+.feynjs-tour .tour-forces > div { display: flex; flex-wrap: wrap; gap: .6rem 1rem; align-items: center; }
+.feynjs-tour .tour-forces figure { width: 5.2rem; }
+.feynjs-tour .tour-forces > .tour-row { display: flex; flex-direction: column; justify-content: center; align-self: stretch; }
+.feynjs-tour .tour-multiplet { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.6rem 2rem; margin: 1rem 0 1.5rem; }
+.feynjs-tour .tour-small { max-width: 26rem; gap: 1rem 1.4rem; }
+.feynjs-tour .tour-flow { display: grid; grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr)); gap: 1.1rem 1.4rem; margin: 1rem 0 1.5rem; align-items: end; }
+.feynjs-tour .tour-flow.tour-decays { grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: 1.8rem 2rem; }
+.feynjs-tour .tour-flow.tour-jets { grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr)); }
+.feynjs-tour .tour-decays svg { max-height: 11rem; }
+.feynjs-tour .tour-nuclei { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 1rem 1.3rem; margin: 1rem 0 1.5rem; }
+@media screen and (max-width: 60em) {
+  .feynjs-tour .tour-table { grid-template-columns: 6rem repeat(3, 1fr) 1fr 1fr; gap: .8rem .7rem; }
+  .feynjs-tour .tour-sep { padding-left: .7rem; }
+  .feynjs-tour .tour-forces { grid-template-columns: 1fr; }
+  .feynjs-tour .tour-forces > span:not(.tour-row) { display: none; }
+  .feynjs-tour .tour-multiplet { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+}
+
+/* an example card's source: a quiet line to open, not a coloured box */
+.md-typeset .grid.cards details.example { border: none; box-shadow: none; background: none; margin: .5em 0 0; padding: 0; font-size: .64rem; }
+.md-typeset .grid.cards details.example > summary { background: none; border: none; padding: .15em 1.6em .15em 1.2em; color: var(--md-default-fg-color--light); font-weight: 400; display: inline-block; }
+.md-typeset .grid.cards details.example > summary::before { left: 0; top: .3em; width: .85em; height: .85em; background-color: currentColor; }
+.md-typeset .grid.cards details.example > summary::after { right: .1em; top: .3em; width: .9em; height: .9em; }
+.md-typeset .grid.cards details.example > summary:hover { color: var(--md-accent-fg-color); }
+.md-typeset .grid.cards details.example > .highlight, .md-typeset .grid.cards details.example > pre { margin: .3em 0 0; }

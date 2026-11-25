@@ -297,7 +297,7 @@ in: d1 b
 out: d2 s mu1 mu2
 d1 [d] -- [fermion] d2 [d]
 s [\bar{s}] -- [fermion] l2 -- [fermion, label={\bar{u}, \bar{c}, \bar{t}}] l1 -- [fermion] b [\bar{b}]
-l1 -- [boson, label=W^-] x -- [boson] l2
+l1 -- [boson, label=W^+] x -- [boson] l2
 x -- [photon, label={\gamma, Z^0}] v
 v -- [fermion] mu1 [\mu^-]
 mu2 [\mu^+] -- [fermion] v
@@ -310,7 +310,7 @@ in: d1 b
 out: d2 s mu1 mu2
 d1 [d] -- [fermion] d2 [d]
 s [\bar{s}] -- [fermion] l2 -- [fermion, label={\bar{u}, \bar{c}, \bar{t}}] l1 -- [fermion] b [\bar{b}]
-l1 -- [boson, label=W^-] x -- [boson] l2
+l1 -- [boson, label=W^+] x -- [boson] l2
 x -- [photon, label={\gamma, Z^0}] v
 v -- [fermion] mu1 [\mu^-]
 mu2 [\mu^+] -- [fermion] v

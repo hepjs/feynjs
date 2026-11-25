@@ -245,6 +245,115 @@ Supersymmetric particles are drawn a little bolder and in the SUSY colour (brick
 
 </div>
 
+### Superpartners, by any name
+
+MadGraph's MSSM names (`n1`, `x1+`, `el-`, `t1`, `go`, `sve`, `h2`) and the names papers use
+(`neutralino2`, `chargino1+`, `higgsino0`, `wino+`, `stop1`) both draw as superpartners, in their
+own colour and style. A name without a number is the generic particle: `neutralino` is
+χ̃⁰.
+
+<div class="grid cards feynjs-demo" markdown>
+
+-   **Charginos and neutralinos,** in MadGraph's names
+
+    ```feynman
+    p p > x1+ n2, (x1+ > w+ n1, w+ > l+ vl), (n2 > z n1, z > l+ l-)
+    ```
+
+    ```text
+    p p > x1+ n2, (x1+ > w+ n1, w+ > l+ vl), (n2 > z n1, z > l+ l-)
+    ```
+
+-   **The same pair,** in the names papers use
+
+    ```feynman
+    p p > chargino1+ neutralino2
+    chargino1+ > W+ neutralino1
+    neutralino2 > Z neutralino1
+    ```
+
+    ```text
+    p p > chargino1+ neutralino2
+    chargino1+ > W+ neutralino1
+    neutralino2 > Z neutralino1
+    ```
+
+-   **Selectrons** (`el-`, the left-handed selectron)
+
+    ```feynman
+    p p > el- el+, (el- > e- n1), (el+ > e+ n1)
+    ```
+
+    ```text
+    p p > el- el+, (el- > e- n1), (el+ > e+ n1)
+    ```
+
+-   **Higgsinos,** a compressed spectrum
+
+    ```feynman
+    p p > higgsino+ higgsino0
+    higgsino+ > pi+ neutralino1
+    higgsino0 > gamma neutralino1
+    ```
+
+    ```text
+    p p > higgsino+ higgsino0
+    higgsino+ > pi+ neutralino1
+    higgsino0 > gamma neutralino1
+    ```
+
+</div>
+
+
+### Hadrons, by their English names
+
+Mesons and baryons by the names they are known by: `jpsi`, `K*+`, `Lambda_b`, `upsilon`. Any
+takes a star, a charge or `bar`. A hadron with a state in brackets keeps it in its label,
+`psi(2S)`; one written with its quarks, `X(ucd)` or `Pc(uudcc~)`, carries them. Point at a
+label to see a hadron's quarks, charge and mass.
+
+<div class="grid cards feynjs-demo" markdown>
+
+-   **B⁺ → J/ψ K\*⁺**
+
+    ```feynman
+    B+ > jpsi K*+
+    jpsi > mu+ mu-
+    K*+ > K+ pi0
+    ```
+
+    ```text
+    B+ > jpsi K*+
+    jpsi > mu+ mu-
+    K*+ > K+ pi0
+    ```
+
+-   **A state in brackets:** ψ(2S)
+
+    ```feynman
+    B0 > psi(2S) K0bar
+    psi(2S) > jpsi pi+ pi-
+    ```
+
+    ```text
+    B0 > psi(2S) K0bar
+    psi(2S) > jpsi pi+ pi-
+    ```
+
+-   **A pentaquark,** written with its quarks
+
+    ```feynman
+    Lambda_b > Pc(uudcc~) K-
+    Pc(uudcc~) > p jpsi
+    ```
+
+    ```text
+    Lambda_b > Pc(uudcc~) K-
+    Pc(uudcc~) > p jpsi
+    ```
+
+</div>
+
 ## Labels
 
 ```feynman

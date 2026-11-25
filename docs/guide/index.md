@@ -57,6 +57,6 @@ feynjs reads two notations, and both give the same drawing.
 
 | Topic | Pages |
 |---|---|
-| **Layout and styling** | [Layout engines](layout.md), [Views](views.md), [Styling and export](styling.md), [Theme settings](../reference/theme.md): where vertices go, the detector and lattice views, colours, sizes, SVG, PNG and TikZ |
+| **Layout and styling** | [Engines](engines.md), [Views](views.md), [Styling and export](styling.md), [Theme settings](../reference/theme.md): where vertices go, the detector and lattice views, colours, sizes, SVG, PNG and TikZ |
 | **From code** | [Setup](../get-started/setup.md#setup-javascript--command-line), the [JavaScript API](../reference/api.md), the [command line](../reference/cli.md), [Checking diagrams](styling.md#checking-diagrams) |
 | **Other tools** | [TikZ-Feynman](tikz-feynman.md) and [MadGraph](madgraph.md): what carries over from each |

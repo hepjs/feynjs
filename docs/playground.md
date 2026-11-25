@@ -26,7 +26,7 @@ tags:
 - **Erase**: click a point or a line to remove it.
 - **Layout**, **Size** and **Styling** write their switch into the source (`layout: grid`,
   `colour flow: on`). **Why?** writes `debug: on`: each line marked with the
-  [family of rules](guide/layout.md#why-a-line-is-where-it-is) that shapes it.
+  [family of rules](guide/engines.md#why-a-line-is-where-it-is) that shapes it.
 - **Undo** and **Redo** step through every change; **Share** copies a link that holds the source; **SVG**,
   **PNG** and **TikZ** take the diagram away.
 

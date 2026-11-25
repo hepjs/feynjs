@@ -304,16 +304,15 @@ writes, and switch it back before committing. That copy is also published with t
 
 ### Pages kept by hand
 
-Three pages list what is in the code. For now they are kept by hand in this repository:
+Two pages list what is in the code. For now they are kept by hand in this repository:
 
 | Page | Lists |
 |---|---|
-| `examples/gallery.md` | the diagrams in `examples/*.feyn` |
 | `reference/particles.md` | the particles in `src/particles/registry.ts` |
 | `reference/theme.md` | the settings in `src/theme.ts` |
 
-Adding a particle or a theme setting means updating its page too. So does adding an example to
-`examples/`.
+Adding a particle or a theme setting means updating its page too. The example pages
+(`docs/examples/`) are grouped by subject; a new example goes on the page of its subject.
 
 ### How diagrams get drawn
 
