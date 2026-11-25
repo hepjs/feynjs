@@ -49,7 +49,7 @@ v -- f2 [H]
 ```
 
 Each diagram is one vertex: a dot where the lines meet, with its coupling written beside it as a
-[coupling label](../guide/labels.md#coupling-labels). The text under each heading gives the rest of
+[coupling label](../guide/lines.md#coupling-labels). The text under each heading gives the rest of
 the vertex factor. Both leave out the overall factor of *i* and the sign, which differ from one
 textbook to the next. Throughout, *Q<sub>f</sub>* is the fermion's charge in units of *e* > 0,
 *c<sub>W</sub>* = cos θ<sub>W</sub> and *v* ≈ 246 GeV. The W and Z are in unitary gauge, so no

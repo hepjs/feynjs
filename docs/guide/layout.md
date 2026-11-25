@@ -117,7 +117,7 @@ the balance, then snaps loops, arcs and vacuum pairs into their exact shapes.
 
 It was reviewed figure by figure against some 500 published diagrams and is frozen: its layouts
 change only when a change is reviewed and approved again (see
-[Testing](../contributing/testing.md#the-validation-set-and-the-approved-layouts)).
+[Testing](../reference/contributing.md#the-validation-set-and-the-approved-layouts)).
 
 ### The conventions it follows
 
@@ -351,7 +351,7 @@ A pin holds in the default layout too, so one or two pins are also the heaviest 
 
 `layout: v1` places vertices in columns by time, then settles their heights with a list of
 named rules: forks open at set angles, cascades arc, loops sit over their lines. It is fast and
-predictable, and kept as it was. Every rule is listed in [Layout rules](../reference/layout-rules.md).
+predictable, and kept as it was. Every rule is listed in [Layout rules](../reference/internals.md#layout-rules).
 
 ```feynman
 --- layout: default
@@ -878,4 +878,4 @@ lines are numbered and their lengths and directions given, without reasons.
 
 `feynjs.measure(source)` scores a layout without anyone looking at it: crossings, crowded
 vertices and labels, the smallest angle at a vertex, stub lines. See
-[Checking diagrams](tools.md#measure).
+[Checking diagrams](styling.md#measure).

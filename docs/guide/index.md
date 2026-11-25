@@ -46,17 +46,17 @@ feynjs reads two notations, and both give the same drawing.
 | [Lines and particles](lines.md) | every line style, and the particles that pick them |
 | [All particles](../reference/particles.md) | every particle name, with its line and label |
 | [Vertices, blobs and nuclei](vertices.md) | dots, blobs, proton beams, jets, marks on a line, nuclei, hadrons with their quarks |
-| [Labels and notes](labels.md) | TeX labels, which side they sit on, momenta, coupling labels, notes |
-| [Loops, boxes and hadrons](loops-hadrons.md) | loops over a line, penguins, boxes, mesons and baryons, spectators |
+| [Labels and notes](lines.md#labels) | TeX labels, which side they sit on, momenta, coupling labels, notes |
+| [Loops, boxes and hadrons](vertices.md#loops-boxes-and-hadrons) | loops over a line, penguins, boxes, mesons and baryons, spectators |
 | [Colour flow](colour-flow.md) | colour lines beside quarks and gluons, in double-line notation |
 | [Detector objects](objects.md) | large-R jets, hadronic taus, semi-visible, emerging and displaced jets, lepton-jets, missing energy |
-| [Panels and switches](panels.md) | several diagrams side by side; diagram-wide switches |
+| [Panels and switches](syntax.md#panels-and-switches) | several diagrams side by side; diagram-wide switches |
 | [Syntax at a glance](../reference/index.md) | the whole syntax on one page |
 
 ## Elsewhere
 
-| Section | For |
+| Topic | Pages |
 |---|---|
-| **Layout & Styling** | [Layout engines](layout.md), [Views](views.md), [Styling and export](styling.md), [Theme settings](../reference/theme.md): where vertices go, the detector and lattice views, colours, sizes, SVG, PNG and TikZ |
-| **Usage** | [Use feynjs from code](../developers/index.md), the [JavaScript API](../reference/api.md), the [command line](../reference/cli.md), [Checking diagrams](tools.md) |
-| **Compatibility** | [TikZ-Feynman](../compatibility/tikz-feynman.md) and [MadGraph](../compatibility/madgraph.md): what carries over from each |
+| **Layout and styling** | [Layout engines](layout.md), [Views](views.md), [Styling and export](styling.md), [Theme settings](../reference/theme.md): where vertices go, the detector and lattice views, colours, sizes, SVG, PNG and TikZ |
+| **From code** | [Setup](../get-started/setup.md#setup-javascript--command-line), the [JavaScript API](../reference/api.md), the [command line](../reference/cli.md), [Checking diagrams](styling.md#checking-diagrams) |
+| **Other tools** | [TikZ-Feynman](tikz-feynman.md) and [MadGraph](madgraph.md): what carries over from each |

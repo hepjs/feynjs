@@ -1,7 +1,7 @@
 # Contributing to feynjs
 
-Thank you for helping. The full guide is on the docs site, under Contributing
-(`docs/contributing/`). This is the short version.
+Thank you for helping. The full guide is on the docs site, under Reference: Contributing
+(`docs/reference/contributing.md`). This is the short version.
 
 ## How a diagram is made
 

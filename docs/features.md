@@ -38,7 +38,7 @@ Every diagram on this page is drawn live, by your browser, as the page loads.
     t~ > b~ W-(> d u~)
     ```
 
--   **[Gluon fusion](guide/loops-hadrons.md)**: a loop, in braces
+-   **[Gluon fusion](guide/vertices.md#loops-boxes-and-hadrons)**: a loop, in braces
 
     ```feynman
     g g > {t} > H
@@ -69,7 +69,7 @@ Every diagram on this page is drawn live, by your browser, as the page loads.
     Z > l l
     ```
 
--   **[B⁰ → K*⁰μμ](guide/loops-hadrons.md)**: a penguin, with its hadrons
+-   **[B⁰ → K*⁰μμ](guide/vertices.md#loops-boxes-and-hadrons)**: a penguin, with its hadrons
 
     ```feynman
     % B0 -> K*0 mu mu: a W loop over the quark line, with the photon leaving the loop
@@ -240,10 +240,10 @@ Z > l+ l-
 -   **Write**
 
     - [Lines and particles](guide/lines.md): every TikZ-Feynman style, 105 particle names
-    - [Vertices, blobs and nuclei](guide/vertices.md), [labels and notes](guide/labels.md)
-    - [Loops, boxes and hadrons](guide/loops-hadrons.md), found for you
+    - [Vertices, blobs and nuclei](guide/vertices.md), [labels and notes](guide/lines.md#labels)
+    - [Loops, boxes and hadrons](guide/vertices.md#loops-boxes-and-hadrons), found for you
     - [Colour flow](guide/colour-flow.md) and [detector objects](guide/objects.md)
-    - [Panels](guide/panels.md): diagrams side by side, joined by +, = or a cut
+    - [Panels](guide/syntax.md#panels-and-switches): diagrams side by side, joined by +, = or a cut
 
 -   **Lay out and style**
 
@@ -255,18 +255,18 @@ Z > l+ l-
 
 -   **Use it in**
 
-    - [Zensical or MkDocs](get-started/zensical.md): a `feynman` block in your Markdown
-    - [Obsidian](get-started/obsidian.md): the same block, in your notes
-    - [Any web page](developers/index.md): one script tag
-    - [LaTeX](compatibility/latex.md): papers, on Overleaf and arXiv too
+    - [Zensical or MkDocs](get-started/setup.md#setup-zensical--mkdocs): a `feynman` block in your Markdown
+    - [Obsidian](get-started/setup.md#setup-obsidian): the same block, in your notes
+    - [Any web page](get-started/setup.md#setup-web-page): one script tag
+    - [LaTeX](get-started/setup.md#setup-latex): papers, on Overleaf and arXiv too
     - [JavaScript](reference/api.md) and the [command line](reference/cli.md)
 
 -   **Tools**
 
     - [The playground](playground.md): type, drag and draw, then take the diagram away
-    - [TikZ-Feynman](compatibility/tikz-feynman.md): its keys in, its code out
-    - [MadGraph](compatibility/madgraph.md): draw every diagram a process generates
-    - [Checking diagrams](guide/tools.md): lint, describe in words, score a layout
-    - [Data in and out](developers/interchange.md): every part named, for programs and AI
+    - [TikZ-Feynman](guide/tikz-feynman.md): its keys in, its code out
+    - [MadGraph](guide/madgraph.md): draw every diagram a process generates
+    - [Checking diagrams](guide/styling.md#checking-diagrams): lint, describe in words, score a layout
+    - [Data in and out](reference/interchange.md): every part named, for programs and AI
 
 </div>

@@ -14,70 +14,45 @@ edit_uri = "edit/main/docs/"
 nav = [
   { "Features" = "features.md" },
   { "Get started" = [
-    { "Choose your setup" = "get-started/index.md" },
-    { "Zensical setup" = "get-started/zensical.md" },
-    { "Obsidian setup" = "get-started/obsidian.md" },
-    { "LaTeX setup" = "compatibility/latex.md" },
-    { "MadGraph setup" = "compatibility/madgraph.md" },
-    { "Try it: the playground" = "playground.md" },
+    { "Get started" = "get-started/index.md" },
+    { "Setup" = "get-started/setup.md" },
     { "Your first diagram" = "get-started/first-diagram.md" },
-    { "Upgrading" = "get-started/upgrading.md" },
-    { "Browser support" = "get-started/browser-support.md" },
-    { "Licence" = "get-started/licence.md" },
+    { "About" = "get-started/about.md" },
   ] },
   { "Guide" = [
-    { "Components" = [
-      { "Overview" = "guide/index.md" },
-      { "Write edges, as in TikZ-Feynman" = "guide/syntax.md" },
-      { "Write processes, as in MadGraph" = "guide/processes.md" },
-      { "Lines and particles" = "guide/lines.md" },
-      { "All particles" = "reference/particles.md" },
-      { "Vertices, blobs and nuclei" = "guide/vertices.md" },
-      { "Labels and notes" = "guide/labels.md" },
-      { "Loops, boxes and hadrons" = "guide/loops-hadrons.md" },
-      { "Colour flow" = "guide/colour-flow.md" },
-      { "Detector objects" = "guide/objects.md" },
-      { "Panels and switches" = "guide/panels.md" },
-      { "Syntax at a glance" = "reference/index.md" },
-    ] },
-    { "Layout & Styling" = [
-      { "Layout engines" = "guide/layout.md" },
-      { "Views" = "guide/views.md" },
-      { "Styling and export" = "guide/styling.md" },
-      { "Theme settings" = "reference/theme.md" },
-    ] },
+    { "Overview" = "guide/index.md" },
+    { "Writing diagrams" = "guide/syntax.md" },
+    { "Processes" = "guide/processes.md" },
+    { "Lines, particles and labels" = "guide/lines.md" },
+    { "Vertices, loops and hadrons" = "guide/vertices.md" },
+    { "Colour flow" = "guide/colour-flow.md" },
+    { "Detector objects" = "guide/objects.md" },
+    { "Layout" = "guide/layout.md" },
+    { "Views" = "guide/views.md" },
+    { "Styling, export and checks" = "guide/styling.md" },
+    { "Coming from TikZ-Feynman" = "guide/tikz-feynman.md" },
+    { "Coming from MadGraph" = "guide/madgraph.md" },
   ] },
   { "Examples" = [
     { "Overview" = "examples/index.md" },
     { "Names and syntax" = "examples/names-and-syntax.md" },
-    { "Every line type" = "examples/lines.md" },
     { "Standard Model vertices" = "examples/sm-vertices.md" },
     { "Standard Model processes" = "examples/sm-processes.md" },
     { "Stop production" = "examples/stop.md" },
     { "Gallery" = "examples/gallery.md" },
+    { "MadGraph gallery" = "examples/madgraph-gallery.md" },
+  ] },
+  { "Reference" = [
+    { "Syntax at a glance" = "reference/index.md" },
+    { "All particles and line types" = "reference/particles.md" },
+    { "Theme settings" = "reference/theme.md" },
+    { "JavaScript API" = "reference/api.md" },
+    { "Command line" = "reference/cli.md" },
+    { "Hand-over format" = "reference/interchange.md" },
+    { "Contributing" = "reference/contributing.md" },
+    { "Internals" = "reference/internals.md" },
   ] },
   { "Playground" = "playground.md" },
-  { "Integrations" = [
-    { "Usage" = [
-      { "Use feynjs from code" = "developers/index.md" },
-      { "JavaScript API" = "reference/api.md" },
-      { "Command line" = "reference/cli.md" },
-      { "Checking diagrams" = "guide/tools.md" },
-      { "Hand-over format" = "developers/interchange.md" },
-    ] },
-    { "Compatibility" = [
-      { "TikZ-Feynman" = "compatibility/tikz-feynman.md" },
-    ] },
-    { "Contributing" = [
-      { "How to contribute" = "contributing/index.md" },
-      { "Development setup" = "contributing/setup.md" },
-      { "Architecture" = "contributing/architecture.md" },
-      { "Extending feynjs" = "contributing/extending.md" },
-      { "Testing" = "contributing/testing.md" },
-      { "The docs site" = "contributing/docs.md" },
-      { "Layout rules (v1)" = "reference/layout-rules.md" },
-    ] },
-  ] },
 ]
 
 extra_css = ["stylesheets/feynjs.css", "stylesheets/theme.css"]
@@ -186,5 +161,7 @@ pymdownx.superfences.custom_fences = [
 ]
 pymdownx.tabbed.alternate_style = true
 pymdownx.tabbed.combine_header_slug = true
+# tabs get ids from their titles, so a link can open one: get-started/setup/#setup-latex
+pymdownx.tabbed.slugify = { object = "pymdownx.slugs.slugify", kwds = { case = "lower" } }
 pymdownx.tasklist.custom_checkbox = true
 pymdownx.tilde = {}
