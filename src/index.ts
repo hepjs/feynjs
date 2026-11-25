@@ -102,23 +102,32 @@ let diagramCounter = 0;
 /**
  * Replace every matching element's text with its rendered diagram. Safe to call repeatedly.
  * By default: elements with the class `feynman`, and the ```feynman code blocks Markdown tools
- * write (`<pre><code class="language-feynman">`, from GitHub Pages, Hugo, Jekyll, markdown-it).
+ * write (`<pre><code class="language-feynman">`, from GitHub Pages, Hugo, Jekyll, markdown-it;
+ * Sphinx's `<div class="highlight-feynman">` from a reST code-block or a MyST fence).
  */
 export function run(options: RunOptions = {}): void {
   const { querySelector, root = document, download, ...renderOptions } = options;
   if (renderOptions.tooltips) installTooltips();
   // (a Markdown code block becomes a plain element first, in place of the block: plain Markdown
   // writes <pre><code class="language-feynman">; highlighters such as MkDocs's and Zensical's
-  // put the class on a wrapper round the <pre>)
-  if (!querySelector) root.querySelectorAll<HTMLElement>("pre > code.language-feynman, .language-feynman > pre > code").forEach((code) => {
-    const pre = code.parentElement!, wrapper = pre.parentElement;
-    const block = wrapper && wrapper.classList.contains("language-feynman") && !wrapper.classList.contains("feynman") ? wrapper : pre;
+  // put the class on a wrapper round the <pre>; Sphinx writes <div class="highlight-feynman">
+  // <div class="highlight"><pre>, with no <code>, for a reST code-block or a MyST fence)
+  const replace = (block: HTMLElement, text: string) => {
     if (!block.isConnected) return;
     const holder = document.createElement("div");
     holder.className = "feynman";
-    holder.textContent = code.textContent ?? "";
+    holder.textContent = text;
     block.replaceWith(holder);
-  });
+  };
+  if (!querySelector) {
+    root.querySelectorAll<HTMLElement>("pre > code.language-feynman, .language-feynman > pre > code").forEach((code) => {
+      const pre = code.parentElement!, wrapper = pre.parentElement;
+      replace(wrapper && wrapper.classList.contains("language-feynman") && !wrapper.classList.contains("feynman") ? wrapper : pre, code.textContent ?? "");
+    });
+    root.querySelectorAll<HTMLElement>(".highlight-feynman > .highlight > pre").forEach((pre) => {
+      replace(pre.parentElement!.parentElement!, pre.textContent ?? "");
+    });
+  }
   const selector = querySelector ?? ".feynman:not([data-processed])";
   root.querySelectorAll<HTMLElement>(selector).forEach((element) => {
     if (element.dataset.processed) return;

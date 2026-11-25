@@ -20,6 +20,16 @@ Pick where you write. Every option draws the same diagrams from the same text.
 
     [Set up a site](../compatibility/zensical.md){ .md-button .md-button--primary }
 
+-   **Sphinx**
+
+    A Sphinx project: <code>feynman</code> code blocks in reST or MyST Markdown become diagrams.
+
+    ```python
+    html_js_files = ["https://cdn.jsdelivr.net/npm/feynjs@0.10/dist/feynjs.min.js"]
+    ```
+
+    [Set up Sphinx](../compatibility/sphinx.md){ .md-button }
+
 -   **Obsidian**
 
     Your notes: the same <code>feynman</code> blocks, drawn in the note's own colours.
