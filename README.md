@@ -66,7 +66,7 @@ t~ > b~ W-(> d u~)
 | | |
 |---|---|
 | **npm** | `npm install feynjs` ([npmjs.com/package/feynjs](https://www.npmjs.com/package/feynjs)) |
-| **CDN** | `<script src="https://cdn.jsdelivr.net/npm/feynjs@0.9/dist/feynjs.min.js"></script>` |
+| **CDN** | `<script src="https://cdn.jsdelivr.net/npm/feynjs@0.10/dist/feynjs.min.js"></script>` |
 | **Release files** | `feynjs.min.js`, `feynjs.mjs`, the Obsidian plugin and the MadGraph plugin, from the [latest release](https://github.com/hepjs/feynjs/releases/latest) |
 | **Archive** | every release on Zenodo, [10.5281/zenodo.24497761](https://doi.org/10.5281/zenodo.24497761) |
 | **LaTeX package** | [`integrations/latex/feynjs.sty`](integrations/latex/) |
@@ -77,14 +77,14 @@ t~ > b~ W-(> d u~)
 is drawn once the page has loaded:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/feynjs@0.9/dist/feynjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/feynjs@0.10/dist/feynjs.min.js"></script>
 ```
 
 **A Markdown site** (Zensical, MkDocs): the script, and `feynman` blocks passed through as they are:
 
 ```toml
 [project]
-extra_javascript = ["https://cdn.jsdelivr.net/npm/feynjs@0.9/dist/feynjs.min.js"]
+extra_javascript = ["https://cdn.jsdelivr.net/npm/feynjs@0.10/dist/feynjs.min.js"]
 
 [project.markdown_extensions]
 pymdownx.superfences.custom_fences = [
@@ -175,7 +175,7 @@ latest.
 @software{feynjs,
   author  = {Oliver, Jason and Zhu, Pengxuan},
   title   = {feynjs: a JavaScript engine for Feynman diagrams},
-  version = {0.9.5},
+  version = {0.10.0},
   year    = {2026},
   doi     = {10.5281/zenodo.24497762},
   url     = {https://github.com/hepjs/feynjs}

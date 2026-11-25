@@ -8,7 +8,7 @@ import madgraph.interface.master_interface as master_interface
 
 from . import convert
 
-SCRIPT = "https://cdn.jsdelivr.net/npm/feynjs@0.9/dist/feynjs.min.js"
+SCRIPT = "https://cdn.jsdelivr.net/npm/feynjs@0.10/dist/feynjs.min.js"
 
 
 class FeynjsInterface(master_interface.MasterCmd):

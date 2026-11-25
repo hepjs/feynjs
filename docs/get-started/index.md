@@ -24,7 +24,7 @@ Pick where you write. Every option draws the same diagrams from the same text.
     A docs site: every <code>feynman</code> block in your Markdown becomes a diagram.
 
     ```toml
-    extra_javascript = ["https://cdn.jsdelivr.net/npm/feynjs@0.9/dist/feynjs.min.js"]
+    extra_javascript = ["https://cdn.jsdelivr.net/npm/feynjs@0.10/dist/feynjs.min.js"]
     ```
 
     [Set up a site](setup.md#setup-zensical--mkdocs){ .md-button .md-button--primary }
@@ -44,7 +44,7 @@ Pick where you write. Every option draws the same diagrams from the same text.
     Any page: one script tag, and every <code>feynman</code> block or <code>&lt;div class="feynman"&gt;</code> is drawn.
 
     ```html
-    <script src="https://cdn.jsdelivr.net/npm/feynjs@0.9/dist/feynjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feynjs@0.10/dist/feynjs.min.js"></script>
     ```
 
     [Use it in a page](setup.md#setup-web-page){ .md-button }

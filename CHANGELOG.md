@@ -3,7 +3,7 @@
 All notable changes, newest first. Versions follow [semantic versioning](https://semver.org): a
 layout that moves is a change, recorded here.
 
-## Unreleased
+## 0.10.0 — 2026-11-25
 
 - **A scattered beam reads as scattering.** Where an exchange between the beams scatters a line
   (one point before, one after), the line comes in toward the centre and leaves outward, each by

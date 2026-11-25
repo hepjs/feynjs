@@ -44,14 +44,14 @@ One tab for each place you can write a diagram. Each draws the same diagrams fro
 
             ```toml
             [project]
-            extra_javascript = ["https://cdn.jsdelivr.net/npm/feynjs@0.9/dist/feynjs.min.js"]
+            extra_javascript = ["https://cdn.jsdelivr.net/npm/feynjs@0.10/dist/feynjs.min.js"]
             ```
 
         === "mkdocs.yml"
 
             ```yaml
             extra_javascript:
-              - https://cdn.jsdelivr.net/npm/feynjs@0.9/dist/feynjs.min.js
+              - https://cdn.jsdelivr.net/npm/feynjs@0.10/dist/feynjs.min.js
             ```
 
     2.  **Add the fence.** It keeps a `feynman` block as written. Without it, the highlighter turns the
@@ -213,7 +213,7 @@ One tab for each place you can write a diagram. Each draws the same diagrams fro
     ```
 
     ```html
-    <script src="https://cdn.jsdelivr.net/npm/feynjs@0.9/dist/feynjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feynjs@0.10/dist/feynjs.min.js"></script>
 
     <div class="feynman">
       i1 [g] -- a
@@ -231,10 +231,10 @@ One tab for each place you can write a diagram. Each draws the same diagrams fro
     Load it from jsDelivr. It defines one global, `feynjs`.
 
     ```html
-    <script src="https://cdn.jsdelivr.net/npm/feynjs@0.9/dist/feynjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feynjs@0.10/dist/feynjs.min.js"></script>
     ```
 
-    `@0.9` follows the newest 0.9 release. To keep a copy of your own, take `dist/feynjs.min.js`
+    `@0.10` follows the newest 0.10 release. To keep a copy of your own, take `dist/feynjs.min.js`
     from the package and serve it next to your page.
 
     ### In a web page
@@ -243,7 +243,7 @@ One tab for each place you can write a diagram. Each draws the same diagrams fro
 
     ```html
     <link rel="stylesheet" href="feynjs.css">   <!-- optional: the label font -->
-    <script src="https://cdn.jsdelivr.net/npm/feynjs@0.9/dist/feynjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feynjs@0.10/dist/feynjs.min.js"></script>
 
     <div class="feynman">
       i1 [g] -- a

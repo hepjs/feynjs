@@ -29,7 +29,7 @@ Upgrading to a new release, the browsers and Node versions feynjs runs in, and i
 | Where you use feynjs | To upgrade |
 |---|---|
 | npm | `npm install feynjs@latest` |
-| jsDelivr link, `feynjs@0.9` | nothing for a 0.9.x release; change the link for 0.10 |
+| jsDelivr link, `feynjs@0.10` | nothing for a 0.10.x release; change the link for 0.11 |
 | Obsidian | replace the plugin folder with the one from the new release |
 
 Versions follow [semantic versioning](https://semver.org). Before 1.0, a new minor version (0.9
@@ -47,18 +47,19 @@ few of your diagrams.
 
 ### The jsDelivr link
 
-A link to `feynjs@0.9` picks up each 0.9.x release on its own:
+A link to `feynjs@0.10` picks up each 0.10.x release on its own:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/feynjs@0.9/dist/feynjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/feynjs@0.10/dist/feynjs.min.js"></script>
 ```
 
 jsDelivr can cache the version a range points to for up to about 12 hours, so a page may draw
 with the previous release for that long after a new one is out.
 
-A new minor version needs a new link. For 0.10, change `@0.9` to `@0.10` wherever the script is
+A new minor version needs a new link. For 0.11, change `@0.10` to `@0.11` wherever the script is
 loaded: `extra_javascript` in `zensical.toml` or `mkdocs.yml`, or the `<script>` tag. To stay on
-one exact release, write it in full, such as `feynjs@0.9.3`.
+one exact release, write it in full, such as `feynjs@0.10.0`. Pages still linking `feynjs@0.9`
+keep drawing with 0.9.5, the last 0.9 release.
 
 ### Obsidian
 
@@ -176,7 +177,7 @@ latest. Cite the version you used:
 @software{feynjs,
   author  = {Oliver, Jason and Zhu, Pengxuan},
   title   = {feynjs: a JavaScript engine for Feynman diagrams},
-  version = {0.9.5},
+  version = {0.10.0},
   year    = {2026},
   doi     = {10.5281/zenodo.24497762},
   url     = {https://github.com/hepjs/feynjs},

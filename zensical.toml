@@ -63,7 +63,7 @@ nav = [
 extra_css = ["stylesheets/feynjs.css", "stylesheets/theme.css"]
 # the released library from npm, through jsDelivr: the site shows what users of 0.9 get
 extra_javascript = [
-  "https://cdn.jsdelivr.net/npm/feynjs@0.9/dist/feynjs.min.js",
+  "https://cdn.jsdelivr.net/npm/feynjs@0.10/dist/feynjs.min.js",
   "javascripts/feynjs-init.js",
   "javascripts/playground.js",
 ]
