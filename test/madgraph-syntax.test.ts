@@ -60,7 +60,8 @@ test("a name with brackets that do not start with \">\" is one name: a hadron's 
   assert.deepEqual(legs("p p > X(3872) j"), ["X(3872)", "j"]);
   assert.deepEqual(legs("p p > X(ucd)"), ["X(ucd)"]);
   assert.deepEqual(legs("Pc(uudcc~) > p J/psi"), ["p", "J/psi"]);
-  assert.equal(parse("Pc(uudcc~) > p J/psi").vertices.get("in2")!.label, "Pc(uudcc~)");
+  // (the whole name reaches the registry, which reads the brackets as quark content: P_c, its quarks on hover)
+  assert.equal(parse("Pc(uudcc~) > p J/psi").vertices.get("in2")!.label, "P_c");
   // (a name may go on after its brackets, and brackets may hold brackets)
   assert.deepEqual(legs("B0 > D*(2010)- pi+"), ["D*(2010)-", "pi+"]);
   // a hadron with brackets decays on a line of its own, or on the spot
