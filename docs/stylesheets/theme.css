@@ -564,3 +564,5 @@
 .md-typeset .feynjs-belief { margin: 0.6rem 0 1.8rem; padding-left: 0.9rem; border-left: 3px solid var(--md-accent-fg-color); font-family: "NewComputerModern10", serif; font-style: italic; font-size: 1.25rem; line-height: 1.4; color: var(--md-default-fg-color); }
 /* a home-page row whose text ends in code and a button: room above the button and below it */
 .md-typeset .feynjs-row-text .highlight + p:has(.md-button) { margin: 1.2rem 0 1.6rem; }
+/* the home page shows its code to read, not to copy: no buttons on its code blocks either */
+.md-content__inner:has(.feynjs-no-source[data-page="home"]) .md-code__nav { display: none; }
