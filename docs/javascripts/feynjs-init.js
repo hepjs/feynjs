@@ -343,7 +343,7 @@
       var names = (box.getAttribute("data-points") || "").split(/\s+/).filter(Boolean);
       if (names.length) teach(svg, names);
       pairLabels(svg);
-      var lit = [], stageTimer = null, current = -1, lines = [], playing = null;
+      var lit = [], stageTimer = null, current = -1, lines = [], playing = null, counter = null;
       var light = function (el, cls) { el.classList.add(cls); lit.push([el, cls]); };
       var live = document.createElement("span");
       live.className = "feynjs-explain-live";
@@ -355,7 +355,7 @@
         box.classList.remove("feynjs-explaining");
         lines.forEach(function (l) { l.el.classList.remove("feynjs-line-on"); });
         current = -1;
-        counter.textContent = "";
+        if (counter) Array.prototype.forEach.call(counter.children, function (d) { d.classList.remove("feynjs-on"); });
       };
       var lightEdges = function (edges) {
         edges.forEach(function (e) {
@@ -370,7 +370,7 @@
         current = k;
         box.classList.add("feynjs-explaining");
         line.el.classList.add("feynjs-line-on");
-        counter.textContent = (k + 1) + " / " + lines.length;
+        if (counter) Array.prototype.forEach.call(counter.children, function (d, j) { d.classList.toggle("feynjs-on", j === k); });
         live.textContent = line.note;
         line.ids.forEach(function (id) {
           all(svg, '[data-vertex="' + id + '"], .feynjs-teach-tag[data-teach="' + id + '"], .feynjs-teach-dot[data-teach="' + id + '"]').forEach(function (el) { light(el, "feynjs-lit-point"); });
@@ -430,34 +430,32 @@
       var widest = 0;
       all(code, ".feynjs-src").forEach(function (el) { widest = Math.max(widest, el.textContent.length); });
       all(code, ".feynjs-src").forEach(function (el) { el.style.setProperty("--feynjs-src-width", (widest + 3) + "ch"); });
-      // the controls: step back, step on, play through; the step shown; the note read aloud
+      // the controls: back and on (Lucide's chevrons), and a dot for each step, the current one
+      // filled, any one a button to it; the note read aloud
       var bar = document.createElement("div");
       bar.className = "feynjs-explain-bar";
-      var button = function (text, title, act) {
+      var chevron = function (d) { return '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + d + '"/></svg>'; };
+      var button = function (html, title, act, cls) {
         var b = document.createElement("button");
-        b.type = "button"; b.className = "feynjs-explain-button"; b.textContent = text;
+        b.type = "button"; b.className = cls; b.innerHTML = html;
         b.setAttribute("aria-label", title); b.title = title;
-        b.addEventListener("click", function () { box.dataset.touched = "1"; act(); });
-        bar.appendChild(b);
+        b.addEventListener("click", function () { box.dataset.touched = "1"; stop(); act(); });
         return b;
       };
-      var stop = function () { if (playing) { clearTimeout(playing); playing = null; play.textContent = "▶ Play"; play.setAttribute("aria-label", "Play through the lines"); } };
+      var stop = function () { clearTimeout(playing); playing = null; };
       var run = function (k) {
         if (k >= lines.length) { stop(); clear(); return; }
         show(k);
         playing = setTimeout(function () { run(k + 1); }, lines[k].stages ? 1000 * lines[k].stages.length + 400 : 1600);
       };
-      button("◀", "Previous line", function () { stop(); show(Math.max(0, current < 0 ? 0 : current - 1)); });
-      button("▶", "Next line", function () { stop(); show(Math.min(lines.length - 1, current + 1)); });
-      var play = button("▶ Play", "Play through the lines", function () {
-        if (playing) { stop(); return; }
-        play.textContent = "❚❚ Pause"; play.setAttribute("aria-label", "Pause");
-        run(current < 0 || current >= lines.length - 1 ? 0 : current + 1);
-      });
-      var counter = document.createElement("span");
-      counter.className = "feynjs-explain-count";
-      bar.appendChild(counter);
+      bar.appendChild(button(chevron("m15 18-6-6 6-6"), "Previous line", function () { show(Math.max(0, current - 1)); }, "feynjs-explain-step"));
+      var dots = document.createElement("span");
+      dots.className = "feynjs-explain-dots";
+      lines.forEach(function (line, k) { dots.appendChild(button("", "Line " + (k + 1) + ": " + line.note, function () { show(k); }, "feynjs-explain-dot")); });
+      bar.appendChild(dots);
+      bar.appendChild(button(chevron("m9 18 6-6-6-6"), "Next line", function () { show(Math.min(lines.length - 1, current + 1)); }, "feynjs-explain-step"));
       bar.appendChild(live);
+      counter = dots;
       var diagram = box.querySelector("div.feynman");
       diagram.parentNode.insertBefore(bar, diagram.nextSibling);
       if (!("IntersectionObserver" in window)) return;
@@ -465,7 +463,7 @@
       var seen = new IntersectionObserver(function (e) {
         if (!e[0].isIntersecting) return;
         seen.disconnect();
-        setTimeout(function () { if (!box.dataset.touched) { play.textContent = "❚❚ Pause"; run(0); } }, 500);
+        setTimeout(function () { if (!box.dataset.touched) run(0); }, 500);
       }, { threshold: 0.6 });
       seen.observe(box);
     });
