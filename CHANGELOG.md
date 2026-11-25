@@ -3,6 +3,16 @@
 All notable changes, newest first. Versions follow [semantic versioning](https://semver.org): a
 layout that moves is a change, recorded here.
 
+## Unreleased
+
+- **`measure` counts only accidental crossings.** Two legs that cross because the `in:` or `out:`
+  order asks for it (a u-channel's beams, as well as its final states) no longer count, as long
+  as the drawing keeps that order; two legs crossing against it still do. Every approved diagram
+  now measures no crossings: the two that did (ATL-PHYS-PUB-2016-008 fig. 1b, EXOT-2014-10 fig. 1c)
+  cross their beams as the originals do. No layout moves.
+- **MadGraph plugin:** MSSM sleptons and sneutrinos (`el-`, `mur+`, `ta1-`, `sve`) are drawn as
+  superpartners, labelled as papers write them.
+
 ## 0.9.4 — 2026-11-24
 
 0.9.3 was not published: its changes are here, after this release's own.

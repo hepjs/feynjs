@@ -222,6 +222,16 @@ test("examples have no unintended crossings, crowded vertices or crowded labels"
   }
 });
 
+test("a crossing the in: or out: order asks for does not count; one against the order does", async () => {
+  const { measure } = await import("../src/tools/quality.ts");
+  // (u-channel VBF: the beams cross, as the in: order has them)
+  const crossedBeams = "in: i1 i2\nout: f1 h f2\ni1 [q] -- [plain] b [dot]\ni2 [q'] -- [plain] a [dot]\na -- [plain] f1 [q']\nb -- [plain] f2 [q]\na -- [V] x [dot] -- [V] b\nx -- [scalar] h [H]";
+  assert.equal(measure(crossedBeams).crossings, 0);
+  // (the same legs placed by hand against their listed order: i2 drawn above i1, so they cross by accident)
+  const against = "layout: manual\nin: i1 i2\nout: f1 f2\ni1 at (0, -1)\ni2 at (0, 1)\na at (1, -1)\nb at (1, 1)\nf1 at (2, 1)\nf2 at (2, -1)\ni1 -- b\ni2 -- a\na -- b\na -- f2\nb -- f1";
+  assert.equal(measure(against).crossings, 1);
+});
+
 test("panels split on dashes and are captioned", () => {
   const svg = render("a -- b\n--- (b) second\nc -- d");
   assert.ok(svg.includes("feynjs-panels") && svg.includes("(a)") && svg.includes("(b) second"));

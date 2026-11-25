@@ -61,14 +61,19 @@ function measureOne(source: string, theme: ThemeOverrides = {}): Quality {
   const problems: string[] = [];
   const straight = d.edges.filter((e) => e.from !== e.to && e.style.line !== "none");
 
+  // (two legs whose order the author listed in `in:` or `out:` cross on purpose: a u-channel's
+  // final states, or its beams. The crossing is the one asked for when the drawing keeps the
+  // listed order, the first listed above; otherwise the two crossed by accident, and it counts)
+  const listedLeg = (g: Edge) => [g.from, g.to].map((id) => d.vertices.get(id)!).find((v) => v.declaredOrder !== undefined && (v.role === "in" || v.role === "out"));
+  const askedFor = (e: Edge, f: Edge) => {
+    const a = listedLeg(e), b = listedLeg(f);
+    return !!a && !!b && a.role === b.role && (a.declaredOrder! - b.declaredOrder!) * (at(a.id).y - at(b.id).y) > 0;
+  };
   let crossings = 0;
   for (let i = 0; i < straight.length; i++) {
     for (let j = i + 1; j < straight.length; j++) {
       const e = straight[i], f = straight[j];
-      if (e.bend || f.bend || sharesVertex(e, f)) continue;
-      // (two legs whose order the author listed cross on purpose: a u-channel's final states)
-      const listedLeg = (g: Edge) => [g.from, g.to].some((id) => d.vertices.get(id)!.declaredOrder !== undefined && d.vertices.get(id)!.role === "out");
-      if (listedLeg(e) && listedLeg(f)) continue;
+      if (e.bend || f.bend || sharesVertex(e, f) || askedFor(e, f)) continue;
       if (segmentsCross(at(e.from), at(e.to), at(f.from), at(f.to))) {
         crossings++;
         problems.push(`${e.from}-${e.to} crosses ${f.from}-${f.to}`);
