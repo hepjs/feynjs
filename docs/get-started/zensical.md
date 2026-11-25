@@ -136,7 +136,7 @@ document$.subscribe(() => feynjs.run({ download: true }));
 
 ## Next
 
-- [Your first diagram](../get-started/first-diagram.md): what each line of a diagram means.
+- [Your first diagram](first-diagram.md): what each line of a diagram means.
 - [Write edges, as in TikZ-Feynman](../authoring/syntax.md) or
   [write processes, as in MadGraph](../authoring/processes.md).
 - [Examples](../authoring/examples/index.md): hundreds of diagrams with their source.

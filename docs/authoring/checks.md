@@ -21,7 +21,7 @@ warning: external leg "f2" has no particle label  [unlabelled-leg]
 
 A drawing can look right and still be wrong. feynjs reads a diagram as well as drawing it, and
 three tools report what it finds. Each takes the same source as `render`, and each runs
-[from a shell](cli.md) too.
+[from a shell](../get-started/cli.md) too.
 
 ## check
 

@@ -2,6 +2,46 @@
 
 <p class="feynjs-belief">Growing the field means learning how to share and work together at greater scales.</p>
 
+## Who makes it
+
+<div class="feynjs-person" markdown>
+
+![Jason Oliver](jason-oliver.jpg){ .feynjs-portrait width="160" height="160" }
+
+<div markdown>
+
+I'm **Jason Oliver**, an experimental particle physicist at Adelaide University, Australia, on
+the ATLAS experiment at CERN. I've worked on searches for supersymmetry, on the Higgs boson, and
+on the systems that select collisions as they happen. More and more of my time goes into how a
+collaboration finds and shares what it knows: ATLAS's web pages, and a search built on OpenSearch
+that people and AI assistants can both use. feynjs comes from the same place.
+
+[ORCID](https://orcid.org/0000-0002-0713-6627){ .md-button }
+[GitHub](https://github.com/joliverHEP){ .md-button }
+
+</div>
+</div>
+
+<div class="feynjs-person" markdown>
+
+![Pengxuan Zhu](pengxuan-zhu.jpg){ .feynjs-portrait width="160" height="160" }
+
+<div markdown>
+
+**Pengxuan Zhu**, at Adelaide University, writes feynjs with me, bringing work across high-energy
+physics, AI and scientific computing: collider phenomenology, and frameworks for reproducible
+analysis.
+
+[ORCID](https://orcid.org/0000-0003-2039-5794){ .md-button }
+[GitHub](https://github.com/Pengxuan-Zhu-Phys){ .md-button }
+
+</div>
+</div>
+
+feynjs is part of [hepjs](https://github.com/hepjs), JavaScript tools for high-energy physics.
+Ideas, bug reports and diagrams that come out wrong are welcome on
+[GitHub](https://github.com/hepjs/feynjs/issues); see [Contributing](contributing.md).
+
 ## Why feynjs exists
 
 Particle physics is done by thousands of people, in collaborations that span continents and
@@ -21,32 +61,6 @@ feynjs makes a Feynman diagram as easy to write as a sentence, wherever physicis
 - **laid out as published diagrams are drawn,** with no coordinates, so a diagram looks right the
   first time;
 - **the same everywhere:** in a web page, a Markdown site, a notebook, a note or a LaTeX paper.
-
-## Who makes it
-
-<div class="feynjs-person" markdown>
-
-![Jason Oliver](jason-oliver.jpg){ .feynjs-portrait width="160" height="160" }
-
-<div markdown>
-
-I'm **Jason Oliver**, an experimental particle physicist at Adelaide University, Australia, on
-the ATLAS experiment at CERN. I've worked on searches for supersymmetry, on the Higgs boson, and
-on the systems that select collisions as they happen. More and more of my time goes into how a
-collaboration finds and shares what it knows: ATLAS's web pages, and a search built on OpenSearch
-that people and AI assistants can both use. feynjs comes from the same place.
-
-feynjs is written with Pengxuan Zhu, at Adelaide University, as part of
-[hepjs](https://github.com/hepjs), JavaScript tools for high-energy physics.
-
-[ORCID](https://orcid.org/0000-0002-0713-6627){ .md-button }
-[GitHub](https://github.com/hepjs){ .md-button }
-
-</div>
-</div>
-
-Ideas, bug reports and diagrams that come out wrong are welcome on
-[GitHub](https://github.com/hepjs/feynjs/issues); see [Contributing](contributing.md).
 
 ## How to cite
 

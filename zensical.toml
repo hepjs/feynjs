@@ -16,26 +16,21 @@ nav = [
   { "Get started" = [
     { "Get started" = "get-started/index.md" },
     { "Your first diagram" = "get-started/first-diagram.md" },
-  ] },
-  { "Usage" = [
-    { "Overview" = "usage/index.md" },
-    { "Zensical and MkDocs" = "usage/zensical.md" },
-    { "Sphinx" = "usage/sphinx.md" },
-    { "Jupyter" = "usage/jupyter.md" },
-    { "Web pages" = "usage/web.md" },
-    { "Obsidian" = "usage/obsidian.md" },
-    { "LaTeX and Beamer" = "usage/latex.md" },
-    { "JavaScript API" = "usage/api.md" },
-    { "Command line" = "usage/cli.md" },
-    { "Checking diagrams" = "usage/checks.md" },
-    { "Exporting" = "usage/export.md" },
-    { "Hand-over format" = "usage/interchange.md" },
-    { "Upgrading" = "usage/upgrading.md" },
-    { "Browsers and Node" = "usage/browsers.md" },
-  ] },
-  { "Setup" = [
-    { "Styling" = "setup/index.md" },
-    { "Theme settings" = "setup/theme.md" },
+    { "Where you write" = [
+      { "Zensical and MkDocs" = "get-started/zensical.md" },
+      { "Sphinx" = "get-started/sphinx.md" },
+      { "Jupyter" = "get-started/jupyter.md" },
+      { "Web pages" = "get-started/web.md" },
+      { "Obsidian" = "get-started/obsidian.md" },
+      { "LaTeX and Beamer" = "get-started/latex.md" },
+    ] },
+    { "From code" = [
+      { "JavaScript API" = "get-started/api.md" },
+      { "Command line" = "get-started/cli.md" },
+      { "Hand-over format" = "get-started/interchange.md" },
+    ] },
+    { "Upgrading" = "get-started/upgrading.md" },
+    { "Browsers and Node" = "get-started/browsers.md" },
   ] },
   { "Authoring" = [
     { "How it works" = "authoring/index.md" },
@@ -49,6 +44,7 @@ nav = [
     { "Engines" = "authoring/engines.md" },
     { "Drawing the eye" = "authoring/emphasis.md" },
     { "Views" = "authoring/views.md" },
+    { "Checking diagrams" = "authoring/checks.md" },
     { "Syntax at a glance" = "authoring/syntax-at-a-glance.md" },
     { "Examples" = [
       { "Overview" = "authoring/examples/index.md" },
@@ -58,6 +54,11 @@ nav = [
       { "Nuclear and heavy ions" = "authoring/examples/nuclear.md" },
       { "Beyond the Standard Model" = "authoring/examples/bsm.md" },
     ] },
+  ] },
+  { "Setup" = [
+    { "Styling" = "setup/index.md" },
+    { "Exporting" = "setup/export.md" },
+    { "Theme settings" = "setup/theme.md" },
   ] },
   { "Compatibility" = [
     { "TikZ-Feynman" = "compatibility/tikz-feynman.md" },

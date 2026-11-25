@@ -57,7 +57,7 @@ names work too, the Standard Model's (`t~`, `w+`, `ve`, `ta+`) and the MSSM's (`
 `ul`, `t1`, `ta1-`; see [MadGraph](../compatibility/madgraph.md#particle-names)), and hadrons go by
 their English names (`kaon+`, `K*0`, `Lambda_b`, `jpsi`, or `X(ucd)` with its quarks). A name feynjs
 doesn't know is drawn as a plain line carrying that name as its label, and
-[`check`](../usage/api.md#check) warns of it.
+[`check`](../get-started/api.md#check) warns of it.
 
 To draw a particle with a label of your own, while keeping its line style and properties, add a
 `label:` line. This works in both syntaxes:

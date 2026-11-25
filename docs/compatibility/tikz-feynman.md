@@ -295,4 +295,4 @@ From JavaScript it is `toTikz(source)`. The diagram at the top of this page come
 
 Plain TikZ-Feynman has no jets, hadron braces or SUSY lines drawn over a wave, so those come out
 as the nearest TikZ-Feynman lines. The options, standalone documents and the propagator length
-are in [Exporting](../usage/export.md) and [toTikz](../usage/api.md#totikz).
+are in [Exporting](../setup/export.md) and [toTikz](../get-started/api.md#totikz).

@@ -15,9 +15,9 @@ f1 [mu-] -- b -- f2 [mu+]
 ````
 
 feynjs turns a few lines of text into a Feynman diagram, drawn as SVG. To draw these yourself, put
-them in a `feynman` block on a [Zensical site](../usage/zensical.md) or in an [Obsidian note](../usage/obsidian.md),
+them in a `feynman` block on a [Zensical site](zensical.md) or in an [Obsidian note](obsidian.md),
 or paste them into the [playground](../playground.md). To install feynjs for your own code, see
-[Install](../usage/api.md#install).
+[Install](api.md#install).
 
 !!! note "Early days"
     feynjs is at version 0.9. The syntax described here is stable enough to write diagrams
@@ -94,7 +94,7 @@ feynjs: line 2: unclosed [
 
 `feynjs.check(source)` (or `feynjs check diagram.feyn`) finds physics slips the drawing would
 hide: fermion lines that don't pair up at a vertex, arrows that don't flow through, legs with no
-particle name. See [Checking diagrams](../usage/checks.md).
+particle name. See [Checking diagrams](../authoring/checks.md).
 
 ## Next
 

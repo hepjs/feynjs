@@ -61,7 +61,7 @@ In a component framework, put the string into the page as HTML, for example in R
 text, so it carries no script.
 
 The same source is drawn only once: `render` keeps the last 256 diagrams, so a page that redraws
-often is cheap. Every function and option is in the [JavaScript API](api.md).
+often is cheap. Every function and option is below.
 
 ## Drawing
 
@@ -115,7 +115,7 @@ check(source: string): Finding[]
 ```
 
 Structural lint: fermion pairing and flow, unconnected vertices, unlabelled legs. See
-[Checking diagrams](checks.md#check).
+[Checking diagrams](../authoring/checks.md#check).
 
 ### describe
 
@@ -124,7 +124,7 @@ describe(source: string): Description
 ```
 
 `{ process, incoming, outgoing, propagators, vertices, loops, pieces, hadrons }`. See
-[Checking diagrams](checks.md#describe).
+[Checking diagrams](../authoring/checks.md#describe).
 
 ### measure
 
@@ -133,7 +133,7 @@ measure(source: string, theme?: ThemeOverrides): Quality
 ```
 
 `{ crossings, crowdedVertices, crowdedLabels, smallestAngle, stubs, aspect, problems }`. See
-[Checking diagrams](checks.md#measure).
+[Checking diagrams](../authoring/checks.md#measure).
 
 ### explain
 
@@ -142,7 +142,7 @@ explain(source: string): string
 ```
 
 The diagram in plain English, as every SVG carries in its `<desc>`. See
-[Checking diagrams](checks.md#explain).
+[Checking diagrams](../authoring/checks.md#explain).
 
 ### parse
 
@@ -281,7 +281,7 @@ and `line` holds it.
 Every SVG feynjs draws names its parts: each line is a `<g data-edge="a--b">`, each point's mark a
 `<g data-vertex="b">`, and `<metadata class="feynjs-model">` holds the whole diagram as JSON. A
 page script, a test or a language model can find any part and change the source by name. See
-[the drawing's parts, by name](api.md#the-drawings-parts-by-name).
+[the drawing's parts, by name](#the-drawings-parts-by-name).
 
 Two skills for AI assistants come with the repository:
 [`feynjs`](https://github.com/hepjs/feynjs/tree/main/skills/feynjs), for writing, checking and

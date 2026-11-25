@@ -21,13 +21,13 @@ neutralino2 > H neutralino1
 
 Every name feynjs knows, 212 in all, and MadGraph's names for them. Write a name on a line
 (`a -- [W+] b`) or on an external leg (`f1 [mu-]`) and it sets the line style, the label and, for
-supersymmetric particles, the colour. Add your own with [`registerParticle`](../usage/api.md#registerparticle).
+supersymmetric particles, the colour. Add your own with [`registerParticle`](../get-started/api.md#registerparticle).
 
 Any name with a tilde is its antiparticle (`t~`, `ve~`, `ul~`): a charged one is its partner of the
 other charge (`pi+~` is the `pi-`), a neutrino takes its bar on the symbol alone (`ve~` is
 `\bar\nu_e`), anything else a bar over its label. A name feynjs does not know is an error on a
 line; in a process it is drawn as a plain line labelled with the name, and
-[`check`](../usage/api.md#check) warns of it.
+[`check`](../get-started/api.md#check) warns of it.
 
 *Lists the particle registry, `src/particles/registry.ts`.*
 

@@ -129,7 +129,7 @@ One line in `src/particles/registry.ts`, using the helpers there:
 ```
 
 Then add it to the [Particles](../authoring/particles.md) page, which is kept by hand. A particle needed by one page only can be added
-at run time with [`registerParticle`](../usage/api.md#registerparticle) instead.
+at run time with [`registerParticle`](../get-started/api.md#registerparticle) instead.
 
 ### Add a line style
 

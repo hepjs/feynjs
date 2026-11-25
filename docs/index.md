@@ -23,7 +23,7 @@ A JavaScript display engine for *Feynman diagrams*{ .feynjs-accent }
 { .feynjs-punch }
 
 [Learn more](authoring/index.md){ .md-button }
-[Getting started](usage/index.md){ .md-button .md-button--primary }
+[Getting started](get-started/index.md){ .md-button .md-button--primary }
 
 </div>
 
@@ -252,7 +252,7 @@ v -- f2 [H]
 The same text is a diagram in a Markdown site, in an Obsidian note, on any web page with one script
 tag, and in a LaTeX paper, where it becomes TikZ-Feynman code.
 
-[Getting started](usage/index.md){ .md-button .md-button--primary }
+[Getting started](get-started/index.md){ .md-button .md-button--primary }
 [Try the playground](playground.md){ .md-button }
 
 </div>

@@ -87,7 +87,7 @@ Every name is in [All particles](../authoring/particles.md).
 
 MadGraph's MSSM names (`go`, `n1`, `x1+`, `ul`, `t1`, `el-`, `sve`, `h2`, ...) work too: the full table is in [All particles](../authoring/particles.md#madgraphs-mssm-names). They are matched only as written: `dl` is the left down squark, and the displaced lepton is
 `dislep` (or `DL`). A name feynjs doesn't know is still drawn, as a plain line with the name as its
-label, and [`check`](../usage/api.md#check) warns of it.
+label, and [`check`](../get-started/api.md#check) warns of it.
 
 ## What feynjs takes
 

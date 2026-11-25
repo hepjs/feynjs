@@ -45,4 +45,4 @@ f1 [mu-] -- b -- f2 [mu+]
 
 To set the colours yourself, or to get a file with colours of its own for a slide or a paper, see
 [Light and dark](../setup/index.md#light-and-dark) and
-[Exporting](export.md).
+[Exporting](../setup/export.md).
