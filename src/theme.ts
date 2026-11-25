@@ -70,12 +70,12 @@ export interface VertexLook {
   smallBlob: number;
   /** half the size of the cross of an insertion (a mass or mixing insertion on a line) */
   insertion: number;
-  /** a nucleus's radius is this times A to the third, in px; its protons and neutrons are these colours, each nucleon edged in `nucleonEdge` */
+  /** a nucleon's size, in px (each 0.5 of it across): a nucleus grows as A to the third; protons and neutrons are these colours */
   nucleusUnit: number;
   proton: string;
   neutron: string;
   nucleonEdge: string;
-  /** a proton's and a neutron's own edge, in place of `nucleonEdge`; "none" draws nucleons without edges */
+  /** a proton's and a neutron's own edge, a dark shade of its colour (`nucleonEdge`, ink, with `nucleon edges: ink`); "none" draws nucleons without edges */
   protonEdge?: string;
   neutronEdge?: string;
   /** fill of blobs and hadron ellipses (a page's stylesheet can override it) */
@@ -450,7 +450,7 @@ export const defaultTheme: Theme = {
     jetHalfAngle: 9, jetMaxHalfWidth: 11, jetColor: "#3f90da", jetShade: 0.6, jetFade: 0.2,
     largeJetScale: 2, narrowJetScale: 0.8, trackWidth: 0.9, objectLegStretch: 1.6,
   },
-  vertex: { dot: 3.6, couplingDot: 4.6, crossedDot: 6.5, blob: 11, smallBlob: 4.6, insertion: 4.5, nucleusUnit: 7, proton: "#cf3a1a", neutron: "#8290a8", nucleonEdge: "#2b2b2b", blobFill: "rgba(100, 120, 150, 0.2)", smallBlobFill: "#9aa1ab", hatchSpacing: 2.8 },
+  vertex: { dot: 3.6, couplingDot: 4.6, crossedDot: 6.5, blob: 11, smallBlob: 4.6, insertion: 4.5, nucleusUnit: 7, proton: "#b8493b", neutron: "#5d6b85", nucleonEdge: "#2b2b2b", protonEdge: "#6e2c23", neutronEdge: "#343d4f", blobFill: "rgba(100, 120, 150, 0.2)", smallBlobFill: "#9aa1ab", hatchSpacing: 2.8 },
   colourFlow: { gap: 3.4, width: 2.6, opacity: 0.6, arrowLength: 7, arrowWidth: 6.2, turn: 14, palette: ["#e0241b", "#1f9e4a", "#2f6fdf"], anti: ["#00a7c4", "#c8379f", "#f0b000"] },
   engine: "v2",
   // fitted to the hand-placed reference diagrams by scripts/fit/tune.ts (2026-11-22)

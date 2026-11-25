@@ -300,10 +300,10 @@ export function drawDiagram(d: Diagram, options: RenderOptions = {}): { svg: str
   const zoom = Number(d.directives.scale) || 1;
   const thicker = zoom < 1 ? portable.power(zoom, -0.5) : 1;
   const thinned = thicker === 1 ? sized : { ...sized, line: { ...sized.line, stroke: sized.line.stroke * thicker, heavy: sized.line.heavy * thicker, susy: sized.line.susy * thicker } };
-  // (nucleon edges: ink, none, or tinted, a darker red round protons and a lighter grey round neutrons)
+  // (nucleon edges: each in a dark shade of its own colour (tinted, the default), ink, or none)
   const edges = (d.directives["nucleon edges"] ?? "").trim().toLowerCase();
   const theme = edges === "none" ? { ...thinned, vertex: { ...thinned.vertex, protonEdge: "none", neutronEdge: "none" } }
-    : edges === "tinted" ? { ...thinned, vertex: { ...thinned.vertex, protonEdge: "#8e1f10", neutronEdge: "#aab3c3" } } : thinned;
+    : edges === "ink" ? { ...thinned, vertex: { ...thinned.vertex, protonEdge: thinned.vertex.nucleonEdge, neutronEdge: thinned.vertex.nucleonEdge } } : thinned;
   // (the lattice view draws space-time cut into sites and links, not the diagram)
   if (/^lattice$/i.test((d.directives.view ?? "").trim())) return { svg: drawLattice(d, theme), scene: new Scene(d, theme, options.idPrefix ?? "feyn") };
   // (`debug: on`: a faint grid, each point's name, and why each line lies where it does)

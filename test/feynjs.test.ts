@@ -740,8 +740,8 @@ test("TikZ-Feynman keys: momentum variants, insertions, arrows, angles, placemen
 });
 
 test("nuclei: drawn as A spheres, Z of them protons, from a symbol, an isotope or A= and Z=", () => {
-  // (protons are the red ones, shaded a little across the nucleus; neutrons the grey ones)
-  const nucleons = (svg: string) => [...svg.matchAll(/<circle [^>]*fill="#([0-9a-f]{6})" stroke="#2b2b2b"/g)].map((m) => parseInt(m[1].slice(0, 2), 16) - parseInt(m[1].slice(2, 4), 16) > 60);
+  // (protons are the brick-red ones, neutrons the slate ones, each edged in a dark shade of its own)
+  const nucleons = (svg: string) => [...svg.matchAll(/<circle [^>]*fill="#([0-9a-f]{6})" stroke="#(?:6e2c23|343d4f)"/g)].map((m) => parseInt(m[1].slice(0, 2), 16) - parseInt(m[1].slice(2, 4), 16) > 60);
   const lead = nucleons(render("i1 [Pb] -- b [nucleus=Pb] -- o1 [Pb]\nb -- [photon] g [gamma]"));
   assert.equal(lead.filter(Boolean).length, 82);
   assert.equal(lead.length, 208);
@@ -823,12 +823,18 @@ test("production modes: ggF > H is the top triangle; VBF > H and VBS > H > W+ W-
   assert.ok(at.every((e) => e.particle === "H" || selfCoupling.vertices.get(e.to)!.particle === "H"));
 });
 
-test("nucleon edges: ink by default, none, or tinted; a diagram of nuclei alone draws", () => {
+test("nucleon edges: each in a dark shade of its own by default, ink, or none; a diagram of nuclei alone draws", () => {
   const lead = "i1 [Pb] -- b [nucleus=Pb] -- o1 [Pb]\nb -- [photon] g [gamma]";
-  assert.ok(render(lead).includes('stroke="#2b2b2b"'));
-  assert.ok(!render("nucleon edges: none\n" + lead).includes('stroke="#2b2b2b"'));
-  const tinted = render("nucleon edges: tinted\n" + lead);
-  assert.ok(tinted.includes('stroke="#8e1f10"') && tinted.includes('stroke="#aab3c3"'));
+  const own = render(lead);
+  assert.ok(own.includes('stroke="#6e2c23"') && own.includes('stroke="#343d4f"'));
+  assert.equal(render("nucleon edges: tinted\n" + lead), own);
+  assert.ok(render("nucleon edges: ink\n" + lead).includes('stroke="#2b2b2b"'));
+  assert.ok(!/stroke="#(6e2c23|343d4f|2b2b2b)"/.test(render("nucleon edges: none\n" + lead).split("feynjs-nucleus")[1]));
+  // (every nucleon one size, so lead is wider than helium by about A to the third)
+  const across = (svg: string) => { const xs = [...svg.split("feynjs-nucleus")[1].matchAll(/cx="([-\d.]+)"/g)].map((m) => Number(m[1])); return Math.max(...xs) - Math.min(...xs); };
+  const radius = (svg: string) => Number(/feynjs-nucleus"><circle [^>]*r="([\d.]+)"/.exec(svg)![1]);
+  assert.equal(radius(render("a [nucleus=He]")), radius(render("a [nucleus=Pb]")));
+  assert.ok(across(render("a [nucleus=Pb]")) > 3 * across(render("a [nucleus=He]")));
   assert.ok(render("a [nucleus=He]; b [nucleus=Pb]").includes("feynjs-nucleus"));
 });
 

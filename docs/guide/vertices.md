@@ -146,11 +146,11 @@ larger, so the colour reads. See [coupling labels](lines.md#coupling-labels).
 
 ### Nuclei
 
-`nucleus=Pb` draws a nucleus as its protons (dull red) and neutrons (dull black) packed together,
-growing as A to the third. Name it by symbol (`Pb`, `Au`, `Xe`, `O`...), as an isotope (`208Pb`),
-or give any numbers with `A=` and `Z=`. The nucleons sit in a ball of the nucleus's genuine
-radius, seen in 3D. `nucleon edges: tinted` edges them in a darker red and a lighter grey instead
-of ink; `nucleon edges: none` draws them without edges.
+`nucleus=Pb` draws a nucleus as its protons (brick red) and neutrons (slate) packed together,
+every nucleon the same size, so a nucleus grows as A to the third. Name it by symbol (`Pb`, `Au`,
+`Xe`, `O`...), as an isotope (`208Pb`), or give any numbers with `A=` and `Z=`. The nucleons sit
+in a ball of the nucleus's genuine radius, seen in 3D, each edged in a dark shade of its own
+colour; `nucleon edges: ink` edges them in ink, `nucleon edges: none` not at all.
 
 ```feynman
 i1 [Pb] -- b1 [nucleus=Pb] -- o1 [Pb]

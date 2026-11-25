@@ -4,7 +4,7 @@ import * as portable from "../geometry/portable-math.ts";
 
 /**
  * A nucleus drawn as an atom's core is drawn in textbooks: A small spheres packed in a disc,
- * Z of them protons (dull red), the rest neutrons (dull black), mixed through it. Its size
+ * Z of them protons (brick red), the rest neutrons (slate), mixed through it. Its size
  * grows as A to the third, as a nucleus's radius does.
  */
 
@@ -31,11 +31,11 @@ export function nucleusFrom(text: string): { A: number; Z: number } | undefined 
  * Where a nucleus's A nucleons sit, seen from the front, with how near each is: inside a ball of
  * the nucleus's genuine radius, 1.2 fm A^(1/3) to a nucleon's 0.85 fm (so lead is about eight
  * nucleons across, not thirteen as a flat packing would make it), pushed apart until each has
- * its room, the same every time. Each nucleon is smaller the heavier the nucleus (as A to the
- * -1/6), so the whole grows as A to the sixth on the page, gently.
+ * its room, the same every time. Every nucleon is the same size, so the whole grows as A to the
+ * third, as a nucleus does: lead is about 3.7 times helium across.
  */
 function nucleonPlaces(A: number, unit: number): { places: (Pt & { z: number })[]; r: number } {
-  const r = unit * portable.power(A, -1 / 6), R = Math.max(r, ((1.2 / 0.85) * portable.cbrt(A)) * r), inside = Math.max(0, R - r);
+  const r = unit * 0.5, R = Math.max(r, ((1.2 / 0.85) * portable.cbrt(A)) * r), inside = Math.max(0, R - r);
   type P3 = { x: number; y: number; z: number };
   let pts: P3[];
   // (the lightest by hand: a touching pair, a triangle, a tetrahedron turned a little)
@@ -89,43 +89,21 @@ export function nucleusRadius(A: number, unit: number): number {
 export function nucleusSvg(p: Pt, A: number, Z: number, unit: number, colours: { proton: string; neutron: string; edge: string; protonEdge?: string; neutronEdge?: string }): string {
   const { places: offsets, r } = nucleonPlaces(A, unit);
   const places = offsets.map((q) => ({ x: p.x + q.x, y: p.y + q.y, z: q.z }));
-  const disc = Math.max(r, ...offsets.map((q) => portable.hypot(q.x, q.y)));
   // (which are protons: Z of them, spread evenly from the middle out, so a small nucleus alternates
   // protons and neutrons; mixed a little in a large one, the same every time for the same nucleus)
   const evenly = places.map((_, k) => Math.floor(((k + 1) * Z) / A) > Math.floor((k * Z) / A));
   const order = A > 20 ? shuffled(A, A * 1000 + Z) : places.map((_, k) => k);
   const protons = new Set(order.filter((_, k) => evenly[k]).map((k) => k));
-  // (flat colours, each nucleon edged in thin dark ink, so ones that overlap still read as several;
-  // the far ones first, so the near ones sit over them)
-  // (a gentle cast across the protons, redder toward the bottom left)
-  const redder = lessOrange(colours.proton);
+  // (flat colours, each nucleon edged in a dark shade of its own, so ones that overlap still read
+  // as several; the far ones first, so the near ones sit over them)
   const spheres = places.map((q, k) => ({ q, k })).sort((a, b) => a.q.z - b.q.z).map(({ q, k }) => {
-    const t = disc > 0 ? Math.min(1, Math.max(0, ((q.x - p.x - (q.y - p.y)) / Math.SQRT2 / disc + 1) / 2)) : 0.5;
-    const fill = protons.has(k) ? mix(redder, colours.proton, t) : colours.neutron;
+    const fill = protons.has(k) ? colours.proton : colours.neutron;
     // (each kind may have its own edge, or none)
     const edge = (protons.has(k) ? colours.protonEdge : colours.neutronEdge) ?? colours.edge;
     const stroke = edge === "none" ? "" : ` stroke="${edge}" stroke-width="${fmt(Math.min(0.6, r * 0.12))}"`;
     return `<circle cx="${fmt(q.x)}" cy="${fmt(q.y)}" r="${fmt(r)}" fill="${fill}"${stroke}/>`;
   }).join("");
   return `<g class="feynjs-nucleus">${spheres}</g>`;
-}
-
-const rgb = (c: string) => { const n = parseInt(c.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255]; };
-const hex = (v: number[]) => `#${v.map((c) => Math.round(Math.min(255, Math.max(0, c))).toString(16).padStart(2, "0")).join("")}`;
-const isHex = (c: string) => /^#[0-9a-f]{6}$/i.test(c);
-
-/** Between two hex colours, `t` of the way from the first (any other colour: the first). */
-function mix(a: string, b: string, t: number): string {
-  if (!isHex(a) || !isHex(b)) return a;
-  const [x, y] = [rgb(a), rgb(b)];
-  return hex(x.map((c, k) => c + (y[k] - c) * t));
-}
-
-/** A red with less orange in it: some of its green taken out, toward crimson. */
-function lessOrange(c: string): string {
-  if (!isHex(c)) return c;
-  const [r, g, b] = rgb(c);
-  return hex([r * 0.96, g * 0.55, b * 1.15]);
 }
 
 /** The numbers 0 ... n-1 in an order fixed by `seed`. */

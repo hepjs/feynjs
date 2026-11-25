@@ -126,7 +126,7 @@ Contents: `j` jet, `b` b-tagged jet (with its secondary vertex), `e` electron, `
 | `cone` | this leg is a jet, marked by a small cone in a column at the right, as many papers mark it |
 | `insertion` | a cross on the line |
 | `bag=proton` (or `pi+`, `J/psi`, `Zc`, `Pc`...; or its quarks, `uud`, `c cbar u dbar`), with `motion` to let its flux tubes breathe, `molecule` to draw a pentaquark as a baryon beside a meson (or write the parts with a plus, `uud + c cbar`) | a hadron with its valence quarks, each a dot in its colour charge (red, green, blue; antiquarks in anticolours, so the whole is colourless), bound by colour flux tubes as lattice QCD shows them: straight for a meson, a Y-junction for a baryon, linked junctions for tetra- and pentaquarks |
-| `nucleus=Pb` (or `208Pb`, `Au`, `O`...; or `nucleus, A=16, Z=8`) | a nucleus drawn as its A protons and neutrons packed in a disc, Z of them dull red, the rest dull black, as wide as A to the third |
+| `nucleus=Pb` (or `208Pb`, `Au`, `O`...; or `nucleus, A=16, Z=8`) | a nucleus drawn as its A protons and neutrons packed in a disc, Z of them brick red, the rest slate, every nucleon one size, so as wide as A to the third |
 | `label=...` | a coupling label |
 | `[photon, radiation]` (on a line) | given off as radiation: the line it leaves runs on straight into the collision (a gluon off an incoming quark is radiation already) |
 | `rim=black`, `size=1.5` (on a dot) | a rim of another colour; a larger or smaller dot |
@@ -167,7 +167,7 @@ Contents: `j` jet, `b` b-tagged jet (with its secondary vertex), `e` electron, `
 | `debug: on` | a faint grid, each point's name, and each line marked with the family of rules that shapes it most (decays, mass, incoming...: measured, by settling the diagram again without each); under the drawing, each family once, with the lines it holds, and the steps after the forces that moved it ([Why a line is where it is](../guide/layout.md#why-a-line-is-where-it-is)) |
 | `final plane: on` | the decays laid out as a tree: every final state on one vertical plane, every decay forking about level, the branches of a decay mirrored with equal room (by default each decay follows its parent's direction) |
 | `colour flow: on` | draw colour flow beside quarks and gluons |
-| `nucleon edges: tinted` (or `none`, `ink`) | how nuclei's nucleons are edged: a darker red and lighter grey, none, or ink (the default) |
+| `nucleon edges: ink` (or `none`, `tinted`) | how nuclei's nucleons are edged: in ink, not at all, or each in a dark shade of its own colour (the default) |
 | `charge colour: on` | colour charged lines by charge |
 | `colours: bw` | draw the diagram in black; dots, blobs, hadrons and jet cones filled in one grey (`default` keeps SUSY and author colours) |
 | `reveal: n` | the first `n` steps as usual, the rest faint |
