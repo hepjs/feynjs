@@ -301,6 +301,20 @@ test("a heavy line along an exchange stands exactly upright: the neutralino betw
   assert.ok(Math.abs(c1.x - c2.x) < 1e-6, `the neutralino leans by ${Math.abs(c1.x - c2.x)}`);
 });
 
+test("a quark exchange leans forward into a lone point giving something off, not through a loop", async () => {
+  // (b b-bar H: the Higgs vertex sits ahead of the two gluon vertices, the b quarks leaning into it)
+  const d = parse(readFileSync("validation/atlas/HIGG-2015-08/fig_01b.feyn", "utf8"));
+  layoutDiagram(d, { ...defaultTheme, engine: "v2" });
+  const at = (id: string) => d.vertices.get(id)!;
+  assert.ok(at("c").x > at("a").x + 0.1 && at("c").x > at("b").x + 0.1, `the Higgs vertex is not ahead: ${at("c").x} against ${at("a").x}, ${at("b").x}`);
+  // (an exchange into a quark triangle keeps it: no point along it leans ahead)
+  const { readStructure } = await import("../src/engines/forces/structure.ts");
+  const { exchangePointsAhead } = await import("../src/engines/forces/forces.ts");
+  const loop = parse(readFileSync("validation/atlas/ATL-PHYS-PUB-2016-009/fig_01_3.feyn", "utf8"));
+  layoutDiagram(loop, { ...defaultTheme, engine: "v2" });
+  assert.equal(exchangePointsAhead(readStructure(loop)).size, 0);
+});
+
 test("a crossed box: the incoming gluons cross, not the lines beyond them", () => {
   const src = readFileSync("validation/atlas/EXOT-2014-10/fig_01c.feyn", "utf8");
   const d = parse(src);

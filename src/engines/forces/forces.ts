@@ -573,16 +573,25 @@ export function clearance(s: Structure, rules: ForceRules): Force {
  * it a weight.
  */
 /**
- * Points along a boson exchange between the beams that make something going on forward (the
- * H of vector-boson fusion): they sit a little ahead, the bosons into them leaning forward. A
- * quark line along an exchange stays straight.
+ * Points along an exchange between the beams that make something going on forward (the H of
+ * vector-boson fusion, or of b b-bar H between two b quarks): they sit a little ahead, the lines
+ * into them leaning forward. A quark exchange leans only into a lone such point, and not through a
+ * loop.
  */
 export function exchangePointsAhead(s: Structure): Set<number> {
   const other = (l: number, i: number) => (s.lines[l].a === i ? s.lines[l].b : s.lines[l].a);
-  return new Set(s.spines.flatMap((path) => path.slice(1, -1).filter((v) => {
-    const along = s.linesAt[v].filter((l) => path.includes(other(l, v)));
-    return along.every((l) => !s.lines[l].fermion) && s.linesAt[v].some((l) => !path.includes(other(l, v)) && s.time[other(l, v)] > s.time[v]);
-  })));
+  const onLoop = new Set(s.loops.flatMap((loop) => loop.points));
+  return new Set(s.spines.flatMap((path) => {
+    const giving = (v: number) => s.linesAt[v].some((l) => !path.includes(other(l, v)) && s.time[other(l, v)] > s.time[v]);
+    const middle = path.slice(1, -1).filter(giving);
+    // (a quark exchange too, when one point alone along it gives something off: the Higgs
+    // between two b quarks; not one through a loop, whose box or triangle keeps its shape)
+    const throughLoop = path.some((v) => onLoop.has(v));
+    return middle.filter((v) => {
+      const along = s.linesAt[v].filter((l) => path.includes(other(l, v)));
+      return along.every((l) => !s.lines[l].fermion) || (middle.length === 1 && !throughLoop);
+    });
+  }));
 }
 
 export function uprightExchange(s: Structure, rules: ForceRules): Force {
