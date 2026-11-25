@@ -67,7 +67,7 @@ nav = [
   ] },
   { "Playground" = "playground.md" },
   { "About" = [
-    { "Why feynjs" = "about/index.md" },
+    { "Who makes it" = "about/index.md" },
     { "Cite it" = "about/cite.md" },
     { "Licence" = "about/licence.md" },
     { "Contributing" = "about/contributing.md" },

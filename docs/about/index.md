@@ -1,9 +1,7 @@
-# About
+# Who makes it
 
-feynjs exists so that a Feynman diagram is as easy to write and share as a sentence, wherever
-physicists write: in a web page, a notebook, a note or a paper.
-
-## Who makes it
+*feynjs exists so that a Feynman diagram is as easy to write and share as a sentence, wherever
+physicists write: in a web page, a notebook, a note or a paper.*
 
 <div class="feynjs-person" markdown>
 
