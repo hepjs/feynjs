@@ -54,6 +54,11 @@ e- e+ > gamma > mu- mu+
   first way, the second the second way. If there are more particles than ways, the last way repeats.
 - **`W+(> e+ nu)` decays one particle on the spot**, without a rule for every `W+`.
 - **Whatever does not decay leaves the diagram.**
+- **Decays may follow the process after commas, as in MadGraph.** A decay in brackets comes with
+  the decays of what it makes. Both are read as the decay lines above.
+- **`>` may be written without spaces**, `p p>t t~`. Names still need a space between them.
+- **A name may carry brackets**, `psi(2S)`, `X(3872)`, `Pc(uudcc~)`. Brackets that start with
+  `>` are a decay on the spot.
 
 Particle names are feynjs's own, listed in [Particles](../reference/particles.md). MadGraph's
 Standard Model names work too (`t~`, `w+`, `ve`, `ta+`; see [MadGraph](../compatibility/madgraph.md#particle-names)),
@@ -76,6 +81,48 @@ p p > chargino+ neutralino2
 chargino+ > W+ neutralino1
 neutralino2 > Z neutralino1
 ```
+
+## MadGraph's decay chains, on one line
+
+A process pasted from MadGraph draws as it is. Each decay after a comma is a decay line of its own,
+and a decay in brackets comes with the decays of what it makes, bracket inside bracket. These two
+draw the same diagram:
+
+```feynman
+p p > t t~, (t > b w+, w+ > e+ ve), (t~ > b~ w-, w- > j j)
+---
+p p > t t~
+t > b w+(> e+ ve)
+t~ > b~ w-(> j j)
+```
+
+````markdown
+```feynman
+p p > t t~, (t > b w+, w+ > e+ ve), (t~ > b~ w-, w- > j j)
+```
+````
+
+Without brackets, `p p > t t~, t > b w+, t~ > b~ w-` is the process and two decay lines. Brackets
+go as deep as the chain does:
+`p p > t1 t1~, (t1 > t n1, (t > b w+, w+ > e+ ve)), (t1~ > t~ n1, (t~ > b~ w-, w- > j j))`.
+
+`>` needs no spaces round it: `p p>t t~,t>b w+` is the same as `p p > t t~, t > b w+`. The one
+exception is after a name ending in `-`, since `->` is an arrow: write `w- > e- ve~`, not
+`w->e- ve~`. Names need a space between them: `e+ e-`, not `e+e-`.
+
+A name may carry brackets of its own, a hadron's state or content, and the whole is one name:
+
+```feynman
+p p > psi(2S) j
+psi(2S) > J/psi pi+ pi-
+```
+
+````markdown
+```feynman
+p p > psi(2S) j
+psi(2S) > J/psi pi+ pi-
+```
+````
 
 ## How it differs from MadGraph
 

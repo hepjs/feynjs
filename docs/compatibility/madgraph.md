@@ -1961,20 +1961,32 @@ output
 ```
 
 ```text title="feynjs"
-p p > t t~
-t > b w+(> e+ ve)
-t~ > b~ w-(> j j)
+p p > t t~, (t > b w+, w+ > e+ ve), (t~ > b~ w-, w- > j j)
 ```
 
 ```feynman
+p p > t t~, (t > b w+, w+ > e+ ve), (t~ > b~ w-, w- > j j)
+```
+
+The process line is the same; the MadGraph commands (`import model`, `generate`, `output`) go.
+Each decay after a comma is read as a decay line of its own, and a decay in brackets comes with the
+decays of what it makes, so the line above draws just as feynjs's own way of writing it does:
+
+```text title="feynjs, written its own way"
 p p > t t~
 t > b w+(> e+ ve)
 t~ > b~ w-(> j j)
 ```
 
-The process line is the same. Each decay after a comma becomes a line of its own, and a decay
-inside a decay goes in brackets after the particle, `w+(> e+ ve)`. The MadGraph commands
-(`import model`, `generate`, `output`) go.
+Brackets go inside brackets, as deep as the chain goes:
+
+```text
+p p > t1 t1~, (t1 > t n1, (t > b w+, w+ > e+ ve)), (t1~ > t~ n1, (t~ > b~ w-, w- > j j))
+```
+
+`>` may be written without spaces, `p p>t t~,t>b w+`, except after a name ending in `-`: `w->`
+would be an arrow, so write `w- > e- ve~` (or `w- >e- ve~`). Names need a space between them, as
+in MadGraph: `e+ e-`, not `e+e-`.
 
 ## How it differs from MadGraph
 
@@ -2038,8 +2050,10 @@ name as its label.
 |---|---|
 | `a b > c d` | yes: the process, the first line with `>` |
 | `a b > x > c d` | yes: one particle between two `>`, drawn as the line between |
-| `p p > t t~, t > b w+` | write the decay on its own line, `t > b w+`, or on the spot, `t(> b w+)` |
-| `(t > b w+, w+ > e+ ve)` | `t > b w+(> e+ ve)`, or `t > b w+` and `w+ > e+ ve` on two lines |
+| `p p > t t~, t > b w+` | yes: each decay after a comma is a decay line, as `t > b w+` on a line of its own |
+| `(t > b w+, w+ > e+ ve)` | yes: the decay and the decays of what it makes, as `t > b w+(> e+ ve)`; brackets nest |
+| `p p>t t~`, with no spaces round `>` | yes; but `w->` is an arrow, so write `w- >` |
+| `psi(2S)`, `X(3872)` | yes: brackets that do not start with `>` are part of the name |
 | `g g > h [noborn=QCD]` | yes: through a top loop, the top triangle; the partons must be named, not `p p` |
 | `[QCD]`, `[virt=QCD]`, `[QED]` | yes: the tree is drawn as it is |
 | `[real=QCD]` and other brackets | no: write the loop where it goes, `g g > {t} > H` |
@@ -2048,7 +2062,6 @@ name as its label.
 | `@1` | no: remove it |
 | `generate`, `add process`, `import model`, `output`, `launch` | no: write the process alone |
 | `define l = e+ e-` | no: an error; write the particles, or use the built-in `l+`, `l-`, `j`, `p` |
-| `p p>t t~`, with no spaces round `>` | no: put spaces round each `>` |
 
 `$`, `$$`, `/` and `@1` are not errors: feynjs reads them as particle names and draws extra legs
 for them. Take them out before pasting a process.
