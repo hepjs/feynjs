@@ -9,6 +9,8 @@ import { buildNeighbours, isExternalLeg } from "./graph.ts";
 export function assignRoles(d: Diagram): void {
   const neighbours = buildNeighbours(d);
   const legs = [...d.vertices.values()].filter((v) => isExternalLeg(v, neighbours));
+  // (a nucleus at the end of a line, written neither in nor out, is what the line acts on: a target)
+  for (const v of legs) if (v.shape === "nucleus" && !v.role && !/^(i|in|p|f|o|out)\d*$/i.test(v.id)) v.target = true;
   for (const v of legs) {
     if (v.role) continue;
     if (/^(i|in|p)\d*$/i.test(v.id)) v.role = "in";

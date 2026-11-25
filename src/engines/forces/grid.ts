@@ -133,8 +133,10 @@ export function snapToGrid(d: Diagram, step: number, lineLength: number, rowOver
       if (inHadron.has(v)) { placed.set(v, { x: from.x + (b.x - a.x), y: from.y + (b.y - a.y) }); queue.push(v); continue; }
       const side = forward.includes(v) ? forward : back.includes(v) ? back : undefined;
       const angle = spread.get(v) ?? (side && side.length === 1 ? (side === forward ? 0 : Math.PI) : snap(raw.get(v)! / unit));
-      // (every line one standard length, two steps of the grid: a W's quarks as long as the W)
-      const length = lineLength;
+      // (every line one standard length, two steps of the grid: a W's quarks as long as the W;
+      // a line given its own, `length=1.5`, that much longer, to the nearest crossing)
+      const written = d.edges.find((e) => (e.from === u && e.to === v) || (e.to === u && e.from === v))?.length;
+      const length = lineLength * (written ?? 1);
       // (on a crossing of the grid: a 45 degree step lands on one exactly, a 22.5 degree step on
       // the nearest, a little steeper; never on the point it leaves)
       let to = { x: from.x + portable.cos(angle) * length, y: from.y + portable.sin(angle) * length };

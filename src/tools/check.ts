@@ -3,6 +3,7 @@ import { INTERCHANGE_VERSION, interchangeVersion } from "./interchange.ts";
 import type { Edge } from "../model.ts";
 import { splitPanels } from "../render/panels.ts";
 import { closestName } from "../parse/parse.ts";
+import { nucleonMismatch, nucleusNamed, onlyNucleus } from "../parse/chains.ts";
 import { parseObject } from "../particles/objects.ts";
 import { lookupParticle, particleNames } from "../particles/registry.ts";
 import { isExternal, kindOfLine, linesByVertex, readDiagram } from "./prepare.ts";
@@ -34,6 +35,8 @@ function susyKind(e: Edge): "majorana" | "scalar" | undefined {
   return undefined;
 }
 const isFermionLine = (e: Edge) => {
+  // (a nucleus's path, plain with no arrow, is no fermion)
+  if (e.style.cls === "ion") return false;
   const kind = susyKind(e);
   if (kind) return kind === "majorana";
   return e.style.line === "plain" || (e.style.cls === "susy" && e.style.line !== "dash");
@@ -84,7 +87,8 @@ function checkOne(source: string): Finding[] {
     }
     if (isExternal(d, id, lines)) {
       const invisible = here.every((e) => e.style.line === "none");
-      if (!v.label && !invisible && !here.some((e) => e.label)) findings.push({ severity: "warning", rule: "unlabelled-leg", vertex: id, message: `external leg "${id}" has no particle label` });
+      // (a nucleus is drawn as itself: it needs no name)
+      if (!v.label && !invisible && v.shape !== "nucleus" && !here.some((e) => e.label)) findings.push({ severity: "warning", rule: "unlabelled-leg", vertex: id, message: `external leg "${id}" has no particle label` });
       continue;
     }
     if (here.length === 2) continue; // a mark on a line
@@ -125,6 +129,8 @@ function checkOne(source: string): Finding[] {
     const guess = name.length >= 3 ? closestName(name, particleNames()) : undefined;
     findings.push({ severity: "warning", rule: "unknown-particle", message: `"${name}" in the process is not a particle feynjs knows: it is drawn as a plain line labelled with its name${guess ? ` (did you mean "${guess}"?)` : ""}` });
   }
+  // (a nucleus written with its nucleons that are not the element's: He(3p 2n) is lithium)
+  for (const message of nucleonMismatches(source)) findings.push({ severity: "warning", rule: "nucleus-nucleons", message });
   return findings;
 }
 
@@ -133,7 +139,7 @@ const SWITCHES = new Set(["horizontal", "horizontal'", "vertical", "vertical'", 
   "size", "title", "layout", "grid", "grid forks", "view", "projection", "rotate", "reconstruct", "show intermediate",
   "show intermediates", "lattice", "wilson loop", "plaquette", "link", "polyakov loop", "site", "boundary", "axes",
   "background", "debug", "final plane", "colour flow", "nucleon edges", "charge colour", "colours", "colors", "reveal",
-  "edge labels"]);
+  "edge labels", "chain", "modes", "signal"]);
 const LAYOUTS = new Set(["default", "v1", "v2", "manual", "grid"]);
 
 /** Switches feynjs does not know, and so passes over (`node distance: 2`), and layouts it does not have. */
@@ -172,13 +178,26 @@ function unknownProcessNames(source: string): string[] {
     if (!/(^|[^-])>/.test(line) || /--/.test(line) || /^[\w -]+:/.test(line)) continue;
     // (a MadGraph loop order at the end, [noborn=QCD]; a production mode at the start, ggF or VBF(W))
     const text = line.replace(/\[[^\]]*\]\s*$/, "").replace(/^\s*(?:ggf|vbf|vbs)(?:\([^)]*\))?\s*>/i, ">");
+    // (in a nuclear process, 2H 3H > 4He n, its nuclei are known too)
+    const nuclear = namesInProcess(text).some(onlyNucleus);
     for (const name of namesInProcess(text)) {
       const inner = /^\{(.+)\}$/.exec(name)?.[1].trim() ?? name;
-      if (lookupParticle(inner) || isObject(inner) || unknown.includes(inner)) continue;
+      if (lookupParticle(inner) || isObject(inner) || unknown.includes(inner) || (nuclear && nucleusNamed(inner))) continue;
       unknown.push(inner);
     }
   }
   return unknown;
+}
+
+/** What is wrong with each nucleus a process writes with its nucleons, `He(3p 2n)`, once each. */
+function nucleonMismatches(source: string): string[] {
+  const found = new Set<string>();
+  for (const raw of source.split(/\r?\n/)) {
+    const line = raw.replace(/%.*$/, "").trim();
+    if (!/(^|[^-])>/.test(line) || /--/.test(line) || /^[\w -]+:/.test(line)) continue;
+    for (const name of namesInProcess(line)) { const wrong = nucleonMismatch(name); if (wrong) found.add(wrong); }
+  }
+  return [...found];
 }
 
 /** A detector object's name, `LRJ(2j)` or `SVJ` (and not one that cannot be read). */

@@ -3,6 +3,7 @@ import { nucleusRadius } from "./nucleus.ts";
 import { bagRadius } from "./bag.ts";
 import { drawKinematic } from "../views/kinematic.ts";
 import { drawLattice } from "../views/lattice.ts";
+import { drawReaction } from "../views/reaction.ts";
 import { snapToGrid } from "../engines/forces/grid.ts";
 import { fmt } from "../geometry/curve.ts";
 import { layout } from "../engines/rules/layout.ts";
@@ -103,6 +104,7 @@ function assembleSvg(scene: Scene, title: string | undefined, ariaLabel: string,
     + (title ? `<title>${escapeText(title)}</title>` : "") + (description ? `<desc>${escapeText(description)}</desc>` : "") + (model ? `<metadata class="feynjs-model">${escapeText(model)}</metadata>` : "") + hatching + gridLines
     + `<g class="feynjs-edges">${scene.edges.join("")}</g>`
     + `<g class="feynjs-vertices">${scene.vertices.join("")}</g>`
+    + (scene.over.length ? `<g class="feynjs-over">${scene.over.join("")}</g>` : "")
     + `<g class="feynjs-labels">${scene.labels.join("")}</g></svg>`;
 }
 
@@ -306,6 +308,10 @@ export function drawDiagram(d: Diagram, options: RenderOptions = {}): { svg: str
     : edges === "ink" ? { ...thinned, vertex: { ...thinned.vertex, protonEdge: thinned.vertex.nucleonEdge, neutronEdge: thinned.vertex.nucleonEdge } } : thinned;
   // (the lattice view draws space-time cut into sites and links, not the diagram)
   if (/^lattice$/i.test((d.directives.view ?? "").trim())) return { svg: drawLattice(d, theme), scene: new Scene(d, theme, options.idPrefix ?? "feyn") };
+  // (the reaction view draws a nuclear reaction as textbooks do, nuclei bursting, a decay chain
+  // step by step: a nuclear process is drawn so unless `view: diagram` asks for its diagram)
+  const asked = (d.directives.view ?? "").trim().toLowerCase();
+  if (asked === "reaction" || (d.nuclear && !asked)) return { svg: drawReaction(d, theme, options.idPrefix ?? "feyn"), scene: new Scene(d, theme, options.idPrefix ?? "feyn") };
   // (`debug: on`: a faint grid, each point's name, and why each line lies where it does)
   const debug: DebugInfo | undefined = /^(on|yes|true)$/i.test((d.directives.debug ?? "").trim()) ? { engine: "", steps: [] } : undefined;
   layoutDiagram(d, theme, debug);
@@ -325,7 +331,9 @@ export function drawDiagram(d: Diagram, options: RenderOptions = {}): { svg: str
   scene.tooltips = options.tooltips ?? false;
   scene.chargeColour = /^(on|yes|true)$/i.test(d.directives["charge colour"] ?? d.directives["charge color"] ?? "");
   // a pulsing point pulses the lines that meet there too
-  for (const e of d.edges) if (e.pulse === undefined) e.pulse = d.vertices.get(e.from)?.pulse ?? d.vertices.get(e.to)?.pulse;
+  // (not a nucleus's: there `pulse` is its energy, a glow of its own)
+  const pulseOf = (id: string) => { const v = d.vertices.get(id); return v?.shape === "nucleus" ? undefined : v?.pulse; };
+  for (const e of d.edges) if (e.pulse === undefined) e.pulse = pulseOf(e.from) ?? pulseOf(e.to);
   // wrap what one call adds to a list of SVG pieces in a group carrying its step in time
   const tagged = (list: string[], step: number | undefined, draw: () => void) => {
     const start = list.length;

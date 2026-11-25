@@ -48,6 +48,10 @@ The whole syntax on one page. The [Components](../guide/index.md) pages explain 
 | `a b > c d` | particles meeting at a point |
 | `a b > g > c d` | through an intermediate line `g` |
 | `t > b W+` | how a particle decays (every later `>` line) |
+| `2H 3H > 4He n`, `H H > He`, `235U n > 141Ba 92Kr n n n` | a nuclear process (a name in it can only be a nucleus: an isotope, `4He`, or an element no particle is called, `He`): every element's symbol is a nucleus (`H` is hydrogen), `p` and `n` one proton and one neutron; drawn as the [reaction picture](../guide/views.md#the-reaction-picture), or, with `view: diagram`, each leg ending in its nucleus on a plain line, meeting at a blob |
+| `C(6p 8n)`, `X(3p 4n)` | a nucleus with its protons and neutrons written: an element's isotope, or a nucleus of its own named as written; `check()` warns when the protons are another element's |
+| `238U > 234Th 4He, 234Th > 234Pa e- ve~` | a nuclear process that decays on: drawn as a decay chain |
+| `12C* > 12C gamma` | a star: the nucleus excited |
 | two lines for one particle | used in turn by its instances; the last repeats |
 | `W+(> e+ nu)` | decay this one particle on the spot |
 | `g g > {t} > H`, `g g > {t} > H H`, `H > {W+} > a a` | through a loop of the particle in braces: everything meeting it at a corner of its own (a triangle, a box...), in the process or a decay; MadGraph's `[noborn=QCD]` is a top loop |
@@ -76,6 +80,7 @@ The whole syntax on one page. The [Components](../guide/index.md) pages explain 
 | `with arrow=0.3`, `with reversed arrow=0.7` | an arrow (or one pointing back) that far along the line, besides any it has |
 | `out=-45, in=180` (and `looseness=1.5`) | the line leaves at one angle and arrives from another, in degrees counter-clockwise from the right, as in TikZ |
 | `no arrow`, `no label`, `overlay` | drop the arrow, drop the label, a straight line over a wave |
+| `length=1.5` (or `length=2cm`) | the line that much longer than usual (or that long): the force layout and the grid honour it |
 | `lifetime` (or `lifetime={c\tau}`) | a particle that lives a while: a band under the line, clear where it is made and 30% of its colour where it decays; with a value, a brace beside it carrying that label |
 | `heavy`, `dashed`, `dotted`, `double`, `jet` (after a style) | thicker, dashed, dotted, drawn twice, a jet cone round it |
 | `ellipsis` | three dots where a leg would be |
@@ -126,7 +131,10 @@ Contents: `j` jet, `b` b-tagged jet (with its secondary vertex), `e` electron, `
 | `cone` | this leg is a jet, marked by a small cone in a column at the right, as many papers mark it |
 | `insertion` | a cross on the line |
 | `bag=proton` (or `pi+`, `J/psi`, `Zc`, `Pc`...; or its quarks, `uud`, `c cbar u dbar`), with `motion` to let its flux tubes breathe, `molecule` to draw a pentaquark as a baryon beside a meson (or write the parts with a plus, `uud + c cbar`) | a hadron with its valence quarks, each a dot in its colour charge (red, green, blue; antiquarks in anticolours, so the whole is colourless), bound by colour flux tubes as lattice QCD shows them: straight for a meson, a Y-junction for a baryon, linked junctions for tetra- and pentaquarks |
-| `nucleus=Pb` (or `208Pb`, `Au`, `O`...; or `nucleus, A=16, Z=8`) | a nucleus drawn as its A protons and neutrons packed in a disc, Z of them brick red, the rest slate, every nucleon one size, so as wide as A to the third |
+| `recoil` (or `recoil=down`, `right`, `30`) | on a nucleus: recoiling, moved on with two faint copies trailing back to where it was hit; away from what hits it unless a way is given |
+| `pulse`, `excited` (or `pulse=low`, `medium`, `high`, a number, a colour) | on a nucleus: excited, a still warm glow and faint rings round it, amber toward a near-white yellow with more energy (a star, `nucleus=Xe*`, gives it too) |
+| `emits=gamma` | on a nucleus: a short photon radiating out of it, away from what hits it |
+| `nucleus=Pb` (or `208Pb`, `Au`, `O`...; or `nucleus, A=16, Z=8`; `N=` for its neutrons) | a nucleus drawn as its A protons and neutrons packed in a disc, Z of them brick red, the rest slate, every nucleon one size, so as wide as A to the third |
 | `label=...` | a coupling label |
 | `[photon, radiation]` (on a line) | given off as radiation: the line it leaves runs on straight into the collision (a gluon off an incoming quark is radiation already) |
 | `rim=black`, `size=1.5` (on a dot) | a rim of another colour; a larger or smaller dot |
@@ -162,6 +170,11 @@ Contents: `j` jet, `b` b-tagged jet (with its secondary vertex), `e` electron, `
 | `rotate: 30` | in the kinematic view, turn the event by this many degrees: in azimuth in the transverse view, about the collision point in the longitudinal view (the beam and the detector stay put); 30 by default |
 | `reconstruct: off` | in the kinematic view, draw final states as particles rather than as the objects they are reconstructed as (jets, tracks, missing energy) |
 | `show intermediate: true` | in the kinematic view, draw the particles that decay on (tops, W bosons), their products starting from their ends |
+| `view: reaction` | how a nuclear process is drawn (the default for one): the nuclei coming in on the left, each with an arrow into a burst, and what it makes fanned out on the right; a photon breaking a nucleus up, an elastic scattering (the nucleus recoiling) and an excited nucleus each in a picture of its own; a decay chain step by step; every nucleus at its true size |
+| `view: diagram` | a nuclear process drawn as a diagram, not the reaction picture |
+| `chain: curve` | a decay chain along a gentle arc (`chain: straight`, left to right, by default) |
+| `modes: off` | a decay chain's arrows without their modes (α, β⁻, β⁺, γ) |
+| `signal: on` | in an elastic scattering's picture, what a detector sees: scintillation photons and ionisation electrons |
 | `view: lattice` | draw space-time as a lattice instead of the diagram: `lattice: 8x6` (sites across by up), `wilson loop: (1,1) to (4,4)`, `plaquette: (5,1)`, `link: (5,4) to (6,4)`, `polyakov loop: 7`, `site: (1,1) [label=\psi]`, `boundary: periodic`, `axes: off`; each may be written many times, and takes `[label=...]` and `[color=...]` |
 | `background: grid` | a light grey grid behind the drawing, every half line length (on by default with `layout: grid`) |
 | `debug: on` | a faint grid, each point's name, and each line marked with the family of rules that shapes it most (decays, mass, incoming...: measured, by settling the diagram again without each); under the drawing, each family once, with the lines it holds, and the steps after the forces that moved it ([Why a line is where it is](../guide/layout.md#why-a-line-is-where-it-is)) |

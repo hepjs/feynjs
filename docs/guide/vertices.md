@@ -172,6 +172,102 @@ b -- [photon] g1 [gamma]
 c -- [photon] g2 [gamma]
 ```
 
+#### Nuclei in a process
+
+A process line with a name that can only be a nucleus is a nuclear one: an isotope, a mass number
+then the element (`2H`, `4He`, `12C`, `235U`), or an element no particle is called (`He`, `Li`,
+`C`, `O`, `Fe`, `U`...). In it every element's symbol is a nucleus, so `H` is hydrogen there (and
+stays the Higgs everywhere else), and `p` and `n` are one proton and one neutron; what is no
+nucleus, `gamma`, `e+`, `ve`, stays a particle. A nuclear process is drawn as the textbook picture
+of a reaction, each nucleus labelled with its isotope, upright (a bare symbol as its most common
+one, `He` as helium-4):
+
+```feynman
+2H 3H > 4He n
+---
+235U n > 141Ba 92Kr n n n
+```
+
+```text
+2H 3H > 4He n
+---
+235U n > 141Ba 92Kr n n n
+```
+
+`H H > He`, `2H 2H > 3He n`, `p p > 2H e+ ve` and `4He 4He 4He > 12C` draw the same way; a
+photon breaking a nucleus up, an elastic scattering, a decay chain and an excited nucleus have
+pictures of their own ([the reaction picture](views.md#the-reaction-picture)). `view: diagram`
+draws the process as a diagram instead: each nucleus at the end of its leg, a plain line with no
+arrow, meeting at a blob.
+
+```feynman
+view: diagram
+2H 3H > 4He n
+```
+
+```text
+view: diagram
+2H 3H > 4He n
+```
+
+(`Pb` alone is the lead beam, its double line, as before: write `208Pb` for its nucleus.)
+
+A nucleus may carry its protons and neutrons in brackets: `C(6p 8n)` is carbon-14, and any other
+name with them is a nucleus of its own, `X(3p 4n)`, labelled X. (Brackets holding anything else
+are a hadron's, as before: `psi(2S)`, `X(ucd)`.) `check()` says when the protons are another
+element's: `He(3p 2n)` has lithium's three. As a point's options, `N=` gives the neutrons:
+`[nucleus=C, N=8]`.
+
+```feynman
+He(2p 2n) > X(3p 4n) gamma
+```
+
+```text
+He(2p 2n) > X(3p 4n) gamma
+```
+
+#### A nucleus as a target
+
+A line meeting a nucleus is drawn reaching a third of the way into it, over its nucleons, so it
+reads as acting on it; an element written as a leg's name is set upright (`Xe`, `208Pb`). A
+nucleus at the end of a line, neither in nor out, is a target: it is laid out below what hits it,
+and a line passing through the point it is struck at comes in toward it and leaves away from it,
+a V with its corner at the nucleus. Dark matter scattering off xenon, and the same as a reaction:
+
+```feynman
+i1 [chi] -- a -- f1 [chi]
+a -- [scalar, label=\phi, length=1.5] n [nucleus=Xe, recoil, pulse]
+---
+chi Xe > chi Xe
+signal: on
+```
+
+```text
+i1 [chi] -- a -- f1 [chi]
+a -- [scalar, label=\phi, length=1.5] n [nucleus=Xe, recoil, pulse]
+---
+chi Xe > chi Xe
+signal: on
+```
+
+| Option | Draws |
+|---|---|
+| `recoil` (or `recoil=down`, `right`, `30`...) | the nucleus recoiling: moved on, two faint copies trailing back to where it was hit, and two short streaks behind; away from what hits it unless a way is given |
+| `pulse` (or `excited`; `pulse=low`, `medium`, `high`, a number, or a colour) | an excited nucleus: a still, warm glow behind it and faint rings round it, amber, warming toward a near-white yellow with more energy; a star after its name (`Xe*`) gives it too |
+| `emits=gamma` | a short photon radiating out of it, from inside, away from what hits it, ending in its name |
+
+A line written from a nucleus, `n -- [photon] g [gamma]`, starts inside it the same way:
+
+```feynman
+i [chi] -- a -- f [chi]
+a -- [scalar] n [nucleus=Xe*, emits=gamma]
+```
+
+```text
+i [chi] -- a -- f [chi]
+a -- [scalar] n [nucleus=Xe*, emits=gamma]
+```
+
 ### Hadrons with their quarks
 
 `bag=proton` draws a hadron with its valence quarks and the colour flux tubes that bind them, as

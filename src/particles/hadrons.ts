@@ -1,4 +1,5 @@
 import type { EdgeStyle } from "../model.ts";
+import { nucleonCount } from "../render/nucleus.ts";
 import type { ParticleProperties } from "./properties.ts";
 
 /**
@@ -215,6 +216,8 @@ function withParentheses(name: string): Hadron | undefined {
   const m = /^([A-Za-z][A-Za-z0-9_']*)\((.+)\)$/.exec(name);
   if (!m) return undefined;
   const [, base, inside] = m;
+  // (protons and neutrons, He(2p 2n), are a nucleus's, not a hadron's state)
+  if (nucleonCount(inside)) return undefined;
   const label = labelOfBase(base);
   if (!label) return undefined;
   const family = byFamily(base);

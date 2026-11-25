@@ -32,6 +32,7 @@ export function isExternal(d: Diagram, id: string, lines: Map<string, Edge[]>): 
 export function kindOfLine(e: Edge): string {
   const { line, arrow, overlay, cls } = e.style;
   if (cls === "susy") return line === "coil" ? "gluino" : line === "dash" ? "sfermion" : "gaugino";
+  if (cls === "ion") return "nucleus";
   if (line === "plain") return arrow === 2 ? "majorana fermion" : "fermion";
   if (line === "wave") return arrow ? "charged boson" : "boson";
   if (line === "coil") return overlay ? "gluino" : "gluon";

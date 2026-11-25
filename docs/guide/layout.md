@@ -809,6 +809,9 @@ From lightest touch to heaviest:
    even if that makes lines cross ([Edges](syntax.md#what-comes-in-what-goes-out)).
 2. **Add a hidden line.** `a -- [hidden] b` ties two vertices together without drawing anything.
 3. **Bend a line.** `half left`, `quarter right`, `bend=30` curve one line without moving its ends.
+   **Lengthen one.** `length=1.5` makes a line half as long again as the layout would (or
+   `length=2cm`, that long): the force layout stretches its natural length, the grid takes that
+   many more steps; a mediator to a nucleus, say, gets room for the nucleus.
 4. **Pin a vertex.** `v at (2, 1)` fixes `v` in place, in propagator lengths with y up. The rest
    of the diagram is still laid out around it ([Placing points by hand](#placing-points-by-hand)).
 5. **Tune the rules.** Every angle, length and weight is a [theme setting](../reference/theme.md),

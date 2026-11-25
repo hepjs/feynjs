@@ -1,6 +1,8 @@
 import { FeynError } from "../model.ts";
+import type { ChainNucleus, DecayStep } from "../model.ts";
 import { lookupParticle, particleNames } from "../particles/registry.ts";
 import { parseObject } from "../particles/objects.ts";
+import { ELEMENTS, elementSymbol, isotopeLabel, nucleonCount } from "../render/nucleus.ts";
 
 /**
  * Decay chains: a shorthand for cascades, written with `>` and expanded into ordinary lines
@@ -34,8 +36,14 @@ import { parseObject } from "../particles/objects.ts";
  * meeting where what is made comes out (`VBF(W)`, `VBF(Z)` name the bosons; V by default). Three
  * or more made (`VBS(W) > W+ H W-`) come off a boson exchanged between the two, top to bottom;
  * `VBS(W, H)` names what is exchanged (a Higgs: the middle vertex is then the Higgs self-coupling).
+ *
+ * A process with a name that can only be a nucleus, an isotope (`4He`, `235U`) or an element no
+ * particle is called (`He`, `Fe`), is a nuclear one: `2H 3H > 4He n`. In it every element's
+ * symbol is a nucleus (`H` is hydrogen there, not the Higgs) and `p` and `n` are one proton and
+ * one neutron; each leg ends in its nucleus, a plain line with no arrow, and they meet at a blob.
+ * (`found.nuclear` says whether the process was one: it is drawn as a reaction unless asked not to.)
  */
-export function expandChains(source: string): string {
+export function expandChains(source: string, found: { nuclear?: boolean; decayChain?: DecayStep[] } = {}): string {
   const lines = source.split("\n");
   const isChain = (line: string) => (/(^|\s)>(\s|$)/.test(stripComment(line)) || hasCloseArrow(line)) && !/--/.test(line);
   if (!lines.some(isChain)) return source;
@@ -46,13 +54,15 @@ export function expandChains(source: string): string {
   // the ways each particle decays, taken in turn by its instances (the last one repeating)
   const rules = new Map<string, Rule[]>();
   const taken = new Map<string, number>();
-  let process: { line: number; segments: Item[][] } | undefined;
+  let process: { line: number; segments: Item[][]; nuclear: boolean } | undefined;
   lines.forEach((line, n) => {
     if (!isChain(line)) return;
     // (MadGraph's decays after commas, p p > t t~, t > b w+, are read as lines of their own)
-    for (const statement of madGraphDecays(stripComment(line), n + 1)) {
-      const segments = withMadGraphLoop(productionMode(statement, !process), n + 1);
-      if (!process) { process = { line: n + 1, segments }; continue; }
+    const statements = madGraphDecays(stripComment(line), n + 1).map((statement, k) => withMadGraphLoop(productionMode(statement, !process && k === 0), n + 1));
+    // (a line with a name that can only be a nucleus is nuclear: its element symbols are nuclei)
+    const nuclear = markNuclei(statements, n + 1);
+    for (const segments of statements) {
+      if (!process) { process = { line: n + 1, segments, nuclear }; continue; }
       // a decay: "particle > products", or through a loop, "particle > {t} > products"
       const loop = segments.length === 3 && isLoop(segments[1]) ? loopName(segments[1]) : undefined;
       if (!(segments.length === 2 || loop) || segments[0].length !== 1 || segments[0][0].decay || isLoop(segments[0])) throw new FeynError(`a decay reads "particle > products" (or "particle > {t} > products" through a loop)`, n + 1);
@@ -68,7 +78,10 @@ export function expandChains(source: string): string {
     taken.set(name, k + 1);
     return ways[Math.min(k, ways.length - 1)];
   };
-  const edgeStyle = (name: string) => (lookupParticle(name) ? name : `label={${name}}`);
+  const edgeStyle = (item: Item) => (item.nucleus ? `ion, label={${item.nucleus.label}}` : lookupParticle(item.name) ? item.name : `label={${item.name}}`);
+  // (in a nuclear process, where things meet is a blob)
+  const nuclear = process!.nuclear;
+  const asBlob = (at: string) => { if (nuclear) out.push(`${at} [blob]`); };
   /** A closed loop of `name` through `count` new corners, named once; the corners in order round it. */
   const drawLoop = (name: string, count: number, line: number): string[] => {
     if (count < 2) throw new FeynError(`a loop needs at least two lines meeting it`, line);
@@ -83,21 +96,26 @@ export function expandChains(source: string): string {
     const rule: Rule | undefined = item.decay ? { products: item.decay } : seen.includes(item.name) ? undefined : nextDecay(item.name);
     // (a detector object, LRJ or SVJ, is drawn as one: the leg takes the object's style; a name
     // that is a particle as written, tau, stays the particle)
+    if (!rule && item.nucleus) { out.push(`${from} -- [ion] ${fresh("out")} [${nucleusOptions(item.nucleus)}, out]`); return; }
     if (!rule && !particleNames().includes(item.name) && parseObject(item.name)) { out.push(`${from} -- [${item.name}] ${fresh("out")} [out]`); return; }
     if (!rule) { out.push(`${from} -- ${fresh("out")} [${item.name}, out]`); return; }
     if (rule.loop) {
       const corners = drawLoop(rule.loop, 1 + rule.products.length, process!.line);
-      out.push(`${from} -- [${edgeStyle(item.name)}] ${corners[0]}`);
+      out.push(`${from} -- [${edgeStyle(item)}] ${corners[0]}`);
       const leaving = corners.slice(1).reverse();
       rule.products.forEach((product, k) => emit(leaving[k], product, [...seen, item.name]));
       return;
     }
     const at = fresh("v");
-    out.push(`${from} -- [${edgeStyle(item.name)}] ${at}`);
+    out.push(`${from} -- [${edgeStyle(item)}] ${at}`);
+    asBlob(at);
     for (const product of rule.products) emit(at, product, [...seen, item.name]);
   };
 
   const { segments, line } = process!;
+  // (said back, so a nuclear process is drawn as the reaction it is, or the decay chain)
+  found.nuclear = nuclear;
+  if (nuclear) found.decayChain = decayChainOf(segments, rules);
   if (segments.length < 2) throw new FeynError(`a process reads "incoming > outgoing"`, line);
   // what has arrived so far: one point where things already meet (the beams' blob), or the ends
   // of lines still to be joined to whatever comes next
@@ -128,11 +146,20 @@ export function expandChains(source: string): string {
       return [...lines.slice(0, first).filter((l) => !isChain(l)), ...out, ...lines.slice(first + 1).filter((l) => !isChain(l))].join("\n");
     }
     out.push(`${a} -- [${boson}] ${meeting}`, `${b} -- [${boson}] ${meeting}`);
+  } else if (nuclear) {
+    // (each nucleus coming in on a plain line, its nucleus at the end; any particle as it is)
+    ends = incoming.map((p) => (to: string) => { out.push(p.nucleus ? `${fresh("in")} [${nucleusOptions(p.nucleus)}, in] -- [ion] ${to}` : `${fresh("in")} [${p.name}, in] -- ${to}`); });
   } else if (incoming.length === 2 && incoming.every((p) => p.name === "p")) {
     meeting = fresh("pp");
     out.push(`${fresh("in")} [p, in] -- ${meeting} [blob] -- ${fresh("in")} [p, in]`);
   } else ends = incoming.map((p) => (to: string) => { out.push(`${fresh("in")} [${p.name}, in] -- ${to}`); });
-  const joinHere = () => { const at = meeting ?? fresh("v"); ends.forEach((join) => join(at)); ends = []; meeting = undefined; return at; };
+  const joinHere = () => {
+    const at = meeting ?? fresh("v");
+    ends.forEach((join) => join(at));
+    if (!meeting) asBlob(at);
+    ends = []; meeting = undefined;
+    return at;
+  };
 
   for (let k = 1; k < segments.length; k++) {
     const segment = segments[k], last = k === segments.length - 1;
@@ -149,7 +176,7 @@ export function expandChains(source: string): string {
       ends = [];
       if (nextIsLast) { next.forEach((product, i) => emit(leaving[i], product, [])); break; }
       const through = next[0], from = leaving[0];
-      ends = [(to: string) => { out.push(`${from} -- [${edgeStyle(through.name)}] ${to}`); }];
+      ends = [(to: string) => { out.push(`${from} -- [${edgeStyle(through)}] ${to}`); }];
       k++;
       continue;
     }
@@ -157,7 +184,7 @@ export function expandChains(source: string): string {
     // a line the process passes through, from where things met to where the next meet
     if (segment.length !== 1) throw new FeynError(`between two ">" goes one particle`, line);
     const from = joinHere(), through = segment[0];
-    ends = [(to: string) => { out.push(`${from} -- [${edgeStyle(through.name)}] ${to}`); }];
+    ends = [(to: string) => { out.push(`${from} -- [${edgeStyle(through)}] ${to}`); }];
   }
 
   // the expansion takes the place of the first chain line; the others are dropped
@@ -202,7 +229,101 @@ function withMadGraphLoop(text: string, line: number): Item[][] {
   throw new FeynError(`write a loop in braces where it goes, such as "g g > {t} > H"`, line);
 }
 
-interface Item { name: string; decay?: Item[] }
+interface Item { name: string; decay?: Item[]; nucleus?: NucleusItem }
+
+/** A nucleus named in a process: its numbers, its symbol, and how its label is written. */
+interface NucleusItem { A: number; Z: number; symbol: string; label: string; nucleons?: boolean; excited?: boolean }
+
+/**
+ * The nucleus a name in a nuclear process stands for: an isotope, a mass number then an element's
+ * symbol (`2H`, `4He`, `235U`), or the symbol alone, as its most common isotope (`He`, `Fe`, `H`);
+ * `p` and `n` are one proton and one neutron, `D` a deuteron. Any name may carry its nucleons in
+ * brackets, `C(6p 8n)`, `X(3p 4n)`: an element is then that isotope (carbon-14), and any other
+ * name is a nucleus of its own, labelled as written. Undefined for any other name.
+ */
+export function nucleusNamed(name: string): NucleusItem | undefined {
+  const bracket = /^([A-Za-z0-9_']+)\(([^()]*)\)$/.exec(name), nucleons = bracket ? nucleonCount(bracket[2]) : undefined;
+  if (bracket && nucleons) {
+    const A = nucleons.Z + nucleons.N, element = nucleusNamed(bracket[1]);
+    const symbol = element ? element.symbol : bracket[1];
+    return { A, Z: nucleons.Z, symbol, label: element ? isotopeLabel(A, element.symbol === "p" || element.symbol === "n" ? elementSymbol(nucleons.Z) : symbol) : `\\mathrm{${symbol}}`, nucleons: true };
+  }
+  // (a star after it, 12C*, is the nucleus excited)
+  const m = /^(\d+)?([A-Z][a-z]?|[pn])(\*)?$/.exec(name);
+  if (!m || !Object.prototype.hasOwnProperty.call(ELEMENTS, m[2])) return undefined;
+  // (a proton or a neutron is one nucleon: `2p` is no nucleus)
+  if (m[1] && /^[pn]$/.test(m[2]) && m[1] !== "1") return undefined;
+  const [Z, common] = ELEMENTS[m[2]];
+  const A = m[1] ? Number(m[1]) : common;
+  return { A, Z, symbol: m[2], label: isotopeLabel(A, m[2]) + (m[3] ? "^*" : ""), ...(m[3] ? { excited: true } : {}) };
+}
+
+/**
+ * A name that can only be a nucleus: an isotope, or an element's symbol that names no particle
+ * (`He`, not `H`, the Higgs). `Y` is not one by itself: a new particle often takes that name.
+ */
+export function onlyNucleus(name: string): boolean {
+  const nucleus = nucleusNamed(name);
+  return !!nucleus && (/^\d/.test(name) || !!nucleus.nucleons || (!lookupParticle(name) && name !== "Y"));
+}
+
+/**
+ * What is wrong with a nucleus written with its nucleons, if anything: protons that make another
+ * element (`He(3p 2n)` is lithium), or nucleons that add up to another mass number than the one
+ * written (`4He(2p 3n)`). Undefined when it is right, or names no element.
+ */
+export function nucleonMismatch(name: string): string | undefined {
+  const bracket = /^(\d*)([A-Za-z]{1,2})\(([^()]*)\)$/.exec(name), nucleons = bracket ? nucleonCount(bracket[3]) : undefined;
+  if (!bracket || !nucleons || !/^[A-Z][a-z]?$/.test(bracket[2]) || !Object.prototype.hasOwnProperty.call(ELEMENTS, bracket[2])) return undefined;
+  const [Z] = ELEMENTS[bracket[2]], A = nucleons.Z + nucleons.N;
+  if (nucleons.Z !== Z) return `"${name}" has ${nucleons.Z} proton${nucleons.Z === 1 ? "" : "s"}, but ${bracket[2]} has ${Z}: ${nucleons.Z} protons make ${elementSymbol(nucleons.Z)}`;
+  if (bracket[1] && Number(bracket[1]) !== A) return `"${name}" has ${A} nucleons, not ${bracket[1]}: write ${A}${bracket[2]}`;
+  return undefined;
+}
+
+/**
+ * Whether the statements of one process line are nuclear (a name in them can only be a nucleus),
+ * and if they are, each name that is a nucleus there marked as one.
+ */
+function markNuclei(statements: Item[][][], line: number): boolean {
+  const every = (items: Item[]): Item[] => items.flatMap((item) => [item, ...every(item.decay ?? [])]);
+  const items = statements.flatMap((segments) => segments.flatMap(every));
+  if (!items.some((item) => onlyNucleus(item.name))) return false;
+  for (const item of items) {
+    const nucleus = nucleusNamed(item.name);
+    if (!nucleus) continue;
+    if (nucleus.A < nucleus.Z || nucleus.A > 300) throw new FeynError(`"${item.name}" has ${nucleus.Z} protons in ${nucleus.A} nucleons: write its mass number, the protons and neutrons together, such as ${nucleus.symbol === "n" || nucleus.symbol === "p" ? "4He" : `${2 * nucleus.Z}${nucleus.symbol}`}`, line);
+    item.nucleus = nucleus;
+  }
+  return true;
+}
+
+/**
+ * A nuclear process as a decay chain, when it is one: one nucleus that decays (`238U > 234Th
+ * 4He`), and what it leaves decaying on by later lines (`234Th > 234Pa e- ve~`), step by step.
+ * What each step leaves is the nucleus that decays on, else the heaviest; the rest it gives off.
+ * Undefined for a single reaction, which is drawn as one.
+ */
+function decayChainOf(segments: Item[][], rules: Map<string, Rule[]>): DecayStep[] | undefined {
+  if (segments.length !== 2 || segments[0].length !== 1 || !segments[0][0].nucleus) return undefined;
+  const chain = (item: Item): ChainNucleus => ({ A: item.nucleus!.A, Z: item.nucleus!.Z, label: item.nucleus!.label, name: item.name });
+  const steps: DecayStep[] = [], seen = new Set<string>();
+  let parent = segments[0][0], products: Item[] | undefined = segments[1];
+  while (products && !seen.has(parent.name)) {
+    seen.add(parent.name);
+    const nuclei: Item[] = products.filter((p) => p.nucleus && !p.decay);
+    const daughter: Item | undefined = nuclei.find((p) => rules.get(p.name)?.some((r) => !r.loop)) ?? [...nuclei].sort((a, b) => b.nucleus!.A - a.nucleus!.A)[0];
+    if (!daughter) break;
+    const given = products.filter((p) => p !== daughter).map((p) => (p.nucleus ? { nucleus: chain(p), label: p.nucleus.label } : { particle: p.name, label: lookupParticle(p.name)?.label ?? p.name }));
+    steps.push({ parent: chain(parent), daughter: chain(daughter), given });
+    parent = daughter;
+    products = rules.get(daughter.name)?.find((r) => !r.loop)?.products;
+  }
+  return steps.length > 1 ? steps : undefined;
+}
+
+/** A nucleus's options at the end of its leg: what it is, and its label. */
+const nucleusOptions = (n: NucleusItem) => `nucleus, A=${n.A}, Z=${n.Z}, ${n.label}${n.excited ? ", excited" : ""}`;
 
 
 const stripComment = (line: string) => line.replace(/%.*$/, "").trim();
@@ -315,7 +436,7 @@ function splitSegments(text: string, line: number): Item[][] {
       if (text[k] !== "(" || k === start || opensDecay(k)) return text.slice(start, k);
       const open = k;
       k = closingBracket(text, open, line) + 1;
-      if (/\s/.test(text.slice(open, k)) && !parseObject(text.slice(start, k))) throw new FeynError(`write a decay as "${text.slice(start, open)}(> products)", or an object's contents as "LRJ(2j)"`, line);
+      if (/\s/.test(text.slice(open, k)) && !parseObject(text.slice(start, k)) && !nucleonCount(text.slice(open + 1, k - 1))) throw new FeynError(`write a decay as "${text.slice(start, open)}(> products)", or an object's contents as "LRJ(2j)"`, line);
     }
   };
   const readItems = (inside: boolean): Item[] => {

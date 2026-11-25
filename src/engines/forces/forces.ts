@@ -113,7 +113,8 @@ export function lineLength(s: Structure, rules: ForceRules): Force {
       // (a massive fermion only: a gaugino's W or Z, a dark scalar, keep their lengths)
       const fromSusy = !line.leg && !line.heavy && line.fermion && line.mass === "massive" && s.linesAt[start].some((l) => s.lines[l].heavy && s.time[s.lines[l].a === start ? s.lines[l].b : s.lines[l].a] < s.time[start])
         && s.linesAt[start].some((l) => l !== s.lines.indexOf(line) && s.lines[l].heavy && s.time[s.lines[l].a === start ? s.lines[l].b : s.lines[l].a] > s.time[start]);
-      const want = (line.leg ? rules.legLength * (intoLoop ? rules.loopLeg : 1) * (givenOff ? rules.givenOffLength : 1) : rules.lineLength * (fromSusy ? rules.susyProductLength : 1)) * (halves ? 0.5 : 1) * stage * (intoBlob ? rules.blobBeamLength : 1) * (between(line) ? 0.5 : intoRun(line) ? 0.7 : 1) + rim;
+      // (a line given its own length, `length=1.5`, is that much longer than it would be)
+      const want = (line.stretch ?? 1) * (line.leg ? rules.legLength * (intoLoop ? rules.loopLeg : 1) * (givenOff ? rules.givenOffLength : 1) : rules.lineLength * (fromSusy ? rules.susyProductLength : 1)) * (halves ? 0.5 : 1) * stage * (intoBlob ? rules.blobBeamLength : 1) * (between(line) ? 0.5 : intoRun(line) ? 0.7 : 1) + rim;
       // (an outgoing leg gives way first: when the final states end level, the leg with less
       // far to go grows to meet them, not the propagator that brought it)
       const stiffness = rules.length * (line.leg && !intoBlob ? rules.legGive : 1) * (fromSusy ? rules.susyProductHold : 1);
@@ -1042,6 +1043,40 @@ export function heavyCarriesOn(s: Structure, rules: ForceRules): Force {
  * along its chain). Legs of different branches may lean toward each other a little, by an
  * angle that grows with how deep in a cascade they come out.
  */
+/**
+ * A line scattered off a nucleus reads as scattering: where a line passes through a point (one
+ * point before, one after) whose other line leads to a nucleus, the line comes in running toward
+ * the nucleus and leaves running away from it, each by at least `scatterAngle` degrees, and as
+ * much the one way as the other: a V with its corner pointing at the nucleus. Free while that holds; a push only when it does not. (Only a
+ * diagram with a nucleus in it has any; its strength and least angle are fixed here, not theme
+ * settings, while the approved layouts' settings are frozen.)
+ */
+const SCATTER = 2000, SCATTER_ANGLE = 15;
+export function nucleusScatter(s: Structure): Force {
+  const other = (l: number, i: number) => (s.lines[l].a === i ? s.lines[l].b : s.lines[l].a);
+  const least = portable.sin((SCATTER_ANGLE * Math.PI) / 180);
+  const terms: Term[] = [];
+  s.ids.forEach((_, n) => {
+    if (!s.nucleus?.[n] || s.linesAt[n].length !== 1) return;
+    const v = other(s.linesAt[n][0], n);
+    const off = s.linesAt[v].map((l) => other(l, v)).filter((w) => w !== n);
+    if (off.length !== 2 || s.linesAt[v].length !== 3) return;
+    const [a, b] = [...off].sort((x, y) => s.time[x] - s.time[y]);
+    if (s.time[a] === s.time[b]) return;
+    // (how far along the way toward the nucleus a step runs, as a share of its length)
+    const toward = (p: Float64Array, from: number, to: number) => {
+      const ux = dx(p, v, n), uy = dy(p, v, n), un = portable.hypot(ux, uy) || 1, len = portable.hypot(dx(p, from, to), dy(p, from, to)) || 1;
+      return (dx(p, from, to) * ux + dy(p, from, to) * uy) / (un * len);
+    };
+    terms.push(limit([a, v, n], (p) => { const short = least - toward(p, a, v); return short > 0 ? SCATTER * portable.square(short) : 0; }));
+    terms.push(limit([v, b, n], (p) => { const short = least + toward(p, v, b); return short > 0 ? SCATTER * portable.square(short) : 0; }));
+    // (and as much toward it coming in as away from it leaving: the V even about the nucleus, its
+    // corner pointing at it, not leaning one way)
+    terms.push(limit([a, v, b, n], (p) => { const lean = Math.abs(toward(p, a, v) + toward(p, v, b)) - 0.1; return lean > 0 ? SCATTER * portable.square(lean) : 0; }));
+  });
+  return { name: "nucleus scatter", terms };
+}
+
 export function noConverging(s: Structure, rules: ForceRules): Force {
   const other = (l: number, i: number) => (s.lines[l].a === i ? s.lines[l].b : s.lines[l].a);
   const legs = s.ids.map((_, i) => i).filter((i) => s.external[i] && s.time[i] > 0 && s.linesAt[i].length === 1 && !s.field[i])
@@ -2031,5 +2066,5 @@ export function givenOffSideways(s: Structure, rules: ForceRules): Force {
 }
 
 export function allForces(s: Structure, rules: ForceRules): Force[] {
-  return [straightIntoBlob(s, rules), pairsTogether(s, rules), restLevel(s, rules), equalProducts(s, rules), forwardForks(s, rules), lineLength(s, rules), evenAngles(s, rules), timeFlow(s, rules), timeOrder(s, rules), clearance(s, rules), uprightExchange(s, rules), exchangeFan(s, rules), showerFan(s, rules), mirrorBranches(s, rules), beamsStartTogether(s, rules), finalPlane(s, rules), lightOutside(s, rules), heavyCarriesOn(s, rules), givenOffSideways(s, rules), noConverging(s, rules), hadrons(s, rules), vacuumArcs(s, rules), loopShapes(s, rules)];
+  return [straightIntoBlob(s, rules), pairsTogether(s, rules), restLevel(s, rules), equalProducts(s, rules), forwardForks(s, rules), lineLength(s, rules), evenAngles(s, rules), timeFlow(s, rules), timeOrder(s, rules), clearance(s, rules), uprightExchange(s, rules), exchangeFan(s, rules), showerFan(s, rules), mirrorBranches(s, rules), beamsStartTogether(s, rules), finalPlane(s, rules), lightOutside(s, rules), heavyCarriesOn(s, rules), givenOffSideways(s, rules), noConverging(s, rules), hadrons(s, rules), vacuumArcs(s, rules), loopShapes(s, rules), nucleusScatter(s)];
 }
