@@ -351,7 +351,7 @@
       var said = document.createElement("code");
       said.className = "feynjs-explain-line";
       var sentence = function (note) { note = note.charAt(0).toUpperCase() + note.slice(1); return /[.!?…]$/.test(note) ? note : note + "."; };
-      var rest = function () { said.textContent = " "; said.style.visibility = "hidden"; live.textContent = "Point at a line of the source below, or step through it, to see what each line draws."; };
+      var rest = function () { said.textContent = " "; said.style.visibility = "hidden"; live.textContent = box.dataset.says || ""; };
       var clear = function () {
         lit.forEach(function (p) { p[0].classList.remove(p[1]); });
         lit = [];

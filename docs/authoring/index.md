@@ -11,7 +11,7 @@ Name the points and join them; feynjs places every point itself. Point at a line
 step through it with the arrows beside the diagram: what the line draws lights up, and the
 text beside the diagram says what it does.
 
-<div class="feynjs-explain" data-points="i1 i2 a b f1 f2" data-names="rest" markdown>
+<div class="feynjs-explain" data-says="Five lines: two lines come in, one runs between, two go out." data-points="i1 i2 a b f1 f2" data-names="rest" markdown>
 
 ```feynman
 in: i1 i2
@@ -38,7 +38,7 @@ diagram.
 
 A particle's name sets the line's style, its arrow and its label in one word.
 
-<div class="feynjs-explain" data-points="i1 i2 a b f1 f2" markdown>
+<div class="feynjs-explain" data-says="Name a particle and its line takes the style, the arrow and the label." data-points="i1 i2 a b f1 f2" markdown>
 
 ```feynman
 i1 [e-] -- a -- i2 [e+]
@@ -60,7 +60,7 @@ f1 [mu-] -- b -- f2 [mu+]    % a muon pair
 
 Or name the process, as MadGraph writes it, and feynjs works out the points and lines:
 
-<div class="feynjs-explain" markdown>
+<div class="feynjs-explain" data-says="One line, read left to right: what comes in, what is exchanged, what goes out." markdown>
 
 ```feynman
 e- e+ > gamma > mu- mu+
@@ -79,7 +79,7 @@ e- e+ > gamma > mu- mu+      % what comes in > what is exchanged > what goes out
 A point can carry a vertex dot and its coupling, or be a blob, a proton beam, a nucleus, or a
 hadron's quarks.
 
-<div class="feynjs-explain" data-points="i1 i2 a b f1 f2" markdown>
+<div class="feynjs-explain" data-says="A dot where the lines meet, with its coupling beside it." data-points="i1 i2 a b f1 f2" markdown>
 
 ```feynman
 i1 [e-] -- a -- i2 [e+]
@@ -107,7 +107,7 @@ spectator quarks.
 Colour can be drawn beside the quarks and gluons, and a final state can be drawn as what a
 detector sees: a jet, a large-R jet with what is inside it, missing energy.
 
-<div class="feynjs-explain" markdown>
+<div class="feynjs-explain" data-says="Colour runs beside each quark and gluon, as a line of its own." markdown>
 
 ```feynman
 colour flow: on
@@ -155,7 +155,7 @@ Points given `at (x, y)` stay where they are put, and the rest settle round them
 Three marks point a reader at what matters: a pulse on a point or a line, a band for a particle
 that lives a while, and a brace grouping lines.
 
-<div class="feynjs-explain" markdown>
+<div class="feynjs-explain" data-says="A pulse and a lifetime band draw the eye to what matters." markdown>
 
 ```feynman
 i1 [q] -- a -- i2 [qbar']
@@ -177,7 +177,7 @@ c -- f3 [pi+]
 
 </div>
 
-<div class="feynjs-explain" markdown>
+<div class="feynjs-explain" data-says="A brace groups quarks into the hadron they make." markdown>
 
 ```feynman
 in: u d
@@ -207,7 +207,7 @@ loops and hadrons](vertices.md).
 The same diagram can be drawn as something else: the kinematics in the lab, a lattice, or for a
 nuclear process, the textbook picture of the reaction.
 
-<div class="feynjs-explain" markdown>
+<div class="feynjs-explain" data-says="A nuclear process drawn as the textbook picture of the reaction." markdown>
 
 ```feynman
 2H 3H > 4He n
