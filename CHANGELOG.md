@@ -5,6 +5,14 @@ layout that moves is a change, recorded here.
 
 ## Unreleased
 
+- **Processes as MadGraph writes them:** decays after commas (`p p > t t~, t > b w+, t~ > b~ w-`),
+  and a decay in brackets with the decays of what it makes, nested as deep as the chain goes
+  (`p p > t t~, (t > b w+, w+ > e+ ve), (t~ > b~ w-, w- > j j)`). They draw the same diagram as
+  the decays written on lines of their own.
+- **`>` without spaces round it:** `p p>t t~,t>b w+`. `->` is still an arrow, so write `w- >`;
+  `e+e-` still needs a space. Lines with `--` and setting lines are read as before.
+- **Names with brackets of their own**, a hadron's state: `psi(2S)`, `X(3872)`, `Pc(uudcc~)`. They
+  no longer give an error; `t(> b w+)` is still a decay on the spot. No layout moves.
 - **Labels in the reader's own math font** (CSS `font-family: math`: STIX Two Math on a Mac,
   Cambria Math on Windows), falling back to STIX Two Math, Cambria Math, New Computer Modern Math
   and Latin Modern Math where `math` is not understood. Italic letters are Unicode's
