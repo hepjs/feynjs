@@ -1,7 +1,8 @@
 # A version tag (v0.9.1): test, build, publish to npm (and so to jsDelivr and unpkg), and make a
 # GitHub release with the built files. npm trusts this workflow by "trusted publishing" (set up
 # once on npmjs.com for the package), so no npm token is stored here. A version already on npm
-# (the first, published by hand) is not published again.
+# (the first, published by hand) is not published again. The Python package (python/), the same
+# script with a Sphinx extension and a Jupyter display, goes to PyPI the same way.
 name: Release
 on:
   push:
@@ -42,3 +43,26 @@ jobs:
             dist/feynjs.mjs
             feynjs-obsidian.zip
             feynjs-madgraph.zip
+  pypi:
+    # (PyPI's publishing action runs on Linux; PyPI trusts this workflow and its "pypi" environment)
+    runs-on: ubuntu-latest
+    environment: pypi
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22.22.2
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: node scripts/python-package.mjs
+      - uses: astral-sh/setup-uv@v6
+      - name: Build the Python package, and check it imports with its script
+        run: |
+          cd python && uv build
+          uv run --no-project --with dist/*.whl python -c "import feynjs, feynjs.sphinx; assert len(feynjs.script()) > 100000; print('feynjs', feynjs.__version__)"
+      - name: Publish to PyPI (unless this version is there already)
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: python/dist
+          skip-existing: true

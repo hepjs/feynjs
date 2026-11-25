@@ -66,6 +66,7 @@ nav = [
   { "Compatibility" = [
     { "Zensical and MkDocs" = "compatibility/zensical.md" },
     { "Sphinx" = "compatibility/sphinx.md" },
+    { "Jupyter" = "compatibility/jupyter.md" },
     { "Web pages" = "compatibility/web.md" },
     { "Obsidian" = "compatibility/obsidian.md" },
     { "LaTeX" = "compatibility/latex.md" },

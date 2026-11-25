@@ -1,15 +1,20 @@
 # Sphinx
 
-A Sphinx project draws every `feynman` code block, in reST or in MyST Markdown, once the script is
-loaded.
+A Sphinx project draws every `feynman` code block, in reST or in MyST Markdown.
 
-1.  **Load the script** in `conf.py`, and silence the warning Sphinx gives for a code block's
-    language it cannot highlight:
+1.  **Add the extension.** Install the Python package, which carries feynjs, and list it in
+    `conf.py`:
+
+    ```sh
+    pip install feynjs
+    ```
 
     ```python
-    html_js_files = ["https://cdn.jsdelivr.net/npm/feynjs@0.10/dist/feynjs.min.js"]
-    suppress_warnings = ["misc.highlighting_failure"]
+    extensions = ["feynjs.sphinx"]
     ```
+
+    The extension serves the script with your site (nothing is loaded from the network) and tells
+    Sphinx that `feynman` blocks are plain text, so a strict build (`-W`) passes.
 
 2.  **Write a diagram.** In reST, a `code-block`:
 
@@ -44,7 +49,17 @@ should hold HTML instead, a `raw` block works too, in reST or MyST:
    </div>
 ```
 
-## Without the CDN
+## Without the Python package
+
+Load the script from the CDN in `conf.py`, and silence the warning Sphinx gives for a code block's
+language it cannot highlight:
+
+```python
+html_js_files = ["https://cdn.jsdelivr.net/npm/feynjs@0.10/dist/feynjs.min.js"]
+suppress_warnings = ["misc.highlighting_failure"]
+```
+
+### Or a copy of your own
 
 Download `feynjs.min.js` once, from the latest release or from the npm package:
 

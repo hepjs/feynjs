@@ -5,6 +5,9 @@ layout that moves is a change, recorded here.
 
 ## Unreleased
 
+- **A Python package, `pip install feynjs`:** the script, bundled; a Sphinx extension
+  (`extensions = ["feynjs.sphinx"]`) that serves it and lets a strict build pass; and a Jupyter
+  display, `feynjs.Diagram("...")`. Published to PyPI with each release.
 - **Sphinx:** a `feynman` code block from reST or MyST Markdown (`<div class="highlight-feynman">`) is drawn
   by the script, as Markdown's fences already are. No approved layout moves.
 

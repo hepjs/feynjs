@@ -25,7 +25,8 @@ Pick where you write. Every option draws the same diagrams from the same text.
     A Sphinx project: <code>feynman</code> code blocks in reST or MyST Markdown become diagrams.
 
     ```python
-    html_js_files = ["https://cdn.jsdelivr.net/npm/feynjs@0.10/dist/feynjs.min.js"]
+    # pip install feynjs
+    extensions = ["feynjs.sphinx"]
     ```
 
     [Set up Sphinx](../compatibility/sphinx.md){ .md-button }
@@ -74,6 +75,18 @@ Pick where you write. Every option draws the same diagrams from the same text.
     ```
 
     [The API](../usage/api.md){ .md-button }
+
+-   **Jupyter**
+
+    A notebook: a diagram is a Python object that draws itself.
+
+    ```python
+    # pip install feynjs
+    from feynjs import Diagram
+    Diagram("g g > {t} > H")
+    ```
+
+    [Use it in Jupyter](../compatibility/jupyter.md){ .md-button }
 
 -   **The command line**
 

@@ -66,6 +66,7 @@ t~ > b~ W-(> d u~)
 | | |
 |---|---|
 | **npm** | `npm install feynjs` ([npmjs.com/package/feynjs](https://www.npmjs.com/package/feynjs)) |
+| **PyPI** | `pip install feynjs`: the script, a Sphinx extension (`extensions = ["feynjs.sphinx"]`) and a Jupyter display (`feynjs.Diagram`) |
 | **CDN** | `<script src="https://cdn.jsdelivr.net/npm/feynjs@0.10/dist/feynjs.min.js"></script>` |
 | **Release files** | `feynjs.min.js`, `feynjs.mjs`, the Obsidian plugin and the MadGraph plugin, from the [latest release](https://github.com/hepjs/feynjs/releases/latest) |
 | **Archive** | every release on Zenodo, [10.5281/zenodo.24497761](https://doi.org/10.5281/zenodo.24497761) |
