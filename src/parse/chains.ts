@@ -18,6 +18,11 @@ import { parseObject } from "../particles/objects.ts";
  * way repeating). `W+(> e+ nu)` decays one particle on the spot instead. Whatever does not
  * decay leaves the diagram.
  *
+ * MadGraph's way of writing the decays goes too, on the process line after commas:
+ * `p p > t t~, (t > b w+, w+ > e+ ve), t~ > b~ w-` (a decay in brackets coming with the decays of
+ * what it makes), and `>` with no spaces round it, `p p>t t~`. A name may carry brackets that do
+ * not start with `>`, a hadron's state: `psi(2S) > J/psi pi+ pi-`.
+ *
  * A loop is a segment of its own, in braces, the particle that runs round it named inside:
  * `g g > {t} > H` passes through a top loop. Everything that meets the loop, coming in or going
  * on, meets it at a corner of its own, so that is the top triangle; `g g > {t} > H H` is a box,
@@ -32,7 +37,7 @@ import { parseObject } from "../particles/objects.ts";
  */
 export function expandChains(source: string): string {
   const lines = source.split("\n");
-  const isChain = (line: string) => /(^|\s)>(\s|$)/.test(stripComment(line)) && !/--/.test(line);
+  const isChain = (line: string) => (/(^|\s)>(\s|$)/.test(stripComment(line)) || hasCloseArrow(line)) && !/--/.test(line);
   if (!lines.some(isChain)) return source;
 
   let made = 0;
@@ -44,13 +49,16 @@ export function expandChains(source: string): string {
   let process: { line: number; segments: Item[][] } | undefined;
   lines.forEach((line, n) => {
     if (!isChain(line)) return;
-    const segments = withMadGraphLoop(productionMode(stripComment(line), !process), n + 1);
-    if (!process) { process = { line: n + 1, segments }; return; }
-    // a decay: "particle > products", or through a loop, "particle > {t} > products"
-    const loop = segments.length === 3 && isLoop(segments[1]) ? loopName(segments[1]) : undefined;
-    if (!(segments.length === 2 || loop) || segments[0].length !== 1 || segments[0][0].decay || isLoop(segments[0])) throw new FeynError(`a decay reads "particle > products" (or "particle > {t} > products" through a loop)`, n + 1);
-    const name = segments[0][0].name;
-    rules.set(name, [...(rules.get(name) ?? []), { products: segments[segments.length - 1], loop }]);
+    // (MadGraph's decays after commas, p p > t t~, t > b w+, are read as lines of their own)
+    for (const statement of madGraphDecays(stripComment(line), n + 1)) {
+      const segments = withMadGraphLoop(productionMode(statement, !process), n + 1);
+      if (!process) { process = { line: n + 1, segments }; continue; }
+      // a decay: "particle > products", or through a loop, "particle > {t} > products"
+      const loop = segments.length === 3 && isLoop(segments[1]) ? loopName(segments[1]) : undefined;
+      if (!(segments.length === 2 || loop) || segments[0].length !== 1 || segments[0][0].decay || isLoop(segments[0])) throw new FeynError(`a decay reads "particle > products" (or "particle > {t} > products" through a loop)`, n + 1);
+      const name = segments[0][0].name;
+      rules.set(name, [...(rules.get(name) ?? []), { products: segments[segments.length - 1], loop }]);
+    }
   });
 
   const nextDecay = (name: string): Rule | undefined => {
@@ -199,14 +207,109 @@ interface Item { name: string; decay?: Item[] }
 
 const stripComment = (line: string) => line.replace(/%.*$/, "").trim();
 
+/**
+ * A ">" written without spaces, as MadGraph allows (p p>t t~): one outside square brackets, and
+ * not the end of an arrow, "->", on a line that is not a switch (title: a>b stays a title).
+ */
+function hasCloseArrow(line: string): boolean {
+  const text = line.replace(/(^|\s)(%|\/\/|#).*$/, "");
+  if (/^\s*[A-Za-z]+(?: [A-Za-z]+)?'?\s*:/.test(text)) return false;
+  let depth = 0;
+  for (let k = 0; k < text.length; k++) {
+    if (text[k] === "[") depth++;
+    else if (text[k] === "]") depth--;
+    else if (text[k] === ">" && depth === 0 && text[k - 1] !== "-") return true;
+  }
+  return false;
+}
+
+/** Split at each top-level comma, one not inside brackets of any kind (VBS(W, H), [a, b], {t}). */
+function splitAtTopCommas(text: string): string[] {
+  const parts: string[] = [];
+  let depth = 0, start = 0;
+  for (let k = 0; k < text.length; k++) {
+    if ("([{".includes(text[k])) depth++;
+    else if (")]}".includes(text[k])) depth--;
+    else if (text[k] === "," && depth === 0) { parts.push(text.slice(start, k).trim()); start = k + 1; }
+  }
+  parts.push(text.slice(start).trim());
+  return parts;
+}
+
+/** Where the bracket opened at `open` closes, brackets inside it counted (LRJ(1b W(2j))). */
+function closingBracket(text: string, open: number, line: number): number {
+  let depth = 0;
+  for (let k = open; k < text.length; k++) {
+    if (text[k] === "(") depth++;
+    else if (text[k] === ")" && --depth === 0) return k;
+  }
+  throw new FeynError(`a "(" is not closed`, line);
+}
+
+/**
+ * MadGraph's decay chain on one line, written as feynjs's own lines: the production, then each
+ * decay after a comma as a line of its own (`p p > t t~, t > b w+` is `p p > t t~` and
+ * `t > b w+`). A decay in brackets comes with the decays under it, which decay what it makes,
+ * on the spot: `(t > b w+, w+ > e+ ve)` is `t > b w+(> e+ ve)`, and so on down, bracket by bracket.
+ * A line with no comma comes back as it is.
+ */
+function madGraphDecays(text: string, line: number): string[] {
+  const [production, ...decays] = splitAtTopCommas(text);
+  if (decays.length === 0) return [text];
+  return [production, ...decays.map((decay) => (isBracketed(decay, line) ? written(decayWithItsDecays(decay.slice(1, -1), line)) : decay))];
+}
+
+/** A whole part in one pair of brackets, `(t > b w+, w+ > e+ ve)`. */
+const isBracketed = (part: string, line: number) => part.startsWith("(") && closingBracket(part, 0, line) === part.length - 1;
+
+/**
+ * A decay and the decays under it, `t > b w+, w+ > e+ ve`, as one decay, each under-decay written
+ * on the spot on what it decays (`t > b w+(> e+ ve)`). Where the decay makes several of one name,
+ * they take the decays of that name in turn, the last repeating, as decay lines are taken.
+ */
+function decayWithItsDecays(text: string, line: number): Item[][] {
+  const [head, ...under] = splitAtTopCommas(text);
+  const segments = splitSegments(head, line);
+  const isDecay = (s: Item[][]) => s.length === 2 && s[0].length === 1 && !s[0][0].decay && !isLoop(s[0]);
+  if (!isDecay(segments)) throw new FeynError(`a decay in brackets reads "(particle > products, ...)"`, line);
+  const products = segments[1];
+  // the decays under it, by the name they decay
+  const ways = new Map<string, Item[][]>();
+  for (const part of under) {
+    const decay = isBracketed(part, line) ? decayWithItsDecays(part.slice(1, -1), line) : splitSegments(part, line);
+    if (!isDecay(decay)) throw new FeynError(`a decay reads "particle > products" (a decay through a loop goes on a line of its own)`, line);
+    const name = decay[0][0].name;
+    ways.set(name, [...(ways.get(name) ?? []), decay[1]]);
+  }
+  for (const [name, decaysOf] of ways) {
+    const made = products.filter((p) => p.name === name && !p.decay);
+    if (made.length === 0) throw new FeynError(`"${head}" makes no ${name} to decay (a decay of what that makes goes in brackets of its own)`, line);
+    made.forEach((p, k) => { p.decay = decaysOf[Math.min(k, decaysOf.length - 1)]; });
+  }
+  return segments;
+}
+
+/** A chain line's segments written back as text, each decay on the spot: `t > b w+(> e+ ve)`. */
+const written = (segments: Item[][]): string => segments.map(writtenItems).join(" > ");
+const writtenItems = (items: Item[]): string => items.map((p) => (p.decay ? `${p.name}(> ${writtenItems(p.decay)})` : p.name)).join(" ");
+
 /** Split "a b > c d(> e f)" at its top-level ">" into lists of particles. */
 function splitSegments(text: string, line: number): Item[][] {
   const segments: Item[][] = [[]];
   let k = 0;
+  // a name runs to a space, a bracket or a ">" (not an arrow's, "->"); brackets that do not open a
+  // decay are part of it, a hadron's state or an object's contents: psi(2S), X(3872), LRJ(1b W(2j))
+  // (spaces inside are an object's alone: Z(e+ e-) is a decay with its ">" left out)
+  const opensDecay = (at: number) => /^\(\s*>/.test(text.slice(at));
   const readName = () => {
     const start = k;
-    while (k < text.length && !/[\s()]/.test(text[k])) k++;
-    return text.slice(start, k);
+    for (;;) {
+      while (k < text.length && !/[\s()]/.test(text[k]) && !(text[k] === ">" && text[k - 1] !== "-")) k++;
+      if (text[k] !== "(" || k === start || opensDecay(k)) return text.slice(start, k);
+      const open = k;
+      k = closingBracket(text, open, line) + 1;
+      if (/\s/.test(text.slice(open, k)) && !parseObject(text.slice(start, k))) throw new FeynError(`write a decay as "${text.slice(start, open)}(> products)", or an object's contents as "LRJ(2j)"`, line);
+    }
   };
   const readItems = (inside: boolean): Item[] => {
     const items: Item[] = [];
@@ -219,18 +322,10 @@ function splitSegments(text: string, line: number): Item[][] {
       if (!name) throw new FeynError(`cannot read "${text}"`, line);
       const item: Item = { name };
       if (text[k] === "(") {
-        // (a detector object's contents, LRJ(1b W(2j)): kept with its name, the object reads them)
-        const contents = /^\((?!\s*>)((?:[^()]|\([^()]*\))*)\)/.exec(text.slice(k));
-        if (contents && parseObject(`${name}(${contents[1]})`)) {
-          item.name = `${name}(${contents[1]})`;
-          k += contents[0].length;
-          items.push(item);
-          continue;
-        }
+        // (a decay on the spot, W+(> e+ nu): any other bracket is the name's own, read with it)
         k++;
         while (k < text.length && /\s/.test(text[k])) k++;
-        if (text[k] !== ">") throw new FeynError(`write a decay as "${name}(> products)", or an object's contents as "LRJ(2j)"`, line);
-        k++;
+        k++; // the ">"
         item.decay = readItems(true);
       }
       items.push(item);
