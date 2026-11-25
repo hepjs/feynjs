@@ -1,111 +1,139 @@
 ---
 name: feynman-design
-description: Design clear, correct Feynman diagrams with feynjs: what to draw, how to lay it out the way physicists expect, how to check the physics, and how to draw the reader's eye. Use when asked to design, improve, review or restyle a Feynman diagram, choose between layouts, or make a diagram for a paper, talk or documentation page. For the syntax itself, see the feynjs skill.
+description: Make good Feynman diagrams with feynjs for real tasks - draw the diagram for a named process, put it in a docs page, notes or a LaTeX paper, reproduce or convert a figure from a paper, fix a layout that looks wrong, show alternatives side by side, or export for slides and journals - with the layout conventions physicists expect and the physics checks a diagram must pass. Use when asked to draw, design, improve, review, reproduce or export a Feynman diagram. For the full syntax, see the feynjs skill.
 ---
 
-# Designing Feynman diagrams
+# Making Feynman diagrams with feynjs
 
-A good diagram says one thing, reads left to right in time, and looks like the diagrams in recent
-papers. feynjs does the placing; your job is to choose what to draw, write the least source that
-says it, and check the result. The syntax is in the `feynjs` skill and at
-https://hepjs.github.io/feynjs/authoring/.
+Most requests are one of the tasks below. Each gives the steps and a starting source; finish with
+the checks at the end. Full syntax: the `feynjs` skill and https://hepjs.github.io/feynjs/authoring/.
 
-## 1. Decide what it must say
+## Tasks
 
-- **One message per diagram.** A production mechanism, a decay, a loop, a signal topology. If a
-  figure needs two messages, draw two panels (`---` between them, a caption after it:
-  `--- (b) through a Z`).
-- **Pick the level.** Partons (`q qbar > Z`) for the hard process; beams (`p p > ...`) when the
-  proton remnants matter; quark lines with braces (`hadron: B^0 = d b [brace]`) for flavour
-  physics; the reaction picture (`2H 3H > 4He n`) for nuclear physics; detector objects
-  (`[LRJ 1b W(2j)]`, `MET`) for what an analysis selects.
-- **Draw the minimum.** Leave out what the reader does not need: decays that do not matter (a
-  stable `W` is fine), the second diagram of a pair (say "and crossed" in the caption instead).
+### "Draw the diagram for <process>"
 
-## 2. Write the least source
+1. Write it as a process line: what comes in, `>`, what goes out; a particle between two `>` is
+   the propagator drawn there; decays follow, after commas or on their own lines.
+   ```text
+   e- e+ > Z > mu- mu+                                          a named s-channel line
+   p p > t t~, (t > b w+, w+ > e+ ve), (t~ > b~ w-, w- > j j)   production and decays, MadGraph style
+   g g > {t} > H                                                 a loop, in braces
+   VBF > H                                                       a production mode by name
+   q qbar > Z' > chi chibar                                      a BSM mediator
+   ```
+2. Use edges (`a -- [gluon] b`) only for what a process line cannot say: boxes, penguins, a
+   coupling on a vertex (`a [dot, label=g_s]`), quark lines grouped into hadrons
+   (`hadron: B^0 = d1 b [brace]`).
+3. Pick the level the reader needs: partons for the hard process, `p p` when beams matter, hadron
+   names (`B0 > K*0 mu+ mu-`) or quark lines for flavour physics, `2H 3H > 4He n` for a nuclear
+   reaction, detector objects (`[LRJ 1b W(2j)]`, `MET`) for an analysis's final state.
+4. Run the checks below, then show the source and the drawing.
 
-- **A process line first.** `p p > t t~, (t > b w+, w+ > e+ ve), (t~ > b~ w-, w- > j j)` or
-  `g g > {t} > H` gets the topology right with no coordinates. Use edges (`a -- [gamma] b`) only
-  for what a process line cannot say: boxes, penguins, couplings on vertices, hadrons.
-- **Name particles, not styles.** `[gluino]` gives the line, its arrow, its colour and its label;
-  `[plain]` with a hand-written label throws that away.
-- **Order the legs** with `in:` and `out:` (top to bottom) only when the default order is wrong,
-  for example to keep a u-channel's crossing.
-- **No coordinates** unless nothing else works. Reach for a switch first (`final plane: on`,
-  `layout: grid`), then `layout: manual` with a few `v at (x, y)` pins.
+If the request is ambiguous (which diagram of several, which decay), draw the leading one and say
+which you chose.
 
-## 3. Lay it out as physicists do
+### "Put it in my docs / notes / page / paper"
 
-These are the conventions the default engine follows; check the result against them.
+| Where | What to do |
+|---|---|
+| Zensical or MkDocs | add `https://cdn.jsdelivr.net/npm/feynjs@0.10/dist/feynjs.min.js` to `extra_javascript` and the `feynman` custom fence; then a ```` ```feynman ```` block |
+| Any web page | `<script src="https://cdn.jsdelivr.net/npm/feynjs@0.10/dist/feynjs.min.js"></script>`, then ```` ```feynman ```` blocks or `<div class="feynman">` |
+| Obsidian | the plugin from the release zip; then ```` ```feynman ```` blocks |
+| LaTeX | `\usepackage{feynjs}` and a `feynjs` environment, compiled as TikZ-Feynman (Overleaf and arXiv too); or `feynjs tikz file.feyn --picture` for a plain `tikzpicture` |
+| Your own code | `npm install feynjs`; `render(source)` gives the SVG, `toTikz(source)` the TikZ |
 
-- **Time runs left to right.** Incoming on the left, outgoing on the right, nothing flowing back.
-- **Near top–bottom symmetry.** Pair production mirrors about the middle; the two beams start
-  together.
-- **Compact.** Short external legs, short beam lines, few waves and coils; not TikZ's large canvas.
-- **Scattering reads as scattering.** In a t-channel exchange, each incoming line runs in toward
-  the centre and each outgoing line leaves outward; the bottom line comes in rising and leaves
-  falling, the top one the mirror image. Particles produced by the scattering sit between the two
-  scattered lines.
-- **Exchanges.** A heavy line exchanged between the beams (a neutralino, a gluino) stands upright;
-  a light quark exchange may lean forward, especially when a line radiates before it.
-- **Radiation.** ISR or FSR off a fermion does not bend the fermion; the radiated line is of
-  moderate length. Radiation off a W usually does bend it.
-- **Cascades.** A SUSY cascade arcs gently, each stage changing direction a little, each stage
-  shorter, with a narrow opening angle from the collision; the stable particle at the end does not
-  bend outward.
-- **Decays.** A W or Z decays about its own direction of travel. `final plane: on` lines every
-  final state up in one column when the reader should compare final states.
-- **Loops.** Write them in braces (`{t}`) or as closed paths; a loop is round, a box square.
-- **Hadrons.** Spectator quark lines are straight. In a strong decay with a quark pair from the
-  vacuum, the two partner lines are straight or diverge symmetrically, never one bent.
-- **Crossings.** None, except the ones the physics asks for (a u-channel's swapped final states).
+Setup for each is at https://hepjs.github.io/feynjs/compatibility/.
 
-## 4. Check the physics
+### "Reproduce this figure from a paper"
 
-A diagram that looks right can still be wrong. Before showing it:
+1. Read the figure: incoming and outgoing particles, every vertex, every propagator, labels.
+2. Write it as a process line if it has no loops or hadrons, else as edges; name the particles so
+   styles and labels come for free; copy the paper's labels with `label=` only where they differ.
+3. Order the legs as the figure does with `in:` and `out:` (top to bottom).
+4. Compare side by side. If a line goes the wrong way, change the structure or add a switch
+   (`final plane: on`, `layout: grid`) before pinning points; pin with `layout: manual` and a few
+   `v at (x, y)` only as a last resort.
 
-- **Charge** is conserved at every vertex. An internal W's label is the charge emitted at the
+### "Convert my TikZ-Feynman figures"
+
+`npx feynjs import paper.tex > diagrams.feyn` converts every TikZ-Feynman picture in the file into
+feynjs lines (from code, `fromTikz()` in `feynjs/tikz`). Convert once and keep editing the result;
+a whole TikZ picture is not pasted into a `feynman` block.
+
+### "This layout looks wrong"
+
+1. Say what is wrong in the terms of the conventions below (a scattered line bending the wrong
+   way, a cascade folding back, labels crowded).
+2. `feynjs measure file.feyn` reports crossings, crowded labels and vertices, stubs and the
+   smallest angle; `debug: on` shows each point's name and which rules shaped each line.
+3. Fix it in this order: the source's structure (leg order with `in:`/`out:`, which particle
+   decays where), a switch (`final plane: on`, `layout: grid`, `size: small`), a line's
+   `length=1.5`, and only then pins.
+
+### "Show the alternatives" / "every diagram of the process"
+
+- Panels: `---` between diagrams, a caption after it; one block draws them side by side.
+  ```text
+  --- (a) through a photon
+  e- e+ > gamma > mu- mu+
+  --- (b) through a Z
+  e- e+ > Z > mu- mu+
+  ```
+- Every diagram MadGraph generates: the feynjs MadGraph plugin (`mg5_aMC --mode=feynjs`, then
+  `feynjs DIR`) writes each diagram's source and a page drawing them all.
+
+### "Export it for slides or a journal"
+
+- SVG: `feynjs render file.feyn > file.svg`, or `render(source, { standalone: true })` for colours
+  of its own; on a page, each diagram's download button gives SVG or PNG.
+- TikZ-Feynman: `feynjs tikz file.feyn` (a document) or `--picture` (a bare picture).
+- For print in black: `colours: bw`. For a slide or a dense figure: `size: small`.
+
+## How physicists expect it to look
+
+The default engine follows these; check the result against them.
+
+- **Time runs left to right**; incoming on the left, outgoing on the right; near top–bottom
+  symmetry; compact (short legs, few waves and coils).
+- **Scattering reads as scattering**: in a t-channel exchange each incoming line runs in toward
+  the centre and each outgoing line leaves outward; what the scattering produces sits between.
+- **A heavy exchange** between the beams (a neutralino, a gluino) stands upright; a light quark
+  exchange may lean forward.
+- **Radiation** off a fermion does not bend it; the radiated line is of moderate length.
+- **Cascades** arc gently, each stage shorter, from a narrow opening angle; the stable particle
+  at the end does not bend outward.
+- **Decays** fan about their parent's direction; `final plane: on` lines up every final state.
+- **Hadrons**: spectator quark lines straight; a quark pair from the vacuum straight or diverging
+  symmetrically.
+- **No crossings** except those the physics asks for (a u-channel).
+
+## Physics checks
+
+- **Charge** is conserved at every vertex. An internal W is labelled by the charge emitted at the
   earlier vertex: b → u gives off a W⁻, b̄ → ū a W⁺.
-- **Colour.** A gluon couples only to coloured lines: in a b → s penguin with a gluon, the gluon
-  leaves the up-type quark in the loop, never the W. A photon or Z may leave the W (γWW, ZWW).
-- **Fermion flow** is continuous: arrows run through every vertex, in on one side and out on the
-  other.
-- **Allowed vertices only.** No ZZZ or ZZγ vertex in the Standard Model; no gluon on a lepton.
-- **Hadron content** matches the name (`B^+` is u b̄). An OZI-suppressed decay (φ → 3π, J/ψ → 3π)
-  goes through gluons, with every quark made anew.
-- **Run `check`.** `feynjs check file.feyn` (or `check(source)`) reports broken fermion flow,
-  unlabelled legs and unknown names; `explain` says the diagram back in words, which catches a
-  wrong topology quickly.
+- **Colour**: a gluon couples only to coloured lines (in a b → s penguin the gluon leaves the
+  loop's quark, not the W); a photon or Z may leave the W.
+- **Fermion flow** is continuous through every vertex.
+- **Only real vertices**: no ZZZ or ZZγ, no gluon on a lepton; hadron names match their quarks
+  (B⁺ is u b̄).
+- **`feynjs check`** finds broken fermion flow, unlabelled legs and unknown names; **`feynjs
+  explain`** says the diagram back in words, which catches a wrong topology.
 
-## 5. Draw the eye, sparingly
+## Drawing the eye
 
-- **One emphasis per diagram.** A `pulse` on the collision or the coupling being measured
-  (`a [dot, pulse]`), a `lifetime` band on a long-lived particle (`[chargino, lifetime={c\tau}]`),
-  a brace on a hadron, or a note (`note: a "new coupling"`). Not all at once.
-- **Colour carries meaning.** feynjs colours superpartners on its own; add colour only for a
-  reason (a new particle in red), `charge colour: on` when charge is the point, and
-  `colours: bw` for a journal that prints in black.
-- **Labels.** Particle names label themselves; label a coupling on its vertex
-  (`v [dot, label=g_{Z'}]`); keep label text short; use `label:` to rename a particle everywhere
-  (`label: W = V`).
-- **Size for the medium.** `size: small` for a slide or a dense figure, `scale:` to zoom.
+One emphasis per diagram, and colour only where it means something:
 
-## 6. Look, measure, adjust
+- `a [dot, pulse]` on the vertex that matters; `[chargino, lifetime={c\tau}]` for a long-lived
+  particle; `hadron: ... [brace]`; `note: a "new coupling"`.
+- feynjs colours superpartners itself; `charge colour: on` when charge is the point.
+- Particle names label themselves; label a coupling on its vertex (`v [dot, label=g_{Z'}]`);
+  `label: W = V` renames a particle everywhere.
 
-1. Render it and look at it at the size it will be shown.
-2. `feynjs measure` reports crossings, crowded labels, stubs and the smallest angle; aim for zero
-   problems.
-3. Compare with how recent papers draw the same process (ATLAS and CMS figures are good
-   references). If feynjs's layout differs, change the source's structure or add a switch before
-   pinning points.
-4. `debug: on` shows each point's name and which rules shaped each line, when a line will not go
-   where you expect.
+## Before you hand it over
 
-## Checklist
-
-- [ ] One message; extra messages in panels with captions.
-- [ ] Time left to right; legs in the intended order; no unintended crossings.
-- [ ] Scattering lines in toward the centre and out away; cascades arc gently.
-- [ ] Charge, colour and fermion flow correct at every vertex; `check` clean.
-- [ ] At most one emphasis; colour only where it means something.
-- [ ] `measure` shows no crowding; the diagram reads at its final size.
+- [ ] It says one thing; extra messages are panels with captions.
+- [ ] `feynjs check` is clean; charge, colour and fermion flow are right at every vertex.
+- [ ] `feynjs measure` shows no problems; nothing crosses that should not.
+- [ ] It reads left to right; scattered lines go in toward the centre and out away.
+- [ ] At most one emphasis; it reads at the size it will be shown.
+- [ ] The source is shown with the drawing, so the user can edit it.
