@@ -228,8 +228,9 @@
   // note after each line's %). The note sits beside its line (under it on a narrow screen).
   // Pointing at a line, tapping it, or moving to it with the keyboard lights what it draws, in
   // three steady colours: lines blue, points amber, labels teal; the rest dims. A process line
-  // (e- e+ > gamma > mu- mu+) lights its stages in turn. Each block has step and play buttons and
-  // plays through once when it first comes into view. The % stays in the code, so a copy is
+  // (e- e+ > gamma > mu- mu+) lights its stages in turn. Each block has step buttons and dots, and
+  // steps slowly through its lines over and over while in view: pointing pauses it, a click or a
+  // key stops it. The % stays in the code, so a copy is
   // still valid source.
   var idsOf = function (src) {
     var s = src.replace(/\[[^\]]*\]/g, " ").trim();
@@ -422,7 +423,7 @@
         var k = lines.length;
         lines.push({ el: el, note: note, src: src.trim(), ids: idsOf(src), edges: edgesOf(svg, src), stages: stagesOf(src.trim()) });
         var touch = function () { box.dataset.touched = "1"; stop(); };
-        el.addEventListener("mouseenter", function () { touch(); show(k); });
+        el.addEventListener("mouseenter", function () { stop(); show(k); });
         el.addEventListener("mouseleave", function () { if (document.activeElement !== el) clear(); });
         el.addEventListener("click", function () { touch(); show(k); });
         el.addEventListener("focus", function () { touch(); show(k); });
@@ -451,10 +452,14 @@
         return b;
       };
       var stop = function () { clearTimeout(playing); playing = null; };
+      // (slowly through every line, then the summary a while, then round again, while in view)
+      var STEP = 3000, REST = 2500, inView = false;
       var run = function (k) {
-        if (k >= lines.length) { stop(); clear(); return; }
+        stop();
+        if (box.dataset.touched || !inView) return;
+        if (k >= lines.length) { clear(); playing = setTimeout(function () { run(0); }, REST); return; }
         show(k);
-        playing = setTimeout(function () { run(k + 1); }, lines[k].stages ? 1000 * lines[k].stages.length + 400 : 1600);
+        playing = setTimeout(function () { run(k + 1); }, lines[k].stages ? Math.max(STEP, 1000 * lines[k].stages.length + 800) : STEP);
       };
       bar.appendChild(button(chevron("m15 18-6-6 6-6"), "Previous line", function () { show(Math.max(0, current - 1)); }, "feynjs-explain-step"));
       var dots = document.createElement("span");
@@ -477,12 +482,17 @@
       stage.appendChild(aside);
       if (!("IntersectionObserver" in window)) return;
       if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-      var seen = new IntersectionObserver(function (e) {
-        if (!e[0].isIntersecting) return;
-        seen.disconnect();
-        setTimeout(function () { if (!box.dataset.touched) run(0); }, 500);
-      }, { threshold: 0.6 });
-      seen.observe(box);
+      // (pointing pauses the loop; it picks up again a little after the pointer leaves)
+      box.addEventListener("mouseleave", function () {
+        if (box.dataset.touched) return;
+        clear(); stop();
+        playing = setTimeout(function () { run(0); }, REST);
+      });
+      new IntersectionObserver(function (e) {
+        inView = e[0].isIntersecting;
+        if (!inView) { stop(); clear(); return; }
+        if (!box.dataset.touched && !playing) playing = setTimeout(function () { run(0); }, 800);
+      }, { threshold: 0.6 }).observe(box);
     });
   };
   // The layouts of one diagram (.feynjs-layouts): buttons for the default, the grid and the final
