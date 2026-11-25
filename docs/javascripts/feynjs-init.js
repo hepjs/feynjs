@@ -345,9 +345,13 @@
       pairLabels(svg);
       var lit = [], stageTimer = null, current = -1, lines = [], playing = null, counter = null;
       var light = function (el, cls) { el.classList.add(cls); lit.push([el, cls]); };
-      var live = document.createElement("span");
-      live.className = "feynjs-explain-live";
+      var live = document.createElement("p");
+      live.className = "feynjs-explain-says";
       live.setAttribute("aria-live", "polite");
+      var said = document.createElement("code");
+      said.className = "feynjs-explain-line";
+      var sentence = function (note) { note = note.charAt(0).toUpperCase() + note.slice(1); return /[.!?…]$/.test(note) ? note : note + "."; };
+      var rest = function () { said.textContent = ""; said.hidden = true; live.textContent = "Point at a line of the source below, or step through it, to see what each line draws."; };
       var clear = function () {
         lit.forEach(function (p) { p[0].classList.remove(p[1]); });
         lit = [];
@@ -355,6 +359,7 @@
         box.classList.remove("feynjs-explaining");
         lines.forEach(function (l) { l.el.classList.remove("feynjs-line-on"); });
         current = -1;
+        rest();
         if (counter) Array.prototype.forEach.call(counter.children, function (d) { d.classList.remove("feynjs-on"); });
       };
       var lightEdges = function (edges) {
@@ -371,7 +376,9 @@
         box.classList.add("feynjs-explaining");
         line.el.classList.add("feynjs-line-on");
         if (counter) Array.prototype.forEach.call(counter.children, function (d, j) { d.classList.toggle("feynjs-on", j === k); });
-        live.textContent = line.note;
+        live.textContent = sentence(line.note);
+        said.textContent = line.src;
+        said.hidden = false;
         line.ids.forEach(function (id) {
           all(svg, '[data-vertex="' + id + '"], .feynjs-teach-tag[data-teach="' + id + '"], .feynjs-teach-dot[data-teach="' + id + '"]').forEach(function (el) { light(el, "feynjs-lit-point"); });
         });
@@ -413,7 +420,7 @@
         el.classList.add("feynjs-line");
         el.setAttribute("tabindex", "0");
         var k = lines.length;
-        lines.push({ el: el, note: note, ids: idsOf(src), edges: edgesOf(svg, src), stages: stagesOf(src.trim()) });
+        lines.push({ el: el, note: note, src: src.trim(), ids: idsOf(src), edges: edgesOf(svg, src), stages: stagesOf(src.trim()) });
         var touch = function () { box.dataset.touched = "1"; stop(); };
         el.addEventListener("mouseenter", function () { touch(); show(k); });
         el.addEventListener("mouseleave", function () { if (document.activeElement !== el) clear(); });
@@ -426,6 +433,7 @@
         });
       });
       if (!lines.length) return;
+      rest();
       // (the notes in one column, just past the longest line of source)
       var widest = 0;
       all(code, ".feynjs-src").forEach(function (el) { widest = Math.max(widest, el.textContent.length); });
@@ -454,10 +462,19 @@
       lines.forEach(function (line, k) { dots.appendChild(button("", "Line " + (k + 1) + ": " + line.note, function () { show(k); }, "feynjs-explain-dot")); });
       bar.appendChild(dots);
       bar.appendChild(button(chevron("m9 18 6-6-6-6"), "Next line", function () { show(Math.min(lines.length - 1, current + 1)); }, "feynjs-explain-step"));
-      bar.appendChild(live);
       counter = dots;
+      // (the diagram and, beside it, what the lit line does: its source and a sentence)
       var diagram = box.querySelector("div.feynman");
-      diagram.parentNode.insertBefore(bar, diagram.nextSibling);
+      var stage = document.createElement("div");
+      stage.className = "feynjs-explain-stage";
+      diagram.parentNode.insertBefore(stage, diagram);
+      stage.appendChild(diagram);
+      var aside = document.createElement("div");
+      aside.className = "feynjs-explain-aside";
+      aside.appendChild(said);
+      aside.appendChild(live);
+      aside.appendChild(bar);
+      stage.appendChild(aside);
       if (!("IntersectionObserver" in window)) return;
       if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
       var seen = new IntersectionObserver(function (e) {

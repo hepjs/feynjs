@@ -7,9 +7,9 @@ Point at a line of source to see what it draws.
 
 ## 1. Points and lines
 
-Name the points and join them; feynjs places every point itself. Point at a line of source (or
-use the buttons under the diagram) to see what it draws: lines in blue, points in amber, labels
-in teal.
+Name the points and join them; feynjs places every point itself. Point at a line of source, or
+step through it with the arrows beside the diagram: what the line draws lights up, and the
+text beside the diagram says what it does.
 
 <div class="feynjs-explain" data-points="i1 i2 a b f1 f2" data-names="rest" markdown>
 

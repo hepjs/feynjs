@@ -490,13 +490,14 @@
   .feynjs-tour .tour-multiplet { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
 }
 
-/* a diagram explained line by line (authoring/index.md). Lit, steady: lines blue, points amber,
-   labels teal; the rest dims. Notes beside their lines, under them on a narrow screen. */
+/* a diagram explained line by line (authoring/index.md). What a line draws is lit in one steady
+   blue, the rest dims; beside the diagram, what the line does. Notes beside their lines in the
+   source, under them on a narrow screen. */
 .md-typeset .feynjs-explain, .md-typeset .feynjs-layouts {
-  --feynjs-teach-line: #3d6fc2; --feynjs-teach-point: #c87d22; --feynjs-teach-label: #1f9283;
+  --feynjs-teach-line: #3d6fc2; --feynjs-teach-point: #3d6fc2; --feynjs-teach-label: #3d6fc2;
 }
 [data-md-color-scheme="slate"] .md-typeset .feynjs-explain, [data-md-color-scheme="slate"] .md-typeset .feynjs-layouts {
-  --feynjs-teach-line: #7ba0e0; --feynjs-teach-point: #e0a04f; --feynjs-teach-label: #52bcae;
+  --feynjs-teach-line: #7ba0e0; --feynjs-teach-point: #7ba0e0; --feynjs-teach-label: #7ba0e0;
 }
 .md-typeset .feynjs-explain .feynjs-line { display: inline-block; width: 100%; border-radius: 0.2rem; cursor: pointer; transition: background-color 0.2s; outline: none; }
 .md-typeset .feynjs-explain .feynjs-line:hover .feynjs-note { text-decoration: underline dotted; text-underline-offset: 0.2em; }
@@ -532,7 +533,6 @@
 .md-typeset .feynjs-explain-button { font: inherit; padding: 0.15rem 0.55rem; border: 1px solid var(--md-default-fg-color--lightest); border-radius: 1rem; background: var(--md-default-bg-color); color: var(--md-default-fg-color--light); cursor: pointer; }
 .md-typeset .feynjs-explain-button:hover, .md-typeset .feynjs-explain-button:focus-visible { color: var(--feynjs-teach-line); border-color: var(--feynjs-teach-line); }
 .md-typeset .feynjs-explain-button.feynjs-on { color: var(--md-default-bg-color); background: var(--feynjs-teach-line); border-color: var(--feynjs-teach-line); }
-.md-typeset .feynjs-explain-live { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 .md-typeset .feynjs-layouts .feynman svg { display: block; margin: 0 auto; width: 100%; max-width: 30rem; height: auto; }
 .md-typeset .feynjs-layouts .feynjs-line { display: inline-block; width: 100%; border-radius: 0.2rem; }
 .md-typeset .feynjs-explain-bar { gap: 0.5rem; }
@@ -542,3 +542,13 @@
 .md-typeset .feynjs-explain-dot { width: 0.36rem; height: 0.36rem; padding: 0; border: 0; border-radius: 50%; background: var(--md-default-fg-color--lightest); cursor: pointer; transition: background-color 0.2s, transform 0.2s; }
 .md-typeset .feynjs-explain-dot:hover, .md-typeset .feynjs-explain-dot:focus-visible { background: var(--md-default-fg-color--lighter); }
 .md-typeset .feynjs-explain-dot.feynjs-on { background: var(--feynjs-teach-line); transform: scale(1.25); }
+.md-typeset .feynjs-explain-stage { display: flex; align-items: center; gap: 1.6rem; margin: 1rem 0 0.6rem; }
+.md-typeset .feynjs-explain-stage > .feynman { flex: 1 1 60%; min-width: 0; margin: 0; }
+.md-typeset .feynjs-explain-aside { flex: 0 0 14rem; display: flex; flex-direction: column; gap: 0.5rem; min-height: 7rem; justify-content: center; }
+.md-typeset .feynjs-explain-aside .feynjs-explain-line { align-self: flex-start; font-size: 0.66rem; color: var(--feynjs-teach-line); background: color-mix(in srgb, var(--feynjs-teach-line) 8%, transparent); }
+.md-typeset .feynjs-explain-says { margin: 0; font-size: 0.78rem; line-height: 1.5; color: var(--md-default-fg-color); }
+.md-typeset .feynjs-explain-aside .feynjs-explain-bar { justify-content: flex-start; margin: 0.2rem 0 0; }
+@media screen and (max-width: 45em) {
+  .md-typeset .feynjs-explain-stage { flex-direction: column; align-items: stretch; gap: 0.6rem; }
+  .md-typeset .feynjs-explain-aside { flex: none; min-height: 5.5rem; }
+}
