@@ -104,7 +104,7 @@ the balance, then snaps loops, arcs and vacuum pairs into their exact shapes.
 
 It was reviewed figure by figure against some 500 published diagrams and is frozen: its layouts
 change only when a change is reviewed and approved again (see
-[Testing](../get-started/guides/contributing.md#the-validation-set-and-the-approved-layouts)).
+[Testing](../about/contributing.md#the-validation-set-and-the-approved-layouts)).
 
 ### The conventions it follows
 
@@ -338,7 +338,7 @@ A pin holds in the default layout too, so one or two pins are also the heaviest 
 
 `layout: v1` places vertices in columns by time, then settles their heights with a list of
 named rules: forks open at set angles, cascades arc, loops sit over their lines. It is fast and
-predictable, and kept as it was. Every rule is listed in [Layout rules](../get-started/guides/internals.md#layout-rules).
+predictable, and kept as it was. Every rule is listed in [Layout rules](../about/internals.md#layout-rules).
 
 ```feynman
 --- layout: default

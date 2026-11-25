@@ -1,8 +1,14 @@
+---
+tags:
+  - beyond the Standard Model
+---
+
 # Beyond the Standard Model
 
-New particles searched for at the LHC: dark matter and its mediators, new gauge bosons, leptoquarks, heavy and excited fermions, dark photons. Supersymmetry and extra dimensions have pages of their own.
+New particles searched for at the LHC: dark matter, leptoquarks and heavy neutrinos,
+supersymmetry, and extra dimensions.
 
-## Textbook
+## New particles
 
 <div class="grid cards" markdown>
 
@@ -64,253 +70,7 @@ New particles searched for at the LHC: dark matter and its mediators, new gauge 
     d -- qb [q]
     ```
 
--   **Lepton-flavour violation**
-
-    ```feynman
-    in: i1 i2
-    out: f1 f2
-    i1 [mu-] -- a -- f1 [e-]
-    a -- [Z'] b
-    i2 [e-] -- b -- f2 [mu-]
-    ```
-
-    ```text
-    in: i1 i2
-    out: f1 f2
-    i1 [mu-] -- a -- f1 [e-]
-    a -- [Z'] b
-    i2 [e-] -- b -- f2 [mu-]
-    ```
-
-</div>
-
-## From ATLAS papers
-
-Figures from ATLAS publications, each written as a few lines of feynjs and laid out by it; the link under each goes to the paper.
-
-<div class="grid cards" markdown>
-
--   **Dark matter through a Z' · a**
-
-    ```feynman
-    arrows: none
-    dots: all
-    in: i1 i2
-    out: h x1 x2
-    i1 [qbar] -- a -- i2 [q]
-    a -- [Z', label'=Z'] b
-    b -- [scalar] h [h]
-    b -- [Z', label'=Z'] c
-    x1 [chibar] -- c -- x2 [chi]
-    ```
-
-    ```text
-    arrows: none
-    dots: all
-    in: i1 i2
-    out: h x1 x2
-    i1 [qbar] -- a -- i2 [q]
-    a -- [Z', label'=Z'] b
-    b -- [scalar] h [h]
-    b -- [Z', label'=Z'] c
-    x1 [chibar] -- c -- x2 [chi]
-    ```
-
-    <small>ATLAS, [EXOT-2015-23](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/EXOT-2015-23/), figure 1a</small>
-
--   **Dark matter through a Z' · b**
-
-    ```feynman
-    arrows: none
-    dots: all
-    in: i1 i2
-    out: h x1 x2
-    i1 [qbar] -- a -- i2 [q]
-    a -- [Z'] b
-    b -- [scalar] h [h]
-    b -- [dotted, label'=A] c
-    x1 [chibar] -- c -- x2 [chi]
-    ```
-
-    ```text
-    arrows: none
-    dots: all
-    in: i1 i2
-    out: h x1 x2
-    i1 [qbar] -- a -- i2 [q]
-    a -- [Z'] b
-    b -- [scalar] h [h]
-    b -- [dotted, label'=A] c
-    x1 [chibar] -- c -- x2 [chi]
-    ```
-
-    <small>ATLAS, [EXOT-2015-23](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/EXOT-2015-23/), figure 1b</small>
-
--   **Dark matter in 2HDM+a**
-
-    ```feynman
-    in: qb b
-    out: qbp chi chb t
-    qb [particle={\bar{q}}]
-    qbp [particle={\bar{q}'}]
-    b [particle={b}]
-    t [particle={t}]
-    chi [particle={\chi}]
-    chb [particle={\bar{\chi}}]
-    v1 [dot]
-    v2 [dot]
-    v3 [dot]
-    v4 [dot]
-    qbp -- [fermion] v1
-    v1 -- [fermion] qb
-    v1 -- [photon, label={W}] v2
-    b -- [fermion] v2
-    v2 -- [fermion] v3
-    v3 -- [fermion] t
-    v3 -- [scalar, label={a}] v4
-    v4 -- [fermion] chi
-    chb -- [fermion] v4
-    ```
-
-    ```text
-    in: qb b
-    out: qbp chi chb t
-    qb [particle={\bar{q}}]
-    qbp [particle={\bar{q}'}]
-    b [particle={b}]
-    t [particle={t}]
-    chi [particle={\chi}]
-    chb [particle={\bar{\chi}}]
-    v1 [dot]
-    v2 [dot]
-    v3 [dot]
-    v4 [dot]
-    qbp -- [fermion] v1
-    v1 -- [fermion] qb
-    v1 -- [photon, label={W}] v2
-    b -- [fermion] v2
-    v2 -- [fermion] v3
-    v3 -- [fermion] t
-    v3 -- [scalar, label={a}] v4
-    v4 -- [fermion] chi
-    chb -- [fermion] v4
-    ```
-
-    <small>ATLAS, [EXOT-2018-43](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/EXOT-2018-43/), figure 1a</small>
-
--   **Dark matter with b-quarks · a**
-
-    ```feynman
-    in: i1 i2
-    out: f1 x1 x2
-    i2 [b] -- [fermion] c [dot]
-    c -- [fermion] a
-    i1 [g] -- a
-    a -- [fermion] f1 [b]
-    c -- [fermion] x1 [chi]
-    x2 [chibar] -- [fermion] c
-    ```
-
-    ```text
-    in: i1 i2
-    out: f1 x1 x2
-    i2 [b] -- [fermion] c [dot]
-    c -- [fermion] a
-    i1 [g] -- a
-    a -- [fermion] f1 [b]
-    c -- [fermion] x1 [chi]
-    x2 [chibar] -- [fermion] c
-    ```
-
-    <small>ATLAS, [EXOT-2014-01](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/EXOT-2014-01/), figure 1a</small>
-
--   **Dark matter with b-quarks · b**
-
-    ```feynman
-    in: i1 i2
-    out: f1 x1 x2 f2
-    i1 [g] -- a
-    i2 [g] -- b
-    f2 [{\bar b, \bar t}] -- [fermion] b
-    b -- [fermion] c [dot]
-    c -- [fermion] a
-    a -- [fermion] f1 [{b, t}]
-    c -- [fermion] x1 [chi]
-    x2 [chibar] -- [fermion] c
-    ```
-
-    ```text
-    in: i1 i2
-    out: f1 x1 x2 f2
-    i1 [g] -- a
-    i2 [g] -- b
-    f2 [{\bar b, \bar t}] -- [fermion] b
-    b -- [fermion] c [dot]
-    c -- [fermion] a
-    a -- [fermion] f1 [{b, t}]
-    c -- [fermion] x1 [chi]
-    x2 [chibar] -- [fermion] c
-    ```
-
-    <small>ATLAS, [EXOT-2014-01](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/EXOT-2014-01/), figure 1b</small>
-
--   **A W'**
-
-    ```feynman
-    in: i1 i2
-    out: f1 f2
-    i1 [q] -- [fermion] a
-    a -- [fermion] i2 [qbar']
-    a -- [W'] b
-    b -- f1 [W]
-    b -- f2 [Z]
-    ```
-
-    ```text
-    in: i1 i2
-    out: f1 f2
-    i1 [q] -- [fermion] a
-    a -- [fermion] i2 [qbar']
-    a -- [W'] b
-    b -- f1 [W]
-    b -- f2 [Z]
-    ```
-
-    <small>ATLAS, [EXOT-2013-07](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/EXOT-2013-07/), auxiliary figure 1</small>
-
--   **A heavy resonance**
-
-    ```feynman
-    in: g1 g2
-    out: v1 v2
-    g1 [particle={g}]
-    g2 [particle={g}]
-    v1 [particle={V}]
-    v2 [particle={V}]
-    g1 -- [gluon] a
-    a -- [gluon] g2
-    a -- [photon, label'={G_{KK}}] b
-    b -- [photon] v1
-    b -- [photon] v2
-    ```
-
-    ```text
-    in: g1 g2
-    out: v1 v2
-    g1 [particle={g}]
-    g2 [particle={g}]
-    v1 [particle={V}]
-    v2 [particle={V}]
-    g1 -- [gluon] a
-    a -- [gluon] g2
-    a -- [photon, label'={G_{KK}}] b
-    b -- [photon] v1
-    b -- [photon] v2
-    ```
-
-    <small>ATLAS, [EXOT-2017-31](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/EXOT-2017-31/), figure 1d</small>
-
--   **Leptoquarks · a**
+-   **A leptoquark, from ATLAS**
 
     ```feynman
     in: lq
@@ -330,125 +90,7 @@ Figures from ATLAS publications, each written as a few lines of feynjs and laid 
 
     <small>ATLAS, [EXOT-2015-19](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/EXOT-2015-19/), figure 1</small>
 
--   **Leptoquarks · b**
-
-    ```feynman
-    in: i1 i2
-    out: f1 f2
-    i1 -- [gluon] a
-    i2 -- [gluon] a
-    a -- [gluon] b
-    b -- [charged scalar] f1
-    f2 -- [charged scalar] b
-    ```
-
-    ```text
-    in: i1 i2
-    out: f1 f2
-    i1 -- [gluon] a
-    i2 -- [gluon] a
-    a -- [gluon] b
-    b -- [charged scalar] f1
-    f2 -- [charged scalar] b
-    ```
-
-    <small>ATLAS, [EXOT-2015-19](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/EXOT-2015-19/), figure 2, part 1</small>
-
--   **A single vector-like T**
-
-    ```feynman
-    in: q g
-    out: qp hz t bb
-    q [particle={q}]
-    qp [particle={q'}]
-    hz [particle={H/Z}]
-    t [particle={t}]
-    g [particle={g}]
-    bb [particle={\bar{b}/\bar{t}}]
-    q -- [fermion] v1
-    v1 -- [fermion] qp
-    v1 -- [photon, label'={W/Z}] v2
-    v4 -- [fermion, label={b/t}] v2
-    v2 -- [fermion, label={T}, color=red] v3
-    v3 -- [photon] hz
-    v3 -- [fermion] t
-    g -- [gluon] v4
-    bb -- [fermion] v4
-    ```
-
-    ```text
-    in: q g
-    out: qp hz t bb
-    q [particle={q}]
-    qp [particle={q'}]
-    hz [particle={H/Z}]
-    t [particle={t}]
-    g [particle={g}]
-    bb [particle={\bar{b}/\bar{t}}]
-    q -- [fermion] v1
-    v1 -- [fermion] qp
-    v1 -- [photon, label'={W/Z}] v2
-    v4 -- [fermion, label={b/t}] v2
-    v2 -- [fermion, label={T}, color=red] v3
-    v3 -- [photon] hz
-    v3 -- [fermion] t
-    g -- [gluon] v4
-    bb -- [fermion] v4
-    ```
-
-    <small>ATLAS, [EXOT-2018-52](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/EXOT-2018-52/), figure 1a</small>
-
--   **Vector-like B · a**
-
-    ```feynman
-    in: i1 i2
-    out: f1 t w
-    i1 [q] -- [fermion] a -- [fermion] f1 [q]
-    a -- [scalar, label=Z] b
-    i2 [b] -- [fermion] b [label=\lambda]
-    b -- [B, color=red] c
-    c -- [fermion] t [t]
-    c -- [boson] w [W]
-    ```
-
-    ```text
-    in: i1 i2
-    out: f1 t w
-    i1 [q] -- [fermion] a -- [fermion] f1 [q]
-    a -- [scalar, label=Z] b
-    i2 [b] -- [fermion] b [label=\lambda]
-    b -- [B, color=red] c
-    c -- [fermion] t [t]
-    c -- [boson] w [W]
-    ```
-
-    <small>ATLAS, [EXOT-2014-13](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/EXOT-2014-13/), figure 1a</small>
-
--   **Vector-like B · b**
-
-    ```feynman
-    in: i1 i2
-    out: t w
-    i1 [g] -- a [label=f_g]
-    i2 [b] -- [fermion] a
-    a -- [B, color=blue, label=b^*] c
-    c -- [fermion] t [t]
-    c -- [boson] w [W]
-    ```
-
-    ```text
-    in: i1 i2
-    out: t w
-    i1 [g] -- a [label=f_g]
-    i2 [b] -- [fermion] a
-    a -- [B, color=blue, label=b^*] c
-    c -- [fermion] t [t]
-    c -- [boson] w [W]
-    ```
-
-    <small>ATLAS, [EXOT-2014-13](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/EXOT-2014-13/), figure 1b</small>
-
--   **A heavy Majorana neutrino**
+-   **A heavy Majorana neutrino, from ATLAS**
 
     ```feynman
     in: i1 i2
@@ -480,290 +122,268 @@ Figures from ATLAS publications, each written as a few lines of feynjs and laid 
 
     <small>ATLAS, [EXOT-2012-24](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/EXOT-2012-24/), figure 1</small>
 
--   **Type-III seesaw**
+</div>
 
-    ```feynman
-    in: q qb
-    out: nu1 l1 l2 l3 nu3 nu2
-    q [particle={q}]
-    qb [particle={\bar{q}'}]
-    nu1 [particle={\nu}]
-    l1 [particle={\ell^\pm}]
-    l2 [particle={\ell^\mp}]
-    l3 [particle={\ell'^\pm}]
-    nu3 [particle={\nu}]
-    q -- [plain] a
-    a -- [plain] qb
-    a -- [photon, label={W^*}] b
-    b -- [plain, label={N^0}, color=#2896dc] c
-    b -- [plain, label'={L^\pm}, color=#e61e5a] d
-    c -- [scalar] nu1
-    c -- [photon, label={Z}] e
-    e -- [plain] l1
-    e -- [plain] l2
-    d -- [scalar, label={\nu}] nu2
-    d -- [photon, label={W^\pm}] f
-    f -- [plain] l3
-    f -- [scalar] nu3
-    ```
+## Supersymmetry
 
-    ```text
-    in: q qb
-    out: nu1 l1 l2 l3 nu3 nu2
-    q [particle={q}]
-    qb [particle={\bar{q}'}]
-    nu1 [particle={\nu}]
-    l1 [particle={\ell^\pm}]
-    l2 [particle={\ell^\mp}]
-    l3 [particle={\ell'^\pm}]
-    nu3 [particle={\nu}]
-    q -- [plain] a
-    a -- [plain] qb
-    a -- [photon, label={W^*}] b
-    b -- [plain, label={N^0}, color=#2896dc] c
-    b -- [plain, label'={L^\pm}, color=#e61e5a] d
-    c -- [scalar] nu1
-    c -- [photon, label={Z}] e
-    e -- [plain] l1
-    e -- [plain] l2
-    d -- [scalar, label={\nu}] nu2
-    d -- [photon, label={W^\pm}] f
-    f -- [plain] l3
-    f -- [scalar] nu3
-    ```
+<div class="grid cards" markdown>
 
-    <small>ATLAS, [EXOT-2020-02](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/EXOT-2020-02/), figure 1a</small>
-
--   **An excited muon**
+-   **Squark and gluino**
 
     ```feynman
     in: i1 i2
-    out: mu1 mu2 q2 qb2
-    i1 [q] -- [fermion] a [blob]
-    a -- [fermion] i2 [qbar]
-    a -- [fermion] mu1 [mu-]
-    b [blob] -- [fermion, label=\mu^{*+}] a
-    mu2 [mu+] -- [fermion] b
-    b -- [fermion] q2 [q]
-    qb2 [qbar] -- [fermion] b
+    out: f1 f2
+    i1 [q] -- a -- f1 [squark]
+    i2 [g] -- b
+    a -- [gluino] b
+    b -- f2 [gluino]
     ```
 
     ```text
     in: i1 i2
-    out: mu1 mu2 q2 qb2
-    i1 [q] -- [fermion] a [blob]
-    a -- [fermion] i2 [qbar]
-    a -- [fermion] mu1 [mu-]
-    b [blob] -- [fermion, label=\mu^{*+}] a
-    mu2 [mu+] -- [fermion] b
-    b -- [fermion] q2 [q]
-    qb2 [qbar] -- [fermion] b
+    out: f1 f2
+    i1 [q] -- a -- f1 [squark]
+    i2 [g] -- b
+    a -- [gluino] b
+    b -- f2 [gluino]
     ```
 
-    <small>ATLAS, [EXOT-2015-01](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/EXOT-2015-01/), figure 1</small>
-
--   **Dark photons · a**
+-   **Slepton pair**
 
     ```feynman
-    in: i1 i2
-    out: qj1 xd1 lp1 lm1 lp2 lm2 xd2 qj2
-    i1 [q] -- [fermion] a
-    b -- [fermion] i2 [q]
-    a -- [gluon, label=\tilde g] b
-    a -- [charged scalar, label=\tilde q_i] c
-    d -- [charged scalar, label'=\tilde q_i] b
-    c -- [fermion] qj1 [q_j]
-    c -- [fermion, label'=\tilde\chi^0_1] e
-    e -- [fermion] xd1 [\tilde\chi_d]
-    e -- [photon, label'=\gamma_d] g1
-    lp1 [l+] -- [fermion] g1
-    g1 -- [fermion] lm1 [l-]
-    qj2 [q_j] -- [fermion] d
-    f -- [fermion, label'=\tilde\chi^0_1] d
-    xd2 [\tilde\chi_d] -- [fermion] f
-    f -- [photon, label=\gamma_d] g2
-    lp2 [l+] -- [fermion] g2
-    g2 -- [fermion] lm2 [l-]
+    i1 [q] -- a -- i2 [qbar]
+    a -- [gamma] b
+    b -- [slepton] c
+    b -- [slepton] d
+    c -- f1 [l]
+    c -- f2 [neutralino]
+    d -- f3 [l]
+    d -- f4 [neutralino]
     ```
 
     ```text
-    in: i1 i2
-    out: qj1 xd1 lp1 lm1 lp2 lm2 xd2 qj2
-    i1 [q] -- [fermion] a
-    b -- [fermion] i2 [q]
-    a -- [gluon, label=\tilde g] b
-    a -- [charged scalar, label=\tilde q_i] c
-    d -- [charged scalar, label'=\tilde q_i] b
-    c -- [fermion] qj1 [q_j]
-    c -- [fermion, label'=\tilde\chi^0_1] e
-    e -- [fermion] xd1 [\tilde\chi_d]
-    e -- [photon, label'=\gamma_d] g1
-    lp1 [l+] -- [fermion] g1
-    g1 -- [fermion] lm1 [l-]
-    qj2 [q_j] -- [fermion] d
-    f -- [fermion, label'=\tilde\chi^0_1] d
-    xd2 [\tilde\chi_d] -- [fermion] f
-    f -- [photon, label=\gamma_d] g2
-    lp2 [l+] -- [fermion] g2
-    g2 -- [fermion] lm2 [l-]
+    i1 [q] -- a -- i2 [qbar]
+    a -- [gamma] b
+    b -- [slepton] c
+    b -- [slepton] d
+    c -- f1 [l]
+    c -- f2 [neutralino]
+    d -- f3 [l]
+    d -- f4 [neutralino]
     ```
 
-    <small>ATLAS, [EXOT-2014-09](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/EXOT-2014-09/), figure 1a</small>
-
--   **Dark photons · b**
+-   **Four-stage SUSY cascade**
 
     ```feynman
-    in: i1 i2
-    out: qj1 xd1 lp1 lm1 lp2 lm2 lp3 lm3 lp4 lm4 xd2 qj2
-    i1 [q] -- [fermion] a
-    b -- [fermion] i2 [q]
-    a -- [gluino, label=\tilde g] b
-    a -- [squark, label=\tilde q_i] c
-    d -- [squark, label'=\tilde q_i] b
-    c -- [fermion] qj1 [q_j]
-    c -- [neutralino, label'=\tilde\chi^0_1] e
-    e -- [neutralino, no label] xd1 [\tilde\chi_d]
-    e -- [charged scalar, label'=s_d] s1
-    s1 -- [photon, label=\gamma_d] g1
-    s1 -- [photon, label'=\gamma_d] g2
-    lp1 [l+] -- [fermion] g1
-    g1 -- [fermion] lm1 [l-]
-    lp2 [l+] -- [fermion] g2
-    g2 -- [fermion] lm2 [l-]
-    qj2 [q_j] -- [fermion] d
-    f -- [neutralino, label'=\tilde\chi^0_1] d
-    f -- [neutralino, no label] xd2 [\tilde\chi_d]
-    s2 -- [charged scalar, label'=s_d] f
-    s2 -- [photon, label=\gamma_d] g3
-    s2 -- [photon, label'=\gamma_d] g4
-    lp3 [l+] -- [fermion] g3
-    g3 -- [fermion] lm3 [l-]
-    lp4 [l+] -- [fermion] g4
-    g4 -- [fermion] lm4 [l-]
+    i1 [p] -- pp [blob] -- i2 [p]
+    pp -- [gluino] d1
+    pp -- [gluino] d2
+    d1 -- f1 [q]
+    d1 -- f2 [q]
+    d1 -- [chargino] e1
+    e1 -- f3 [W]
+    e1 -- [neutralino2] g1
+    g1 -- f4 [Z]
+    g1 -- f5 [neutralino1]
+    d2 -- [chargino] e2
+    e2 -- [neutralino2] g2
+    e2 -- f6 [W]
+    g2 -- f7 [neutralino1]
+    g2 -- f8 [Z]
+    d2 -- f9 [q]
+    d2 -- f10 [q]
     ```
 
     ```text
-    in: i1 i2
-    out: qj1 xd1 lp1 lm1 lp2 lm2 lp3 lm3 lp4 lm4 xd2 qj2
-    i1 [q] -- [fermion] a
-    b -- [fermion] i2 [q]
-    a -- [gluino, label=\tilde g] b
-    a -- [squark, label=\tilde q_i] c
-    d -- [squark, label'=\tilde q_i] b
-    c -- [fermion] qj1 [q_j]
-    c -- [neutralino, label'=\tilde\chi^0_1] e
-    e -- [neutralino, no label] xd1 [\tilde\chi_d]
-    e -- [charged scalar, label'=s_d] s1
-    s1 -- [photon, label=\gamma_d] g1
-    s1 -- [photon, label'=\gamma_d] g2
-    lp1 [l+] -- [fermion] g1
-    g1 -- [fermion] lm1 [l-]
-    lp2 [l+] -- [fermion] g2
-    g2 -- [fermion] lm2 [l-]
-    qj2 [q_j] -- [fermion] d
-    f -- [neutralino, label'=\tilde\chi^0_1] d
-    f -- [neutralino, no label] xd2 [\tilde\chi_d]
-    s2 -- [charged scalar, label'=s_d] f
-    s2 -- [photon, label=\gamma_d] g3
-    s2 -- [photon, label'=\gamma_d] g4
-    lp3 [l+] -- [fermion] g3
-    g3 -- [fermion] lm3 [l-]
-    lp4 [l+] -- [fermion] g4
-    g4 -- [fermion] lm4 [l-]
+    i1 [p] -- pp [blob] -- i2 [p]
+    pp -- [gluino] d1
+    pp -- [gluino] d2
+    d1 -- f1 [q]
+    d1 -- f2 [q]
+    d1 -- [chargino] e1
+    e1 -- f3 [W]
+    e1 -- [neutralino2] g1
+    g1 -- f4 [Z]
+    g1 -- f5 [neutralino1]
+    d2 -- [chargino] e2
+    e2 -- [neutralino2] g2
+    e2 -- f6 [W]
+    g2 -- f7 [neutralino1]
+    g2 -- f8 [Z]
+    d2 -- f9 [q]
+    d2 -- f10 [q]
     ```
 
-    <small>ATLAS, [EXOT-2014-09](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/EXOT-2014-09/), figure 1b</small>
-
--   **An axion-like particle**
+-   **Stop pairs, from ATLAS**
 
     ```feynman
     in: g1 g2
-    out: uc al w bb
+    out: t1 n1 n2 t2
+    x [blob]
     g1 [particle={g}]
     g2 [particle={g}]
-    uc [particle={u/c}]
-    bb [particle={\bar{b}}]
-    al [\mathit{a}]
-    w [particle={W}]
-    g1 -- [gluon] a
-    a -- [gluon] g2
-    a -- [gluon, label'={g}] b
-    b -- [fermion, label'={t}] t1
-    t1 -- [fermion] uc
-    bb -- [fermion] t2
-    t2 -- [fermion, label={\bar{t}}] b
-    t1 -- [scalar] al
-    t2 -- [photon] w
+    t1 [particle={t}]
+    t2 [particle={\bar{t}}]
+    n1 [particle={\nu}]
+    n2 [particle={\bar{\nu}}]
+    g1 -- [gluon] v1
+    g2 -- [gluon] v2
+    t2 -- [fermion] v2
+    v2 -- [fermion] x
+    x -- [fermion] v1
+    v1 -- [fermion] t1
+    x -- [fermion] n1
+    n2 -- [fermion] x
     ```
 
     ```text
     in: g1 g2
-    out: uc al w bb
+    out: t1 n1 n2 t2
+    x [blob]
     g1 [particle={g}]
     g2 [particle={g}]
-    uc [particle={u/c}]
-    bb [particle={\bar{b}}]
-    al [\mathit{a}]
-    w [particle={W}]
-    g1 -- [gluon] a
-    a -- [gluon] g2
-    a -- [gluon, label'={g}] b
-    b -- [fermion, label'={t}] t1
-    t1 -- [fermion] uc
-    bb -- [fermion] t2
-    t2 -- [fermion, label={\bar{t}}] b
-    t1 -- [scalar] al
-    t2 -- [photon] w
+    t1 [particle={t}]
+    t2 [particle={\bar{t}}]
+    n1 [particle={\nu}]
+    n2 [particle={\bar{\nu}}]
+    g1 -- [gluon] v1
+    g2 -- [gluon] v2
+    t2 -- [fermion] v2
+    v2 -- [fermion] x
+    x -- [fermion] v1
+    v1 -- [fermion] t1
+    x -- [fermion] n1
+    n2 -- [fermion] x
     ```
 
-    <small>ATLAS, [EXOT-2021-32](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/EXOT-2021-32/), figure 3c</small>
+    <small>ATLAS, [SUSY-2023-22](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/SUSY-2023-22/), figure 1d</small>
 
--   **Same-sign leptons from WW scattering**
+-   **Charginos and neutralinos, from ATLAS**
 
     ```feynman
-    in: u1 u2
-    out: d1 l1 l2 d2
-    u1 [particle={\mathrm{u}}]
-    u2 [particle={\mathrm{u}}]
-    d1 [particle={\mathrm{d}}]
-    d2 [particle={\mathrm{d}}]
-    o [dot]
-    l1 [particle={\ell'^+}]
-    l2 [particle={\ell^+}]
-    u1 -- [fermion] a
-    a -- [fermion] d1
-    u2 -- [fermion] b
-    b -- [fermion] d2
-    a -- [boson, label'={W^+}] c
-    b -- [boson, label={W^+}] e
-    l1 -- [fermion] c
-    l2 -- [fermion] e
-    c -- [fermion, label={\nu^c_{\ell'}}] o
-    e -- [fermion, label'={\nu_\ell}] o
+    in: p1 p2
+    out: l1 la lb bo l2
+    pp [blob]
+    p1 [particle={p}]
+    p2 [particle={p}]
+    d1 [dot, label={\epsilon_i}, color=blue]
+    d2 [dot, label={\epsilon_i}, color=blue]
+    l1 [particle={\ell^\pm}]
+    la [particle={\ell^\pm}]
+    lb [particle={\ell^\mp}]
+    bo [particle={Z/H/W^\mp}]
+    l2 [particle={\ell^\mp/\ell^\mp/\nu}]
+    p1 -- [proton] pp
+    pp -- [proton] p2
+    pp -- [susy fermion, label={\tilde{\chi}^\pm_1}] d1
+    pp -- [susy fermion, label'={\tilde{\chi}^\mp_1}] d2
+    d1 -- [plain] l1
+    d2 -- [plain] l2
+    d1 -- [photon, label'={Z}] zv
+    zv -- [plain] la
+    zv -- [plain] lb
+    d2 -- [photon] bo
     ```
 
     ```text
-    in: u1 u2
-    out: d1 l1 l2 d2
-    u1 [particle={\mathrm{u}}]
-    u2 [particle={\mathrm{u}}]
-    d1 [particle={\mathrm{d}}]
-    d2 [particle={\mathrm{d}}]
-    o [dot]
-    l1 [particle={\ell'^+}]
-    l2 [particle={\ell^+}]
-    u1 -- [fermion] a
-    a -- [fermion] d1
-    u2 -- [fermion] b
-    b -- [fermion] d2
-    a -- [boson, label'={W^+}] c
-    b -- [boson, label={W^+}] e
-    l1 -- [fermion] c
-    l2 -- [fermion] e
-    c -- [fermion, label={\nu^c_{\ell'}}] o
-    e -- [fermion, label'={\nu_\ell}] o
+    in: p1 p2
+    out: l1 la lb bo l2
+    pp [blob]
+    p1 [particle={p}]
+    p2 [particle={p}]
+    d1 [dot, label={\epsilon_i}, color=blue]
+    d2 [dot, label={\epsilon_i}, color=blue]
+    l1 [particle={\ell^\pm}]
+    la [particle={\ell^\pm}]
+    lb [particle={\ell^\mp}]
+    bo [particle={Z/H/W^\mp}]
+    l2 [particle={\ell^\mp/\ell^\mp/\nu}]
+    p1 -- [proton] pp
+    pp -- [proton] p2
+    pp -- [susy fermion, label={\tilde{\chi}^\pm_1}] d1
+    pp -- [susy fermion, label'={\tilde{\chi}^\mp_1}] d2
+    d1 -- [plain] l1
+    d2 -- [plain] l2
+    d1 -- [photon, label'={Z}] zv
+    zv -- [plain] la
+    zv -- [plain] lb
+    d2 -- [photon] bo
     ```
 
-    <small>ATLAS, [EXOT-2023-16](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/EXOT-2023-16/), figure 1b</small>
+    <small>ATLAS, [SUSY-2018-36](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/SUSY-2018-36/), figure 1a</small>
+
+</div>
+
+## Extra dimensions
+
+<div class="grid cards" markdown>
+
+-   **A Kaluza–Klein graviton to two photons**
+
+    ```feynman
+    in: i1 i2
+    out: f1 f2
+    i1 [g] -- a
+    i2 [g] -- a
+    a -- [photon, double, label=G_{\mathrm{KK}}] b
+    b -- f1 [gamma]
+    b -- f2 [gamma]
+    ```
+
+    ```text
+    in: i1 i2
+    out: f1 f2
+    i1 [g] -- a
+    i2 [g] -- a
+    a -- [photon, double, label=G_{\mathrm{KK}}] b
+    b -- f1 [gamma]
+    b -- f2 [gamma]
+    ```
+
+    In the Randall–Sundrum model the graviton's excitations are heavy and couple to everything; a resonance in two photons is its cleanest sign.
+
+-   **A Kaluza–Klein gluon to top quarks**
+
+    ```feynman
+    in: i1 i2
+    out: f1 f2
+    i1 [q] -- a -- i2 [qbar]
+    a -- [gluon, heavy, label=g_{\mathrm{KK}}] b
+    f1 [tbar] -- b -- f2 [t]
+    ```
+
+    ```text
+    in: i1 i2
+    out: f1 f2
+    i1 [q] -- a -- i2 [qbar]
+    a -- [gluon, heavy, label=g_{\mathrm{KK}}] b
+    f1 [tbar] -- b -- f2 [t]
+    ```
+
+    The gluon's first excitation couples most strongly to the top quark.
+
+-   **A graviton to W pairs, from ATLAS**
+
+    ```feynman
+    in: i1 i2
+    out: f1 f2
+    i1 [g] -- a
+    i2 [g] -- a
+    a -- [scalar, label=G^*] b
+    b -- f1 [W+]
+    b -- f2 [W-]
+    ```
+
+    ```text
+    in: i1 i2
+    out: f1 f2
+    i1 [g] -- a
+    i2 [g] -- a
+    a -- [scalar, label=G^*] b
+    b -- f1 [W+]
+    b -- f2 [W-]
+    ```
+
+    <small>ATLAS, [EXOT-2013-01](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/EXOT-2013-01/), auxiliary figure 1a</small>
 
 </div>

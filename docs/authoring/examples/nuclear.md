@@ -1,8 +1,12 @@
+---
+tags:
+  - nuclear physics
+---
+
 # Nuclear and heavy ions
 
-Nuclear reactions written as a process line and drawn as the textbook picture, and the photon collisions of lead ions at the LHC. The [Views](../views.md#the-reaction-picture) page explains the reaction picture.
-
-## Reactions
+Nuclear reactions, written as a process line and drawn as the textbook picture; the
+[Views](../views.md#the-reaction-picture) page explains the picture.
 
 <div class="grid cards" markdown>
 
@@ -42,18 +46,6 @@ Nuclear reactions written as a process line and drawn as the textbook picture, a
 
     Two protons make a deuteron, a positron and a neutrino: how the Sun starts.
 
--   **The triple-alpha process**
-
-    ```feynman
-    4He 4He 4He > 12C
-    ```
-
-    ```text
-    4He 4He 4He > 12C
-    ```
-
-    Three helium nuclei make carbon in red giants.
-
 -   **Photodisintegration**
 
     ```feynman
@@ -65,18 +57,6 @@ Nuclear reactions written as a process line and drawn as the textbook picture, a
     ```
 
     A photon reaches into the deuteron and breaks it apart.
-
--   **Neutron scattering**
-
-    ```feynman
-    n 12C > n 12C
-    ```
-
-    ```text
-    n 12C > n 12C
-    ```
-
-    The neutron leaves deflected; the nucleus recoils.
 
 -   **Dark matter scattering off xenon**
 
@@ -92,18 +72,6 @@ Nuclear reactions written as a process line and drawn as the textbook picture, a
 
     What a direct-detection experiment looks for: a recoiling nucleus, its scintillation light and ionisation electrons.
 
--   **De-excitation**
-
-    ```feynman
-    12C* > 12C gamma
-    ```
-
-    ```text
-    12C* > 12C gamma
-    ```
-
-    An excited nucleus gives off a photon.
-
 -   **The uranium series**
 
     ```feynman
@@ -118,141 +86,7 @@ Nuclear reactions written as a process line and drawn as the textbook picture, a
 
     An alpha decay, then two beta decays, each named over its arrow.
 
-</div>
-
-## From ATLAS papers
-
-Figures from ATLAS publications, each written as a few lines of feynjs and laid out by it; the link under each goes to the paper.
-
-<div class="grid cards" markdown>
-
--   **γγ → μμ in lead–lead collisions · a**
-
-    ```feynman
-    in: pb1 pb2
-    out: pb3 m1 m2 pb4
-    pb1 [particle={\mathrm{Pb}}]
-    pb2 [particle={\mathrm{Pb}}]
-    B1 [hatched blob]
-    B2 [hatched blob]
-    pb3 [particle={\mathrm{Pb}}]
-    pb4 [particle={\mathrm{Pb}}]
-    m1 [particle={\mu^-}]
-    m2 [particle={\mu^+}]
-    pb1 -- [fermion] B1
-    B1 -- [fermion] pb3
-    pb2 -- [fermion] B2
-    B2 -- [fermion] pb4
-    B1 -- [photon, label'={k_2}] a
-    B2 -- [photon, label={k_1}] b
-    b -- [fermion] a
-    a -- [fermion] m1
-    m2 -- [fermion] b
-    ```
-
-    ```text
-    in: pb1 pb2
-    out: pb3 m1 m2 pb4
-    pb1 [particle={\mathrm{Pb}}]
-    pb2 [particle={\mathrm{Pb}}]
-    B1 [hatched blob]
-    B2 [hatched blob]
-    pb3 [particle={\mathrm{Pb}}]
-    pb4 [particle={\mathrm{Pb}}]
-    m1 [particle={\mu^-}]
-    m2 [particle={\mu^+}]
-    pb1 -- [fermion] B1
-    B1 -- [fermion] pb3
-    pb2 -- [fermion] B2
-    B2 -- [fermion] pb4
-    B1 -- [photon, label'={k_2}] a
-    B2 -- [photon, label={k_1}] b
-    b -- [fermion] a
-    a -- [fermion] m1
-    m2 -- [fermion] b
-    ```
-
-    <small>ATLAS, [HION-2016-02](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/HION-2016-02/), figure 1a</small>
-
--   **γγ → μμ in lead–lead collisions · b**
-
-    ```feynman
-    in: pb1 pb2
-    out: pb3 m1 g1 m2 pb4
-    pb1 [\mathrm{Pb}]
-    pb2 [\mathrm{Pb}]
-    pb3 [\mathrm{Pb}]
-    pb4 [\mathrm{Pb}]
-    B1 [hatched blob]
-    B2 [hatched blob]
-    pb1 -- [fermion] B1 -- [fermion] pb3
-    pb2 -- [fermion] B2 -- [fermion] pb4
-    B1 -- [photon, label'=k_2] a
-    B2 -- [photon, label=k_1] b
-    b -- [fermion] a -- [fermion] r -- [fermion] m1 [mu-]
-    r -- [photon] g1 [gamma]
-    m2 [mu+] -- [fermion] b
-    ```
-
-    ```text
-    in: pb1 pb2
-    out: pb3 m1 g1 m2 pb4
-    pb1 [\mathrm{Pb}]
-    pb2 [\mathrm{Pb}]
-    pb3 [\mathrm{Pb}]
-    pb4 [\mathrm{Pb}]
-    B1 [hatched blob]
-    B2 [hatched blob]
-    pb1 -- [fermion] B1 -- [fermion] pb3
-    pb2 -- [fermion] B2 -- [fermion] pb4
-    B1 -- [photon, label'=k_2] a
-    B2 -- [photon, label=k_1] b
-    b -- [fermion] a -- [fermion] r -- [fermion] m1 [mu-]
-    r -- [photon] g1 [gamma]
-    m2 [mu+] -- [fermion] b
-    ```
-
-    <small>ATLAS, [HION-2016-02](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/HION-2016-02/), figure 1b</small>
-
--   **γγ → μμ in lead–lead collisions · c**
-
-    ```feynman
-    in: pb1 pb2
-    out: pb3 m1 m2 pb4
-    pb1 [\mathrm{Pb}]
-    pb2 [\mathrm{p\ (in\ Pb)}]
-    pb3 [\mathrm{Pb}]
-    pb4 [\mathrm{Pb}^{\star}+\mathrm{X}]
-    B1 [hatched blob]
-    B2 [hatched blob]
-    pb1 -- [fermion] B1 -- [fermion] pb3
-    pb2 -- [fermion] B2 -- [proton] pb4
-    B1 -- [photon, label'=k_2] a
-    B2 -- [photon, label=k_1] b
-    b -- [fermion] a -- [fermion] m1 [mu-]
-    m2 [mu+] -- [fermion] b
-    ```
-
-    ```text
-    in: pb1 pb2
-    out: pb3 m1 m2 pb4
-    pb1 [\mathrm{Pb}]
-    pb2 [\mathrm{p\ (in\ Pb)}]
-    pb3 [\mathrm{Pb}]
-    pb4 [\mathrm{Pb}^{\star}+\mathrm{X}]
-    B1 [hatched blob]
-    B2 [hatched blob]
-    pb1 -- [fermion] B1 -- [fermion] pb3
-    pb2 -- [fermion] B2 -- [proton] pb4
-    B1 -- [photon, label'=k_2] a
-    B2 -- [photon, label=k_1] b
-    b -- [fermion] a -- [fermion] m1 [mu-]
-    m2 [mu+] -- [fermion] b
-    ```
-
-    <small>ATLAS, [HION-2016-02](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/HION-2016-02/), figure 1c</small>
-
--   **Light-by-light scattering · a**
+-   **Light-by-light scattering, from ATLAS**
 
     ```feynman
     in: g1 c1
@@ -279,211 +113,5 @@ Figures from ATLAS publications, each written as a few lines of feynjs and laid 
     ```
 
     <small>ATLAS, [HION-2016-05](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/HION-2016-05/), figure 1a, part 1</small>
-
--   **Light-by-light scattering · b**
-
-    ```feynman
-    in: g1 c1
-    out: g2 g3
-    c1 [crossed dot]
-    g1 -- [photon] a
-    a -- [fermion] b -- [fermion] c -- [fermion] d -- [fermion] a
-    b -- [photon] g2
-    c1 -- [photon] d
-    c -- [photon] g3
-    ```
-
-    ```text
-    in: g1 c1
-    out: g2 g3
-    c1 [crossed dot]
-    g1 -- [photon] a
-    a -- [fermion] b -- [fermion] c -- [fermion] d -- [fermion] a
-    b -- [photon] g2
-    c1 -- [photon] d
-    c -- [photon] g3
-    ```
-
-    <small>ATLAS, [HION-2016-05](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/HION-2016-05/), figure 1a, part 2</small>
-
--   **Light-by-light scattering · c**
-
-    ```feynman
-    in: g1 g4
-    out: g2 g3
-    g1 -- [photon] a
-    a -- [fermion] b -- [fermion] c -- [fermion] d -- [fermion] a
-    b -- [photon] g2
-    g4 -- [photon] d
-    c -- [photon] g3
-    ```
-
-    ```text
-    in: g1 g4
-    out: g2 g3
-    g1 -- [photon] a
-    a -- [fermion] b -- [fermion] c -- [fermion] d -- [fermion] a
-    b -- [photon] g2
-    g4 -- [photon] d
-    c -- [photon] g3
-    ```
-
-    <small>ATLAS, [HION-2016-05](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/HION-2016-05/), figure 1a, part 3</small>
-
--   **Light-by-light scattering · d**
-
-    ```feynman
-    in: pb1 pb2
-    out: pb3 x pb4
-    pb1 -- [fermion] a -- [fermion] pb3
-    pb2 -- [fermion] b -- [fermion] pb4
-    a [label=\mathrm{Pb}^{82+}]
-    b [label=\mathrm{Pb}^{82+}]
-    c [blob]
-    a -- [photon, label'=\gamma] c
-    b -- [photon, label=\gamma] c
-    c -- [proton] x [X]
-    ```
-
-    ```text
-    in: pb1 pb2
-    out: pb3 x pb4
-    pb1 -- [fermion] a -- [fermion] pb3
-    pb2 -- [fermion] b -- [fermion] pb4
-    a [label=\mathrm{Pb}^{82+}]
-    b [label=\mathrm{Pb}^{82+}]
-    c [blob]
-    a -- [photon, label'=\gamma] c
-    b -- [photon, label=\gamma] c
-    c -- [proton] x [X]
-    ```
-
-    <small>ATLAS, [HION-2016-05](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/HION-2016-05/), figure 1b</small>
-
--   **Light-by-light and axion-like particles · a**
-
-    ```feynman
-    in: pb1 pb2
-    out: pb3 g1 g2 pb4
-    pb1 [\mathrm{Pb}]
-    pb2 [\mathrm{Pb}]
-    pb3 [\mathrm{Pb(*)}]
-    pb4 [\mathrm{Pb(*)}]
-    B1 [hatched blob]
-    B2 [hatched blob]
-    pb1 -- [fermion] B1 -- [fermion] pb3
-    pb2 -- [fermion] B2 -- [fermion] pb4
-    B1 -- [gamma] a
-    B2 -- [gamma] d
-    a -- [fermion] b -- [fermion] c -- [fermion] d -- [fermion] a
-    b -- [photon] g1 [gamma]
-    c -- [photon] g2 [gamma]
-    ```
-
-    ```text
-    in: pb1 pb2
-    out: pb3 g1 g2 pb4
-    pb1 [\mathrm{Pb}]
-    pb2 [\mathrm{Pb}]
-    pb3 [\mathrm{Pb(*)}]
-    pb4 [\mathrm{Pb(*)}]
-    B1 [hatched blob]
-    B2 [hatched blob]
-    pb1 -- [fermion] B1 -- [fermion] pb3
-    pb2 -- [fermion] B2 -- [fermion] pb4
-    B1 -- [gamma] a
-    B2 -- [gamma] d
-    a -- [fermion] b -- [fermion] c -- [fermion] d -- [fermion] a
-    b -- [photon] g1 [gamma]
-    c -- [photon] g2 [gamma]
-    ```
-
-    <small>ATLAS, [HION-2019-08](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/HION-2019-08/), figure 1a</small>
-
--   **Light-by-light and axion-like particles · b**
-
-    ```feynman
-    in: i1 i2
-    out: o1 g1 g2 o2
-    i1 [particle={Pb}]
-    i2 [particle={Pb}]
-    o1 [particle={Pb(*)}]
-    o2 [particle={Pb(*)}]
-    c [small blob, color=gray]
-    d [small blob, color=gray]
-    g1 [particle={\gamma}]
-    g2 [particle={\gamma}]
-    i1 -- [fermion] b1
-    b1 -- [fermion] o1
-    i2 -- [fermion] b2
-    b2 -- [fermion] o2
-    b1 -- [photon, label'={\gamma}] c
-    b2 -- [photon, label={\gamma}] c
-    c -- [ghost, label={\textsf{a}}] d
-    d -- [photon] g1
-    d -- [photon] g2
-    ```
-
-    ```text
-    in: i1 i2
-    out: o1 g1 g2 o2
-    i1 [particle={Pb}]
-    i2 [particle={Pb}]
-    o1 [particle={Pb(*)}]
-    o2 [particle={Pb(*)}]
-    c [small blob, color=gray]
-    d [small blob, color=gray]
-    g1 [particle={\gamma}]
-    g2 [particle={\gamma}]
-    i1 -- [fermion] b1
-    b1 -- [fermion] o1
-    i2 -- [fermion] b2
-    b2 -- [fermion] o2
-    b1 -- [photon, label'={\gamma}] c
-    b2 -- [photon, label={\gamma}] c
-    c -- [ghost, label={\textsf{a}}] d
-    d -- [photon] g1
-    d -- [photon] g2
-    ```
-
-    <small>ATLAS, [HION-2019-08](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/HION-2019-08/), figure 1b</small>
-
--   **γγ → e⁺e⁻**
-
-    ```feynman
-    in: pb1 pb2
-    out: pb3 e1 e2 pb4
-    pb1 [\mathrm{Pb}]
-    pb2 [\mathrm{Pb}]
-    pb3 [\mathrm{Pb}]
-    pb4 [\mathrm{Pb}]
-    B1 [hatched blob]
-    B2 [hatched blob]
-    pb1 -- [fermion] B1 -- [fermion] pb3
-    pb2 -- [fermion] B2 -- [fermion] pb4
-    B1 -- [photon] a
-    B2 -- [photon] b
-    b -- [fermion] a -- [fermion] e1 [e-]
-    e2 [e+] -- [fermion] b
-    ```
-
-    ```text
-    in: pb1 pb2
-    out: pb3 e1 e2 pb4
-    pb1 [\mathrm{Pb}]
-    pb2 [\mathrm{Pb}]
-    pb3 [\mathrm{Pb}]
-    pb4 [\mathrm{Pb}]
-    B1 [hatched blob]
-    B2 [hatched blob]
-    pb1 -- [fermion] B1 -- [fermion] pb3
-    pb2 -- [fermion] B2 -- [fermion] pb4
-    B1 -- [photon] a
-    B2 -- [photon] b
-    b -- [fermion] a -- [fermion] e1 [e-]
-    e2 [e+] -- [fermion] b
-    ```
-
-    <small>ATLAS, [HION-2021-16](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/HION-2021-16/), figure 1</small>
 
 </div>

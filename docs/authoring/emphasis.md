@@ -72,5 +72,5 @@ On the collision, `pp [blob, pulse]` rings the blob.
 
 `render(source, { levels: true })` tags every line, vertex and label with its step in time
 (`data-level`: steps from the incoming particles), so a page can reveal a diagram one step at a
-time. The [stop production](examples/stop.md) walkthrough uses it.
+time. The "Drawn in time order" diagram on the [home page](../index.md) uses it.
 

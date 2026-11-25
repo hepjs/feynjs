@@ -79,7 +79,7 @@ papers draw it, is one of the most useful things you can send.
 - **Name functions for what they do** (`labelExternalLeg`, `spreadKeepingOrder`). A module's
   top-level function reads as a list of named steps.
 - **No magic numbers.** A size, gap, angle or colour belongs in `src/theme.ts`, with a comment
-  saying what it controls, so users can override it and the [theme reference](../../setup/theme.md)
+  saying what it controls, so users can override it and the [theme reference](../setup/theme.md)
   documents it.
 - **Defaults come from practice.** A layout or style default should match how the diagram is
   drawn in published papers. Point to the examples.

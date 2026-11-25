@@ -128,8 +128,8 @@ One line in `src/particles/registry.ts`, using the helpers there:
 "sneutrino": susy("dash", "\\tilde\\nu"),
 ```
 
-Then add it to the [Particles](../../authoring/particles.md) page, which is kept by hand. A particle needed by one page only can be added
-at run time with [`registerParticle`](../../usage/api.md#registerparticle) instead.
+Then add it to the [Particles](../authoring/particles.md) page, which is kept by hand. A particle needed by one page only can be added
+at run time with [`registerParticle`](../usage/api.md#registerparticle) instead.
 
 ### Add a line style
 
@@ -137,20 +137,20 @@ at run time with [`registerParticle`](../../usage/api.md#registerparticle) inste
 2. Draw it in `src/render/lines.ts` (`drawLine`), and give it a clearance in `halfWidth`.
 3. Put its sizes in `LineLook` in `src/theme.ts`, each with a comment.
 4. Name it in `STYLES` in `src/particles/registry.ts`.
-5. Add it to `examples/lines.feyn` and to [Lines and particles](../../authoring/lines.md).
+5. Add it to `examples/lines.feyn` and to [Lines and particles](../authoring/lines.md).
 
 ### Add a vertex shape
 
 1. Add it to `VertexShape` in `src/model.ts`.
 2. Add its keyword to `SHAPES` in `src/parse/parse.ts`.
 3. Draw it in `src/render/vertices.ts`, with its size in `VertexLook`.
-4. Add it to [Vertices and blobs](../../authoring/vertices.md).
+4. Add it to [Vertices and blobs](../authoring/vertices.md).
 
 ### Add a switch
 
 A `name: value` line is stored in `diagram.directives` by the parser. Read it where it matters
 (drawing switches in `src/render/edge-styles.ts`, layout switches in `src/render/render.ts`), and
-add it to [Panels and switches](../../authoring/syntax.md#panels-and-switches) and [Syntax at a glance](../../authoring/syntax-at-a-glance.md).
+add it to [Panels and switches](../authoring/syntax.md#panels-and-switches) and [Syntax at a glance](../authoring/syntax-at-a-glance.md).
 
 ### Change the layout
 
@@ -165,7 +165,7 @@ Either way, add a diagram that shows the change to `examples/` and a test to `te
 ### Extend the process syntax
 
 `src/parse/chains.ts` turns process lines into edges. A change there needs a test in
-`test/feynjs.test.ts`, and an example in [Processes](../../authoring/processes.md).
+`test/feynjs.test.ts`, and an example in [Processes](../authoring/processes.md).
 
 ## Layout rules
 
