@@ -1,102 +1,47 @@
 # About
 
-Upgrading to a new release, the browsers and Node versions feynjs runs in, and its licence.
+<div class="feynjs-person" markdown>
 
-## Upgrading
+![Jason Oliver](jason-oliver.jpg){ .feynjs-portrait width="160" height="160" }
 
-| Where you use feynjs | To upgrade |
-|---|---|
-| npm | `npm install feynjs@latest` |
-| jsDelivr link, `feynjs@0.10` | nothing for a 0.10.x release; change the link for 0.11 |
-| Obsidian | replace the plugin folder with the one from the new release |
+<div markdown>
 
-Versions follow [semantic versioning](https://semver.org). Before 1.0, a new minor version (0.9
-to 0.10) may change how a diagram is written. A layout that moves counts as a change too. Each
-one is in the [changelog](#changelog) below.
+I'm **Jason Oliver**, an experimental particle physicist at Adelaide University, Australia, working
+on the ATLAS experiment at CERN's Large Hadron Collider. My research has ranged from searches for
+supersymmetry and studies of the Higgs boson to the trigger and tracking systems that choose,
+in real time, which collisions to keep, most recently with FPGA accelerators for the
+High-Luminosity LHC. Before returning to Adelaide I was a research scholar at the University of
+California, Irvine; my PhD is from the University of Adelaide.
 
-### npm
+I care about how physics is shown and told: in talks, in design, and in the tools we write with.
+feynjs grew out of that.
 
-```sh
-npm install feynjs@latest
-```
+[ORCID](https://orcid.org/0000-0002-0713-6627){ .md-button }
+[GitHub](https://github.com/hepjs){ .md-button }
 
-This updates `package.json` and the `feynjs` command too. Check with `npx feynjs check FILE` on a
-few of your diagrams.
+</div>
+</div>
 
-### The jsDelivr link
+## Why feynjs
 
-A link to `feynjs@0.10` picks up each 0.10.x release on its own:
+Feynman diagrams are how particle physicists think and explain. Yet drawing one still means TeX: a
+toolchain built for the printed page, a compile step, and a picture that cannot leave the PDF.
+Physics now lives on the web as much as on paper, in documentation, notes, notebooks and talks,
+and with arXiv's move to HTML, in the papers themselves.
 
-```html
-<script src="https://cdn.jsdelivr.net/npm/feynjs@0.10/dist/feynjs.min.js"></script>
-```
+feynjs's aim is to make a Feynman diagram as easy to write as a sentence, wherever physicists
+write: in the syntax they already know, TikZ-Feynman's and MadGraph's; laid out as published
+diagrams are drawn, with no coordinates; and drawn the same in a web page, a Markdown site, a
+notebook, a note or a LaTeX paper.
 
-jsDelivr can cache the version a range points to for up to about 12 hours, so a page may draw
-with the previous release for that long after a new one is out.
+## Who makes it
 
-A new minor version needs a new link. For 0.11, change `@0.10` to `@0.11` wherever the script is
-loaded: `extra_javascript` in `zensical.toml` or `mkdocs.yml`, or the `<script>` tag. To stay on
-one exact release, write it in full, such as `feynjs@0.10.0`. Pages still linking `feynjs@0.9`
-keep drawing with 0.9.5, the last 0.9 release.
+feynjs is written by Jason Oliver and Pengxuan Zhu, at Adelaide University, as part of
+[hepjs](https://github.com/hepjs), JavaScript tools for high-energy physics. Ideas, bug reports
+and diagrams that come out wrong are welcome on
+[GitHub](https://github.com/hepjs/feynjs/issues); see [Contributing](guides/contributing.md).
 
-### Obsidian
-
-1.  Download `feynjs-obsidian.zip` from the
-    [latest release](https://github.com/hepjs/feynjs/releases/latest) and unzip it.
-2.  Replace the `feynjs` folder in `<vault>/.obsidian/plugins/` with the new one.
-3.  In *Settings → Community plugins*, switch **feynjs** off and on again, or restart Obsidian.
-
-The plugin keeps no settings of its own, so nothing is lost when its folder is replaced.
-
-### Changelog
-
-The full list is in
-[CHANGELOG.md](https://github.com/hepjs/feynjs/blob/main/CHANGELOG.md). In short:
-
-**0.9.3** (2026-11-24)
-:   Every part of a drawing is named in the SVG (`data-edge`, `data-vertex`) and the diagram is
-    written into it as JSON. The [playground](../playground.md). The grid and the lattice view
-    stay faint on dark pages. Releases carry the Obsidian plugin as `feynjs-obsidian.zip`.
-    Cascades on the grid layout are drawn as a level spine with what they give off hanging from it.
-
-**0.9.1** (2026-11-24)
-:   In Zensical and MkDocs, diagrams are drawn again after each instant page change, so the
-    script and the `feynman` fence are all a site needs.
-
-**0.9.0** (2026-11-23)
-:   The first public release: the edge and process syntaxes, every TikZ-Feynman line style, the
-    force, grid and manual layouts, the kinematic and lattice views, the npm package, the command
-    line, TikZ export and the Obsidian plugin.
-
-## Licence
-
-feynjs is under the [MIT licence](https://github.com/hepjs/feynjs/blob/main/LICENSE.md),
-copyright 2026 Jason Oliver.
-
-### What the MIT licence allows
-
-- **Use it anywhere:** in papers, theses, slides, websites, notes and programs, free or paid.
-- **Change it** and share your changed version.
-- **Bundle it** with your own code, under your own licence.
-
-The one condition: keep the copyright notice and the licence text with any copy of the code, or
-any substantial part of it. The licence comes with no warranty.
-
-### Third-party material
-
-The repository and its packages carry a few things under their own licences, listed in
-[THIRD-PARTY.md](https://github.com/hepjs/feynjs/blob/main/THIRD-PARTY.md):
-
-| What | Licence |
-|---|---|
-| New Computer Modern fonts, this site's name and page titles (in `docs/fonts/`) | GUST Font License (LPPL-based) |
-| Inter fonts, this site's text face (in `docs/fonts/`) | SIL Open Font License 1.1 |
-| Two Lucide icons, download and triangle-alert, drawn inline | ISC |
-
-The edge syntax follows TikZ-Feynman and the process syntax follows MadGraph5_aMC@NLO. feynjs is
-an independent implementation and contains no code from either.
-
-### How to cite
+## How to cite
 
 If you use feynjs in your work, please cite it. Every release is archived on Zenodo with a DOI of
 its own; [10.5281/zenodo.24497761](https://doi.org/10.5281/zenodo.24497761) always resolves to the

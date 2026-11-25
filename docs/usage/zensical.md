@@ -132,7 +132,7 @@ yourself from a small script listed after feynjs; feynjs leaves what you have dr
 document$.subscribe(() => feynjs.run({ download: true }));
 ```
 
-`run` takes every option in the [JavaScript API](../usage/api.md#run).
+`run` takes every option in the [JavaScript API](api.md#run).
 
 ## Next
 

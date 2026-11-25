@@ -18,7 +18,7 @@ the browser, so a diagram comes out the same in every browser.
 
 The npm package and the `feynjs` command need Node 20 or later (`engines` in `package.json`).
 `render` needs no browser: it returns the SVG as a string, the same in Node as on a page. See
-[Use feynjs from code](../usage/index.md) and [Command line](../usage/cli.md).
+[Use feynjs from code](api.md#install) and [Command line](cli.md).
 
 ## Any page charset
 
@@ -45,4 +45,4 @@ f1 [mu-] -- b -- f2 [mu+]
 
 To set the colours yourself, or to get a file with colours of its own for a slide or a paper, see
 [Light and dark](../setup/index.md#light-and-dark) and
-[Exporting](../usage/export.md).
+[Exporting](export.md).

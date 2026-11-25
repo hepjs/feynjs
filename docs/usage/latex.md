@@ -89,5 +89,5 @@ processor and in every JavaScript engine, so a coauthor's `feynjs cache` gives t
 
 ## Without the package
 
-`feynjs tikz diagram.feyn` (or [`toTikz`](../usage/api.md) from code) writes one diagram as
-TikZ-Feynman code to paste in by hand. See [TikZ-Feynman](tikz-feynman.md) for what carries over.
+`feynjs tikz diagram.feyn` (or [`toTikz`](api.md) from code) writes one diagram as
+TikZ-Feynman code to paste in by hand. See [TikZ-Feynman](../compatibility/tikz-feynman.md) for what carries over.

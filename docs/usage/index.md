@@ -1,78 +1,121 @@
-# Install
+---
+hide:
+  - toc
+---
 
-feynjs as an npm package: for your own programs, and the `feynjs` command.
+# Usage
 
-=== "npm"
+Where you can use feynjs. Every option draws the same diagrams from the same text.
+{ .feynjs-start-lead }
 
-    ```sh
-    npm install feynjs
+<div class="grid cards feynjs-start" markdown>
+
+-   **Zensical or MkDocs**
+
+    A docs site: every <code>feynman</code> block in your Markdown becomes a diagram.
+
+    ```toml
+    extra_javascript = ["https://cdn.jsdelivr.net/npm/feynjs@0.10/dist/feynjs.min.js"]
     ```
+
+    [Set up a site](zensical.md){ .md-button .md-button--primary }
+
+-   **Sphinx**
+
+    A Sphinx project: <code>feynman</code> code blocks in reST or MyST Markdown become diagrams.
+
+    ```python
+    # pip install feynjs
+    extensions = ["feynjs.sphinx"]
+    ```
+
+    [Set up Sphinx](sphinx.md){ .md-button }
+
+-   **Obsidian**
+
+    Your notes: the same <code>feynman</code> blocks, drawn in the note's own colours.
+
+    ```text
+    feynjs-obsidian.zip  →  .obsidian/plugins/feynjs/
+    ```
+
+    [Set up Obsidian](obsidian.md){ .md-button .md-button--primary }
+
+-   **A web page**
+
+    Any page: one script tag, and every <code>feynman</code> block or <code>&lt;div class="feynman"&gt;</code> is drawn.
+
+    ```html
+    <script src="https://cdn.jsdelivr.net/npm/feynjs@0.10/dist/feynjs.min.js"></script>
+    ```
+
+    [Use it in a page](web.md){ .md-button }
+
+-   **LaTeX**
+
+    A paper: write diagrams in feynjs syntax; they compile as TikZ-Feynman, on Overleaf and arXiv too.
+
+    ```latex
+    \usepackage{feynjs}
+    \begin{feynjs}
+    p p > t tbar
+    \end{feynjs}
+    ```
+
+    [Set up LaTeX](latex.md){ .md-button }
+
+-   **JavaScript**
+
+    Your own program: <code>render</code> gives the SVG, <code>toTikz</code> the TikZ.
 
     ```js
+    // npm install feynjs
     import { render } from "feynjs";
+    const svg = render("g g > {t} > H");
     ```
 
-=== "From source"
+    [The API](api.md){ .md-button }
+
+-   **Jupyter**
+
+    A notebook: a diagram is a Python object that draws itself.
+
+    ```python
+    # pip install feynjs
+    from feynjs import Diagram
+    Diagram("g g > {t} > H")
+    ```
+
+    [Use it in Jupyter](jupyter.md){ .md-button }
+
+-   **The command line**
+
+    A shell: draw, check, describe or measure a diagram from a file.
 
     ```sh
-    git clone https://github.com/hepjs/feynjs.git && cd feynjs
-    npm install
-    npm run build      # dist/feynjs.mjs (ES module) and dist/feynjs.min.js (script tag)
+    npx feynjs render diagram.feyn > diagram.svg
     ```
 
-## From JavaScript
+    [The commands](cli.md){ .md-button }
 
-`render` takes the source and returns the SVG as a string. It works the same in a browser, in Node
-and in a build step:
+-   **MadGraph**
 
-```js
-import { render } from "feynjs";
-import { writeFileSync } from "node:fs";
+    Every diagram of a process MadGraph generates, decay chains joined into whole diagrams.
 
-const source = `
-  i1 [q] -- a -- f1 [q']
-  i2 [b] -- b -- f2 [t]
-  a -- [W] b
-`;
+    ```text
+    mg5_aMC --mode=feynjs
+    ```
 
-// standalone: black on white, correct outside a themed page (slides, papers, editors)
-writeFileSync("single-top.svg", render(source, { standalone: true }));
-```
+    [Set up MadGraph](../compatibility/madgraph.md#the-plugin){ .md-button }
 
-In a component framework, put the string into the page as HTML, for example in React with
-`<div dangerouslySetInnerHTML={{ __html: render(source) }} />`. The SVG is built from your source
-text, so it carries no script.
+-   **Just try it**
 
-The same source is drawn only once: `render` keeps the last 256 diagrams, so a page that redraws
-often is cheap. Every function and option is in the [JavaScript API](api.md).
+    No setup: type a diagram in the browser, drag its points, and take it away as SVG, PNG or TikZ.
 
-## From the command line
+    [Open the playground](../playground.md){ .md-button }
 
-```sh
-feynjs render diagram.feyn > diagram.svg   # SVG
-feynjs tikz diagram.feyn > diagram.tex     # TikZ-Feynman, for pdflatex
-feynjs check diagram.feyn                  # lint; exits 1 on an error
-feynjs describe diagram.feyn               # the process, as JSON
-feynjs measure diagram.feyn                # layout quality, as JSON
-```
+</div>
 
-With no file, `feynjs` reads standard input. See [Command line](cli.md).
-
-## For programs and AI tools
-
-Every SVG feynjs draws names its parts: each line is a `<g data-edge="a--b">`, each point's mark a
-`<g data-vertex="b">`, and `<metadata class="feynjs-model">` holds the whole diagram as JSON. A
-page script, a test or a language model can find any part and change the source by name. See
-[the drawing's parts, by name](api.md#the-drawings-parts-by-name).
-
-Two skills for AI assistants come with the repository:
-[`feynjs`](https://github.com/hepjs/feynjs/tree/main/skills/feynjs), for writing, checking and
-rendering diagrams, and [`feynman-design`](https://github.com/hepjs/feynjs/tree/main/skills/feynman-design),
-for designing them: what to draw, how physicists lay it out, and the physics to check. Copy a
-skill's folder into your assistant's skills folder to use it.
-
-## Further reading
-
-- [JavaScript API](api.md): every function feynjs exports, with its options.
-- [Command line](cli.md): every command, from SVG to TikZ-Feynman code and lint reports.
-- [Theme settings](../setup/theme.md): every size, colour and layout weight, with its default.
+After a diagram is in place: [check](checks.md) it, [export](export.md) it as SVG, PNG or
+TikZ, and [upgrade](upgrading.md) to a new release. [Browsers and Node](browsers.md) says where it
+runs.

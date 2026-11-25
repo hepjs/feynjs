@@ -17,6 +17,52 @@ With the script tag, the same functions are on the global `feynjs`. TypeScript t
 package: `RenderOptions`, `Theme`, `ThemeOverrides`, `Particle`, `Description`, `Finding`,
 `Quality`, `TikzOptions`, `Diagram`.
 
+## Install
+
+=== "npm"
+
+    ```sh
+    npm install feynjs
+    ```
+
+    ```js
+    import { render } from "feynjs";
+    ```
+
+=== "From source"
+
+    ```sh
+    git clone https://github.com/hepjs/feynjs.git && cd feynjs
+    npm install
+    npm run build      # dist/feynjs.mjs (ES module) and dist/feynjs.min.js (script tag)
+    ```
+
+### From JavaScript
+
+`render` takes the source and returns the SVG as a string. It works the same in a browser, in Node
+and in a build step:
+
+```js
+import { render } from "feynjs";
+import { writeFileSync } from "node:fs";
+
+const source = `
+  i1 [q] -- a -- f1 [q']
+  i2 [b] -- b -- f2 [t]
+  a -- [W] b
+`;
+
+// standalone: black on white, correct outside a themed page (slides, papers, editors)
+writeFileSync("single-top.svg", render(source, { standalone: true }));
+```
+
+In a component framework, put the string into the page as HTML, for example in React with
+`<div dangerouslySetInnerHTML={{ __html: render(source) }} />`. The SVG is built from your source
+text, so it carries no script.
+
+The same source is drawn only once: `render` keeps the last 256 diagrams, so a page that redraws
+often is cheap. Every function and option is in the [JavaScript API](api.md).
+
 ## Drawing
 
 ### render
@@ -229,3 +275,17 @@ class FeynError extends Error { line?: number }
 
 Thrown for a mistake in the source. `message` starts with the line number (`line 2: unclosed [`)
 and `line` holds it.
+
+## For programs and AI tools
+
+Every SVG feynjs draws names its parts: each line is a `<g data-edge="a--b">`, each point's mark a
+`<g data-vertex="b">`, and `<metadata class="feynjs-model">` holds the whole diagram as JSON. A
+page script, a test or a language model can find any part and change the source by name. See
+[the drawing's parts, by name](api.md#the-drawings-parts-by-name).
+
+Two skills for AI assistants come with the repository:
+[`feynjs`](https://github.com/hepjs/feynjs/tree/main/skills/feynjs), for writing, checking and
+rendering diagrams, and [`feynman-design`](https://github.com/hepjs/feynjs/tree/main/skills/feynman-design),
+for designing them: what to draw, how physicists lay it out, and the physics to check. Copy a
+skill's folder into your assistant's skills folder to use it.
+

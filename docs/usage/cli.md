@@ -29,7 +29,7 @@ output. Installed with the package (`npx feynjs ...`), or run from a checkout as
 | `explain` | the diagram in plain English | 1 on a mistake |
 | `measure` | the [layout score](checks.md#measure) as JSON | 1 on a mistake |
 | `import [file.tex]` | every TikZ-Feynman picture in a LaTeX file, as feynjs's lines (each under a comment when there are several): see [TikZ-Feynman](../compatibility/tikz-feynman.md#converting-a-papers-pictures) | 1 on a mistake |
-| `cache [dir]` | each `*-feynjs-*.feyn` a LaTeX document left in `dir` (default `.`) drawn as TikZ-Feynman code beside it, skipping those already drawn: see [LaTeX](../compatibility/latex.md) | 1 on a mistake |
+| `cache [dir]` | each `*-feynjs-*.feyn` a LaTeX document left in `dir` (default `.`) drawn as TikZ-Feynman code beside it, skipping those already drawn: see [LaTeX](latex.md) | 1 on a mistake |
 
 ```sh
 feynjs render ggf.feyn > ggf.svg

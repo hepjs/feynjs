@@ -15,9 +15,9 @@ f1 [mu-] -- b -- f2 [mu+]
 ````
 
 feynjs turns a few lines of text into a Feynman diagram, drawn as SVG. To draw these yourself, put
-them in a `feynman` block on a [Zensical site](../compatibility/zensical.md) or in an [Obsidian note](../compatibility/obsidian.md),
+them in a `feynman` block on a [Zensical site](../usage/zensical.md) or in an [Obsidian note](../usage/obsidian.md),
 or paste them into the [playground](../playground.md). To install feynjs for your own code, see
-[Install](../usage/index.md).
+[Install](../usage/api.md#install).
 
 !!! note "Early days"
     feynjs is at version 0.9. The syntax described here is stable enough to write diagrams
