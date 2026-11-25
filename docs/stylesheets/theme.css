@@ -80,7 +80,7 @@
 .md-tabs { border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
 
 /* ---- type ----------------------------------------------------------------------------- */
-.md-typeset { font-size: 0.78rem; line-height: 1.7; }
+.md-typeset { font-size: 0.7rem; line-height: 1.7; }
 .md-typeset h1 {
   font-family: "NewComputerModern10", serif; font-style: italic; font-weight: 400;
   font-size: 2.4em; letter-spacing: 0.005em; color: var(--md-default-fg-color); margin-bottom: 0.6em;
