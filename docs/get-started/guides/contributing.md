@@ -295,4 +295,6 @@ colours for light and dark. `docs/stylesheets/theme.css` is the site's look.
 
 The logo files are in `docs/brand/logo/`: the mark, the wordmark and the lockups, each for light
 and dark backgrounds, with the favicon and the social card. The site uses `mark-red.svg` as its
-logo and `favicon.svg` as its favicon, both set in `zensical.toml`.
+logo and `favicon.svg` as its favicon, both set in `zensical.toml`. The icon (`mark*.svg`, `favicon.svg`,
+`apple-touch-icon.png`, `icon-512.png`) is drawn by `node scripts/icons.mjs`: change it there, not
+by hand.
