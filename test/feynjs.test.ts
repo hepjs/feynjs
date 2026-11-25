@@ -236,7 +236,7 @@ test("a crossing the in: or out: order asks for does not count; one against the 
 test("a spectator line, in to out, is no leg: what crosses it counts", async () => {
   const { measure } = await import("../src/tools/quality.ts");
   // (the leptons, listed after the meson, fall across the spectator d-bar: a crossing, not one the order asks for)
-  const crossed = "in: iQ iS\nout: fQ fS fl fn\niQ [b] -- [fermion] v -- [fermion] fQ [c]\nfS [\\bar d] -- [fermion] iS [\\bar d]\nv -- [boson, label=W^-] w\nw -- fl [e-]\nw -- fn [ve~]";
+  const crossed = "in: iQ iS\nout: fQ fS fl fn\niQ [b]\niS [\\bar{d}]\nfQ [c]\nfS [\\bar{d}]\niQ -- [fermion] v\nv -- [fermion] fQ\nfS -- [fermion] iS\nv -- [boson, label=W^-] w\nw -- fl [e-]\nw -- fn [ve~]\nmeson: \\bar B^0 = iQ iS [brace]\nmeson: D^+ = fQ fS [brace]";
   assert.equal(measure(crossed).crossings, 1);
   assert.equal(measure(crossed.replace("out: fQ fS fl fn", "out: fl fn fQ fS")).crossings, 0);
 });
