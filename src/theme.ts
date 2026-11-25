@@ -450,7 +450,7 @@ export const defaultTheme: Theme = {
     jetHalfAngle: 9, jetMaxHalfWidth: 11, jetColor: "#3f90da", jetShade: 0.6, jetFade: 0.2,
     largeJetScale: 2, narrowJetScale: 0.8, trackWidth: 0.9, objectLegStretch: 1.6,
   },
-  vertex: { dot: 3.6, couplingDot: 4.6, crossedDot: 6.5, blob: 11, smallBlob: 4.6, insertion: 4.5, nucleusUnit: 7, proton: "#b8493b", neutron: "#5d6b85", nucleonEdge: "#2b2b2b", protonEdge: "#6e2c23", neutronEdge: "#343d4f", blobFill: "rgba(100, 120, 150, 0.2)", smallBlobFill: "#9aa1ab", hatchSpacing: 2.8 },
+  vertex: { dot: 3.6, couplingDot: 4.6, crossedDot: 6.5, blob: 11, smallBlob: 4.6, insertion: 4.5, nucleusUnit: 7, proton: "#b8493b", neutron: "#5d6b85", nucleonEdge: "#2b2b2b", protonEdge: "#4f1f19", neutronEdge: "#252c3a", blobFill: "rgba(100, 120, 150, 0.2)", smallBlobFill: "#9aa1ab", hatchSpacing: 2.8 },
   colourFlow: { gap: 3.4, width: 2.6, opacity: 0.6, arrowLength: 7, arrowWidth: 6.2, turn: 14, palette: ["#e0241b", "#1f9e4a", "#2f6fdf"], anti: ["#00a7c4", "#c8379f", "#f0b000"] },
   engine: "v2",
   // fitted to the hand-placed reference diagrams by scripts/fit/tune.ts (2026-11-22)

@@ -8,7 +8,7 @@ layout that moves is a change, recorded here.
 - **Nuclei drawn cleaner:** every nucleon one size, so a nucleus grows as A to the third (lead
   about 3.7 times helium across, where nucleons used to shrink as nuclei grew); flat colours,
   protons brick red (`#b8493b`) and neutrons slate (`#5d6b85`), each edged in a dark shade of its
-  own. `nucleon edges: ink` edges them in ink as before, `none` not at all. No approved layout
+  own (`#4f1f19`, `#252c3a`). `nucleon edges: ink` edges them in ink as before, `none` not at all. No approved layout
   draws a nucleus.
 - **A panel's caption is set in a text face** (`captionFontFamily`, the system's sans-serif by
   default), not the math font labels use, and carries the class `feynjs-caption` for a page to
