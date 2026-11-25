@@ -26,19 +26,17 @@ Extra dimensions show up as towers of heavier copies of known particles, the Kal
     b -- f2 [gamma]
     ```
 
+    ```text
+    in: i1 i2
+    out: f1 f2
+    i1 [g] -- a
+    i2 [g] -- a
+    a -- [photon, double, label=G_{\mathrm{KK}}] b
+    b -- f1 [gamma]
+    b -- f2 [gamma]
+    ```
+
     In the Randall–Sundrum model the graviton's excitations are heavy and couple to everything; a resonance in two photons is its cleanest sign.
-
-    ??? example "Source"
-
-        ```text
-        in: i1 i2
-        out: f1 f2
-        i1 [g] -- a
-        i2 [g] -- a
-        a -- [photon, double, label=G_{\mathrm{KK}}] b
-        b -- f1 [gamma]
-        b -- f2 [gamma]
-        ```
 
 -   **A Kaluza–Klein gluon to top quarks**
 
@@ -50,17 +48,15 @@ Extra dimensions show up as towers of heavier copies of known particles, the Kal
     f1 [tbar] -- b -- f2 [t]
     ```
 
+    ```text
+    in: i1 i2
+    out: f1 f2
+    i1 [q] -- a -- i2 [qbar]
+    a -- [gluon, heavy, label=g_{\mathrm{KK}}] b
+    f1 [tbar] -- b -- f2 [t]
+    ```
+
     The gluon's first excitation couples most strongly to the top quark.
-
-    ??? example "Source"
-
-        ```text
-        in: i1 i2
-        out: f1 f2
-        i1 [q] -- a -- i2 [qbar]
-        a -- [gluon, heavy, label=g_{\mathrm{KK}}] b
-        f1 [tbar] -- b -- f2 [t]
-        ```
 
 -   **Kaluza–Klein photon pair, universal extra dimensions**
 
@@ -77,22 +73,20 @@ Extra dimensions show up as towers of heavier copies of known particles, the Kal
     d -- f4 [qbar]
     ```
 
+    ```text
+    in: i1 i2
+    out: f1 f2 f3 f4
+    i1 [q] -- a -- i2 [qbar]
+    a -- [gluon] b
+    b -- [heavy, label=q^{(1)}] c
+    b -- [heavy, label=\bar q^{(1)}] d
+    c -- f1 [q]
+    c -- [photon, heavy, label=\gamma^{(1)}] f2
+    d -- [photon, heavy, label=\gamma^{(1)}] f3
+    d -- f4 [qbar]
+    ```
+
     Every particle has a tower of heavier copies; the lightest, the first photon excitation, could be dark matter.
-
-    ??? example "Source"
-
-        ```text
-        in: i1 i2
-        out: f1 f2 f3 f4
-        i1 [q] -- a -- i2 [qbar]
-        a -- [gluon] b
-        b -- [heavy, label=q^{(1)}] c
-        b -- [heavy, label=\bar q^{(1)}] d
-        c -- f1 [q]
-        c -- [photon, heavy, label=\gamma^{(1)}] f2
-        d -- [photon, heavy, label=\gamma^{(1)}] f3
-        d -- f4 [qbar]
-        ```
 
 </div>
 
@@ -112,17 +106,15 @@ Figures from ATLAS publications, each written as a few lines of feynjs and laid 
     f1 [tbar] -- b -- f2 [t]
     ```
 
+    ```text
+    in: i1 i2
+    out: f1 f2
+    i1 [q] -- a -- i2 [qbar]
+    a -- [Z', color=red] b
+    f1 [tbar] -- b -- f2 [t]
+    ```
+
     <small>ATLAS, [EXOT-2015-04](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/EXOT-2015-04/), figure 1a</small>
-
-    ??? example "Source"
-
-        ```text
-        in: i1 i2
-        out: f1 f2
-        i1 [q] -- a -- i2 [qbar]
-        a -- [Z', color=red] b
-        f1 [tbar] -- b -- f2 [t]
-        ```
 
 -   **Z', KK gluon and KK graviton to tops · b**
 
@@ -134,17 +126,15 @@ Figures from ATLAS publications, each written as a few lines of feynjs and laid 
     f1 [tbar] -- b -- f2 [t]
     ```
 
+    ```text
+    in: i1 i2
+    out: f1 f2
+    i1 [g] -- a -- i2 [g]
+    a -- [G, color=red, label=G_{\mathrm{KK}}] b
+    f1 [tbar] -- b -- f2 [t]
+    ```
+
     <small>ATLAS, [EXOT-2015-04](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/EXOT-2015-04/), figure 1b</small>
-
-    ??? example "Source"
-
-        ```text
-        in: i1 i2
-        out: f1 f2
-        i1 [g] -- a -- i2 [g]
-        a -- [G, color=red, label=G_{\mathrm{KK}}] b
-        f1 [tbar] -- b -- f2 [t]
-        ```
 
 -   **Z', KK gluon and KK graviton to tops · c**
 
@@ -156,17 +146,15 @@ Figures from ATLAS publications, each written as a few lines of feynjs and laid 
     f1 [tbar] -- b -- f2 [t]
     ```
 
+    ```text
+    in: i1 i2
+    out: f1 f2
+    i1 [q] -- a -- i2 [qbar]
+    a -- [gluon, heavy, color=red, label=g_{\mathrm{KK}}] b
+    f1 [tbar] -- b -- f2 [t]
+    ```
+
     <small>ATLAS, [EXOT-2015-04](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/EXOT-2015-04/), figure 1c</small>
-
-    ??? example "Source"
-
-        ```text
-        in: i1 i2
-        out: f1 f2
-        i1 [q] -- a -- i2 [qbar]
-        a -- [gluon, heavy, color=red, label=g_{\mathrm{KK}}] b
-        f1 [tbar] -- b -- f2 [t]
-        ```
 
 -   **A graviton to W pairs · a**
 
@@ -180,19 +168,17 @@ Figures from ATLAS publications, each written as a few lines of feynjs and laid 
     b -- f2 [W-]
     ```
 
+    ```text
+    in: i1 i2
+    out: f1 f2
+    i1 [g] -- a
+    i2 [g] -- a
+    a -- [scalar, label=G^*] b
+    b -- f1 [W+]
+    b -- f2 [W-]
+    ```
+
     <small>ATLAS, [EXOT-2013-01](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/EXOT-2013-01/), auxiliary figure 1a</small>
-
-    ??? example "Source"
-
-        ```text
-        in: i1 i2
-        out: f1 f2
-        i1 [g] -- a
-        i2 [g] -- a
-        a -- [scalar, label=G^*] b
-        b -- f1 [W+]
-        b -- f2 [W-]
-        ```
 
 -   **A graviton to W pairs · b**
 
@@ -206,19 +192,17 @@ Figures from ATLAS publications, each written as a few lines of feynjs and laid 
     b -- f2 [Z]
     ```
 
+    ```text
+    in: i1 i2
+    out: f1 f2
+    i1 [q] -- [fermion] a
+    a -- [fermion] i2 [qbar']
+    a -- [scalar, label=W'] b
+    b -- f1 [W]
+    b -- f2 [Z]
+    ```
+
     <small>ATLAS, [EXOT-2013-01](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/EXOT-2013-01/), auxiliary figure 1b</small>
-
-    ??? example "Source"
-
-        ```text
-        in: i1 i2
-        out: f1 f2
-        i1 [q] -- [fermion] a
-        a -- [fermion] i2 [qbar']
-        a -- [scalar, label=W'] b
-        b -- f1 [W]
-        b -- f2 [Z]
-        ```
 
 -   **A graviton to Higgs pairs**
 
@@ -232,19 +216,17 @@ Figures from ATLAS publications, each written as a few lines of feynjs and laid 
     b -- f2 [H]
     ```
 
+    ```text
+    in: i1 i2
+    out: f1 f2
+    i1 [g] -- a
+    i2 [g] -- a
+    a -- [G, label'=G^*_{KK}] b
+    b -- f1 [H]
+    b -- f2 [H]
+    ```
+
     <small>ATLAS, [HDBS-2018-41](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/HDBS-2018-41/), figure 1b</small>
-
-    ??? example "Source"
-
-        ```text
-        in: i1 i2
-        out: f1 f2
-        i1 [g] -- a
-        i2 [g] -- a
-        a -- [G, label'=G^*_{KK}] b
-        b -- f1 [H]
-        b -- f2 [H]
-        ```
 
 -   **A heavy gluon to a vector-like quark**
 
@@ -262,22 +244,20 @@ Figures from ATLAS publications, each written as a few lines of feynjs and laid 
     b3 [\overline{b}] -- [fermion] h
     ```
 
+    ```text
+    in: i1 i2
+    out: b1 b2 b3 b4
+    i1 [q] -- [fermion] a
+    a -- [fermion] i2 [\overline{q}]
+    a -- [gluon, color=red, label=G^*] g
+    g -- [B, color=red, label=B_{\mathrm{H}}] c
+    b4 [\overline{b}] -- [fermion] g
+    c -- [fermion] b1 [b]
+    c -- [scalar, label=H] h
+    h -- [fermion] b2 [b]
+    b3 [\overline{b}] -- [fermion] h
+    ```
+
     <small>ATLAS, [EXOT-2014-19](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/EXOT-2014-19/), figure 1</small>
-
-    ??? example "Source"
-
-        ```text
-        in: i1 i2
-        out: b1 b2 b3 b4
-        i1 [q] -- [fermion] a
-        a -- [fermion] i2 [\overline{q}]
-        a -- [gluon, color=red, label=G^*] g
-        g -- [B, color=red, label=B_{\mathrm{H}}] c
-        b4 [\overline{b}] -- [fermion] g
-        c -- [fermion] b1 [b]
-        c -- [scalar, label=H] h
-        h -- [fermion] b2 [b]
-        b3 [\overline{b}] -- [fermion] h
-        ```
 
 </div>

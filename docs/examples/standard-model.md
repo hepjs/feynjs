@@ -20,13 +20,11 @@ The textbook diagrams: electrons and photons, quarks and gluons, the weak decays
     e- e+ > gamma > mu- mu+
     ```
 
+    ```text
+    e- e+ > gamma > mu- mu+
+    ```
+
     The photon in the s channel. At higher energies a Z joins it, as in Drell–Yan below.
-
-    ??? example "Source"
-
-        ```text
-        e- e+ > gamma > mu- mu+
-        ```
 
 -   **Pair annihilation, e⁺e⁻ → γγ**
 
@@ -38,18 +36,16 @@ The textbook diagrams: electrons and photons, quarks and gluons, the weak decays
     b -- f2 [gamma]
     ```
 
+    ```text
+    in: i1 i2
+    out: f1 f2
+    i1 [e-] -- a -- b -- i2 [e+]
+    a -- f1 [gamma]
+    b -- f2 [gamma]
+    ```
+
     An electron exchanged between the two photons. The same diagram with the photons swapped
     adds to it.
-
-    ??? example "Source"
-
-        ```text
-        in: i1 i2
-        out: f1 f2
-        i1 [e-] -- a -- b -- i2 [e+]
-        a -- f1 [gamma]
-        b -- f2 [gamma]
-        ```
 
 -   **Bhabha scattering, s channel**
 
@@ -57,13 +53,11 @@ The textbook diagrams: electrons and photons, quarks and gluons, the weak decays
     e- e+ > gamma > e- e+
     ```
 
+    ```text
+    e- e+ > gamma > e- e+
+    ```
+
     e⁺e⁻ → e⁺e⁻: the pair annihilates into a photon...
-
-    ??? example "Source"
-
-        ```text
-        e- e+ > gamma > e- e+
-        ```
 
 -   **Bhabha scattering, t channel**
 
@@ -75,17 +69,15 @@ The textbook diagrams: electrons and photons, quarks and gluons, the weak decays
     a -- [gamma] b
     ```
 
+    ```text
+    in: i1 i2
+    out: f1 f2
+    i1 [e-] -- a -- f1 [e-]
+    i2 [e+] -- b -- f2 [e+]
+    a -- [gamma] b
+    ```
+
     ...or exchanges one. The two amplitudes come with a relative minus sign.
-
-    ??? example "Source"
-
-        ```text
-        in: i1 i2
-        out: f1 f2
-        i1 [e-] -- a -- f1 [e-]
-        i2 [e+] -- b -- f2 [e+]
-        a -- [gamma] b
-        ```
 
 -   **Møller scattering, t channel**
 
@@ -97,17 +89,15 @@ The textbook diagrams: electrons and photons, quarks and gluons, the weak decays
     a -- [gamma] b
     ```
 
+    ```text
+    in: i1 i2
+    out: f1 f2
+    i1 [e-] -- a -- f1 [e-]
+    i2 [e-] -- b -- f2 [e-]
+    a -- [gamma] b
+    ```
+
     e⁻e⁻ → e⁻e⁻: two identical electrons, so the t channel comes with...
-
-    ??? example "Source"
-
-        ```text
-        in: i1 i2
-        out: f1 f2
-        i1 [e-] -- a -- f1 [e-]
-        i2 [e-] -- b -- f2 [e-]
-        a -- [gamma] b
-        ```
 
 -   **Møller scattering, u channel**
 
@@ -123,23 +113,21 @@ The textbook diagrams: electrons and photons, quarks and gluons, the weak decays
     a -- [gamma] b
     ```
 
+    ```text
+    in: i1 i2
+    out: f2 f1
+    i1 [e-] -- a
+    i2 [e-] -- b
+    f1 [e-]
+    f2 [e-]
+    a -- [e-, no arrow, with arrow=.8] f1
+    b -- [e-, no arrow, with arrow=.8] f2
+    a -- [gamma] b
+    ```
+
     ...the u channel, the outgoing electrons swapped. `out: f2 f1` crosses the lines;
     `no arrow, with arrow=.8` moves
     the arrows clear of the crossing.
-
-    ??? example "Source"
-
-        ```text
-        in: i1 i2
-        out: f2 f1
-        i1 [e-] -- a
-        i2 [e-] -- b
-        f1 [e-]
-        f2 [e-]
-        a -- [e-, no arrow, with arrow=.8] f1
-        b -- [e-, no arrow, with arrow=.8] f2
-        a -- [gamma] b
-        ```
 
 -   **Compton scattering, s channel**
 
@@ -147,13 +135,11 @@ The textbook diagrams: electrons and photons, quarks and gluons, the weak decays
     e- gamma > e- > e- gamma
     ```
 
+    ```text
+    e- gamma > e- > e- gamma
+    ```
+
     e⁻γ → e⁻γ: the electron absorbs the photon, then emits one...
-
-    ??? example "Source"
-
-        ```text
-        e- gamma > e- > e- gamma
-        ```
 
 -   **Compton scattering, u channel**
 
@@ -165,17 +151,15 @@ The textbook diagrams: electrons and photons, quarks and gluons, the weak decays
     a -- f2 [gamma]
     ```
 
+    ```text
+    in: i1 i2
+    out: f2 f1
+    i1 [e-] -- a -- b -- f1 [e-]
+    i2 [gamma] -- b
+    a -- f2 [gamma]
+    ```
+
     ...or emits the outgoing photon first and absorbs the incoming one after.
-
-    ??? example "Source"
-
-        ```text
-        in: i1 i2
-        out: f2 f1
-        i1 [e-] -- a -- b -- f1 [e-]
-        i2 [gamma] -- b
-        a -- f2 [gamma]
-        ```
 
 -   **Bremsstrahlung**
 
@@ -188,16 +172,14 @@ The textbook diagrams: electrons and photons, quarks and gluons, the weak decays
     i2 [q] -- c -- f2 [q]
     ```
 
-    ??? example "Source"
-
-        ```text
-        in: i1 i2
-        out: f3 f1 f2
-        i1 [e-] -- a -- b -- f1 [e-]
-        a -- f3 [gamma]
-        b -- [gamma] c
-        i2 [q] -- c -- f2 [q]
-        ```
+    ```text
+    in: i1 i2
+    out: f3 f1 f2
+    i1 [e-] -- a -- b -- f1 [e-]
+    a -- f3 [gamma]
+    b -- [gamma] c
+    i2 [q] -- c -- f2 [q]
+    ```
 
 </div>
 
@@ -211,13 +193,11 @@ The textbook diagrams: electrons and photons, quarks and gluons, the weak decays
     q g > q > q g
     ```
 
+    ```text
+    q g > q > q g
+    ```
+
     The quark absorbs the gluon and gives it off again...
-
-    ??? example "Source"
-
-        ```text
-        q g > q > q g
-        ```
 
 -   **qg → qg, t channel**
 
@@ -229,17 +209,15 @@ The textbook diagrams: electrons and photons, quarks and gluons, the weak decays
     a -- [gluon] b
     ```
 
+    ```text
+    in: i1 i2
+    out: f1 f2
+    i1 [q] -- a -- f1 [q]
+    i2 [g] -- b -- f2 [g]
+    a -- [gluon] b
+    ```
+
     ...or exchanges a gluon with it, through the three-gluon vertex.
-
-    ??? example "Source"
-
-        ```text
-        in: i1 i2
-        out: f1 f2
-        i1 [q] -- a -- f1 [q]
-        i2 [g] -- b -- f2 [g]
-        a -- [gluon] b
-        ```
 
 -   **Gluon splitting**
 
@@ -250,14 +228,12 @@ The textbook diagrams: electrons and photons, quarks and gluons, the weak decays
     b -- f3 [bbar]
     ```
 
-    ??? example "Source"
-
-        ```text
-        i1 [q] -- a -- f1 [q]
-        a -- [gluon, label=g] b
-        b -- f2 [b]
-        b -- f3 [bbar]
-        ```
+    ```text
+    i1 [q] -- a -- f1 [q]
+    a -- [gluon, label=g] b
+    b -- f2 [b]
+    b -- f3 [bbar]
+    ```
 
 -   **Quark exchanged between two gluons**
 
@@ -271,17 +247,15 @@ The textbook diagrams: electrons and photons, quarks and gluons, the weak decays
     h -- f4 [bbar]
     ```
 
-    ??? example "Source"
-
-        ```text
-        % gg -> t tbar H: the top quark is exchanged between the two gluons and radiates the Higgs
-        i1 [g] -- a
-        i2 [g] -- b
-        f1 [tbar] -- [fermion] b -- [fermion, label=t] m -- [fermion] a -- [fermion] f2 [t]
-        m -- [H] h
-        h -- f3 [b]
-        h -- f4 [bbar]
-        ```
+    ```text
+    % gg -> t tbar H: the top quark is exchanged between the two gluons and radiates the Higgs
+    i1 [g] -- a
+    i2 [g] -- b
+    f1 [tbar] -- [fermion] b -- [fermion, label=t] m -- [fermion] a -- [fermion] f2 [t]
+    m -- [H] h
+    h -- f3 [b]
+    h -- f4 [bbar]
+    ```
 
 </div>
 
@@ -296,15 +270,13 @@ The textbook diagrams: electrons and photons, quarks and gluons, the weak decays
     mu- > nu_mu W-(> e- nubar)
     ```
 
+    ```text
+    label: nubar = \bar\nu_e
+    mu- > nu_mu W-(> e- nubar)
+    ```
+
     The W is far off shell, so at low energy this is Fermi's four-fermion interaction. `label:`
     draws the antineutrino as ν̄<sub>e</sub>.
-
-    ??? example "Source"
-
-        ```text
-        label: nubar = \bar\nu_e
-        mu- > nu_mu W-(> e- nubar)
-        ```
 
 -   **Beta decay, n → p e⁻ ν̄<sub>e</sub>**
 
@@ -321,23 +293,21 @@ The textbook diagrams: electrons and photons, quarks and gluons, the weak decays
     baryon: p = u2 d3 u3
     ```
 
+    ```text
+    in: u1 d1 d2
+    out: u2 d3 u3 e nu
+    u1 [u] -- u2 [u]
+    d1 [d] -- d3 [d]
+    d2 [d] -- v -- u3 [u]
+    v -- [boson, label=W^-] w
+    w -- e [e-]
+    nu [\bar\nu_e] -- [fermion] w
+    baryon: n = u1 d1 d2
+    baryon: p = u2 d3 u3
+    ```
+
     A d quark of the neutron gives off a W⁻ and becomes a u; the other two quarks are
     spectators. `baryon:` groups each set of three quarks.
-
-    ??? example "Source"
-
-        ```text
-        in: u1 d1 d2
-        out: u2 d3 u3 e nu
-        u1 [u] -- u2 [u]
-        d1 [d] -- d3 [d]
-        d2 [d] -- v -- u3 [u]
-        v -- [boson, label=W^-] w
-        w -- e [e-]
-        nu [\bar\nu_e] -- [fermion] w
-        baryon: n = u1 d1 d2
-        baryon: p = u2 d3 u3
-        ```
 
 </div>
 
@@ -354,14 +324,12 @@ The textbook diagrams: electrons and photons, quarks and gluons, the weak decays
     b -- [photon] f1
     ```
 
-    ??? example "Source"
-
-        ```text
-        i1 -- [photon, momentum=q] a
-        a -- [fermion] b
-        b -- [fermion] a
-        b -- [photon] f1
-        ```
+    ```text
+    i1 -- [photon, momentum=q] a
+    a -- [fermion] b
+    b -- [fermion] a
+    b -- [photon] f1
+    ```
 
 -   **Vacuum polarisation**
 
@@ -372,14 +340,12 @@ The textbook diagrams: electrons and photons, quarks and gluons, the weak decays
     b -- f1 [gamma]
     ```
 
-    ??? example "Source"
-
-        ```text
-        i1 [gamma] -- a
-        a -- [fermion, half left] b
-        b -- [fermion, half left] a
-        b -- f1 [gamma]
-        ```
+    ```text
+    i1 [gamma] -- a
+    a -- [fermion, half left] b
+    b -- [fermion, half left] a
+    b -- f1 [gamma]
+    ```
 
 -   **Vertex correction**
 
@@ -392,16 +358,14 @@ The textbook diagrams: electrons and photons, quarks and gluons, the weak decays
     i2 [gamma] -- c
     ```
 
-    ??? example "Source"
-
-        ```text
-        % a photon vertex with a photon loop around it
-        in: i1 i2
-        out: f1
-        i1 [e-] -- a -- c -- d -- f1 [e-]
-        a -- [photon, half left] d
-        i2 [gamma] -- c
-        ```
+    ```text
+    % a photon vertex with a photon loop around it
+    in: i1 i2
+    out: f1
+    i1 [e-] -- a -- c -- d -- f1 [e-]
+    a -- [photon, half left] d
+    i2 [gamma] -- c
+    ```
 
 -   **Box loop**
 
@@ -413,15 +377,13 @@ The textbook diagrams: electrons and photons, quarks and gluons, the weak decays
     d -- f2 [H]
     ```
 
-    ??? example "Source"
-
-        ```text
-        i1 [g] -- a
-        i2 [g] -- b
-        a -- [fermion] c -- [fermion] d -- [fermion] b -- [fermion] a
-        c -- f1 [H]
-        d -- f2 [H]
-        ```
+    ```text
+    i1 [g] -- a
+    i2 [g] -- b
+    a -- [fermion] c -- [fermion] d -- [fermion] b -- [fermion] a
+    c -- f1 [H]
+    d -- f2 [H]
+    ```
 
 </div>
 
@@ -450,14 +412,12 @@ couple to neutrinos.
     v -- [anti fermion] f2 [\bar f]
     ```
 
-    ??? example "Source"
-
-        ```text
-        v [dot, label=eQ_f]
-        i1 [gamma] -- v
-        v -- [fermion] f1 [f]
-        v -- [anti fermion] f2 [\bar f]
-        ```
+    ```text
+    v [dot, label=eQ_f]
+    i1 [gamma] -- v
+    v -- [fermion] f1 [f]
+    v -- [anti fermion] f2 [\bar f]
+    ```
 
 </div>
 
@@ -478,14 +438,12 @@ structure constants of SU(3).
     v -- f2 [qbar]
     ```
 
-    ??? example "Source"
-
-        ```text
-        v [dot, label=g_s T^a]
-        i1 [g] -- v
-        v -- f1 [q]
-        v -- f2 [qbar]
-        ```
+    ```text
+    v [dot, label=g_s T^a]
+    i1 [g] -- v
+    v -- f1 [q]
+    v -- f2 [qbar]
+    ```
 
 -   **g g g**
 
@@ -496,14 +454,12 @@ structure constants of SU(3).
     v -- f2 [g]
     ```
 
-    ??? example "Source"
-
-        ```text
-        v [dot, label=g_s f^{abc}]
-        i1 [g] -- v
-        v -- f1 [g]
-        v -- f2 [g]
-        ```
+    ```text
+    v [dot, label=g_s f^{abc}]
+    i1 [g] -- v
+    v -- f1 [g]
+    v -- f2 [g]
+    ```
 
 -   **g g g g**
 
@@ -515,15 +471,13 @@ structure constants of SU(3).
     v -- f2 [g]
     ```
 
-    ??? example "Source"
-
-        ```text
-        v [dot, label=g_s^2]
-        i1 [g] -- v
-        i2 [g] -- v
-        v -- f1 [g]
-        v -- f2 [g]
-        ```
+    ```text
+    v [dot, label=g_s^2]
+    i1 [g] -- v
+    i2 [g] -- v
+    v -- f1 [g]
+    v -- f2 [g]
+    ```
 
 -   **ghost: g c c̄**
 
@@ -534,14 +488,12 @@ structure constants of SU(3).
     f2 [\bar c] -- [fermion, dotted] v
     ```
 
-    ??? example "Source"
-
-        ```text
-        v [dot, label=g_s f^{abc}]
-        i1 [g] -- v
-        v -- [fermion, dotted] f1 [c]
-        f2 [\bar c] -- [fermion, dotted] v
-        ```
+    ```text
+    v [dot, label=g_s f^{abc}]
+    i1 [g] -- v
+    v -- [fermion, dotted] f1 [c]
+    f2 [\bar c] -- [fermion, dotted] v
+    ```
 
 </div>
 
@@ -568,14 +520,12 @@ carries an element of the CKM matrix: *V<sub>ud</sub>*, *V<sub>us</sub>*, ...
     v -- f2 [e+]
     ```
 
-    ??? example "Source"
-
-        ```text
-        v [dot, label=g/\sqrt2]
-        i1 [W+] -- v
-        v -- f1 [nu_e]
-        v -- f2 [e+]
-        ```
+    ```text
+    v [dot, label=g/\sqrt2]
+    i1 [W+] -- v
+    v -- f1 [nu_e]
+    v -- f2 [e+]
+    ```
 
 -   **W u d**
 
@@ -586,14 +536,12 @@ carries an element of the CKM matrix: *V<sub>ud</sub>*, *V<sub>us</sub>*, ...
     v -- f2 [dbar]
     ```
 
-    ??? example "Source"
-
-        ```text
-        v [dot, label={V_{ud}\,g/\sqrt2}]
-        i1 [W+] -- v
-        v -- f1 [u]
-        v -- f2 [dbar]
-        ```
+    ```text
+    v [dot, label={V_{ud}\,g/\sqrt2}]
+    i1 [W+] -- v
+    v -- f1 [u]
+    v -- f2 [dbar]
+    ```
 
 </div>
 
@@ -615,14 +563,12 @@ change flavour.
     v -- [anti fermion] f2 [\bar f]
     ```
 
-    ??? example "Source"
-
-        ```text
-        v [dot, label=g/2c_W]
-        i1 [Z] -- v
-        v -- [fermion] f1 [f]
-        v -- [anti fermion] f2 [\bar f]
-        ```
+    ```text
+    v [dot, label=g/2c_W]
+    i1 [Z] -- v
+    v -- [fermion] f1 [f]
+    v -- [anti fermion] f2 [\bar f]
+    ```
 
 </div>
 
@@ -642,14 +588,12 @@ ZZZ vertex. Each also carries the momenta of the three bosons.
     v -- f2 [W-]
     ```
 
-    ??? example "Source"
-
-        ```text
-        v [dot, label=e]
-        i1 [gamma] -- v
-        v -- f1 [W+]
-        v -- f2 [W-]
-        ```
+    ```text
+    v [dot, label=e]
+    i1 [gamma] -- v
+    v -- f1 [W+]
+    v -- f2 [W-]
+    ```
 
 -   **Z W W**
 
@@ -660,14 +604,12 @@ ZZZ vertex. Each also carries the momenta of the three bosons.
     v -- f2 [W-]
     ```
 
-    ??? example "Source"
-
-        ```text
-        v [dot, label=g c_W]
-        i1 [Z] -- v
-        v -- f1 [W+]
-        v -- f2 [W-]
-        ```
+    ```text
+    v [dot, label=g c_W]
+    i1 [Z] -- v
+    v -- f1 [W+]
+    v -- f2 [W-]
+    ```
 
 </div>
 
@@ -688,15 +630,13 @@ Every electroweak quartic vertex has a W<sup>+</sup>W<sup>−</sup> pair too, an
     v -- f2 [W-]
     ```
 
-    ??? example "Source"
-
-        ```text
-        v [dot, label=g^2]
-        i1 [W+] -- v
-        i2 [W-] -- v
-        v -- f1 [W+]
-        v -- f2 [W-]
-        ```
+    ```text
+    v [dot, label=g^2]
+    i1 [W+] -- v
+    i2 [W-] -- v
+    v -- f1 [W+]
+    v -- f2 [W-]
+    ```
 
 -   **W W Z Z**
 
@@ -708,15 +648,13 @@ Every electroweak quartic vertex has a W<sup>+</sup>W<sup>−</sup> pair too, an
     v -- f2 [Z]
     ```
 
-    ??? example "Source"
-
-        ```text
-        v [dot, label=g^2c_W^2]
-        i1 [W+] -- v
-        i2 [W-] -- v
-        v -- f1 [Z]
-        v -- f2 [Z]
-        ```
+    ```text
+    v [dot, label=g^2c_W^2]
+    i1 [W+] -- v
+    i2 [W-] -- v
+    v -- f1 [Z]
+    v -- f2 [Z]
+    ```
 
 -   **W W γ γ**
 
@@ -728,15 +666,13 @@ Every electroweak quartic vertex has a W<sup>+</sup>W<sup>−</sup> pair too, an
     v -- f2 [gamma]
     ```
 
-    ??? example "Source"
-
-        ```text
-        v [dot, label=e^2]
-        i1 [W+] -- v
-        i2 [W-] -- v
-        v -- f1 [gamma]
-        v -- f2 [gamma]
-        ```
+    ```text
+    v [dot, label=e^2]
+    i1 [W+] -- v
+    i2 [W-] -- v
+    v -- f1 [gamma]
+    v -- f2 [gamma]
+    ```
 
 -   **W W Z γ**
 
@@ -748,15 +684,13 @@ Every electroweak quartic vertex has a W<sup>+</sup>W<sup>−</sup> pair too, an
     v -- f2 [gamma]
     ```
 
-    ??? example "Source"
-
-        ```text
-        v [dot, label=egc_W, label side=left]
-        i1 [W+] -- v
-        i2 [W-] -- v
-        v -- f1 [Z]
-        v -- f2 [gamma]
-        ```
+    ```text
+    v [dot, label=egc_W, label side=left]
+    i1 [W+] -- v
+    i2 [W-] -- v
+    v -- f1 [Z]
+    v -- f2 [gamma]
+    ```
 
 </div>
 
@@ -777,14 +711,12 @@ couple to photons or gluons at tree level: H → γγ and gg → H go through lo
     v -- f2 [W-]
     ```
 
-    ??? example "Source"
-
-        ```text
-        v [dot, label=2m_W^2/v]
-        i1 [H] -- v
-        v -- f1 [W+]
-        v -- f2 [W-]
-        ```
+    ```text
+    v [dot, label=2m_W^2/v]
+    i1 [H] -- v
+    v -- f1 [W+]
+    v -- f2 [W-]
+    ```
 
 -   **H Z Z**
 
@@ -795,14 +727,12 @@ couple to photons or gluons at tree level: H → γγ and gg → H go through lo
     v -- f2 [Z]
     ```
 
-    ??? example "Source"
-
-        ```text
-        v [dot, label=2m_Z^2/v]
-        i1 [H] -- v
-        v -- f1 [Z]
-        v -- f2 [Z]
-        ```
+    ```text
+    v [dot, label=2m_Z^2/v]
+    i1 [H] -- v
+    v -- f1 [Z]
+    v -- f2 [Z]
+    ```
 
 -   **H H W W**
 
@@ -814,15 +744,13 @@ couple to photons or gluons at tree level: H → γγ and gg → H go through lo
     v -- f2 [W-]
     ```
 
-    ??? example "Source"
-
-        ```text
-        v [dot, label=2m_W^2/v^2]
-        i1 [H] -- v
-        i2 [H] -- v
-        v -- f1 [W+]
-        v -- f2 [W-]
-        ```
+    ```text
+    v [dot, label=2m_W^2/v^2]
+    i1 [H] -- v
+    i2 [H] -- v
+    v -- f1 [W+]
+    v -- f2 [W-]
+    ```
 
 -   **H H Z Z**
 
@@ -834,15 +762,13 @@ couple to photons or gluons at tree level: H → γγ and gg → H go through lo
     v -- f2 [Z]
     ```
 
-    ??? example "Source"
-
-        ```text
-        v [dot, label=2m_Z^2/v^2]
-        i1 [H] -- v
-        i2 [H] -- v
-        v -- f1 [Z]
-        v -- f2 [Z]
-        ```
+    ```text
+    v [dot, label=2m_Z^2/v^2]
+    i1 [H] -- v
+    i2 [H] -- v
+    v -- f1 [Z]
+    v -- f2 [Z]
+    ```
 
 </div>
 
@@ -863,14 +789,12 @@ From the potential *V* = λ(Φ<sup>†</sup>Φ − *v*<sup>2</sup>/2)<sup>2</sup
     v -- f2 [H]
     ```
 
-    ??? example "Source"
-
-        ```text
-        v [dot, label=6\lambda v]
-        i1 [H] -- v
-        v -- f1 [H]
-        v -- f2 [H]
-        ```
+    ```text
+    v [dot, label=6\lambda v]
+    i1 [H] -- v
+    v -- f1 [H]
+    v -- f2 [H]
+    ```
 
 -   **H H H H**
 
@@ -882,15 +806,13 @@ From the potential *V* = λ(Φ<sup>†</sup>Φ − *v*<sup>2</sup>/2)<sup>2</sup
     v -- f2 [H]
     ```
 
-    ??? example "Source"
-
-        ```text
-        v [dot, label=6\lambda]
-        i1 [H] -- v
-        i2 [H] -- v
-        v -- f1 [H]
-        v -- f2 [H]
-        ```
+    ```text
+    v [dot, label=6\lambda]
+    i1 [H] -- v
+    i2 [H] -- v
+    v -- f1 [H]
+    v -- f2 [H]
+    ```
 
 </div>
 
@@ -910,13 +832,11 @@ strongly to the top quark. Neutrinos are massless in the Standard Model and do n
     v -- [anti fermion] f2 [\bar f]
     ```
 
-    ??? example "Source"
-
-        ```text
-        v [dot, label=y_f/\sqrt2]
-        i1 [H] -- v
-        v -- [fermion] f1 [f]
-        v -- [anti fermion] f2 [\bar f]
-        ```
+    ```text
+    v [dot, label=y_f/\sqrt2]
+    i1 [H] -- v
+    v -- [fermion] f1 [f]
+    v -- [anti fermion] f2 [\bar f]
+    ```
 
 </div>
