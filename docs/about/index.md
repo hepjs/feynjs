@@ -1,7 +1,5 @@
 # About
 
-<p class="feynjs-belief">Growing the field means learning how to share and work together at greater scales.</p>
-
 feynjs exists so that a Feynman diagram is as easy to write and share as a sentence, wherever
 physicists write: in a web page, a notebook, a note or a paper.
 
