@@ -1,69 +1,19 @@
 # Contributing
 
-A diagram from a paper, written as source and drawn by feynjs. A report of one that draws badly
-needs the same two things, and the figure from the paper.
+feynjs welcomes help from physicists and programmers alike. You don't need to know the code to
+make a difference.
 
-```feynman
-% ATLAS-CONF-2011-076 Fig. 1, written with defaults only
-q1 [q] -- a -- [squark] c
-q2 [qbar] -- b -- [squark] d
-a -- [gluino] b
-c -- qt [q]
-c -- [plain, label=\tilde{N}_1] e
-e -- fd1 [f_d]
-e -- [photon, label=\gamma_d] g
-g -- l1 [l+]
-g -- l2 [l-]
-d -- [plain, label=\tilde{N}_1] f
-f -- [photon, label=\gamma_d] h
-h -- l3 [l+]
-h -- l4 [l-]
-f -- fd2 [f_d]
-d -- qb [q]
-```
-
-```text
-% ATLAS-CONF-2011-076 Fig. 1, written with defaults only
-q1 [q] -- a -- [squark] c
-q2 [qbar] -- b -- [squark] d
-a -- [gluino] b
-c -- qt [q]
-c -- [plain, label=\tilde{N}_1] e
-e -- fd1 [f_d]
-e -- [photon, label=\gamma_d] g
-g -- l1 [l+]
-g -- l2 [l-]
-d -- [plain, label=\tilde{N}_1] f
-f -- [photon, label=\gamma_d] h
-h -- l3 [l+]
-h -- l4 [l-]
-f -- fd2 [f_d]
-d -- qb [q]
-```
-
-feynjs is MIT-licensed and welcomes help from physicists and programmers alike. You don't need to
-know the layout code to make a difference: a diagram that draws badly, with a picture of how
-papers draw it, is one of the most useful things you can send.
-
-## Ways to help
-
-**Report a diagram that draws badly.**
-:   Include the source, a screenshot, and a figure from a paper showing how it should look. Every
-    such report becomes a regression case.
-
-**Add particles.**
-:   A model's particles are one line each in the registry. See [Extending feynjs](internals.md#add-a-particle).
-
-**Improve the layout.**
-:   Pick a diagram from the corpus follow-up list and make it match the reference. See
-    [Architecture](internals.md#architecture) and [Testing](#testing).
-
-**Improve these docs.**
-:   Every page is markdown in `docs/`; diagrams are ```` ```feynman ```` blocks. See [The docs site](#the-docs-site).
-
-**Grow the corpus.**
-:   Reproduce a published diagram in TikZ-Feynman with hand-placed vertices. It becomes part of the
-    reference the defaults are fitted to. See [Testing](#the-validation-set-and-the-approved-layouts).
+- **A diagram draws badly?** [Open an issue](https://github.com/hepjs/feynjs/issues/new) with
+  its source, a screenshot, and the figure from a paper showing how it should look. Every report
+  becomes a test that keeps it right.
+- **A particle is missing?** Open an issue naming it and its model, or add it yourself: one line
+  in the registry ([how](https://github.com/hepjs/feynjs/blob/main/INTERNALS.md#add-a-particle)).
+- **Something in these docs is wrong or unclear?** Open an issue, or edit the page's Markdown in
+  [`docs/`](https://github.com/hepjs/feynjs/tree/main/docs) and send a pull request; the button at
+  the top of each page shows its source.
+- **A question, or an idea?** [Start a discussion in the issues](https://github.com/hepjs/feynjs/issues).
+- **Want to change the code?** Set it up in three commands ([Development setup](#development-setup)),
+  then see [Where to start](#where-to-start).
 
 ## How a change goes in
 
@@ -112,18 +62,6 @@ npm run build
 node bin/feynjs.mjs render examples/s-channel.feyn > s-channel.svg
 ```
 
-```feynman
-i1 [e-] -- a -- i2 [e+]
-a -- [gamma] b
-f1 [mu-] -- b -- f2 [mu+]
-```
-
-```text
-i1 [e-] -- a -- i2 [e+]
-a -- [gamma] b
-f1 [mu-] -- b -- f2 [mu+]
-```
-
 You need Node (24 is used in development) and npm. The docs site also needs
 [Zensical](https://zensical.org) (`pip install zensical`). The corpus tools need Python 3 and a
 TeX installation with TikZ-Feynman.
@@ -143,7 +81,7 @@ TeX installation with TikZ-Feynman.
 
 | Path | What is there |
 |---|---|
-| `src/` | the library ([Architecture](internals.md#architecture)) |
+| `src/` | the library ([Architecture](https://github.com/hepjs/feynjs/blob/main/INTERNALS.md#architecture)) |
 | `test/` | unit tests |
 | `examples/` | example diagrams, `.feyn` files: the preview sheet |
 | `validation/` | diagrams from ATLAS papers transcribed as feynjs source, and the approved layouts |
@@ -156,38 +94,8 @@ TikZ-Feynman is GPL-licensed. Its numbers and conventions are a reference; don't
 
 ## Testing
 
-One of the layouts the test holds in place: the gluon-fusion triangle to HH from HDBS-2018-40
-(Fig. 1a), as `validation/atlas/HDBS-2018-40/fig_01a.feyn`.
-
-```feynman
-% HDBS-2018-40 fig_01a: ggF HH triangle diagram with the trilinear coupling lambda_HHH marked
-layout: v2
-in: i1 i2
-out: f1 f2
-i1 [g] -- t1
-i2 [g] -- t2
-t2 -- [fermion] t1 -- [fermion] t3 -- [fermion] t2
-k [dot, color=#ee325a, label=\lambda_{HHH}]
-t3 -- [H, label'=H] k
-k -- f1 [H]
-k -- f2 [H]
-```
-
-```text
-% HDBS-2018-40 fig_01a: ggF HH triangle diagram with the trilinear coupling lambda_HHH marked
-layout: v2
-in: i1 i2
-out: f1 f2
-i1 [g] -- t1
-i2 [g] -- t2
-t2 -- [fermion] t1 -- [fermion] t3 -- [fermion] t2
-k [dot, color=#ee325a, label=\lambda_{HHH}]
-t3 -- [H, label'=H] k
-k -- f1 [H]
-k -- f2 [H]
-```
-
-If a change moves any of its points by more than a twentieth of a line length, `npm test` fails
+Every approved layout is held in place: `validation/layout-baseline.json` records where each
+diagram of the corpus (`validation/atlas/`) puts its points. If a change moves any point by more than a twentieth of a line length, `npm test` fails
 and names it.
 
 ```bash
@@ -235,17 +143,7 @@ b -- f2 [gamma]
 ```
 ````
 
-and this is what the page shows:
-
-```feynman
-in: i1 i2
-out: f1 f2
-i1 [e-] -- a
-i2 [gamma] -- a
-a -- [fermion] b
-b -- f1 [e-]
-b -- f2 [gamma]
-```
+and the page draws the diagram in its place.
 
 This site is built with [Zensical](https://zensical.org) from the markdown in `docs/`, configured
 in `zensical.toml`.

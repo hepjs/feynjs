@@ -59,18 +59,17 @@ nav = [
     { "Styling" = "setup/index.md" },
     { "Exporting" = "setup/export.md" },
     { "Theme settings" = "setup/theme.md" },
-  ] },
-  { "Compatibility" = [
-    { "TikZ-Feynman" = "compatibility/tikz-feynman.md" },
-    { "MadGraph" = "compatibility/madgraph.md" },
-    { "MadGraph gallery" = "compatibility/madgraph-gallery.md" },
+    { "Coming from other tools" = [
+      { "TikZ-Feynman" = "setup/tikz-feynman.md" },
+      { "MadGraph" = "setup/madgraph.md" },
+      { "MadGraph gallery" = "setup/madgraph-gallery.md" },
+    ] },
   ] },
   { "Playground" = "playground.md" },
   { "About" = [
     { "Why feynjs" = "about/index.md" },
     { "Licence" = "about/licence.md" },
     { "Contributing" = "about/contributing.md" },
-    { "Internals" = "about/internals.md" },
   ] },
 ]
 

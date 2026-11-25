@@ -54,7 +54,7 @@ e- e+ > gamma > mu- mu+
 
 Particle names are feynjs's own, listed in [Particles](particles.md). MadGraph's
 names work too, the Standard Model's (`t~`, `w+`, `ve`, `ta+`) and the MSSM's (`go`, `n1`, `x1+`,
-`ul`, `t1`, `ta1-`; see [MadGraph](../compatibility/madgraph.md#particle-names)), and hadrons go by
+`ul`, `t1`, `ta1-`; see [MadGraph](../setup/madgraph.md#particle-names)), and hadrons go by
 their English names (`kaon+`, `K*0`, `Lambda_b`, `jpsi`, or `X(ucd)` with its quarks). A name feynjs
 doesn't know is drawn as a plain line carrying that name as its label, and
 [`check`](../get-started/api.md#check) warns of it.
@@ -120,7 +120,7 @@ psi(2S) > J/psi pi+ pi-
 
 ## How it differs from MadGraph
 
-What feynjs takes from MadGraph, and what it doesn't, is on [MadGraph](../compatibility/madgraph.md).
+What feynjs takes from MadGraph, and what it doesn't, is on [MadGraph](../setup/madgraph.md).
 
 ## Through a loop
 

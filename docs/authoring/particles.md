@@ -407,7 +407,7 @@ them for a particular one: `neutralino1` to `neutralino4`, `chargino1`, `chargin
 ### MadGraph's MSSM names
 
 MadGraph's MSSM names, as its models name them after renaming, draw as the names above do, with
-the labels the [MadGraph plugin](../compatibility/madgraph.md) gives them. They are matched only as
+the labels the [MadGraph plugin](../setup/madgraph.md) gives them. They are matched only as
 written: `dl` is the left down squark, and `DL` the [displaced lepton](objects.md).
 
 ```feynman

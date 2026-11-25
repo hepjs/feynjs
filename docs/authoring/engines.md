@@ -338,7 +338,7 @@ A pin holds in the default layout too, so one or two pins are also the heaviest 
 
 `layout: v1` places vertices in columns by time, then settles their heights with a list of
 named rules: forks open at set angles, cascades arc, loops sit over their lines. It is fast and
-predictable, and kept as it was. Every rule is listed in [Layout rules](../about/internals.md#layout-rules).
+predictable, and kept as it was. Every rule is listed in [Layout rules](https://github.com/hepjs/feynjs/blob/main/INTERNALS.md#layout-rules).
 
 ```feynman
 --- layout: default

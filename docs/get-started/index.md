@@ -129,7 +129,7 @@ Every option draws the same diagrams from the same text.
     mg5_aMC --mode=feynjs
     ```
 
-    [Set up MadGraph](../compatibility/madgraph.md#the-plugin){ .md-button }
+    [Set up MadGraph](../setup/madgraph.md#the-plugin){ .md-button }
 
 -   **Just try it**
 
