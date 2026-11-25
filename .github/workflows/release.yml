@@ -7,11 +7,15 @@ name: Release
 on:
   push:
     tags: ["v*"]
+  # (by hand, from the Actions tab: publishes the Python package of the version on main, if PyPI
+  # lacks it; npm and the GitHub release are left alone)
+  workflow_dispatch:
 permissions:
   contents: write
   id-token: write
 jobs:
   release:
+    if: github.event_name == 'push'
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v7

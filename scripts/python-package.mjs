@@ -1,9 +1,11 @@
 // The Python package (python/): copies the built script into it and gives it the npm package's
 // version. Run after `npm run build`, before building the package: node scripts/python-package.mjs
-import { copyFileSync, readFileSync, writeFileSync } from "node:fs";
+import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 
 const here = (path) => new URL(`../${path}`, import.meta.url).pathname;
 const { version } = JSON.parse(readFileSync(here("package.json"), "utf8"));
+// (the folder holds only the copied script, which git ignores, so a fresh checkout lacks it)
+mkdirSync(here("python/src/feynjs/static"), { recursive: true });
 copyFileSync(here("dist/feynjs.min.js"), here("python/src/feynjs/static/feynjs.min.js"));
 const init = here("python/src/feynjs/__init__.py");
 writeFileSync(init, readFileSync(init, "utf8").replace(/^__version__ = ".*"$/m, `__version__ = "${version}"`));
