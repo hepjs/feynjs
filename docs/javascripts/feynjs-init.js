@@ -244,11 +244,46 @@
     if (v) return Array.prototype.slice.call(svg.querySelectorAll('[data-vertex="' + v[1] + '"]')).concat(edgesAt(v[1]));
     return null;  // (a process line or a switch: it shapes the whole diagram)
   };
+  // name tags for a worked diagram's points (.feynjs-explain data-points="a b"): a small arrow
+  // up to each point from below, its name under the arrow, so a reader can see which point is
+  // which. Drawn over the diagram, not part of its source.
+  var teach = function (svg, names) {
+    var meta = svg.querySelector("metadata.feynjs-model");
+    if (!meta) return;
+    var model = JSON.parse(meta.textContent), vb = svg.viewBox.baseVal;
+    var g = document.createElementNS(NS, "g");
+    g.setAttribute("class", "feynjs-teach");
+    g.setAttribute("aria-hidden", "true");
+    var bottom = vb.y + vb.height;
+    names.forEach(function (id) {
+      var v = model.vertices.filter(function (w) { return w.id === id; })[0];
+      if (!v) return;
+      var tip = v.y + 5, tail = v.y + 19, text = v.y + 28;
+      var path = document.createElementNS(NS, "path");
+      path.setAttribute("d", "M" + v.x + " " + tail + "L" + v.x + " " + tip + "M" + (v.x - 2.6) + " " + (tip + 4) + "L" + v.x + " " + tip + "L" + (v.x + 2.6) + " " + (tip + 4));
+      g.appendChild(path);
+      var t = document.createElementNS(NS, "text");
+      t.setAttribute("x", v.x); t.setAttribute("y", text);
+      t.setAttribute("text-anchor", "middle");
+      t.setAttribute("data-teach", id);
+      t.textContent = id;
+      g.appendChild(t);
+      bottom = Math.max(bottom, text + 3);
+    });
+    if (bottom > vb.y + vb.height) {
+      var scale = parseFloat(svg.getAttribute("height")) / vb.height, h = bottom - vb.y;
+      svg.setAttribute("viewBox", [vb.x, vb.y, vb.width, h].join(" "));
+      svg.setAttribute("height", h * scale);
+    }
+    svg.appendChild(g);
+  };
   var explain = function () {
     document.querySelectorAll(".feynjs-explain:not([data-explained])").forEach(function (box) {
       var svg = box.querySelector("svg.feynjs"), code = box.querySelector("pre code");
       if (!svg || !code) return;
       box.setAttribute("data-explained", "");
+      var names = (box.getAttribute("data-points") || "").split(/\s+/).filter(Boolean);
+      if (names.length) teach(svg, names);
       var lit = [], steps = [];
       var clear = function () {
         lit.forEach(function (el) { el.classList.remove("feynjs-lit"); });

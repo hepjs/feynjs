@@ -7,9 +7,10 @@ Point at a line of source to see what it draws.
 
 ## 1. Points and lines
 
-Name the points and join them; feynjs places every point itself.
+Name the points and join them; feynjs places every point itself. The red arrows mark the
+points `a` and `b`.
 
-<div class="feynjs-explain" markdown>
+<div class="feynjs-explain" data-points="a b" markdown>
 
 ```feynman
 in: i1 i2
@@ -36,7 +37,7 @@ diagram.
 
 A particle's name sets the line's style, its arrow and its label in one word.
 
-<div class="feynjs-explain" markdown>
+<div class="feynjs-explain" data-points="a b" markdown>
 
 ```feynman
 i1 [e-] -- a -- i2 [e+]
@@ -77,7 +78,7 @@ e- e+ > gamma > mu- mu+      % what comes in > what is exchanged > what goes out
 A point can carry a vertex dot and its coupling, or be a blob, a proton beam, a nucleus, or a
 hadron's quarks.
 
-<div class="feynjs-explain" markdown>
+<div class="feynjs-explain" data-points="a b" markdown>
 
 ```feynman
 i1 [e-] -- a -- i2 [e+]

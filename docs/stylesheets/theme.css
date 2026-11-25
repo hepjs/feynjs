@@ -510,3 +510,5 @@
 @media (prefers-reduced-motion: reduce) {
   .md-typeset .feynjs-explain svg.feynjs .feynjs-lit, .md-typeset .feynjs-explain svg.feynjs.feynjs-lit-all { animation: none; filter: drop-shadow(0 0 0.15rem var(--md-accent-fg-color)); }
 }
+.md-typeset .feynjs-explain svg.feynjs .feynjs-teach path { fill: none; stroke: var(--md-accent-fg-color); stroke-width: 1; stroke-linecap: round; stroke-linejoin: round; }
+.md-typeset .feynjs-explain svg.feynjs .feynjs-teach text { fill: var(--md-accent-fg-color); font-family: var(--md-code-font-family); font-size: 8px; }
