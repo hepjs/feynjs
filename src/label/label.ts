@@ -181,7 +181,11 @@ function lay(n: Node, x: number, y: number, size: number, ctx: Ctx): number {
       // (scripts stand a little clear of an italic letter, whose glyph leans past its advance)
       // (and further from an italic capital whose top leans out over it: W, V, Y, T, U, X)
       const overhang = n.base.t === "char" && n.base.italic && /[WVYTUX]/.test(n.base.c) ? size * 0.08 : 0;
-      if (n.sup) sw = Math.max(sw, lay(n.sup, x + w + size * 0.16 + overhang, y - (tall ? 0.46 : 0.41) * size, s, ctx) + size * 0.12 + overhang);
+      // (an italic W is wider than its width here, 0.78 em: 0.91 in the Computer Modern faces,
+      // its top right reaching 1.01, so its superscript is set a further 0.08 em clear. The box
+      // keeps its width, as the layout measured it: only the superscript moves)
+      const wide = n.base.t === "char" && n.base.italic && n.base.c === "W" ? size * 0.08 : 0;
+      if (n.sup) sw = Math.max(sw, lay(n.sup, x + w + size * 0.16 + overhang + wide, y - (tall ? 0.46 : 0.41) * size, s, ctx) + size * 0.12 + overhang);
       if (n.sub) sw = Math.max(sw, lay(n.sub, x + w + size * 0.1, y + 0.25 * size, s, ctx) + size * 0.06);
       return w + sw + size * 0.04;
     }
