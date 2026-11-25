@@ -7,10 +7,10 @@ Point at a line of source to see what it draws.
 
 ## 1. Points and lines
 
-Name the points and join them; feynjs places every point itself. The red arrows mark the
-points `a` and `b`.
+Name the points and join them; feynjs places every point itself. Point at a line of source and
+the points it names are marked.
 
-<div class="feynjs-explain" data-points="a b" markdown>
+<div class="feynjs-explain" data-points="i1 i2 a b f1 f2" markdown>
 
 ```feynman
 in: i1 i2
@@ -37,7 +37,7 @@ diagram.
 
 A particle's name sets the line's style, its arrow and its label in one word.
 
-<div class="feynjs-explain" data-points="a b" markdown>
+<div class="feynjs-explain" data-points="i1 i2 a b f1 f2" markdown>
 
 ```feynman
 i1 [e-] -- a -- i2 [e+]
@@ -78,7 +78,7 @@ e- e+ > gamma > mu- mu+      % what comes in > what is exchanged > what goes out
 A point can carry a vertex dot and its coupling, or be a blob, a proton beam, a nucleus, or a
 hadron's quarks.
 
-<div class="feynjs-explain" data-points="a b" markdown>
+<div class="feynjs-explain" data-points="i1 i2 a b f1 f2" markdown>
 
 ```feynman
 i1 [e-] -- a -- i2 [e+]
@@ -122,32 +122,120 @@ u ubar > g > t tbar          % a quark pair makes a gluon, which makes a top pai
 
 See [Colour flow](colour-flow.md) and [Detector objects](objects.md).
 
-## 5. Where everything goes
+## 5. How it's all laid out
 
-An engine places the points. The default balances forces that encode how physicists draw; a
-grid engine snaps lines to set angles; points given `at (x, y)` stay where they are put.
+An engine places the points; the source stays the same. Pick one with a single switch.
+
+=== "Default"
+
+    <div class="feynjs-explain" markdown>
+
+    ```feynman
+    p p > t t~, (t > b w+, w+ > e+ ve), (t~ > b~ w-, w- > j j)
+    ```
+
+    ```text
+    p p > t t~, (t > b w+, w+ > e+ ve), (t~ > b~ w-, w- > j j)    % a top pair, each top decayed
+    ```
+
+    </div>
+
+    The default balances forces that encode how physicists draw: decays fan out from their
+    parent, the stages of a cascade grow shorter, nothing crosses.
+
+=== "Grid"
+
+    <div class="feynjs-explain" markdown>
+
+    ```feynman
+    layout: grid
+    p p > t t~, (t > b w+, w+ > e+ ve), (t~ > b~ w-, w- > j j)
+    ```
+
+    ```text
+    layout: grid                                                  % every line at a set angle, every point on a grid
+    p p > t t~, (t > b w+, w+ > e+ ve), (t~ > b~ w-, w- > j j)
+    ```
+
+    </div>
+
+    The grid snaps every line to a multiple of 45 degrees, as a diagram drawn on squared paper.
+
+=== "Final plane"
+
+    <div class="feynjs-explain" markdown>
+
+    ```feynman
+    final plane: on
+    p p > t t~, (t > b w+, w+ > e+ ve), (t~ > b~ w-, w- > j j)
+    ```
+
+    ```text
+    final plane: on                                               % everything that leaves, in one column
+    p p > t t~, (t > b w+, w+ > e+ ve), (t~ > b~ w-, w- > j j)
+    ```
+
+    </div>
+
+    The final plane lines up every outgoing particle on the right, as the final state an
+    experiment sees.
+
+Points given `at (x, y)` stay where they are put, and the rest settle round them.
+[Engines](engines.md) covers each engine and its settings.
+
+## 6. Drawing the eye
+
+Three marks point a reader at what matters: a pulse on a point or a line, a band for a particle
+that lives a while, and a brace grouping lines.
 
 <div class="feynjs-explain" markdown>
 
 ```feynman
-layout: grid
-i1 [e-] -- a -- i2 [e+]
-a -- [gamma] b
-f1 [mu-] -- b -- f2 [mu+]
+i1 [q] -- a -- i2 [qbar']
+a [dot, pulse] -- [W+] b
+b -- [chargino, lifetime={c\tau}] c
+b -- f1 [neutralino2]
+c -- f2 [neutralino1]
+c -- f3 [pi+]
 ```
 
 ```text
-layout: grid                 % every line at a multiple of 45 degrees, every point on a grid
-i1 [e-] -- a -- i2 [e+]
-a -- [gamma] b
-f1 [mu-] -- b -- f2 [mu+]
+i1 [q] -- a -- i2 [qbar']
+a [dot, pulse] -- [W+] b                  % pulse: the point beats and the lines meeting there glow
+b -- [chargino, lifetime={c\tau}] c       % lifetime: a band filling in toward the decay, braced with cτ
+b -- f1 [neutralino2]
+c -- f2 [neutralino1]
+c -- f3 [pi+]
 ```
 
 </div>
 
-See [Engines](engines.md).
+<div class="feynjs-explain" markdown>
 
-## 6. How it is pictured
+```feynman
+in: u d
+out: mu nu
+u [u] -- [fermion] a -- [fermion] d [\bar{d}]
+a -- [W+] b
+mu [mu+] -- [fermion] b -- [fermion] nu [nu_mu]
+hadron: \pi^+ = u d [brace]
+```
+
+```text
+in: u d
+out: mu nu
+u [u] -- [fermion] a -- [fermion] d [\bar{d}]    % a u and a d-bar...
+a -- [W+] b
+mu [mu+] -- [fermion] b -- [fermion] nu [nu_mu]
+hadron: \pi^+ = u d [brace]                      % ...braced together as the pion they make
+```
+
+</div>
+
+Pulses and lifetimes are covered in [Styling](../setup/styling.md), hadrons in [Vertices,
+loops and hadrons](vertices.md).
+
+## 7. How it is pictured
 
 The same diagram can be drawn as something else: the kinematics in the lab, a lattice, or for a
 nuclear process, the textbook picture of the reaction.

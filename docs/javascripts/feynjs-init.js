@@ -244,38 +244,66 @@
     if (v) return Array.prototype.slice.call(svg.querySelectorAll('[data-vertex="' + v[1] + '"]')).concat(edgesAt(v[1]));
     return null;  // (a process line or a switch: it shapes the whole diagram)
   };
-  // name tags for a worked diagram's points (.feynjs-explain data-points="a b"): a small arrow
-  // up to each point from below, its name under the arrow, so a reader can see which point is
-  // which. Drawn over the diagram, not part of its source.
+  // name tags for a worked diagram's points (.feynjs-explain data-points="i1 i2 a b f1 f2"): each
+  // point's name with a curved arrow to it, shown while a line of source that names the point is
+  // lit; a point inside the diagram also gets a vertex dot, always shown. Drawn over the
+  // diagram, not part of its source.
+  var idsOf = function (src) {
+    var s = src.replace(/\[[^\]]*\]/g, " ").trim();
+    var m = /^(in|out)\s*:\s*(.*)$/.exec(s);
+    if (m) return m[2].split(/\s+/).filter(Boolean);
+    if (s.indexOf("--") >= 0) return s.split("--").map(function (t) { return t.trim().split(/\s+/)[0]; });
+    var v = /^([A-Za-z_][\w']*)$/.exec(s);
+    return v ? [v[1]] : [];
+  };
   var teach = function (svg, names) {
     var meta = svg.querySelector("metadata.feynjs-model");
     if (!meta) return;
     var model = JSON.parse(meta.textContent), vb = svg.viewBox.baseVal;
-    var g = document.createElementNS(NS, "g");
-    g.setAttribute("class", "feynjs-teach");
-    g.setAttribute("aria-hidden", "true");
-    var bottom = vb.y + vb.height;
+    var all = model.vertices, cx = 0, cy = 0;
+    all.forEach(function (w) { cx += w.x / all.length; cy += w.y / all.length; });
+    var make = function (tag, attrs) {
+      var el = document.createElementNS(NS, tag);
+      for (var k in attrs) el.setAttribute(k, attrs[k]);
+      return el;
+    };
+    var layer = make("g", { "class": "feynjs-teach", "aria-hidden": "true" });
+    var x0 = vb.x, y0 = vb.y, x1 = vb.x + vb.width, y1 = vb.y + vb.height;
+    var f = function (n) { return Math.round(n * 100) / 100; };
     names.forEach(function (id) {
-      var v = model.vertices.filter(function (w) { return w.id === id; })[0];
+      var v = all.filter(function (w) { return w.id === id; })[0];
       if (!v) return;
-      var tip = v.y + 5, tail = v.y + 19, text = v.y + 28;
-      var path = document.createElementNS(NS, "path");
-      path.setAttribute("d", "M" + v.x + " " + tail + "L" + v.x + " " + tip + "M" + (v.x - 2.6) + " " + (tip + 4) + "L" + v.x + " " + tip + "L" + (v.x + 2.6) + " " + (tip + 4));
-      g.appendChild(path);
-      var t = document.createElementNS(NS, "text");
-      t.setAttribute("x", v.x); t.setAttribute("y", text);
-      t.setAttribute("text-anchor", "middle");
-      t.setAttribute("data-teach", id);
+      var outer = v.role === "in" || v.role === "out";
+      var dx = outer ? v.x - cx : 0, dy = outer ? v.y - cy : 1, n = Math.sqrt(dx * dx + dy * dy) || 1;
+      dx /= n; dy /= n;
+      var px = -dy, py = dx;
+      if (!outer) layer.appendChild(make("circle", { "class": "feynjs-teach-dot", cx: v.x, cy: v.y, r: 2.2 }));
+      var sx = v.x + dx * 19, sy = v.y + dy * 19, tx = v.x + dx * 4.5, ty = v.y + dy * 4.5;
+      var qx = (sx + tx) / 2 + px * 6, qy = (sy + ty) / 2 + py * 6;
+      var ux = tx - qx, uy = ty - qy, un = Math.sqrt(ux * ux + uy * uy) || 1;
+      ux /= un; uy /= un;
+      var head = function (turn) {
+        var c = Math.cos(turn), s2 = Math.sin(turn);
+        return [tx - 4 * (ux * c - uy * s2), ty - 4 * (ux * s2 + uy * c)];
+      };
+      var h1 = head(0.5), h2 = head(-0.5);
+      var g = make("g", { "class": "feynjs-teach-tag", "data-teach": id });
+      g.appendChild(make("path", { d: "M" + f(sx) + " " + f(sy) + "Q" + f(qx) + " " + f(qy) + " " + f(tx) + " " + f(ty) + "M" + f(h1[0]) + " " + f(h1[1]) + "L" + f(tx) + " " + f(ty) + "L" + f(h2[0]) + " " + f(h2[1]) }));
+      var lx = v.x + dx * 26, ly = v.y + dy * 26 + 3;
+      var t = make("text", { x: f(lx), y: f(ly), "text-anchor": "middle" });
       t.textContent = id;
       g.appendChild(t);
-      bottom = Math.max(bottom, text + 3);
+      layer.appendChild(g);
+      var w = id.length * 3 + 3;
+      x0 = Math.min(x0, lx - w); x1 = Math.max(x1, lx + w); y0 = Math.min(y0, ly - 9); y1 = Math.max(y1, ly + 3);
     });
-    if (bottom > vb.y + vb.height) {
-      var scale = parseFloat(svg.getAttribute("height")) / vb.height, h = bottom - vb.y;
-      svg.setAttribute("viewBox", [vb.x, vb.y, vb.width, h].join(" "));
-      svg.setAttribute("height", h * scale);
+    var scale = parseFloat(svg.getAttribute("height")) / vb.height;
+    if (x0 < vb.x || y0 < vb.y || x1 > vb.x + vb.width || y1 > vb.y + vb.height) {
+      svg.setAttribute("viewBox", [x0, y0, x1 - x0, y1 - y0].map(f).join(" "));
+      svg.setAttribute("width", f((x1 - x0) * scale));
+      svg.setAttribute("height", f((y1 - y0) * scale));
     }
-    svg.appendChild(g);
+    svg.appendChild(layer);
   };
   var explain = function () {
     document.querySelectorAll(".feynjs-explain:not([data-explained])").forEach(function (box) {
@@ -314,9 +342,12 @@
         line.appendChild(chip);
         line.appendChild(document.createTextNode("\n"));
         line.classList.add("feynjs-line");
-        var parts = partsOf(svg, src);
+        var parts = partsOf(svg, src), ids = idsOf(src);
         var on = function () {
           clear();
+          ids.forEach(function (id) {
+            Array.prototype.forEach.call(svg.querySelectorAll('.feynjs-teach-tag[data-teach="' + id + '"]'), function (el) { el.classList.add("feynjs-lit"); lit.push(el); });
+          });
           box.classList.add("feynjs-explaining");
           line.classList.add("feynjs-line-on");
           if (parts === null || !parts.length) svg.classList.add("feynjs-lit-all");
