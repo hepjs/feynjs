@@ -44,6 +44,26 @@ should hold HTML instead, a `raw` block works too, in reST or MyST:
    </div>
 ```
 
+## Without the CDN
+
+Download `feynjs.min.js` once, from the latest release or from the npm package:
+
+```sh
+curl -L -o feynjs.min.js https://github.com/hepjs/feynjs/releases/latest/download/feynjs.min.js
+# or: npm install feynjs, then copy node_modules/feynjs/dist/feynjs.min.js
+```
+
+It is one file of about 350 KB, with no dependencies, so it works with no network: behind a
+firewall, offline, or on a site that loads nothing from other servers. To update, download it
+again.
+
+Put it in the project's `_static/` folder and load it from there in `conf.py`:
+
+```python
+html_static_path = ["_static"]
+html_js_files = ["feynjs.min.js"]
+```
+
 The diagrams take the page's text colour, so they follow a theme's light and dark modes. Tested
 with Sphinx 9 and MyST-Parser, in the default theme.
 

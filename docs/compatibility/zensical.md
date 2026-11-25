@@ -91,6 +91,38 @@ gluino > q q neutralino2
 neutralino2 > Z neutralino1
 ```
 
+## Without the CDN
+
+Download `feynjs.min.js` once, from the latest release or from the npm package:
+
+```sh
+curl -L -o feynjs.min.js https://github.com/hepjs/feynjs/releases/latest/download/feynjs.min.js
+# or: npm install feynjs, then copy node_modules/feynjs/dist/feynjs.min.js
+```
+
+It is one file of about 350 KB, with no dependencies, so it works with no network: behind a
+firewall, offline, or on a site that loads nothing from other servers. To update, download it
+again.
+
+Put it in `docs/javascripts/` and list it in place of the CDN link (the path is relative to
+`docs/`):
+
+=== "zensical.toml"
+
+    ```toml
+    [project]
+    extra_javascript = ["javascripts/feynjs.min.js"]
+    ```
+
+=== "mkdocs.yml"
+
+    ```yaml
+    extra_javascript:
+      - javascripts/feynjs.min.js
+    ```
+
+The site then carries its own copy, built and published with it.
+
 ## Optional extras
 
 **Your own options.** To pass options to every diagram (a download button, say), call `run`

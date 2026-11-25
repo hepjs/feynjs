@@ -25,6 +25,9 @@ each decay joined on where its particle leaves. Standard Model particles keep th
 which feynjs reads; a new model's particles are drawn by the line type the model gives them and
 labelled with their TeX names.
 
+The page loads feynjs from the CDN; with no network, `feynjs DIR --svg` writes each diagram as an
+SVG file that needs nothing else.
+
 The [MadGraph gallery](madgraph-gallery.md) shows what it draws.
 
 ## Its syntax, by hand

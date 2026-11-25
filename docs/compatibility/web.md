@@ -29,8 +29,26 @@ Load it from jsDelivr. It defines one global, `feynjs`.
 <script src="https://cdn.jsdelivr.net/npm/feynjs@0.10/dist/feynjs.min.js"></script>
 ```
 
-`@0.10` follows the newest 0.10 release. To keep a copy of your own, take `dist/feynjs.min.js`
-from the package and serve it next to your page.
+`@0.10` follows the newest 0.10 release.
+
+### Without the CDN
+
+Download `feynjs.min.js` once, from the latest release or from the npm package:
+
+```sh
+curl -L -o feynjs.min.js https://github.com/hepjs/feynjs/releases/latest/download/feynjs.min.js
+# or: npm install feynjs, then copy node_modules/feynjs/dist/feynjs.min.js
+```
+
+It is one file of about 350 KB, with no dependencies, so it works with no network: behind a
+firewall, offline, or on a site that loads nothing from other servers. To update, download it
+again.
+
+Put it with your page's files and load it from there:
+
+```html
+<script src="feynjs.min.js"></script>
+```
 
 ## In a web page
 
