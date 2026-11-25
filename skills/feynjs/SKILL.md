@@ -19,7 +19,7 @@ t > b W+(> e+ nu)        a decay rule; (> ...) decays one particle on the spot
 tbar > bbar W-(> q qbar)
 ```
 `p p` is two proton beams into a blob; a particle between two `>` is a propagator
-(`d dbar > g > t tbar`). Particle names are feynjs's own: `tbar` (not `t~`), `gluino` (not `go`),
+(`d dbar > g > t tbar`). Particle names: feynjs's own and MadGraph's both work (`tbar` or `t~`, `gluino` or `go`),
 `e-`, `mu+`, `nu`, `gamma`, `Z`, `W+`, `H`, `g`, `neutralino1`, `chargino+`.
 
 **Edges, as in TikZ-Feynman** (full control):
@@ -76,3 +76,6 @@ or two vertices with `layout: manual` and `v at (x, y)`. Look at the SVG before 
   (`i2 [e+]`) already know theirs.
 - A loop on a quark inside a hadron diagram may need two pins (`layout: manual`) to open up.
 - Full syntax: docs/guide/syntax.md, processes.md, vertices.md, layout.md.
+
+To design a diagram well (what to draw, how physicists lay it out, the physics to check), see
+the `feynman-design` skill.

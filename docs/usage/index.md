@@ -65,6 +65,12 @@ Every SVG feynjs draws names its parts: each line is a `<g data-edge="a--b">`, e
 page script, a test or a language model can find any part and change the source by name. See
 [the drawing's parts, by name](api.md#the-drawings-parts-by-name).
 
+Two skills for AI assistants come with the repository:
+[`feynjs`](https://github.com/hepjs/feynjs/tree/main/skills/feynjs), for writing, checking and
+rendering diagrams, and [`feynman-design`](https://github.com/hepjs/feynjs/tree/main/skills/feynman-design),
+for designing them: what to draw, how physicists lay it out, and the physics to check. Copy a
+skill's folder into your assistant's skills folder to use it.
+
 ## Further reading
 
 - [JavaScript API](api.md): every function feynjs exports, with its options.
