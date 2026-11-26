@@ -160,28 +160,39 @@ function chargesByCluster(quarks: Quark[], palette: string[], anti: string[]): s
   return out;
 }
 
-/** The SVG of a hadron and its quarks at `p`. */
-export function bagSvg(p: Pt, quarks: Quark[], theme: Theme, motion: boolean): string {
+/** A bag's outline, flux tubes and quarks, in px around its middle: what the page and TikZ both draw. */
+export function bagFigure(quarks: Quark[], theme: Theme): { rx: number; ry: number; dot: number; outline: number; tubes: Pt[][]; quarks: { at: Pt; fill: string; tex: string; anti: boolean }[] } {
   const { at: units, tubes } = arrangement(quarks);
-  const to = (u: Pt): Pt => ({ x: p.x + u.x * SPACING, y: p.y + u.y * SPACING });
-  const at = units.map(to), { rx, ry } = bagOutline(quarks), dot = DOT;
+  const to = (u: Pt): Pt => ({ x: u.x * SPACING, y: u.y * SPACING });
+  const { rx, ry } = bagOutline(quarks);
   const quiet = (c: string) => mixHex(theme.colors[c] ?? c, "#8a8f98", 0.22);
   const colours = chargesByCluster(quarks, theme.colourFlow.palette.map(quiet), theme.colourFlow.anti.map(quiet));
+  return {
+    rx, ry, dot: DOT, outline: theme.line.stroke * 0.7, tubes: tubes.map((t) => t.map(to)),
+    quarks: quarks.map((q, k) => ({ at: to(units[k]), fill: colours[k], tex: q.anti ? `\\bar{${q.flavour}}` : q.flavour, anti: q.anti })),
+  };
+}
+
+/** The SVG of a hadron and its quarks at `p`. */
+export function bagSvg(p: Pt, quarks: Quark[], theme: Theme, motion: boolean): string {
+  const fig = bagFigure(quarks, theme);
+  const to = (u: Pt): Pt => ({ x: p.x + u.x, y: p.y + u.y });
+  const { rx, ry, dot } = fig;
   // the flux tubes: a soft grey band, a little darker along its middle
-  const d = tubes.map((t) => `M${t.map(to).map((q) => `${fmt(q.x)} ${fmt(q.y)}`).join("L")}`).join("");
+  const d = fig.tubes.map((t) => `M${t.map(to).map((q) => `${fmt(q.x)} ${fmt(q.y)}`).join("L")}`).join("");
   const breathe = motion ? `<animate attributeName="stroke-opacity" values="0.22;0.36;0.22" dur="3.2s" repeatCount="indefinite"/>` : "";
   const tube = `<path d="${d}" fill="none" stroke="#8a919c" stroke-opacity="0.28" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">${breathe}</path>`
     + `<path d="${d}" fill="none" stroke="#8a919c" stroke-opacity="0.55" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>`;
   // the quarks, each with its flavour on it
-  const marks = quarks.map((q, k) => {
-    const c = at[k], box = layoutLabel(q.anti ? `\\bar{${q.flavour}}` : q.flavour, dot * 1.45);
+  const marks = fig.quarks.map((q) => {
+    const c = to(q.at), box = layoutLabel(q.tex, dot * 1.45);
     const lx = c.x - box.width / 2, ly = c.y + (box.ascent - box.descent) / 2 - (q.anti ? 0 : 0.4);
-    return `<circle cx="${fmt(c.x)}" cy="${fmt(c.y)}" r="${dot}" fill="${colours[k]}" stroke="#2b2b2b" stroke-width="0.6"/>`
+    return `<circle cx="${fmt(c.x)}" cy="${fmt(c.y)}" r="${dot}" fill="${q.fill}" stroke="#2b2b2b" stroke-width="0.6"/>`
       + `<g transform="translate(${fmt(lx)} ${fmt(ly)})" fill="#fff">${box.svg}</g>`;
   }).join("");
   const shape = `cx="${fmt(p.x)}" cy="${fmt(p.y)}" rx="${fmt(rx)}" ry="${fmt(ry)}"`;
   return `<g class="feynjs-bag"><ellipse class="feynjs-bg" ${shape} fill="#fff"/>`
-    + `<ellipse ${shape} fill="none" stroke="currentColor" stroke-opacity="0.55" stroke-width="${fmt(theme.line.stroke * 0.7)}"/>`
+    + `<ellipse ${shape} fill="none" stroke="currentColor" stroke-opacity="0.55" stroke-width="${fmt(fig.outline)}"/>`
     + `${tube}${marks}</g>`;
 }
 

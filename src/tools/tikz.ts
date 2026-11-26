@@ -7,6 +7,10 @@ import { splitPanels } from "../render/panels.ts";
 import { colourAsRgb } from "../render/greyscale.ts";
 import type { Panel } from "../render/panels.ts";
 import { CM_PER_LINE_LENGTH } from "../parse/lengths.ts";
+import { bagFigure } from "../render/bag.ts";
+import { nucleonDiscs } from "../render/nucleus.ts";
+import { CIRCLE_RADIUS } from "../render/vertices.ts";
+import type { Pt } from "../geometry/curve.ts";
 
 export interface TikzOptions {
   theme?: ThemeOverrides;
@@ -110,14 +114,31 @@ function tikzBend(bend: number | undefined): string | undefined {
 }
 
 const cm = (n: number) => (Math.round(n * 100) / 100).toFixed(2);
-const tikzName = (id: string) => id.replace(/[^A-Za-z0-9]/g, "x");
+
+/**
+ * TikZ node names are letters and digits. Any other character becomes `x` plus its code, so `a'`
+ * and `ax` stay different points; a name that is still taken gains a count.
+ */
+function tikzNames(ids: Iterable<string>): Map<string, string> {
+  const used = new Set<string>();
+  const names = new Map<string, string>();
+  for (const id of ids) {
+    let base = [...id].map((ch) => /[A-Za-z0-9]/.test(ch) ? ch : `x${ch.codePointAt(0)!.toString(16)}`).join("");
+    if (!/^[A-Za-z]/.test(base)) base = `v${base}`;
+    let name = base;
+    for (let n = 2; used.has(name); n++) name = `${base}x${n}`;
+    used.add(name);
+    names.set(id, name);
+  }
+  return names;
+}
 
 interface Point { x: number; y: number }
 
-/** One vertex, at its place: its shape only (its label is one of the scene's, placed as the page places it). */
-function vertexLine(v: Vertex, at: Point): string {
-  const shape = v.shape !== "none" ? `[${VERTEX_SHAPES[v.shape]}]` : "";
-  return `  \\vertex${shape} (${tikzName(v.id)}) at (${cm(at.x)}, ${cm(at.y)})${v.shape !== "none" ? " {}" : ""};`;
+/** One vertex, at its place. A shape TikZ-Feynman has no key for is a bare point; its picture is drawn after the lines. */
+function vertexLine(v: Vertex, at: Point, name: string): string {
+  const shape = VERTEX_SHAPES[v.shape];
+  return shape ? `  \\vertex[${shape}] (${name}) at (${cm(at.x)}, ${cm(at.y)}) {};` : `  \\vertex (${name}) at (${cm(at.x)}, ${cm(at.y)});`;
 }
 
 /**
@@ -169,30 +190,81 @@ function placesInCm(d: Diagram, unit: number, rowOverRank: number): Map<string, 
 }
 
 /** One line; its label, if any, is among the scene's labels. A momentum keeps its arrow here. */
-function edgeLine(e: Edge, theme: Theme, look: Look): string {
+function edgeLine(e: Edge, theme: Theme, look: Look, names: Map<string, string>): string {
   const options = [tikzLineStyle(e, theme, look), tikzBend(e.bend),
     e.momentum ? `momentum${e.momentumOtherSide ? "'" : ""}={}` : undefined].filter(Boolean);
-  return `    (${tikzName(e.from)}) -- [${options.join(", ")}] (${tikzName(e.to)}),`;
+  return `    (${names.get(e.from)}) -- [${options.join(", ")}] (${names.get(e.to)}),`;
 }
 
 /** A laid-out diagram as one TikZ-Feynman picture, with every vertex at the place feynjs chose. */
 function pictureOf(d: Diagram, scene: Scene, unit: number): string {
   const theme = scene.theme, look = lookAt(theme, unit);
+  const names = tikzNames(d.vertices.keys());
   const places = placesInCm(d, unit, theme.unitY / theme.unitX);
-  const vertices = [...d.vertices.values()].map((v) => vertexLine(v, places.get(v.id)!));
-  const edges = d.edges.map((e) => edgeLine(e, theme, look));
-  const options = [...inlineBaseline(d), ...websiteLook(theme, look)].map((o) => `  ${o},`);
+  const vertices = [...d.vertices.values()].map((v) => vertexLine(v, places.get(v.id)!, names.get(v.id)!));
+  const edges = d.edges.map((e) => edgeLine(e, theme, look, names));
+  const options = [...inlineBaseline(d, names), ...websiteLook(theme, look)].map((o) => `  ${o},`);
   return ["\\begin{tikzpicture}[", ...options, "]", "\\begin{feynman}", ...vertices, "  \\diagram*{", ...edges, "  };",
-    ...hadronShapes(scene, unit, theme, look), ...labelNodes(scene, unit, theme, look), "\\end{feynman}", "\\end{tikzpicture}"].join("\n");
+    ...hadronShapes(scene, unit, theme, look), ...drawnVertices(d, scene, unit, theme, look), ...labelNodes(scene, unit, theme, look), "\\end{feynman}", "\\end{tikzpicture}"].join("\n");
+}
+
+/**
+ * Shapes TikZ-Feynman does not name, drawn as the page draws them over the lines: a bag of
+ * quarks, a nucleus, a small hatched blob, a circle with a label inside.
+ */
+function drawnVertices(d: Diagram, scene: Scene, unit: number, theme: Theme, look: Look): string[] {
+  const cmPerPx = unit / theme.unitX;
+  const at = (x: number, y: number) => `(${cm(x * cmPerPx)}, ${cm(-y * cmPerPx)})`;
+  const paint = (value: string) => tikzColour(value, theme).replace(/^color=/, "");
+  const out: string[] = [];
+  for (const v of d.vertices.values()) {
+    const p = scene.position(v);
+    if (v.shape === "bag" && v.bag) {
+      const fig = bagFigure(v.bag.quarks, theme);
+      const shift = (q: Pt) => at(p.x + q.x, p.y + q.y);
+      const ellipse = `ellipse [x radius=${cm(fig.rx * cmPerPx)}, y radius=${cm(fig.ry * cmPerPx)}]`;
+      const grey = tikzColour("#8a919c", theme);
+      out.push(`  \\fill[white] ${at(p.x, p.y)} ${ellipse};`);
+      out.push(`  \\draw[black, draw opacity=0.55, line width=${look.pt(fig.outline)}] ${at(p.x, p.y)} ${ellipse};`);
+      for (const tube of fig.tubes) {
+        const path = tube.map(shift).join(" -- ");
+        out.push(`  \\draw[${grey}, line cap=round, opacity=0.28, line width=${look.pt(6)}] ${path};`);
+        out.push(`  \\draw[${grey}, line cap=round, opacity=0.55, line width=${look.pt(1.6)}] ${path};`);
+      }
+      const font = `\\fontsize{${look.pt(fig.dot * 1.45)}}{${look.pt(fig.dot * 1.7)}}\\selectfont`;
+      for (const q of fig.quarks) {
+        out.push(`  \\filldraw[fill=${paint(q.fill)}, draw=black, line width=${look.pt(0.6)}] ${shift(q.at)} circle [radius=${look.pt(fig.dot)}];`);
+        out.push(`  \\node[inner sep=0pt, text=white, font=${font}] at ${shift(q.at)} {\\(${q.tex}\\)};`);
+      }
+    } else if (v.shape === "nucleus") {
+      const lookV = theme.vertex;
+      const colours = { proton: lookV.proton, neutron: lookV.neutron, edge: lookV.nucleonEdge, protonEdge: lookV.protonEdge, neutronEdge: lookV.neutronEdge };
+      for (const q of nucleonDiscs(p, v.nucleus?.A ?? 1, v.nucleus?.Z ?? 0, lookV.nucleusUnit, colours)) {
+        const edge = q.edge === "none" ? "" : `, draw=${paint(q.edge)}, line width=${look.pt(q.stroke)}`;
+        out.push(`  \\filldraw[fill=${paint(q.fill)}${edge}] ${at(q.x, q.y)} circle [radius=${look.pt(q.r)}];`);
+      }
+    } else if (v.shape === "smallhatched") {
+      const r = look.pt(theme.vertex.smallBlob * 1.6);
+      out.push(`  \\fill[white] ${at(p.x, p.y)} circle [radius=${r}];`);
+      out.push(`  \\fill[pattern=north west lines] ${at(p.x, p.y)} circle [radius=${r}];`);
+      out.push(`  \\draw[line width=${look.pt(theme.line.stroke)}] ${at(p.x, p.y)} circle [radius=${r}];`);
+    } else if (v.shape === "circle") {
+      const colour = paint(v.color ?? v.rim ?? theme.line.jetColor);
+      const r = look.pt(CIRCLE_RADIUS * (v.dotScale ?? 1));
+      out.push(`  \\filldraw[fill=white, draw=${colour}, line width=${look.pt(theme.line.stroke * 0.7)}] ${at(p.x, p.y)} circle [radius=${r}];`);
+      if (v.circleLabel) out.push(`  \\node[inner sep=0pt, text=${colour}] at ${at(p.x, p.y)} {\\(${v.circleLabel}\\)};`);
+    }
+  }
+  return out;
 }
 
 /**
  * `inline: a` puts point a on the math axis of the line of text, where an equation's middle sits,
  * as the web page does: the picture's baseline is that far below a.
  */
-function inlineBaseline(d: Diagram): string[] {
+function inlineBaseline(d: Diagram, names: Map<string, string>): string[] {
   const id = d.directives.inline?.trim().replace(/^\((.*)\)$/, "$1");
-  return id && d.vertices.has(id) ? [`baseline={([yshift=-${MATH_AXIS_EM}em]${tikzName(id)}.base)}`] : [];
+  return id && d.vertices.has(id) ? [`baseline={([yshift=-${MATH_AXIS_EM}em]${names.get(id)}.base)}`] : [];
 }
 
 /** One panel's source, laid out and labelled exactly as render() draws it, then written as a picture. */

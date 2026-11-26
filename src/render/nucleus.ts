@@ -136,8 +136,10 @@ export function nucleusRadius(A: number, unit: number): number {
   return Math.max(...places.map((q) => portable.hypot(q.x, q.y))) + r;
 }
 
-/** The SVG of a nucleus of `A` nucleons, `Z` of them protons, at `p`. */
-export function nucleusSvg(p: Pt, A: number, Z: number, unit: number, colours: { proton: string; neutron: string; edge: string; protonEdge?: string; neutronEdge?: string }): string {
+export interface NucleonDisc { x: number; y: number; r: number; fill: string; edge: string; stroke: number }
+
+/** One disc per nucleon, far ones first, as the page draws them. */
+export function nucleonDiscs(p: Pt, A: number, Z: number, unit: number, colours: { proton: string; neutron: string; edge: string; protonEdge?: string; neutronEdge?: string }): NucleonDisc[] {
   const { places: offsets, r } = nucleonPlaces(A, unit);
   const places = offsets.map((q) => ({ x: p.x + q.x, y: p.y + q.y, z: q.z }));
   // (which are protons: Z of them, spread evenly from the middle out, so a small nucleus alternates
@@ -145,14 +147,18 @@ export function nucleusSvg(p: Pt, A: number, Z: number, unit: number, colours: {
   const evenly = places.map((_, k) => Math.floor(((k + 1) * Z) / A) > Math.floor((k * Z) / A));
   const order = A > 20 ? shuffled(A, A * 1000 + Z) : places.map((_, k) => k);
   const protons = new Set(order.filter((_, k) => evenly[k]).map((k) => k));
-  // (flat colours, each nucleon edged in a dark shade of its own, so ones that overlap still read
-  // as several; the far ones first, so the near ones sit over them)
-  const spheres = places.map((q, k) => ({ q, k })).sort((a, b) => a.q.z - b.q.z).map(({ q, k }) => {
-    const fill = protons.has(k) ? colours.proton : colours.neutron;
-    // (each kind may have its own edge, or none)
-    const edge = (protons.has(k) ? colours.protonEdge : colours.neutronEdge) ?? colours.edge;
-    const stroke = edge === "none" ? "" : ` stroke="${edge}" stroke-width="${fmt(Math.min(0.6, r * 0.12))}"`;
-    return `<circle cx="${fmt(q.x)}" cy="${fmt(q.y)}" r="${fmt(r)}" fill="${fill}"${stroke}/>`;
+  return places.map((q, k) => ({ q, k })).sort((a, b) => a.q.z - b.q.z).map(({ q, k }) => {
+    const proton = protons.has(k);
+    return { x: q.x, y: q.y, r, fill: proton ? colours.proton : colours.neutron, edge: (proton ? colours.protonEdge : colours.neutronEdge) ?? colours.edge, stroke: Math.min(0.6, r * 0.12) };
+  });
+}
+
+/** The SVG of a nucleus of `A` nucleons, `Z` of them protons, at `p`. */
+export function nucleusSvg(p: Pt, A: number, Z: number, unit: number, colours: { proton: string; neutron: string; edge: string; protonEdge?: string; neutronEdge?: string }): string {
+  // (each kind may have its own edge, or none; the far ones first, so the near ones sit over them)
+  const spheres = nucleonDiscs(p, A, Z, unit, colours).map((q) => {
+    const stroke = q.edge === "none" ? "" : ` stroke="${q.edge}" stroke-width="${fmt(q.stroke)}"`;
+    return `<circle cx="${fmt(q.x)}" cy="${fmt(q.y)}" r="${fmt(q.r)}" fill="${q.fill}"${stroke}/>`;
   }).join("");
   return `<g class="feynjs-nucleus">${spheres}</g>`;
 }

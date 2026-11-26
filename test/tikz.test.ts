@@ -33,6 +33,25 @@ test("hadrons are drawn as on the page: a brace beside the quarks, a shaded elli
   assert.match(shaded, /fill opacity=0\.2/);
 });
 
+test("a bag is drawn, and a primed vertex name does not collapse onto another", () => {
+  const bag = toTikz("a [bag=proton] -- [photon] b", { standalone: false });
+  assert.doesNotMatch(bag, /undefined/);
+  assert.match(bag, /ellipse \[x radius=/);
+  assert.match(bag, /\\\(d\\\)/);
+  const primed = toTikz("a' [dot] -- [photon] ax [dot]", { standalone: false });
+  assert.match(primed, /\(ax27\) -- \[photon\] \(ax\)/);
+  assert.doesNotMatch(primed, /\(ax\) -- \[photon\] \(ax\)/);
+});
+
+test("a nucleus and a small hatched blob are drawn, not left as an unknown vertex style", () => {
+  const nucleus = toTikz("a [nucleus=He] -- [photon] b", { standalone: false });
+  assert.doesNotMatch(nucleus, /undefined/);
+  assert.match(nucleus, /circle \[radius=/);
+  const hatched = toTikz("a [small hatched blob] -- b", { standalone: false });
+  assert.doesNotMatch(hatched, /undefined/);
+  assert.match(hatched, /pattern=north west lines/);
+});
+
 test("inline: a puts point a on the math axis of the text, as on the web page", () => {
   assert.match(toTikz("inline: a\ni1 [e-] -- a -- i2 [e+]\na -- [gamma] f [\\gamma]", { standalone: false }), /baseline=\{\(\[yshift=-0\.25em\]a\.base\)\}/);
 });

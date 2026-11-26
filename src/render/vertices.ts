@@ -13,7 +13,7 @@ import type { LabelSpot, Scene } from "./scene.ts";
 import * as portable from "../geometry/portable-math.ts";
 
 /** A labelled circle's radius, px: one size whatever it holds (a longer label is set smaller). */
-const CIRCLE_RADIUS = 9;
+export const CIRCLE_RADIUS = 9;
 
 /** Radius a vertex shape covers; lines stop at this distance from its centre. */
 /** How far what is drawn at `v` reaches toward (dx, dy): its radius, or an oval's rim that way. */
