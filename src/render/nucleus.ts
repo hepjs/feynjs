@@ -5,7 +5,7 @@ import * as portable from "../geometry/portable-math.ts";
 /**
  * A nucleus drawn as an atom's core is drawn in textbooks: A small spheres packed in a disc,
  * Z of them protons (brick red), the rest neutrons (slate), mixed through it. Its size
- * grows as A to the third, as a nucleus's radius does.
+ * grows as the cube root of A, as a nucleus's radius does.
  */
 
 /** Common nuclei by symbol: [Z, A] (the isotope colliders and textbooks use). */
@@ -81,6 +81,17 @@ export function nucleusFrom(text: string): { A: number; Z: number } | undefined 
  * third, as a nucleus does: lead is about 3.7 times helium across.
  */
 function nucleonPlaces(A: number, unit: number): { places: (Pt & { z: number })[]; r: number } {
+  // (found once for each nucleus and size: a drawing asks for the same nucleus many times, once
+  // for its size while the layout settles)
+  const key = `${A} ${unit}`, known = placesOf.get(key);
+  if (known) return known;
+  const found = packNucleons(A, unit);
+  placesOf.set(key, found);
+  return found;
+}
+const placesOf = new Map<string, { places: (Pt & { z: number })[]; r: number }>();
+
+function packNucleons(A: number, unit: number): { places: (Pt & { z: number })[]; r: number } {
   const r = unit * 0.5, R = Math.max(r, ((1.2 / 0.85) * portable.cbrt(A)) * r), inside = Math.max(0, R - r);
   type P3 = { x: number; y: number; z: number };
   let pts: P3[];
@@ -117,12 +128,6 @@ function nucleonPlaces(A: number, unit: number): { places: (Pt & { z: number })[
     }),
     r,
   };
-}
-
-/** A small generator of numbers in [0, 1), fixed by `seed`. */
-function seeded(seed: number): () => number {
-  let h = seed >>> 0 || 1;
-  return () => ((h = Math.imul(h ^ (h >>> 15), 2246822507) ^ Math.imul(h ^ (h >>> 13), 3266489909)) >>> 0) / 4294967296;
 }
 
 /** How far the nucleus reaches from its middle, in px. */

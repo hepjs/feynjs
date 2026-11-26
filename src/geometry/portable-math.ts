@@ -1,3 +1,9 @@
+/*! feynjs portable maths: functions ported from fdlibm.
+ *   Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
+ *   Developed at SunPro, a Sun Microsystems, Inc. business.
+ *   Permission to use, copy, modify, and distribute this software is freely granted,
+ *   provided that this notice is preserved.
+ */
 /**
  * Maths that gives the same bits on every machine.
  *
@@ -489,10 +495,24 @@ export function hypot(a: number, b: number, c?: number): number {
 }
 
 /**
- * The two-part case, the one the layout calls in its inner loops, without an array. For two
- * parts Kahan's compensation is zero after the first, so the sum is just the two squares.
+ * The two-part case, the one the layout calls in its inner loops: the square root of the sum
+ * of the two squares, each step exactly rounded, so the same everywhere. (Scaling by the larger
+ * part first, as for more parts, only guards against squares beyond 1e308, which no drawing
+ * measured in line lengths comes near.)
  */
 function hypotOfTwo(a: number, b: number): number {
+  if (Math.abs(a) === Infinity || Math.abs(b) === Infinity) return Infinity;
+  if (a !== a || b !== b) return NaN;
+  return Math.sqrt(a * a + b * b);
+}
+
+/**
+ * The length of (a, b) found as the engines find Math.hypot: scaled by the larger part first,
+ * then the square root of the sum of the two squares (the same bits as V8's own). The layout's
+ * written-out gradients and its fault check use it: the layouts were settled and approved with
+ * it there, and the shorter form above would move the few that sit on a knife edge.
+ */
+export function scaledHypot(a: number, b: number): number {
   const sizeA = Math.abs(a), sizeB = Math.abs(b);
   if (sizeA === Infinity || sizeB === Infinity) return Infinity;
   if (sizeA !== sizeA || sizeB !== sizeB) return NaN;

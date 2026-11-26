@@ -1,0 +1,1012 @@
+{
+ "about": "Layouts the author looked at and judged right (graded 2026-11-26). Each may shift by less than 0.15 of a line, after lining it up with its approved points, and may not gain a problem.",
+ "graded": "2026-11-26",
+ "items": {
+  "docs/authoring/engines.md#8": {
+   "source": "--- default\narrows: none\nin: p1 p2\nout: q1 q2 l1 l2 G1 G2 l3 l4 q3 q4\np1 [p] -- pp [blob]\np2 [p] -- pp\npp -- [gluino] g1 [dot, color=gray]\npp -- [gluino] g2 [dot, color=gray]\ng1 -- q1 [q]\ng1 -- q2 [q]\ng1 -- [neutralino1] n1\nn1 -- [Z] z1\nz1 -- l1 [\\ell]\nz1 -- l2 [\\ell]\nn1 -- G1 [gravitino]\ng2 -- [neutralino1] n2\nn2 -- G2 [gravitino]\nn2 -- [Z] z2\nz2 -- l3 [\\ell]\nz2 -- l4 [\\ell]\ng2 -- q3 [q]\ng2 -- q4 [q]\n--- grid\nlayout: grid\narrows: none\nin: p1 p2\nout: q1 q2 l1 l2 G1 G2 l3 l4 q3 q4\np1 [p] -- pp [blob]\np2 [p] -- pp\npp -- [gluino] g1 [dot, color=gray]\npp -- [gluino] g2 [dot, color=gray]\ng1 -- q1 [q]\ng1 -- q2 [q]\ng1 -- [neutralino1] n1\nn1 -- [Z] z1\nz1 -- l1 [\\ell]\nz1 -- l2 [\\ell]\nn1 -- G1 [gravitino]\ng2 -- [neutralino1] n2\nn2 -- G2 [gravitino]\nn2 -- [Z] z2\nz2 -- l3 [\\ell]\nz2 -- l4 [\\ell]\ng2 -- q3 [q]\ng2 -- q4 [q]\n--- final plane: on\nfinal plane: on\narrows: none\nin: p1 p2\nout: q1 q2 l1 l2 G1 G2 l3 l4 q3 q4\np1 [p] -- pp [blob]\np2 [p] -- pp\npp -- [gluino] g1 [dot, color=gray]\npp -- [gluino] g2 [dot, color=gray]\ng1 -- q1 [q]\ng1 -- q2 [q]\ng1 -- [neutralino1] n1\nn1 -- [Z] z1\nz1 -- l1 [\\ell]\nz1 -- l2 [\\ell]\nn1 -- G1 [gravitino]\ng2 -- [neutralino1] n2\nn2 -- G2 [gravitino]\nn2 -- [Z] z2\nz2 -- l3 [\\ell]\nz2 -- l4 [\\ell]\ng2 -- q3 [q]\ng2 -- q4 [q]",
+   "points": {
+    "0:p1": [
+     0.392,
+     -0.789
+    ],
+    "0:p2": [
+     0.391,
+     0.795
+    ],
+    "0:q1": [
+     2.721,
+     -2.094
+    ],
+    "0:q2": [
+     2.977,
+     -1.678
+    ],
+    "0:l1": [
+     4.517,
+     -2.18
+    ],
+    "0:l2": [
+     4.711,
+     -1.453
+    ],
+    "0:G1": [
+     4.547,
+     -0.552
+    ],
+    "0:G2": [
+     4.488,
+     0.551
+    ],
+    "0:l3": [
+     4.707,
+     1.455
+    ],
+    "0:l4": [
+     4.515,
+     2.19
+    ],
+    "0:q3": [
+     2.971,
+     1.687
+    ],
+    "0:q4": [
+     2.716,
+     2.103
+    ],
+    "0:pp": [
+     0.935,
+     0.003
+    ],
+    "0:g1": [
+     2.194,
+     -0.943
+    ],
+    "0:g2": [
+     2.185,
+     0.95
+    ],
+    "0:n1": [
+     3.389,
+     -0.979
+    ],
+    "0:z1": [
+     4.05,
+     -1.464
+    ],
+    "0:n2": [
+     3.354,
+     0.982
+    ],
+    "0:z2": [
+     4.042,
+     1.474
+    ],
+    "1:p1": [
+     0,
+     -1.529
+    ],
+    "1:p2": [
+     0,
+     1.529
+    ],
+    "1:q1": [
+     1.5,
+     -3.059
+    ],
+    "1:q2": [
+     2.5,
+     -3.059
+    ],
+    "1:l1": [
+     5,
+     -3.824
+    ],
+    "1:l2": [
+     5,
+     -2.294
+    ],
+    "1:G1": [
+     5,
+     -1.529
+    ],
+    "1:G2": [
+     5,
+     1.529
+    ],
+    "1:l3": [
+     5,
+     2.294
+    ],
+    "1:l4": [
+     5,
+     3.824
+    ],
+    "1:q3": [
+     2.5,
+     3.059
+    ],
+    "1:q4": [
+     1.5,
+     3.059
+    ],
+    "1:pp": [
+     1,
+     0
+    ],
+    "1:g1": [
+     2,
+     -1.529
+    ],
+    "1:g2": [
+     2,
+     1.529
+    ],
+    "1:n1": [
+     3,
+     -1.529
+    ],
+    "1:z1": [
+     4,
+     -3.059
+    ],
+    "1:n2": [
+     3,
+     1.529
+    ],
+    "1:z2": [
+     4,
+     3.059
+    ],
+    "2:p1": [
+     0.276,
+     -0.674
+    ],
+    "2:p2": [
+     0.275,
+     0.678
+    ],
+    "2:q1": [
+     5.042,
+     -3.782
+    ],
+    "2:q2": [
+     5.042,
+     -2.941
+    ],
+    "2:l1": [
+     5.042,
+     -2.1
+    ],
+    "2:l2": [
+     5.042,
+     -1.259
+    ],
+    "2:G1": [
+     5.042,
+     -0.418
+    ],
+    "2:G2": [
+     5.042,
+     0.423
+    ],
+    "2:l3": [
+     5.042,
+     1.265
+    ],
+    "2:l4": [
+     5.042,
+     2.106
+    ],
+    "2:q3": [
+     5.042,
+     2.947
+    ],
+    "2:q4": [
+     5.042,
+     3.788
+    ],
+    "2:pp": [
+     0.889,
+     0.003
+    ],
+    "2:g1": [
+     2.042,
+     -2.1
+    ],
+    "2:g2": [
+     2.042,
+     2.106
+    ],
+    "2:n1": [
+     3.042,
+     -1.259
+    ],
+    "2:z1": [
+     4.042,
+     -1.679
+    ],
+    "2:n2": [
+     3.042,
+     1.265
+    ],
+    "2:z2": [
+     4.042,
+     1.685
+    ]
+   },
+   "problems": 0
+  },
+  "docs/authoring/examples/flavour.md#3": {
+   "source": "in: b d1\nout: y s d2\nd2 [\\bar{d}] -- [fermion] d1 [\\bar{d}]\nb [b] -- [fermion] l1 -- [fermion, label={u, c, t}] l2 -- [fermion] s [s]\nl1 -- [boson, label=W^-] x -- [boson] l2\nx -- [photon] y [\\gamma]\nhadron: \\bar{B}^0 = b d1 [brace]\nhadron: \\bar{K}^{*0} = s d2 [brace]",
+   "points": {
+    "0:b": [
+     -0.188,
+     -1.233
+    ],
+    "0:d1": [
+     -0.188,
+     0.786
+    ],
+    "0:y": [
+     2.613,
+     -2.123
+    ],
+    "0:s": [
+     2.779,
+     -1.233
+    ],
+    "0:d2": [
+     2.779,
+     0.786
+    ],
+    "0:l1": [
+     0.807,
+     -1.233
+    ],
+    "0:l2": [
+     1.978,
+     -1.233
+    ],
+    "0:x": [
+     1.42,
+     -2.166
+    ]
+   },
+   "problems": 0
+  },
+  "examples/vertex-correction": {
+   "source": "% a photon vertex with a photon loop around it\nin: i1 i2\nout: f1\ni1 [e-] -- a -- c -- d -- f1 [e-]\na -- [photon, half left] d\ni2 [gamma] -- c",
+   "points": {
+    "0:i1": [
+     -0.191,
+     -0.595
+    ],
+    "0:i2": [
+     0.258,
+     0.575
+    ],
+    "0:f1": [
+     2.984,
+     0.077
+    ],
+    "0:a": [
+     0.681,
+     -0.172
+    ],
+    "0:c": [
+     1.286,
+     0.042
+    ],
+    "0:d": [
+     1.983,
+     0.073
+    ]
+   },
+   "problems": 0
+  },
+  "synthetic/107": {
+   "source": "p p > t tbar H\nt > b W+\ntbar > bbar W-",
+   "points": {
+    "0:in2": [
+     0.259,
+     0.47
+    ],
+    "0:pp1": [
+     0.878,
+     1.542
+    ],
+    "0:in3": [
+     0.118,
+     1.341
+    ],
+    "0:v4": [
+     2.055,
+     1.237
+    ],
+    "0:out5": [
+     3.067,
+     0.584
+    ],
+    "0:out6": [
+     2.806,
+     -0.196
+    ],
+    "0:v7": [
+     2.072,
+     1.934
+    ],
+    "0:out8": [
+     2.986,
+     2.553
+    ],
+    "0:out9": [
+     3.035,
+     1.568
+    ],
+    "0:out10": [
+     1.771,
+     -0.046
+    ]
+   },
+   "problems": 0
+  },
+  "test/nuclear.test.ts#25": {
+   "source": "238U > 234Th 4He",
+   "points": {
+    "0:in2": [
+     0.553,
+     0.075
+    ],
+    "0:v1": [
+     0.558,
+     0.075
+    ],
+    "0:out3": [
+     1.911,
+     -7.879
+    ],
+    "0:out4": [
+     1.978,
+     7.727
+    ]
+   },
+   "problems": 0
+  },
+  "validation/atlas/ATL-PHYS-PUB-2016-008/fig_01b": {
+   "source": "% ATL-PHYS-PUB-2016-008 fig_01b: VBF Higgs production, u-channel (crossed) V exchange\nlayout: v2\nin: i1 i2\nout: f1 h f2\ni1 [q] -- [plain] b [dot]\ni2 [q'] -- [plain] a [dot]\na -- [plain] f1 [q']\nb -- [plain] f2 [q]\na -- [V] x [dot] -- [V] b\nx -- [scalar] h [H]",
+   "points": {
+    "0:i1": [
+     0.702,
+     -1.793
+    ],
+    "0:i2": [
+     0.702,
+     1.793
+    ],
+    "0:f1": [
+     2.654,
+     -1.8
+    ],
+    "0:h": [
+     2.967,
+     0
+    ],
+    "0:f2": [
+     2.654,
+     1.8
+    ],
+    "0:b": [
+     1.678,
+     1.464
+    ],
+    "0:a": [
+     1.678,
+     -1.464
+    ],
+    "0:x": [
+     1.967,
+     0
+    ]
+   },
+   "problems": 0
+  },
+  "validation/atlas/BPHY-2013-02/figaux_01c": {
+   "source": "% BPHY-2013-02 figaux_01c: converted from TikZ, no coordinates kept\nin: d1 bb\nout: d2 sb mu1 mu2\nd1 [particle={d}]\nd2 [particle={d}]\nbb [particle={\\overline{b}}]\nsb [particle={\\overline{s}}]\nmu1 [particle={\\mu^-}]\nmu2 [particle={\\mu^+}]\nd1 -- [fermion] d2\nsb -- [fermion] l2\nl2 -- [fermion, label={\\overline{u}, \\overline{c}, \\overline{t}}] l1\nl1 -- [fermion] bb\nl1 -- [photon, quarter right, label={W^-}] lb\nlb -- [photon, quarter right] l2\nlb -- [photon, label={\\gamma, Z^0}] v\nv -- [fermion] mu1\nmu2 -- [fermion] v\nhadron: B^0 = d1 bb [brace]\nhadron: K^{*0} = d2 sb [brace]",
+   "points": {
+    "0:d1": [
+     -0.082,
+     -0.941
+    ],
+    "0:bb": [
+     -0.082,
+     0.96
+    ],
+    "0:d2": [
+     3.176,
+     -0.941
+    ],
+    "0:sb": [
+     3.176,
+     0.96
+    ],
+    "0:mu1": [
+     3.299,
+     2.131
+    ],
+    "0:mu2": [
+     3.234,
+     3.246
+    ],
+    "0:l2": [
+     2.265,
+     0.96
+    ],
+    "0:l1": [
+     0.827,
+     0.96
+    ],
+    "0:lb": [
+     1.552,
+     2.12
+    ],
+    "0:v": [
+     2.708,
+     2.781
+    ]
+   },
+   "problems": 0
+  },
+  "validation/atlas/BPHY-2014-04/fig_01c": {
+   "source": "% BPHY-2014-04 fig_01c: converted from TikZ, no coordinates kept\nin: a1 a2\nout: d1 d2 j2 j1\na1 [particle={\\bar{b}}]\na2 [particle={c}]\nd1 [particle={\\bar{s}}]\nj1 [particle={c}]\nv1 -- [fermion] a1\na2 -- [fermion] v1\nv1 -- [photon] v2\nd1 -- [fermion] v2\nv2 -- [fermion] j1\nvc -- [fermion, label={c}] d2\nj2 -- [fermion, label={\\bar{c}}] vc\nhadron: B_c^+ = a1 a2\nhadron: D_s^{(*)+} = d1 d2\nhadron: J/\\psi = j2 j1",
+   "points": {
+    "0:a1": [
+     0.155,
+     0.187
+    ],
+    "0:a2": [
+     0.155,
+     1.323
+    ],
+    "0:d1": [
+     2.935,
+     -1.034
+    ],
+    "0:d2": [
+     2.935,
+     -0.244
+    ],
+    "0:j2": [
+     2.935,
+     1.36
+    ],
+    "0:j1": [
+     2.935,
+     2.15
+    ],
+    "0:v1": [
+     0.98,
+     0.713
+    ],
+    "0:v2": [
+     1.959,
+     0.66
+    ],
+    "0:vc": [
+     2.477,
+     0.558
+    ]
+   },
+   "problems": 0
+  },
+  "validation/atlas/BPHY-2015-02/fig_01d": {
+   "source": "% BPHY-2015-02 fig_01d: double parton scattering, two gg -> J/psi g sub-processes (hatched circle = colour-singlet J/psi)\nlayout: v2\nin: g1 g2 h1 h2\nout: g3 h3\ng1 -- [gluon] a1\ng2 -- [gluon] b1\nc1 -- [gluon] g3\na1 -- [fermion] m1 [hatched blob] -- [fermion] c1 -- [fermion] b1 -- [fermion] a1\nh1 -- [gluon] a2\nh2 -- [gluon] b2\nc2 -- [gluon] h3\na2 -- [fermion] m2 [hatched blob] -- [fermion] c2 -- [fermion] b2 -- [fermion] a2",
+   "points": {
+    "0:g1": [
+     0.064,
+     -2.231
+    ],
+    "0:g2": [
+     0.058,
+     -0.804
+    ],
+    "0:h1": [
+     0.064,
+     0.827
+    ],
+    "0:h2": [
+     0.058,
+     2.255
+    ],
+    "0:g3": [
+     2.923,
+     -0.863
+    ],
+    "0:h3": [
+     2.923,
+     2.196
+    ],
+    "0:a1": [
+     1.065,
+     -2.175
+    ],
+    "0:b1": [
+     1.055,
+     -0.847
+    ],
+    "0:c1": [
+     1.923,
+     -0.863
+    ],
+    "0:m1": [
+     1.912,
+     -2.159
+    ],
+    "0:a2": [
+     1.065,
+     0.884
+    ],
+    "0:b2": [
+     1.055,
+     2.212
+    ],
+    "0:c2": [
+     1.923,
+     2.196
+    ],
+    "0:m2": [
+     1.912,
+     0.899
+    ]
+   },
+   "problems": 0
+  },
+  "validation/atlas/EXOT-2013-22/fig_01b": {
+   "source": "% EXOT-2013-22 fig_01b: FRVZ model, H > f_d2 f_d2, each f_d2 > HLSP s_d1, s_d1 > gamma_d gamma_d, gamma_d > l+ l-\nlayout: v2\nin: h\nout: s1 l1 l2 l3 l4 s2 l5 l6 l7 l8\nh [H] -- [scalar] a\na -- [plain, label=f_{d_2}] b\na -- [plain, label'=f_{d_2}] c\nb -- [plain] s1 [\\mathrm{HLSP}]\nb -- [scalar, label'=s_{d_1}] d1\nd1 -- [photon, label=\\gamma_d] g1\nd1 -- [photon, label=\\gamma_d] g2\ng1 -- [plain] l1 [l+]\ng1 -- [plain] l2 [l-]\ng2 -- [plain] l3 [l+]\ng2 -- [plain] l4 [l-]\nc -- [plain] s2 [\\mathrm{HLSP}]\nc -- [scalar, label=s_{d_1}] d2\nd2 -- [photon, label=\\gamma_d] g3\nd2 -- [photon, label'=\\gamma_d] g4\ng3 -- [plain] l5 [l+]\ng3 -- [plain] l6 [l-]\ng4 -- [plain] l7 [l+]\ng4 -- [plain] l8 [l-]",
+   "points": {
+    "0:h": [
+     0.268,
+     -0.013
+    ],
+    "0:s1": [
+     3.263,
+     -2.016
+    ],
+    "0:l1": [
+     4.994,
+     -2.108
+    ],
+    "0:l2": [
+     5.092,
+     -1.285
+    ],
+    "0:l3": [
+     4.664,
+     0.092
+    ],
+    "0:l4": [
+     4.335,
+     0.765
+    ],
+    "0:s2": [
+     2.99,
+     1.46
+    ],
+    "0:l5": [
+     4.85,
+     1.479
+    ],
+    "0:l6": [
+     4.855,
+     2.196
+    ],
+    "0:l7": [
+     4.728,
+     3.656
+    ],
+    "0:l8": [
+     4.477,
+     4.402
+    ],
+    "0:a": [
+     1.395,
+     0.238
+    ],
+    "0:b": [
+     2.38,
+     -1.415
+    ],
+    "0:c": [
+     2.175,
+     2.154
+    ],
+    "0:d1": [
+     3.494,
+     -1.01
+    ],
+    "0:g1": [
+     4.363,
+     -1.507
+    ],
+    "0:g2": [
+     4.013,
+     -0.024
+    ],
+    "0:d2": [
+     3.338,
+     2.51
+    ],
+    "0:g3": [
+     4.252,
+     2.045
+    ],
+    "0:g4": [
+     3.981,
+     3.404
+    ]
+   },
+   "problems": 0
+  },
+  "validation/atlas/EXOT-2014-10/fig_01c": {
+   "source": "% EXOT-2014-10 fig_01c: heavy quark pair, g g > Q Qbar via u-channel Q (crossed gluons), Q > q W, Qbar > qbar W\nlayout: v2\ndots: all\nin: i1 i2\nout: q w1 w2 qb\ni1 [g] -- b\ni2 [g] -- a\nb -- [fermion] a\na -- [fermion, label=Q] c\nd -- [fermion, label'=\\bar Q] b\nc -- [fermion] q [q]\nc -- [boson] w1 [W]\nd -- [boson] w2 [W]\nqb [qbar] -- [fermion] d",
+   "points": {
+    "0:i1": [
+     0.133,
+     -1.346
+    ],
+    "0:i2": [
+     0.133,
+     1.346
+    ],
+    "0:q": [
+     2.916,
+     -1.898
+    ],
+    "0:w1": [
+     2.917,
+     -0.858
+    ],
+    "0:w2": [
+     2.917,
+     0.858
+    ],
+    "0:qb": [
+     2.916,
+     1.898
+    ],
+    "0:b": [
+     1.058,
+     0.766
+    ],
+    "0:a": [
+     1.058,
+     -0.766
+    ],
+    "0:c": [
+     1.976,
+     -1.377
+    ],
+    "0:d": [
+     1.976,
+     1.376
+    ]
+   },
+   "problems": 0
+  },
+  "validation/atlas/HIGG-2015-08/fig_01b": {
+   "source": "% HIGG-2015-08 fig_01b: converted from TikZ, no coordinates kept\nin: g1 g2\nout: q1 h q2\nh [particle={\\boldsymbol{h/H/A}}]\ng1 -- [gluon, label={\\boldsymbol{g}}] a\ng2 -- [gluon, label={\\boldsymbol{g}}] b\nq1 -- [fermion, label'={\\boldsymbol{\\bar{b}}}] a\na -- [fermion] c\nc -- [fermion] b\nb -- [fermion, label'={\\boldsymbol{b}}] q2\nc -- [charged scalar] h",
+   "points": {
+    "0:g1": [
+     0.738,
+     -1.843
+    ],
+    "0:g2": [
+     0.738,
+     1.843
+    ],
+    "0:q1": [
+     2.564,
+     -2.255
+    ],
+    "0:h": [
+     2.991,
+     0
+    ],
+    "0:q2": [
+     2.564,
+     2.255
+    ],
+    "0:a": [
+     1.707,
+     -1.466
+    ],
+    "0:b": [
+     1.707,
+     1.466
+    ],
+    "0:c": [
+     1.991,
+     0
+    ]
+   },
+   "problems": 0
+  },
+  "docs/authoring/checks.md#0": {
+   "source": "i1 [e-] -- a -- i2 [e-]\na -- [gamma] b\nf1 [mu-] -- b -- f2",
+   "points": {
+    "0:i1": [
+     0.273,
+     -1.052
+    ],
+    "0:a": [
+     0.999,
+     0
+    ],
+    "0:i2": [
+     0.273,
+     1.052
+    ],
+    "0:b": [
+     2.001,
+     0
+    ],
+    "0:f1": [
+     2.727,
+     -1.052
+    ],
+    "0:f2": [
+     2.727,
+     1.052
+    ]
+   },
+   "problems": 0
+  },
+  "docs/authoring/colour-flow.md#0": {
+   "source": "colour flow: on\nd dbar > g > t tbar\nt > b W+\ntbar > bbar W-",
+   "points": {
+    "0:in2": [
+     0.126,
+     -0.8
+    ],
+    "0:v1": [
+     1.05,
+     -0.004
+    ],
+    "0:in3": [
+     0.126,
+     0.799
+    ],
+    "0:v4": [
+     2.265,
+     -0.004
+    ],
+    "0:v5": [
+     3.113,
+     -1.379
+    ],
+    "0:out6": [
+     3.796,
+     -1.892
+    ],
+    "0:out7": [
+     3.823,
+     -0.964
+    ],
+    "0:v8": [
+     3.113,
+     1.374
+    ],
+    "0:out9": [
+     3.799,
+     1.903
+    ],
+    "0:out10": [
+     3.83,
+     0.951
+    ]
+   },
+   "problems": 0
+  },
+  "docs/authoring/colour-flow.md#2": {
+   "source": "colour flow: on\ni1 [g] -- a -- i2 [g]\na -- [gluon] b\nf1 [t] -- b -- f2 [tbar]",
+   "points": {
+    "0:i1": [
+     0.273,
+     -1.052
+    ],
+    "0:a": [
+     0.999,
+     0
+    ],
+    "0:i2": [
+     0.273,
+     1.052
+    ],
+    "0:b": [
+     2.001,
+     0
+    ],
+    "0:f1": [
+     2.727,
+     -1.052
+    ],
+    "0:f2": [
+     2.727,
+     1.052
+    ]
+   },
+   "problems": 0
+  },
+  "docs/authoring/colour-flow.md#3": {
+   "source": "colour flow: on\ni1 [g] -- a\ni2 [g] -- b\na -- [fermion] c -- [fermion] b -- [fermion, label=t] a\nc -- [H] f1",
+   "points": {
+    "0:i1": [
+     0.045,
+     -0.774
+    ],
+    "0:a": [
+     1.045,
+     -0.765
+    ],
+    "0:i2": [
+     0.045,
+     0.774
+    ],
+    "0:b": [
+     1.045,
+     0.765
+    ],
+    "0:c": [
+     1.911,
+     0
+    ],
+    "0:f1": [
+     2.911,
+     0
+    ]
+   },
+   "problems": 0
+  },
+  "docs/authoring/colour-flow.md#4": {
+   "source": "colour flow: only\ni1 [q] -- a -- f1 [q]\ni2 [q] -- b -- f2 [q]\na -- [gluon] b",
+   "points": {
+    "0:i1": [
+     0.024,
+     -0.875
+    ],
+    "0:a": [
+     1,
+     -0.542
+    ],
+    "0:f1": [
+     1.976,
+     -0.875
+    ],
+    "0:i2": [
+     0.024,
+     1.32
+    ],
+    "0:b": [
+     1,
+     0.987
+    ],
+    "0:f2": [
+     1.976,
+     1.32
+    ]
+   },
+   "problems": 0
+  },
+  "docs/authoring/emphasis.md#0": {
+   "source": "in: i1 i2\nout: f1 f2 f3 f4\ni1 [p] -- pp [blob] -- i2 [p]\npp -- [chargino, lifetime={c\\tau}] c1\npp -- [chargino, lifetime] c2\nc1 -- f1 [pi+]\nc1 -- f2 [neutralino1]\nc2 -- f3 [neutralino1]\nc2 -- f4 [pi-]",
+   "points": {
+    "0:i1": [
+     0.121,
+     -0.726
+    ],
+    "0:i2": [
+     0.121,
+     0.726
+    ],
+    "0:f1": [
+     2.836,
+     -2.086
+    ],
+    "0:f2": [
+     3.239,
+     -0.783
+    ],
+    "0:f3": [
+     3.243,
+     0.783
+    ],
+    "0:f4": [
+     2.838,
+     2.087
+    ],
+    "0:pp": [
+     0.785,
+     -0.002
+    ],
+    "0:c1": [
+     2.087,
+     -0.745
+    ],
+    "0:c2": [
+     2.093,
+     0.746
+    ]
+   },
+   "problems": 1
+  },
+  "docs/authoring/emphasis.md#1": {
+   "source": "--- on a point\ni1 [e-] -- a -- i2 [e+]\na [dot, pulse] -- [Z] b\nb -- f1 [mu-]\nb -- f2 [mu+]\n--- on a coupling and a line\ni1 [q] -- a\ni2 [q] -- b\na -- f1 [q]\nb -- f2 [q]\na -- [W] c\nb -- [W] c\nc -- [H, pulse=blue] l [dot, pulse]\nl -- h1 [H]\nl -- h2 [H]",
+   "points": {
+    "0:i1": [
+     0.273,
+     -1.052
+    ],
+    "0:a": [
+     0.999,
+     0
+    ],
+    "0:i2": [
+     0.273,
+     1.052
+    ],
+    "0:b": [
+     2.001,
+     0
+    ],
+    "0:f1": [
+     2.727,
+     -1.052
+    ],
+    "0:f2": [
+     2.727,
+     1.052
+    ],
+    "1:i1": [
+     0.709,
+     -1.837
+    ],
+    "1:a": [
+     1.677,
+     -1.51
+    ],
+    "1:i2": [
+     0.754,
+     1.813
+    ],
+    "1:b": [
+     1.739,
+     1.482
+    ],
+    "1:f1": [
+     2.673,
+     -1.848
+    ],
+    "1:f2": [
+     2.694,
+     1.816
+    ],
+    "1:c": [
+     2.057,
+     0.017
+    ],
+    "1:l": [
+     3.134,
+     0.017
+    ],
+    "1:h1": [
+     3.782,
+     -0.427
+    ],
+    "1:h2": [
+     3.782,
+     0.46
+    ]
+   },
+   "problems": 0
+  }
+ }
+}

@@ -1,21 +1,62 @@
 import type { Diagram, Edge } from "../model.ts";
 import { particleOfEdge, quarkFromLabel } from "../particles/identify.ts";
 import { PROPERTIES, propertiesOf } from "../particles/properties.ts";
-import { lookupParticle } from "../particles/registry.ts";
+import { lookupParticle, registry } from "../particles/registry.ts";
 import { isExternal, kindOfLine, linesByVertex, readDiagram } from "./prepare.ts";
 
 /**
- * A diagram in plain English, for screen readers, alt text and anyone who cannot see it:
- * what comes in and goes out, then each interaction in time order, then loops and hadrons.
+ * A diagram in plain English, for screen readers, alt text and anyone who cannot see it, told as
+ * a physicist would summarise it. A production followed by decays is one sentence: what is made,
+ * pairs named as pairs, decays that happen alike told once ("each"), and a W or Z that decays
+ * differently on two branches told by its mode:
  *
- *     explain("i1 [e-] -- a -- i2 [e+]\na -- [Z] b\nf1 [mu-] -- b -- f2 [mu+]")
- *     // "An electron and a positron come in; a muon and an antimuon go out. The electron and
- *     //  the positron meet, making a Z boson. The Z boson decays into a muon and an antimuon."
+ *     explain("p p > t tbar\nt > b W+(> e+ nu)\ntbar > bbar W-(> q qbar)")
+ *     // "A proton–proton collision produces a top-quark pair, each top quark decaying into a
+ *     //  bottom quark and a W boson, with one W boson decaying leptonically, to a positron and
+ *     //  a neutrino, and the other hadronically."
  *
- * Every SVG feynjs draws carries this description in its <desc>.
+ * Any other diagram (a loop, an exchange, radiation) is told interaction by interaction, in time
+ * order, after what comes in and goes out. Hadrons and marked couplings follow. Every SVG feynjs
+ * draws carries this description in its <desc>.
  */
 export function explain(source: string): string {
-  return explainParsed(readDiagram(source));
+  const d = readDiagram(source);
+  return `${summaryParsed(d)}. ${explainParsed(d)}`;
+}
+
+/**
+ * The diagram in a phrase: what kind of picture it is and what it shows, in words, for the SVG's
+ * accessible name (its aria-label) and the start of alt text. A high-level summary that details
+ * follow, as accessible-figure guidance asks (ACM DIS 2023: "a high-level summary, then
+ * details"); never the source's own symbols, which a screen reader spells out.
+ *
+ *     "Feynman diagram of a proton–proton collision producing a top-quark pair"
+ *     "Feynman diagram of an electron and a positron annihilating into a muon pair, through a photon"
+ *     "One-loop Feynman diagram of two gluons to a Higgs boson"
+ */
+export function summaryParsed(d: Diagram): string {
+  const lines = linesByVertex(d);
+  const external = new Set([...d.vertices.keys()].filter((id) => isExternal(d, id, lines)));
+  const story = decayStory(d, lines, external);
+  if (story) return `Feynman diagram of ${story.summary}`;
+  const legName = (id: string) => nameOf(d, lines.get(id)![0]);
+  const incoming = [...external].filter((id) => d.vertices.get(id)!.role === "in").map(legName);
+  const outgoing = [...external].filter((id) => d.vertices.get(id)!.role === "out").map(legName);
+  const loops = loopCount(d);
+  const kind = `${loops ? `${capital(NUMBERS[loops] ?? String(loops))}-loop Feynman` : "Feynman"} diagram`;
+  if (!incoming.length && !outgoing.length) return kind;
+  return `${kind} of ${listOf(incoming, "a")} to ${listOf(outgoing, "a")}`;
+}
+
+/** Independent loops among the drawn lines: lines, less points, plus separate pieces. */
+function loopCount(d: Diagram): number {
+  const drawn = d.edges.filter((e) => e.style.line !== "none");
+  const parent = new Map<string, string>();
+  const find = (v: string): string => { while (parent.get(v) !== v) v = parent.get(v)!; return v; };
+  for (const e of drawn) for (const v of [e.from, e.to]) if (!parent.has(v)) parent.set(v, v);
+  for (const e of drawn) parent.set(find(e.from), find(e.to));
+  const pieces = new Set([...parent.keys()].map(find)).size;
+  return Math.max(0, drawn.length - parent.size + pieces);
 }
 
 /** Explain a diagram that has already been parsed, with its legs classified. */
@@ -26,10 +67,17 @@ export function explainParsed(d: Diagram): string {
   const incoming = [...external].filter((id) => d.vertices.get(id)!.role === "in").map(legName);
   const outgoing = [...external].filter((id) => d.vertices.get(id)!.role === "out").map(legName);
   const sentences: string[] = [];
-  if (incoming.length || outgoing.length) {
-    sentences.push(`${capital(listOf(incoming, "a"))} ${incoming.length > 1 ? "come" : "comes"} in; ${listOf(outgoing, "a")} ${outgoing.length > 1 ? "go" : "goes"} out.`);
+  const story = decayStory(d, lines, external);
+  if (story) {
+    sentences.push(story.text);
+    const outgoingLegs = [...external].filter((id) => d.vertices.get(id)!.role === "out").map((id) => lines.get(id)![0]);
+    if (outgoingLegs.length) sentences.push(`The final state is ${listWithPairs(outgoingLegs, (e) => nameOf(d, e, nameFermionLines(d, lines)))}.`);
+  } else {
+    if (incoming.length || outgoing.length) {
+      sentences.push(`${capital(listOf(incoming, "a"))} ${incoming.length > 1 ? "come" : "comes"} in; ${listOf(outgoing, "a")} ${outgoing.length > 1 ? "go" : "goes"} out.`);
+    }
+    sentences.push(...interactions(d, lines, external));
   }
-  sentences.push(...interactions(d, lines, external));
   for (const h of d.hadrons) {
     const legs = h.legs.filter((id) => lines.get(id)?.length).map(legName);
     if (legs.length) sentences.push(`${capital(listOf(legs, "the"))} ${legs.length > 1 ? "are" : "is"} bound in the ${plainText(h.label)}.`);
@@ -37,6 +85,156 @@ export function explainParsed(d: Diagram): string {
   const couplings = [...d.vertices.values()].filter((v) => v.coupling).map((v) => plainText(v.coupling!));
   if (couplings.length) sentences.push(`Couplings marked: ${listOf(couplings.map((c) => ({ singular: c, plural: c })), "")}.`);
   return sentences.join(" ");
+}
+
+// ---- the story of a production and its decays --------------------------------------------
+
+/**
+ * A production followed by decays, in one sentence, or undefined when the diagram is not one:
+ * every incoming leg meets at one point (a collision, an annihilation or a decay), and from there
+ * every line either leaves the diagram or ends in a decay into two or more others. A loop, an
+ * exchange between two points, a line that only carries on, or radiation (a quark decaying into
+ * a quark and a gluon) is told interaction by interaction instead.
+ */
+function decayStory(d: Diagram, lines: Map<string, Edge[]>, external: Set<string>): { text: string; summary: string } | undefined {
+  const drawn = (id: string) => (lines.get(id) ?? []).filter((e) => e.style.line !== "none" && e.from !== e.to);
+  if (loopGroups(d).size) return undefined;
+  if (d.edges.some((e) => e.style.line !== "none" && external.has(e.from) && external.has(e.to))) return undefined;
+  const incomingLegs = [...external].filter((id) => d.vertices.get(id)!.role === "in");
+  if (!incomingLegs.length) return undefined;
+  const other = (e: Edge, id: string) => (e.from === id ? e.to : e.from);
+  const hardPoints = new Set(incomingLegs.flatMap((id) => drawn(id).map((e) => other(e, id))));
+  if (hardPoints.size !== 1) return undefined;
+  const hard = [...hardPoints][0];
+  if (external.has(hard)) return undefined;
+  const fermionNames = nameFermionLines(d, lines);
+  const name = (e: Edge) => nameOf(d, e, fermionNames);
+  const charge = (e: Edge) => propertiesOf(particleOfEdge(d, e))?.charge;
+
+  // the decay tree, from the hard point outward: each line's far point and what leaves it
+  const decay = new Map<Edge, Edge[]>();
+  const visited = new Set([hard]);
+  const grow = (from: string, line: Edge | undefined): boolean => {
+    for (const e of drawn(from)) {
+      if (e === line) continue;
+      const to = other(e, from);
+      if (external.has(to)) { if (d.vertices.get(to)!.role === "in") { if (from !== hard) return false; continue; } else continue; }
+      if (visited.has(to)) return false;
+      visited.add(to);
+      const products = drawn(to).filter((f) => f !== e);
+      if (products.length < 2) return false;
+      // (radiation, not a decay: the particle carries on beside what it gives off)
+      if (products.some((f) => name(f).singular === name(e).singular)) return false;
+      decay.set(e, products);
+      if (!grow(to, e)) return false;
+    }
+    return true;
+  };
+  if (!grow(hard, undefined)) return undefined;
+  if ([...d.vertices.keys()].some((id) => !external.has(id) && !visited.has(id) && drawn(id).length)) return undefined;
+
+  const incoming = drawn(hard).filter((e) => incomingLegs.includes(other(e, hard)));
+  const made = drawn(hard).filter((e) => !incoming.includes(e));
+  if (!made.length) return undefined;
+  const blob = ["blob", "hatched"].includes(d.vertices.get(hard)!.shape);
+  const inNames = incoming.map(name);
+  // (one particle that carries on beside what it gives off radiates; it does not decay)
+  if (inNames.length === 1 && made.some((e) => name(e).singular === inNames[0].singular)) return undefined;
+
+  // what happens first: as a sentence's start, and as the summary's phrase (participles)
+  let opening: string, phrase: string;
+  const annihilate = inNames.length === 2 && baseOf(inNames[0]) === baseOf(inNames[1]) && inNames[0].singular !== inNames[1].singular;
+  if (inNames.length === 1) { opening = `${capital(listOf(inNames, "a"))} decays into`; phrase = `${listOf(inNames, "a")} decaying into`; }
+  else if (blob && inNames.length === 2) {
+    const collision = `${article(baseOf(inNames[0]))} ${baseOf(inNames[0])}–${baseOf(inNames[1])} collision`;
+    opening = `${capital(collision)} produces`; phrase = `${collision} producing`;
+  } else if (inNames.length === 2 && made.length === 1) {
+    opening = `${capital(listOf(inNames, "a"))} ${annihilate ? "annihilate" : "fuse"} into`; phrase = `${listOf(inNames, "a")} ${annihilate ? "annihilating" : "fusing"} into`;
+  } else { opening = `${capital(listOf(inNames, "a"))} collide, producing`; phrase = `${listOf(inNames, "a")} colliding, producing`; }
+  // (one force carrier made and decaying, a photon or a Z between the beams and the products,
+  // is what the process goes through; the summary names what it makes)
+  const carrier = made.length === 1 && decay.has(made[0]) && /^(?:(?:virtual|off-shell) )?(?:photon|gluon|Z boson|W boson)$/.test(name(made[0]).singular);
+  const summary = carrier ? `${phrase} ${listWithPairs(decay.get(made[0])!, name)}, through ${listOf([name(made[0])], "a")}` : `${phrase} ${listWithPairs(made, name)}`;
+
+  const clauses: string[] = [];
+  const groups = groupsOf(made, name);
+  const single = made.length === 1;
+  for (const g of groups) clauses.push(...tellGroup(g, decay, name, charge, single));
+  if (!clauses.length) return { text: `${opening} ${listWithPairs(made, name)}.`, summary };
+  // (two clauses read as one sentence; a longer chain goes on in sentences of its own)
+  const [first, second, ...rest] = clauses;
+  const joined = single ? `${listWithPairs(made, name)}, which ${first}` : `${listWithPairs(made, name)}, ${first}`;
+  const onwards = rest.map((c) => `${capital(c.replace(/ decaying\b/, " decays"))}.`);
+  return { text: [`${opening} ${joined}${second ? `, with ${second}` : ""}.`, ...onwards].join(" "), summary };
+}
+
+/** A name without "anti", the positron an electron: the particle a pair is named after. */
+function baseOf(n: Name): string {
+  return n.singular === "positron" ? "electron" : n.singular.replace(/\banti-?(?=\w)/, "").replace(/ anti-?(?=\w)/, " ");
+}
+
+/** Lines of the same particle, or a particle and its antiparticle, together: the branches told alike. */
+function groupsOf(edges: Edge[], name: (e: Edge) => Name): Edge[][] {
+  const groups = new Map<string, Edge[]>();
+  for (const e of edges) { const k = baseOf(name(e)); (groups.get(k) ?? groups.set(k, []).get(k)!).push(e); }
+  return [...groups.values()];
+}
+
+/** "a top-quark pair and a gluon": two lines of one particle, or of it and its antiparticle, are a pair. */
+function listWithPairs(edges: Edge[], name: (e: Edge) => Name): string {
+  const parts: Name[] = [];
+  for (const g of groupsOf(edges, name)) {
+    if (g.length === 2) { const pair = `${baseOf(name(g[0])).replace(/ /g, "-")} pair`; parts.push({ singular: pair, plural: `${pair}s` }); }
+    else parts.push(...g.map(name));
+  }
+  return listOf(sortNames(parts).sort((a, b) => Number(/neutrino/.test(a.singular)) - Number(/neutrino/.test(b.singular))), "a");
+}
+
+/** How a W or Z decays, when its products say: "leptonically", "hadronically" or "invisibly". */
+function modeOf(parent: Name, products: Name[]): string | undefined {
+  if (!/^(?:off-shell )?[WZ] boson$/.test(parent.singular)) return undefined;
+  const kinds = products.map((n) => baseOf(n)).map((b) => (/neutrino/.test(b) ? "nu" : /\b(?:electron|muon|tau|lepton)\b/.test(b) ? "l" : /\bquark\b|\bjet\b/.test(b) ? "q" : "?"));
+  if (kinds.every((k) => k === "nu")) return "invisibly";
+  if (kinds.every((k) => k === "nu" || k === "l")) return "leptonically";
+  if (kinds.every((k) => k === "q")) return "hadronically";
+  return undefined;
+}
+
+/**
+ * The decays of one group of branches (a particle and its antiparticle, say), as clauses:
+ * told once with "each" when they decay alike, then what they make, group by group; or "one ...
+ * and the other ..." when they do not, a W or Z by its mode.
+ */
+function tellGroup(group: Edge[], decay: Map<Edge, Edge[]>, name: (e: Edge) => Name, charge: (e: Edge) => string | undefined, which: boolean): string[] {
+  const decaying = group.filter((e) => decay.has(e));
+  if (!decaying.length) return [];
+  const base = baseOf(name(group[0]));
+  const keyOf = (products: Edge[]) => products.map((f) => baseOf(name(f))).sort().join("|");
+  const into = (products: Edge[]) => listWithPairs(products, name);
+  const verb = which ? "decays" : "decaying";
+  if (decaying.length === group.length && new Set(decaying.map((e) => keyOf(decay.get(e)!))).size === 1) {
+    const products = decay.get(group[0])!;
+    const subject = which ? "" : group.length > 1 ? `each ${base} ` : `the ${name(group[0]).singular} `;
+    // (a W or Z told by its mode where the mode says it all: hadronically, invisibly)
+    const mode = modeOf(name(group[0]), products.map(name));
+    const clause = mode && mode !== "leptonically" ? `${subject}${verb} ${mode}` : `${subject}${verb} into ${into(products)}`;
+    // the products of every branch, matched by particle, are the next groups
+    const next = new Map<string, Edge[]>();
+    for (const e of group) for (const f of decay.get(e)!) { const k = baseOf(name(f)); (next.get(k) ?? next.set(k, []).get(k)!).push(f); }
+    return [clause, ...[...next.values()].flatMap((g) => tellGroup(g, decay, name, charge, false))];
+  }
+  if (group.length === 2) {
+    const [a, b] = group, pa = decay.get(a), pb = decay.get(b);
+    const ma = pa && modeOf(name(a), pa.map(name)), mb = pb && modeOf(name(b), pb.map(name));
+    const how = (products: Edge[] | undefined, mode: string | undefined, otherMode: string | undefined) =>
+      !products ? "not at all" : mode && mode !== otherMode ? (mode === "leptonically" ? `${mode}, to ${into(products)}` : mode) : `into ${into(products)}`;
+    const first = pa ? a : b, second = pa ? b : a;
+    const [p1, p2, m1, m2] = pa ? [pa, pb, ma, mb] : [pb, pa, mb, ma];
+    const clause = p2 ? `one ${base} ${verb} ${how(p1, m1, m2)}, and the other ${how(p2, m2, m1)}` : `one ${base} ${verb} ${how(p1, m1, undefined)}`;
+    const deeper = [first, second].filter((e) => decay.has(e)).flatMap((e) => decay.get(e)!.flatMap((f) => tellGroup([f], decay, name, charge, false)));
+    return [clause, ...deeper];
+  }
+  return decaying.flatMap((e) => [`${article(name(e).singular)} ${name(e).singular} ${verb} into ${into(decay.get(e)!)}`, ...decay.get(e)!.flatMap((f) => tellGroup([f], decay, name, charge, false))]);
 }
 
 // ---- the story, interaction by interaction ------------------------------------------------
@@ -230,9 +428,20 @@ function plural(name: string): string {
 /** The particle whose own label this is (`\\mu^-` is the mu-), so a TeX label reads as a name. */
 function particleWithLabel(label: string | undefined): string | undefined {
   if (!label) return undefined;
-  const squash = (t: string) => t.replace(/[\s{}]/g, "");
-  return Object.keys(PROPERTIES).find((name) => { const p = lookupParticle(name); return p && squash(p.label) === squash(label); });
+  // (every particle's label, squashed, to its name: built once, again only when a particle is
+  // added; the first name with a label wins, as a search in order would find it)
+  if (!labelIndex || labelIndexVersion !== registry.version) {
+    labelIndex = new Map();
+    labelIndexVersion = registry.version;
+    for (const name of Object.keys(PROPERTIES)) {
+      const p = lookupParticle(name);
+      if (p) { const k = squashLabel(p.label); if (!labelIndex.has(k)) labelIndex.set(k, name); }
+    }
+  }
+  return labelIndex.get(squashLabel(label));
 }
+const squashLabel = (t: string) => t.replace(/[\s{}]/g, "");
+let labelIndex: Map<string, string> | undefined, labelIndexVersion = -1;
 
 const NUMBERS = ["", "one", "two", "three", "four", "five", "six", "seven", "eight"];
 const article = (word: string) => (/^(?:[aeiou]|hon|\d*[18]\b)/i.test(word) && !/^(?:uni|one|eu)/i.test(word) ? "an" : "a");

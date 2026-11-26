@@ -35,13 +35,13 @@ export const FAMILIES: Family[] = [
     name: "spacing", letter: "S", colour: "#7b8494", everywhere: true,
     about: "lines their length, shorter deeper in a cascade; angles even at each point; everything clear of everything else",
     forces: ["length", "even angles", "clearance"],
-    settings: ["lineLength", "legLength", "length", "legGive", "stageShrink", "smallestStage", "smallestLegStage", "evenAngles", "passThroughEvenness", "clearance", "margin", "vertexPad", "minAngle"],
+    settings: ["lineLength", "legLength", "length", "legGive", "stageShrink", "smallestLegStage", "evenAngles", "passThroughEvenness", "clearance", "margin", "vertexPad", "minAngle"],
   },
   {
     name: "time", letter: "T", colour: "#3b7be0", everywhere: true,
     about: "time runs left to right: lines lean the way it runs, and nothing runs back",
     forces: ["time flow", "time order"],
-    settings: ["timeFlow", "shortDiagram", "flowFade", "longFlow", "timeOrder", "maxLean", "offShellFlow", "emittedFlow", "deeperFlow"],
+    settings: ["timeFlow", "timeOrder", "maxLean", "offShellFlow", "emittedFlow", "deeperFlow"],
   },
   {
     name: "incoming", letter: "I", colour: "#0e9f8e",
@@ -67,7 +67,7 @@ export const FAMILIES: Family[] = [
     name: "hadrons", letter: "H", colour: "#2f9e44",
     about: "a hadron's quarks run side by side, evenly spaced; a vacuum pair's quarks arc away together",
     forces: ["hadrons", "vacuumArcs"],
-    settings: ["hadron", "rail", "mesonGap", "baryonGap", "hadronSpacing"],
+    settings: ["hadron", "rail", "mesonGap", "hadronSpacing"],
   },
   {
     name: "loops", letter: "L", colour: "#d6336c",
@@ -76,6 +76,3 @@ export const FAMILIES: Family[] = [
     settings: ["loop", "loopLeg", "loopUpright"],
   },
 ];
-
-/** The family a force belongs to, by the force's name. */
-export const familyOfForce = (force: string): Family | undefined => FAMILIES.find((f) => f.forces.includes(force));

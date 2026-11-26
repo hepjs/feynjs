@@ -2,6 +2,7 @@ import type { Diagram } from "../../model.ts";
 import type { ForceRules } from "../../theme.ts";
 import { allForces, givenOffToward, givesOffFermion, levelTies, topOutside, mirroredPairs, quarkRails, segmentsCross } from "./forces.ts";
 import { balance } from "./solve.ts";
+import type { Projection } from "./solve.ts";
 import { readStructure } from "./structure.ts";
 import type { Sizes, Structure } from "./structure.ts";
 import type { Force } from "./forces.ts";
@@ -41,13 +42,38 @@ export function layoutWithForces(diagram: Diagram, rules: ForceRules, rowOverRan
   const heights = ties.filter((t) => t.axis === 1);
   // settle first with only the level ties, then lock the hadrons' columns from that settled
   // layout (locking them from the start can trap the solver in the wrong arrangement)
-  const settle = (from: Float64Array, extra: Force[] = [], without = "") => {
-    const all = [...forces.filter((f) => f.name !== without), ...extra];
-    let q = balance(from, all, pinned, 1500, heights);
-    if (heights.length < ties.length) q = balance(q, all, pinned, 1500, ties);
+  // (a very weak pull toward the preferred order among each point's later neighbours, the
+  // author's in: / out: order, else the order of their names: two arrangements the other
+  // forces hold almost equal are settled by it the same way every time, not by the last bit of
+  // a sum)
+  const order = preferredPairs(d, s);
+  const tilt: Force = { name: "tilt", terms: order.map(([x, y]) => ({ points: [x, y], energy: (q: Float64Array) => { const rise = q[2 * x + 1] - q[2 * y + 1]; return TILT * rise / Math.sqrt(1 + (rise / 0.2) * (rise / 0.2)); } })) };
+  const settle = (from: Float64Array, extra: Force[] = [], without = "", project?: Projection) => {
+    const all = [...forces.filter((f) => f.name !== without), ...extra, tilt];
+    let q = balance(from, all, pinned, 1500, heights, project);
+    if (heights.length < ties.length) q = balance(q, all, pinned, 1500, ties, project);
     return q;
   };
   let p = settle(start);
+  // (a layout with a fault, two lines crossing, a line turning back on the one that brought
+  // its particle, a line too short to read, two points on top of each other, listed legs out of
+  // order, a loop out of shape, a hadron's lines uneven, settles again from two starts lifted
+  // and lowered a fixed amount by each point's name; one of those is kept only if it has fewer
+  // faults. A layout with none never pays for the extra settles, and nor does a big one: there
+  // the check almost always finds something, and each extra start is a whole settle again)
+  if (s.ids.length <= RESTART_MAX_POINTS) {
+    const faults = faultsOf(d, s, rules);
+    const found = faults(p);
+    if (found > 0) {
+      let fewest = found;
+      for (const sign of [1, -1]) {
+        const lifted = Float64Array.from(start);
+        s.ids.forEach((id, i) => { if (!pinned[2 * i + 1]) lifted[2 * i + 1] += sign * RESTART_LIFT * hashOf(id); });
+        const q = settle(lifted), n = faults(q);
+        if (n < fewest) { p = q; fewest = n; }
+      }
+    }
+  }
   // (with the final plane first, the diagram settles one moment at a time, each moment with
   // what came before it fixed and only the forces among the points so far: what a particle
   // decays to never turns the particle, or anything before it)
@@ -60,6 +86,9 @@ export function layoutWithForces(diagram: Diagram, rules: ForceRules, rowOverRan
       p = balance(p, now, held, 1500, ties.filter((tie) => tie.points.every(upTo)));
     }
   }
+  // (a box, a loop of four, settled more than 10 degrees off square settles again from there
+  // with every closed loop held to a regular polygon; a square box never pays for it)
+  if (boxOffSquare(s, p) > 10) p = settle(p, [], "", regularLoops(s));
   // the legs the author listed in `in:` / `out:` run in that order top to bottom; the forces
   // cannot swap two legs past each other, so if the settled layout has them the wrong way
   // round, branches are turned over to follow the order, and the layout settles again from
@@ -534,10 +563,16 @@ function listedPairs(d: Diagram, s: Structure): [number, number][] {
 function flipBranchesToListedOrder(s: Structure, p: Float64Array, wrong: (q: Float64Array) => number): Float64Array {
   const other = (l: number, i: number) => (s.lines[l].a === i ? s.lines[l].b : s.lines[l].a);
   const later = (i: number) => s.linesAt[i].map((l) => other(l, i)).filter((j) => s.time[j] > s.time[i]);
-  const earlier = (i: number) => s.linesAt[i].map((l) => other(l, i)).filter((j) => s.time[j] < s.time[i]);
+  // (what follows each point, found once: the search below asks for it many times)
+  const laterOf = new Map<number, number[]>(), afterOf = new Map<number, Set<number>>();
+  const laterOnce = (i: number) => { let r = laterOf.get(i); if (!r) laterOf.set(i, (r = later(i))); return r; };
   const after = (v: number) => {
-    const seen = new Set<number>(), stack = later(v);
-    while (stack.length) { const j = stack.pop()!; if (!seen.has(j)) { seen.add(j); stack.push(...later(j)); } }
+    let seen = afterOf.get(v);
+    if (seen) return seen;
+    seen = new Set<number>();
+    const stack = [...laterOnce(v)];
+    while (stack.length) { const j = stack.pop()!; if (!seen.has(j)) { seen.add(j); stack.push(...laterOnce(j)); } }
+    afterOf.set(v, seen);
     return seen;
   };
   const reflect = (pos: Float64Array, v: number): Float64Array => {
@@ -545,7 +580,7 @@ function flipBranchesToListedOrder(s: Structure, p: Float64Array, wrong: (q: Flo
     // the products swap sides while each keeps heading forward (reflecting across the line it
     // came in on would turn a product leaving level into one leaving upright)
     let ux = 0, uy = 0;
-    for (const j of later(v)) {
+    for (const j of laterOnce(v)) {
       const fx = pos[2 * j] - pos[2 * v], fy = pos[2 * j + 1] - pos[2 * v + 1], n = portable.hypot(fx, fy) || 1;
       ux += fx / n; uy += fy / n;
     }
@@ -820,4 +855,185 @@ function crossListedLegs(s: Structure, p: Float64Array, listed: [number, number]
     [p[2 * a], p[2 * b]] = [p[2 * b], p[2 * a]];
     [p[2 * a + 1], p[2 * b + 1]] = [p[2 * b + 1], p[2 * a + 1]];
   }
+}
+
+/** How hard the tilt toward the preferred order pulls: a four-thousandth of the stiffness of a line's length. */
+const TILT = 0.005;
+/** How far, in rows, the extra starts lift and lower each point (by a fixed share from its name). */
+const RESTART_LIFT = 0.15;
+/** Above this many points a layout keeps its first settle (the published diagrams top out at 28,
+ * and the extra starts have only ever helped at 26 or fewer). */
+const RESTART_MAX_POINTS = 40;
+
+/** A fixed number in [-1, 1] from a point's name (FNV-1a): the same on every machine, and far larger than any rounding. */
+function hashOf(id: string): number {
+  let h = 0x811c9dc5;
+  for (let k = 0; k < id.length; k++) { h ^= id.charCodeAt(k); h = Math.imul(h, 0x01000193) >>> 0; }
+  return (h / 4294967295) * 2 - 1;
+}
+
+/** The preferred top-to-bottom order of every point's later neighbours, as pairs: the author's in: / out: order where listed, else the order of their names. */
+function preferredPairs(d: Diagram, s: Structure): [number, number][] {
+  const out: [number, number][] = [];
+  const other = (l: number, i: number) => (s.lines[l].a === i ? s.lines[l].b : s.lines[l].a);
+  const key = (i: number) => { const v = d.vertices.get(s.ids[i])!; return v.declaredOrder !== undefined ? [0, v.declaredOrder, ""] as const : [1, 0, s.ids[i]] as const; };
+  const cmp = (a: number, b: number) => { const x = key(a), y = key(b); return x[0] - y[0] || x[1] - y[1] || (x[2] < y[2] ? -1 : x[2] > y[2] ? 1 : 0); };
+  s.ids.forEach((_, v) => {
+    const later = s.linesAt[v].map((l) => other(l, v)).filter((j) => s.time[j] > s.time[v]).sort(cmp);
+    for (let k = 0; k + 1 < later.length; k++) out.push([later[k], later[k + 1]]);
+  });
+  return out;
+}
+
+/**
+ * How many faults a settled layout has: lines that cross without sharing a point, a line that
+ * turns back past square on the one line that brought its particle, a line under a quarter of
+ * a line long, two points closer than a fifth of a line, listed legs out of order, a loop out
+ * of shape and a hadron's lines out of step.
+ */
+function faultsOf(d: Diagram, s: Structure, rules: ForceRules): (q: Float64Array) => number {
+  const listed = listedPairs(d, s), L = s.lines;
+  return (q) => {
+    let n = 0;
+    for (let i = 0; i < L.length; i++) for (let j = i + 1; j < L.length; j++) {
+      const A = L[i], B = L[j];
+      if (A.a === B.a || A.a === B.b || A.b === B.a || A.b === B.b) continue;
+      if (segmentsCross(q, A.a, A.b, B.a, B.b)) n++;
+    }
+    s.ids.forEach((_, v) => {
+      const near = s.linesAt[v].map((l) => (L[l].a === v ? L[l].b : L[l].a));
+      const ins = near.filter((j) => s.time[j] < s.time[v]);
+      if (ins.length !== 1) return;
+      const u = ins[0];
+      for (const w of near) {
+        if (s.time[w] <= s.time[v]) continue;
+        const hx = q[2 * v] - q[2 * u], hy = q[2 * v + 1] - q[2 * u + 1], dx = q[2 * w] - q[2 * v], dy = q[2 * w + 1] - q[2 * v + 1];
+        if (hx * dx + hy * dy < 0) n++;
+      }
+    });
+    for (const l of L) if (portable.scaledHypot(q[2 * l.b] - q[2 * l.a], q[2 * l.b + 1] - q[2 * l.a + 1]) < 0.25 * rules.lineLength) n++;
+    for (let i = 0; i < s.ids.length; i++) for (let j = i + 1; j < s.ids.length; j++) if (portable.scaledHypot(q[2 * j] - q[2 * i], q[2 * j + 1] - q[2 * i + 1]) < 0.2 * rules.lineLength) n++;
+    for (const [x, y] of listed) if (q[2 * x + 1] > q[2 * y + 1] + 0.02) n++;
+    return n + loopFaults(s, q) + hadronFaults(s, q);
+  };
+}
+
+/** Closed loops out of shape: one that is not convex or crosses itself, a box far from square or squashed, a thin triangle. */
+function loopFaults(s: Structure, q: Float64Array): number {
+  let n = 0;
+  for (const loop of s.loops) {
+    if (loop.run || loop.points.length < 3) continue;
+    const order: number[] = [loop.points[0]];
+    const used = new Set<number>();
+    while (order.length < loop.points.length) {
+      const at = order[order.length - 1];
+      const l = loop.lines.find((m) => !used.has(m) && (s.lines[m].a === at || s.lines[m].b === at));
+      if (l === undefined) break;
+      used.add(l);
+      const next = s.lines[l].a === at ? s.lines[l].b : s.lines[l].a;
+      if (order.includes(next)) break;
+      order.push(next);
+    }
+    const m = order.length;
+    if (m < 3) continue;
+    const P = order.map((i) => [q[2 * i], q[2 * i + 1]]);
+    let pos = 0, neg = 0;
+    const angles: number[] = [], sides: number[] = [];
+    for (let k = 0; k < m; k++) {
+      const a = P[(k + m - 1) % m], b = P[k], c = P[(k + 1) % m];
+      const cross = (b[0] - a[0]) * (c[1] - b[1]) - (b[1] - a[1]) * (c[0] - b[0]);
+      if (cross > 0) pos++; else if (cross < 0) neg++;
+      const v1 = [a[0] - b[0], a[1] - b[1]], v2 = [c[0] - b[0], c[1] - b[1]];
+      angles.push(portable.acos(Math.max(-1, Math.min(1, (v1[0] * v2[0] + v1[1] * v2[1]) / ((portable.scaledHypot(v1[0], v1[1]) * portable.scaledHypot(v2[0], v2[1])) || 1)))) * 180 / Math.PI);
+      sides.push(portable.scaledHypot(c[0] - b[0], c[1] - b[1]));
+    }
+    if (pos && neg) { n++; continue; }
+    const aspect = Math.min(...sides) / Math.max(...sides);
+    if (m === 4 && (Math.max(...angles.map((x) => Math.abs(x - 90))) > 35 || aspect < 0.3)) n++;
+    else if (m === 3 && Math.min(...angles) < 15) n++;
+  }
+  return n;
+}
+
+/** Hadrons whose lines are out of order or unevenly spaced. */
+function hadronFaults(s: Structure, q: Float64Array): number {
+  let n = 0;
+  for (const h of s.hadrons) {
+    if (h.legs.length < 3) continue;
+    const ys = h.legs.map((i) => q[2 * i + 1]), gaps = ys.slice(1).map((y, k) => y - ys[k]);
+    if (gaps.some((g) => g * Math.sign(gaps[0] || 1) <= 0)) { n++; continue; }
+    const mean = gaps.reduce((x, y) => x + Math.abs(y), 0) / gaps.length;
+    if (Math.max(...gaps.map((g) => Math.abs(Math.abs(g) - mean))) > 0.35 * mean) n++;
+  }
+  return n;
+}
+
+/** A loop's points in order round it, walking its lines (fewer than all of them when its lines do not close). */
+function roundLoop(s: Structure, loop: Structure["loops"][number], size: number): number[] {
+  const order: number[] = [loop.points[0]];
+  const used = new Set<number>();
+  while (order.length < size) {
+    const at = order[order.length - 1];
+    const l = loop.lines.find((m) => !used.has(m) && (s.lines[m].a === at || s.lines[m].b === at));
+    if (l === undefined) break;
+    used.add(l);
+    const next = s.lines[l].a === at ? s.lines[l].b : s.lines[l].a;
+    if (order.includes(next)) break;
+    order.push(next);
+  }
+  return order;
+}
+
+/** The furthest any corner of a box (a closed loop of four) is from square, in degrees. */
+function boxOffSquare(s: Structure, q: Float64Array): number {
+  let worst = 0;
+  for (const loop of s.loops) {
+    if (loop.run || loop.points.length !== 4) continue;
+    const order = roundLoop(s, loop, 4);
+    if (order.length !== 4) continue;
+    for (let k = 0; k < 4; k++) {
+      const a = order[(k + 3) % 4], b = order[k], c = order[(k + 1) % 4];
+      const v1x = q[2 * a] - q[2 * b], v1y = q[2 * a + 1] - q[2 * b + 1], v2x = q[2 * c] - q[2 * b], v2y = q[2 * c + 1] - q[2 * b + 1];
+      const angle = portable.acos(Math.max(-1, Math.min(1, (v1x * v2x + v1y * v2y) / ((portable.scaledHypot(v1x, v1y) * portable.scaledHypot(v2x, v2y)) || 1)))) * 180 / Math.PI;
+      worst = Math.max(worst, Math.abs(angle - 90));
+    }
+  }
+  return worst;
+}
+
+/**
+ * Every closed loop held to a regular polygon after each step: its points kept round their
+ * middle at their mean distance, evenly spaced, turned (either way round) to sit nearest where
+ * they were. A loop with a point placed by hand is left alone.
+ */
+function regularLoops(s: Structure): Projection | undefined {
+  const loops: number[][] = [];
+  for (const loop of s.loops) {
+    if (loop.run || loop.points.length < 2) continue;
+    const order = roundLoop(s, loop, loop.points.length);
+    if (order.length === loop.points.length) loops.push(order);
+  }
+  if (!loops.length) return undefined;
+  return (q, pinned) => {
+    for (const order of loops) {
+      if (order.some((i) => pinned[2 * i] && pinned[2 * i + 1])) continue;
+      const m = order.length;
+      let cx = 0, cy = 0;
+      for (const i of order) { cx += q[2 * i]; cy += q[2 * i + 1]; }
+      cx /= m; cy /= m;
+      let r = 0;
+      for (const i of order) r += portable.scaledHypot(q[2 * i] - cx, q[2 * i + 1] - cy);
+      r /= m;
+      let best = { err: Infinity, turn: 0, way: 1 };
+      for (const way of [1, -1]) {
+        let sx = 0, sy = 0;
+        order.forEach((i, k) => { const ph = portable.atan2(q[2 * i + 1] - cy, q[2 * i] - cx) - way * (2 * Math.PI * k) / m; sx += portable.cos(ph); sy += portable.sin(ph); });
+        const turn = portable.atan2(sy, sx);
+        let err = 0;
+        order.forEach((i, k) => { const a = turn + way * (2 * Math.PI * k) / m; err += portable.square(q[2 * i] - cx - r * portable.cos(a)) + portable.square(q[2 * i + 1] - cy - r * portable.sin(a)); });
+        if (err < best.err) best = { err, turn, way };
+      }
+      order.forEach((i, k) => { const a = best.turn + best.way * (2 * Math.PI * k) / m; q[2 * i] = cx + r * portable.cos(a); q[2 * i + 1] = cy + r * portable.sin(a); });
+    }
+  };
 }

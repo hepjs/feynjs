@@ -22,6 +22,17 @@ export interface Term {
    * positive the term is zero, so the solver need not measure it until things move that far.
    */
   clear?: (p: Float64Array) => number;
+  /**
+   * The term's gradient written out, added into `g` (the solver measures it numerically when
+   * a term has none)
+   */
+  grad?: (p: Float64Array, g: Float64Array) => void;
+  /**
+   * For a clearance term: the two things it keeps apart (each a point, or a line's two ends)
+   * and how near they must come before it can be more than zero, so the solver can find the
+   * terms that might matter from where things are, without measuring every pair
+   */
+  tag?: { A: number[]; B: number[]; reach: number };
 }
 
 export interface Force {
@@ -31,7 +42,7 @@ export interface Force {
 
 const term = (points: number[], energy: (p: Float64Array) => number): Term => ({ points: [...new Set(points)], energy });
 /** A term that is zero until a limit is crossed, so the solver can skip it while it is zero. */
-const limit = (points: number[], energy: (p: Float64Array) => number, clear?: (p: Float64Array) => number): Term => ({ points: [...new Set(points)], energy, oneSided: true, clear });
+const limit = (points: number[], energy: (p: Float64Array) => number, clear?: (p: Float64Array) => number, tag?: Term["tag"]): Term => ({ points: [...new Set(points)], energy, oneSided: true, clear, ...(tag ? { tag } : {}) });
 
 const dx = (p: Float64Array, a: number, b: number) => p[2 * b] - p[2 * a];
 const dy = (p: Float64Array, a: number, b: number) => p[2 * b + 1] - p[2 * a + 1];
@@ -94,7 +105,8 @@ export function lineLength(s: Structure, rules: ForceRules): Force {
       // little longer, as papers draw a cascade's spine)
       const depth = loopStage.get(s.lines.indexOf(line)) ?? generation[start];
       const shower = showerLines.has(s.lines.indexOf(line));
-      const stage = shower ? 1.35 : Math.max(line.leg ? rules.smallestLegStage : rules.smallestStage, portable.power(rules.stageShrink, line.heavy && !line.leg ? depth * 0.75 : depth));
+      const shrunk = portable.power(rules.stageShrink, line.heavy && !line.leg ? depth * 0.75 : depth);
+      const stage = shower ? 1.35 : line.leg ? Math.max(rules.smallestLegStage, shrunk) : shrunk;
       // a beam into a blob (the pp collision) is drawn short
       // (quarks into a contact blob are ordinary legs: only beams, protons or ions, are short)
       const beam = (i: number) => !s.particle[i] || !s.lines[s.linesAt[i][0]].fermion;
@@ -123,7 +135,12 @@ export function lineLength(s: Structure, rules: ForceRules): Force {
       if (line.leg && (capped.has(line.a) || capped.has(line.b))) {
         return limit([line.a, line.b], (p) => { const short = want - portable.hypot(dx(p, line.a, line.b), dy(p, line.a, line.b)); return short > 0 ? stiffness * portable.square(short) : 0; });
       }
-      return term([line.a, line.b], (p) => stiffness * portable.square(portable.hypot(dx(p, line.a, line.b), dy(p, line.a, line.b)) - want));
+      return Object.assign(term([line.a, line.b], (p) => stiffness * portable.square(portable.hypot(dx(p, line.a, line.b), dy(p, line.a, line.b)) - want)), {
+        grad: (p: Float64Array, g: Float64Array) => {
+          const x = dx(p, line.a, line.b), y = dy(p, line.a, line.b), r = portable.scaledHypot(x, y) || 1e-12, c = 2 * stiffness * (r - want) / r;
+          g[2 * line.a] -= c * x; g[2 * line.a + 1] -= c * y; g[2 * line.b] += c * x; g[2 * line.b + 1] += c * y;
+        },
+      });
     }),
   };
 }
@@ -219,7 +236,7 @@ export function evenAngles(s: Structure, rules: ForceRules): Force {
 export function timeFlow(s: Structure, rules: ForceRules): Force {
   const outsideTime = loopLinesOutsideTime(s);
   const timed = s.lines.filter((line, l) => s.time[line.a] !== s.time[line.b] && !outsideTime.has(l));
-  const weight = flowWeight(s, rules);
+  const weight = rules.timeFlow;
   const heavyAhead = heavyDecaysAhead(s);
   // a boson given off in the decay of a moving particle (the W of t -> b W) is emitted to the
   // side of the fermion that carries on: it feels part of the pull (emittedFlow)
@@ -245,9 +262,16 @@ export function timeFlow(s: Structure, rules: ForceRules): Force {
         // of two branches made together, the one with more decays ahead keeps nearer level,
         // giving its longer cascade the room (the tbar of tbar -> W bbar, W -> l nu beside a t -> gamma q)
         * (deeper.has(late) ? rules.deeperFlow : 1);
-      return term([early, late], (p) => {
+      return Object.assign(term([early, late], (p) => {
         const x = dx(p, early, late), y = dy(p, early, late);
         return w * (1 - x / (portable.hypot(x, y) || 1));
+      }), {
+        grad: (p: Float64Array, g: Float64Array) => {
+          const x = dx(p, early, late), y = dy(p, early, late), r = portable.scaledHypot(x, y);
+          if (!r) return;
+          const r3 = r * r * r, gx = -w * y * y / r3, gy = w * x * y / r3;
+          g[2 * late] += gx; g[2 * late + 1] += gy; g[2 * early] -= gx; g[2 * early + 1] -= gy;
+        },
       });
     }),
   };
@@ -337,12 +361,6 @@ export function heavyDecaysAhead(s: Structure): number[] {
   return ahead;
 }
 
-/** The time-flow weight for a diagram of this length: full up to a short diagram, then fading. */
-export function flowWeight(s: Structure, rules: ForceRules): number {
-  const steps = Math.max(...s.time);
-  const extra = Math.max(0, steps - rules.shortDiagram);
-  return Math.max(rules.longFlow, rules.timeFlow * portable.power(rules.flowFade, extra));
-}
 
 /**
  * What happens later is drawn further right, and no line leans further than a set angle
@@ -479,25 +497,27 @@ export function clearance(s: Structure, rules: ForceRules): Force {
       ...pairs.map(([a, b]) => limit([...reach(a), ...reach(b)], (p) => {
         const u = elementAt(p, a, first), w = elementAt(p, b, second);
         return push(rules.margin + s.pad[a] + s.pad[b] - portable.hypot(w[0] - u[0], w[1] - u[1]));
-      }, (p) => apartBy(p[2 * a], p[2 * a + 1], p[2 * b], p[2 * b + 1]) - rules.margin - 2 * s.pad[a] - 2 * s.pad[b])),
+      }, (p) => apartBy(p[2 * a], p[2 * a + 1], p[2 * b], p[2 * b + 1]) - rules.margin - 2 * s.pad[a] - 2 * s.pad[b], { A: [a], B: [b], reach: rules.margin + 2 * s.pad[a] + 2 * s.pad[b] })),
       // ...and from every line it does not touch
       ...s.ids.flatMap((_, i) => straight.map((l) => [i, l] as const).filter(([, l]) => !alongOneRun(i, l) && s.lines[l].a !== i && s.lines[l].b !== i && attachedTo[i] !== s.lines[l].a && attachedTo[i] !== s.lines[l].b))
         .map(([i, l]) => limit([...reach(i), s.lines[l].a, s.lines[l].b], (p) => push(rules.margin + s.pad[i] - distanceToLine(elementAt(p, i, first), p, s.lines[l].a, s.lines[l].b)),
-          (p) => distanceToLine(pointAt(p, i), p, s.lines[l].a, s.lines[l].b) - rules.margin - 2 * s.pad[i])),
+          (p) => distanceToLine(pointAt(p, i), p, s.lines[l].a, s.lines[l].b) - rules.margin - 2 * s.pad[i], { A: [i], B: [s.lines[l].a, s.lines[l].b], reach: rules.margin + 2 * s.pad[i] })),
       // a line's label keeps the margin from elements and lines that are not its own
       // ...and from every other line's label
-      ...labelled.flatMap((l, n) => labelled.slice(n + 1).map((k) => limit([s.lines[l].a, s.lines[l].b, s.lines[k].a, s.lines[k].b, ...internal], (p) => {
+      // (a label's side depends on the middle of the diagram only through which side it takes,
+      // a choice the step does not change, so these terms list only the lines' own ends)
+      ...labelled.flatMap((l, n) => labelled.slice(n + 1).map((k) => limit([s.lines[l].a, s.lines[l].b, s.lines[k].a, s.lines[k].b], (p) => {
         const u = labelOf(p, l, first), w = labelOf(p, k, second);
         return push(rules.margin + s.linePad[l] + s.linePad[k] - portable.hypot(w[0] - u[0], w[1] - u[1]));
-      }, (p) => apartBy(mid(p, l, 0), mid(p, l, 1), mid(p, k, 0), mid(p, k, 1)) - rules.margin - 2 * s.linePad[l] - 2 * s.linePad[k]))),
+      }, (p) => apartBy(mid(p, l, 0), mid(p, l, 1), mid(p, k, 0), mid(p, k, 1)) - rules.margin - 2 * s.linePad[l] - 2 * s.linePad[k], { A: [s.lines[l].a, s.lines[l].b], B: [s.lines[k].a, s.lines[k].b], reach: rules.margin + 2 * s.linePad[l] + 2 * s.linePad[k] }))),
       ...labelled.flatMap((l) => [
-        ...s.ids.map((_, i) => i).filter((i) => i !== s.lines[l].a && i !== s.lines[l].b).map((i) => limit([s.lines[l].a, s.lines[l].b, ...reach(i), ...internal], (p) => {
+        ...s.ids.map((_, i) => i).filter((i) => i !== s.lines[l].a && i !== s.lines[l].b).map((i) => limit([s.lines[l].a, s.lines[l].b, ...reach(i)], (p) => {
           const m = labelOf(p, l, first), e = elementAt(p, i, second);
           return push(rules.margin + s.linePad[l] + s.pad[i] - portable.hypot(e[0] - m[0], e[1] - m[1]));
-        }, (p) => apartBy(mid(p, l, 0), mid(p, l, 1), p[2 * i], p[2 * i + 1]) - rules.margin - 2 * s.linePad[l] - 2 * s.pad[i])),
+        }, (p) => apartBy(mid(p, l, 0), mid(p, l, 1), p[2 * i], p[2 * i + 1]) - rules.margin - 2 * s.linePad[l] - 2 * s.pad[i], { A: [s.lines[l].a, s.lines[l].b], B: [i], reach: rules.margin + 2 * s.linePad[l] + 2 * s.pad[i] })),
         ...straight.filter((k) => k !== l && ![s.lines[k].a, s.lines[k].b].some((e) => e === s.lines[l].a || e === s.lines[l].b))
-          .map((k) => limit([s.lines[l].a, s.lines[l].b, s.lines[k].a, s.lines[k].b, ...internal], (p) => push(rules.margin + s.linePad[l] - distanceToLine(labelOf(p, l, first), p, s.lines[k].a, s.lines[k].b)),
-            (p) => distanceToLine(middleOf(p, l), p, s.lines[k].a, s.lines[k].b) - rules.margin - 2 * s.linePad[l])),
+          .map((k) => limit([s.lines[l].a, s.lines[l].b, s.lines[k].a, s.lines[k].b], (p) => push(rules.margin + s.linePad[l] - distanceToLine(labelOf(p, l, first), p, s.lines[k].a, s.lines[k].b)),
+            (p) => distanceToLine(middleOf(p, l), p, s.lines[k].a, s.lines[k].b) - rules.margin - 2 * s.linePad[l], { A: [s.lines[l].a, s.lines[l].b], B: [s.lines[k].a, s.lines[k].b], reach: rules.margin + 2 * s.linePad[l] })),
       ]),
       // no two lines leave a vertex closer than the least angle (an arc leaves square to its stretch)
       ...s.ids.map((_, v) => v).filter((v) => s.linesAt[v].filter((l) => !curved.has(l)).length >= 2).map((v) => {
@@ -561,7 +581,7 @@ export function clearance(s: Structure, rules: ForceRules): Force {
           if (!segmentsCross(p, m.a, m.b, n.a, n.b)) return 0;
           // grows smoothly from nothing, so the solver can always take a step
           return rules.clearance * portable.square(nearest(p));
-        }, (p) => (segmentsCross(p, m.a, m.b, n.a, n.b) ? 0 : nearest(p)));
+        }, (p) => (segmentsCross(p, m.a, m.b, n.a, n.b) ? 0 : nearest(p)), { A: [m.a, m.b], B: [n.a, n.b], reach: 0 });
       }),
     ],
   };
@@ -957,11 +977,23 @@ export function finalPlane(s: Structure, rules: ForceRules): Force {
     if (!sameDecay(a, b) || capped.has(a) || capped.has(b)) continue;
     if (from(a) === from(b)) {
       // products of one decay: the line through their ends stands upright
-      terms.push(term([a, b], (p) => {
+      terms.push(Object.assign(term([a, b], (p) => {
         const x = dx(p, a, b), y = dy(p, a, b);
         return rules.finalPlane * portable.square(x / (portable.hypot(x, y) || 1));
+      }), {
+        grad: (p: Float64Array, g: Float64Array) => {
+          const x = dx(p, a, b), y = dy(p, a, b), r = portable.scaledHypot(x, y);
+          if (!r) return;
+          const r3 = r * r * r, k = 2 * rules.finalPlane * x / r, gx = k * y * y / r3, gy = -k * x * y / r3;
+          g[2 * b] += gx; g[2 * b + 1] += gy; g[2 * a] -= gx; g[2 * a + 1] -= gy;
+        },
       }));
-    } else terms.push(term([a, b], (p) => (rules.finalPlane / outgoing.length) * portable.square(p[2 * a] - p[2 * b])));
+    } else {
+      const w = rules.finalPlane / outgoing.length;
+      terms.push(Object.assign(term([a, b], (p) => w * portable.square(p[2 * a] - p[2 * b])), {
+        grad: (p: Float64Array, g: Float64Array) => { const c = 2 * w * (p[2 * a] - p[2 * b]); g[2 * a] += c; g[2 * b] -= c; },
+      }));
+    }
   }
   // final states from different decays end apart: at least 0.6 of a line between their ends,
   // so the inv of an S and the lepton of a Z beside it do not crowd
@@ -1010,7 +1042,6 @@ export function lightOutside(s: Structure, rules: ForceRules): Force {
     : two && s.lines[l].leg ? (s.lines[l].heavy ? 1.5 : s.lines[l].fermion ? 2 : 1.8) : s.lines[l].heavy ? 0 : s.lines[l].fermion ? 2 : 1);
   const pairs: [number, number, number][] = [];
   const onRail = new Set(quarkRails(s).flatMap((r) => r.path));
-  const arcs = arcLines(s);
   for (const v of internal.filter((i) => !onRail.has(i))) {
     const later = s.linesAt[v].filter((l) => s.time[other(l, v)] > s.time[v]);
     const two = later.length === 2 && later.some((l) => deepBeyond(l, v));
@@ -1270,8 +1301,6 @@ export function hadrons(s: Structure, rules: ForceRules): Force {
     const cx = edge + (h.outgoing ? 1 : -1) * rx * 0.8, cy = sum / h.legs.length;
     return { cx, cy, rx, ry, r: (rx + ry) / 2 };
   };
-  // the space kept between two hadrons: one gap for mesons, a larger one for baryons
-  const gapOf = (h: (typeof ellipses)[number]) => (h.legs.length >= 3 ? rules.baryonGap : rules.mesonGap);
   const push = (shortfall: number) => (shortfall > 0 ? rules.clearance * portable.square(shortfall) : 0);
   for (const [n, h] of ellipses.entries()) {
     const own = new Set(h.legs), ownLines = new Set(h.legs.flatMap((i) => s.linesAt[i]));
@@ -1295,7 +1324,7 @@ export function hadrons(s: Structure, rules: ForceRules): Force {
     for (const g of ellipses.slice(n + 1)) {
       // (two hadrons a labelled quark pair from the vacuum feeds keep room for its labels between them)
       const fed = s.pairs.some((pair) => pair.ends.some((e) => h.legs.includes(e)) && pair.ends.some((e) => g.legs.includes(e)) && pair.lines.some((l) => s.linePad[l] > 0));
-      const gap = Math.max(gapOf(h), gapOf(g), fed ? rules.mesonGap * 3 : 0);
+      const gap = Math.max(rules.mesonGap, fed ? rules.mesonGap * 3 : 0);
       const sameSide = ellipses.filter((e) => e.outgoing === h.outgoing).flatMap((e) => e.legs);
       terms.push(limit([...new Set([...h.legs, ...g.legs, ...sameSide])], (p) => {
         const a = sizeOf(h, p), b = sizeOf(g, p);
@@ -1318,7 +1347,7 @@ export function hadrons(s: Structure, rules: ForceRules): Force {
     if (column.length === 0) continue;
     const pts = [...new Set([...h.legs, ...column.flatMap((g) => g.legs)])];
     // (only a pull: the gap itself is kept by the push between hadrons)
-    const reach = Math.max(gapOf(h), ...column.map(gapOf)) + rules.margin;
+    const reach = rules.mesonGap + rules.margin;
     terms.push(limit(pts, (p) => {
       const a = sizeOf(h, p);
       const nearest = Math.min(...column.map((g) => { const b = sizeOf(g, p); return Math.abs(a.cy - b.cy) - a.ry - b.ry; }));
@@ -2030,9 +2059,6 @@ export function straightIntoBlob(s: Structure, rules: ForceRules): Force {
   const fermionThrough = (a: number, v: number, b: number) => [a, b].every((j) => s.linesAt[v].some((l) => other(l, v) === j && s.lines[l].fermion));
   // (a spectator: a quark from a beam that gives off one boson into the exchange and leaves,
   // u -> d W in t-channel single top, runs straight through, as papers draw it)
-  // (in a short diagram, two decays deep at most: under a long cascade, b W -> T -> Z t -> ...,
-  // the spectator scatters away instead, to give the cascade room)
-  const deepest = Math.max(0, ...decayGenerations(s));
   const spineEnds = new Set(s.spines.flatMap((path) => [path[0], path[path.length - 1]]));
   // (and only a lone spectator: where both beams' quarks give off the bosons that meet, vector-
   // boson fusion, the two quarks angle into the exchange and out of it)

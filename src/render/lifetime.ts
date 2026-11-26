@@ -4,7 +4,9 @@ import type { Edge } from "../model.ts";
 import type { Scene } from "./scene.ts";
 import * as portable from "../geometry/portable-math.ts";
 
-let gradients = 0;
+// (each drawing numbers its own bands, so the same source always draws the same SVG; the id
+// prefix keeps two drawings on one page apart)
+const bandsDrawn = new WeakMap<Scene, number>();
 
 /**
  * A particle that lives a while (`[lifetime]`): a soft band under its line, from clear where it
@@ -28,7 +30,9 @@ function drawLifetimeBand(scene: Scene, curve: Curve, colour: string, half: numb
     right.push(curve.offset(at, half));
   }
   const start = curve.at(0), end = curve.at(curve.length);
-  const id = `${scene.idPrefix}-life${gradients++}`;
+  const count = bandsDrawn.get(scene) ?? 0;
+  bandsDrawn.set(scene, count + 1);
+  const id = `${scene.idPrefix}-life${count}`;
   // (beneath every line: it lies under the one it belongs to)
   // (in the line's colour, through `color`, so a page that recolours the line, a SUSY line on a
   // dark page, recolours its band too)

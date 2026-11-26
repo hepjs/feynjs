@@ -139,7 +139,3 @@ export function drawHadronGroup(scene: Scene, d: Diagram, group: HadronGroup): v
   else if (group.shape === "cap") drawHadronCap(scene, d, group);
   else drawHadronBrace(scene, d, group);
 }
-
-export function drawHadronGroups(scene: Scene, d: Diagram): void {
-  for (const group of d.hadrons) drawHadronGroup(scene, d, group);
-}

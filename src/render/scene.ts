@@ -2,6 +2,8 @@ import type { Curve, Pt } from "../geometry/curve.ts";
 import { fmt } from "../geometry/curve.ts";
 import { layoutLabel } from "../label/label.ts";
 import { particleInfo, propertiesOf } from "../particles/properties.ts";
+import { lookupParticle } from "../particles/registry.ts";
+import { nucleusNamed } from "../parse/chains.ts";
 import type { Diagram, Edge, Vertex } from "../model.ts";
 import type { Theme } from "../theme.ts";
 import * as portable from "../geometry/portable-math.ts";
@@ -32,6 +34,8 @@ interface LabelRequest {
   particle?: string;
   /** obstacles of this kind the label may lie over (a hadron's name, on its own ellipse) */
   ignore?: string;
+  /** a line's own label: it should not sit across another particle's line from its own */
+  edge?: boolean;
 }
 
 export interface Rectangle { left: number; top: number; right: number; bottom: number }
@@ -86,6 +90,28 @@ export class Scene {
   tooltips = false;
   /** `edge labels: left` (a pasted TikZ-Feynman picture): edge label= on the left of its line, as TikZ puts it */
   labelsOnLeft = false;
+  /** what a note in a view may point at: a thing by any of its names, where it is drawn and how far it reaches, and (an arrow) the two it joins */
+  private targets: { names: string[]; point: Pt; reach: number; ends?: [number, number] }[] = [];
+
+  /** Something a note may point at, by any of `names`. Returns its id. */
+  target(names: string[], point: Pt, reach: number, ends?: [number, number]): number {
+    this.targets.push({ names, point, reach, ends });
+    return this.targets.length - 1;
+  }
+
+  /** What a note's target names: a thing by any of its names (`4He`, `He`, `e-`, `burst`), or an arrow between two (`238U--234Th`). */
+  findTarget(target: string): { point: Pt; reach: number } | undefined {
+    const ids = (name: string) => {
+      const n = nucleusNamed(name.trim()), keys = [name.trim(), ...(n ? [`${n.A}/${n.Z}`] : [])];
+      return this.targets.map((t, id) => ({ t, id })).filter(({ t }) => t.names.some((k) => keys.includes(k)) || (lookupParticle(name.trim()) && t.names.includes(`particle:${name.trim()}`))).map(({ id }) => id);
+    };
+    const one = ids(target);
+    if (one.length) return this.targets[one[0]];
+    const sides = target.split(/\s*--\s*/);
+    if (sides.length !== 2) return undefined;
+    const [a, b] = sides.map(ids);
+    return this.targets.find((t) => t.ends && ((a.includes(t.ends[0]) && b.includes(t.ends[1])) || (a.includes(t.ends[1]) && b.includes(t.ends[0]))));
+  }
 
   /** With charge colouring on, the colour for a particle's charge: none for a neutral or unknown one. */
   colourForCharge(particle: string | undefined): string | undefined {
@@ -129,7 +155,9 @@ export class Scene {
   }
 
   /** Something labels must keep clear of: a disc of ink at a point. */
-  private obstacles: { x: number; y: number; radius: number; kind?: string }[] = [];
+  private obstacles: { x: number; y: number; radius: number; kind?: string; line?: number }[] = [];
+  /** how many particle lines have been recorded, so each one's samples share a number */
+  private lines = 0;
   private labelBoxes: Rectangle[] = [];
   private fixedLabels: LabelRequest[] = [];
   /** labels that could not be placed clear of every line and every other label */
@@ -137,12 +165,12 @@ export class Scene {
   private legLabels: LabelRequest[] = [];
   private movableLabels: LabelRequest[] = [];
 
-  /** Record a drawn line as an obstacle for labels. */
-  addObstacleCurve(curve: Curve, radius: number): void {
-    const step = 4;
+  /** Record a drawn line as an obstacle for labels (a particle's line is numbered, so a label can tell its own line from another). */
+  addObstacleCurve(curve: Curve, radius: number, particleLine = false): void {
+    const step = 4, line = particleLine ? this.lines++ : undefined;
     for (let s = 0; s <= curve.length; s += step) {
       const p = curve.at(s);
-      this.obstacles.push({ x: p.x, y: p.y, radius });
+      this.obstacles.push({ x: p.x, y: p.y, radius, line });
     }
   }
 
@@ -159,9 +187,9 @@ export class Scene {
    * Ask for a label. It is drawn by `placeLabels`, once every line is known, at the first
    * of its spots that is clear of lines and other labels. A label with one spot is fixed.
    */
-  requestLabel(tex: string, spots: LabelSpot[], clearance: number, color?: string, scale = 1, placeEarly = false, cls?: string, particle?: string): void {
+  requestLabel(tex: string, spots: LabelSpot[], clearance: number, color?: string, scale = 1, placeEarly = false, cls?: string, particle?: string, edge = false): void {
     const queue = spots.length === 1 ? this.fixedLabels : placeEarly ? this.legLabels : this.movableLabels;
-    queue.push({ tex, spots, clearance, color, scale, level: this.level, cls, particle });
+    queue.push({ tex, spots, clearance, color, scale, level: this.level, cls, particle, edge });
   }
 
   /** Where a label's box lands for one spot, and its baseline origin. */
@@ -172,6 +200,27 @@ export class Scene {
     const cy = spot.anchor.y + spot.direction.y * (clearance + reach);
     const box: Rectangle = { left: cx - width / 2, top: cy - height / 2, right: cx + width / 2, bottom: cy + height / 2 };
     return { box, x: box.left, baseline: cy + (ascent - descent) / 2 };
+  }
+
+  /**
+   * 2 when another particle's line lies between a line's label and the point of its own line it
+   * labels (the label would read as the other line's); else 0. Its own line is the one sampled
+   * nearest the label's point. A preference, not a collision: it never makes a label crowded.
+   */
+  private across(anchor: Pt, box: Rectangle, edge?: boolean): number {
+    if (!edge) return 0;
+    let own = -1, near = Infinity;
+    for (const o of this.obstacles) if (o.line !== undefined) { const d = portable.hypot(o.x - anchor.x, o.y - anchor.y); if (d < near) { near = d; own = o.line; } }
+    const cx = (box.left + box.right) / 2, cy = (box.top + box.bottom) / 2;
+    const x0 = anchor.x + 0.35 * (cx - anchor.x), y0 = anchor.y + 0.35 * (cy - anchor.y), vx = cx - x0, vy = cy - y0, vv = vx * vx + vy * vy || 1;
+    for (const o of this.obstacles) {
+      if (o.line === undefined || o.line === own) continue;
+      if (o.x > box.left && o.x < box.right && o.y > box.top && o.y < box.bottom) continue;
+      const t = Math.max(0, Math.min(1, ((o.x - x0) * vx + (o.y - y0) * vy) / vv));
+      // (a line's samples sit 4 px apart, so its ink alone could let the path slip between two)
+      if (portable.hypot(o.x - x0 - t * vx, o.y - y0 - t * vy) < Math.max(o.radius, 2.2)) return 2;
+    }
+    return 0;
   }
 
   /** How badly a label box collides with what is already there: 0 is clear. */
@@ -196,7 +245,7 @@ export class Scene {
     for (const request of [...this.fixedLabels, ...this.legLabels, ...this.movableLabels]) {
       const label = layoutLabel(request.tex, this.theme.fontSize * request.scale, this.theme.wordLabelScale);
       let best = this.boxAt(request.spots[0], request.clearance, label.width, label.ascent, label.descent);
-      let bestCost = this.crowding(best.box, request.ignore);
+      let bestCost = this.crowding(best.box, request.ignore) + this.across(request.spots[0].anchor, best.box, request.edge);
       // try every spot at the normal distance from its line, then again a little further out
       // (then further out again: a wide label can slide along a narrow gap)
       const distances = [request.clearance, request.clearance + this.theme.labelMargin * 2, request.clearance + this.theme.labelMargin * 5];
@@ -205,7 +254,7 @@ export class Scene {
         const spot = request.spots[attempt % request.spots.length];
         const distance = distances[Math.floor(attempt / request.spots.length)];
         const candidate = this.boxAt(spot, distance, label.width, label.ascent, label.descent);
-        const cost = this.crowding(candidate.box, request.ignore) + attempt * 0.01;
+        const cost = this.crowding(candidate.box, request.ignore) + this.across(spot.anchor, candidate.box, request.edge) + attempt * 0.01;
         if (cost < bestCost) { best = candidate; bestCost = cost; }
       }
       // (still crowded: look all round each spot's own point on its line, a little further out,
@@ -218,14 +267,15 @@ export class Scene {
             const angle = (k * Math.PI) / 8, direction = { x: portable.cos(angle), y: portable.sin(angle) };
             const turn = portable.acos(Math.max(-1, Math.min(1, direction.x * spot.direction.x + direction.y * spot.direction.y)));
             const candidate = this.boxAt({ anchor: spot.anchor, direction }, request.clearance * reach, look.width, look.ascent, look.descent);
-            const cost = this.crowding(candidate.box, request.ignore) + 0.05 * turn + 0.02 * reach + extra;
+            const cost = this.crowding(candidate.box, request.ignore) + this.across(spot.anchor, candidate.box, request.edge) + 0.05 * turn + 0.02 * reach + extra;
             if (cost < bestCost) { best = candidate; bestCost = cost; size = look; }
           }
         };
         ring(label, [1, 1.4], 0);
         if (bestCost >= 1) ring(layoutLabel(request.tex, this.theme.fontSize * request.scale * this.theme.crowdedLabelScale, this.theme.wordLabelScale), [0.7, 1], 0.1);
       }
-      if (bestCost >= 1) this.crowdedLabels.push(request.tex);
+      // (crowded means overlapping: the far-side cost is a preference, not a collision)
+      if (this.crowding(best.box, request.ignore) >= 1) this.crowdedLabels.push(request.tex);
       // a label that names a particle tells what it is when the pointer rests on it
       const info = this.tooltips && request.particle ? particleInfo(request.particle) : undefined;
       const classes = [request.cls, info ? "feynjs-has-info" : "", this.isAhead(request.level) ? "feynjs-ahead" : ""].filter(Boolean).join(" ");

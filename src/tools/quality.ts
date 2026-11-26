@@ -56,6 +56,13 @@ export function measure(source: string, theme: ThemeOverrides = {}): Quality {
 function measureOne(source: string, theme: ThemeOverrides = {}): Quality {
   const t = themeWith(theme);
   const d: Diagram = parse(source);
+  // (a view that draws something other than the laid-out diagram, a reaction (as a nuclear
+  // process is drawn unless asked otherwise), a lattice or the kinematics, has no layout to
+  // score: its points are never placed, and a nucleus there is one drawing, not its nucleons)
+  const view = (d.directives.view ?? "").trim().toLowerCase();
+  if (view === "lattice" || view === "kinematic" || view === "reaction" || (d.nuclear && !view)) {
+    return { crossings: 0, crowdedVertices: 0, crowdedLabels: 0, smallestAngle: 180, stubs: 0, aspect: 1, problems: [] };
+  }
   const { scene } = drawDiagram(d, { theme });
   const at = (id: string): Point => ({ x: d.vertices.get(id)!.x * t.unitX, y: d.vertices.get(id)!.y * t.unitY });
   const problems: string[] = [];

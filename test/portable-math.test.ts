@@ -45,7 +45,10 @@ test("the portable maths is accurate", () => {
     sin: [portable.sin, Math.sin, 1], cos: [portable.cos, Math.cos, 1], tan: [portable.tan, Math.tan, 4],
     atan2: [(x, y) => portable.atan2(y, x), (x, y) => Math.atan2(y, x), 1], acos: [(x) => portable.acos(x / 1000), (x) => Math.acos(x / 1000), 1],
     exp: [(x) => portable.exp(x / 3), (x) => Math.exp(x / 3), 1], log: [(x) => portable.log(Math.abs(x)), (x) => Math.log(Math.abs(x)), 1],
-    power: [(x, y) => portable.power(Math.abs(x), y), (x, y) => Math.pow(Math.abs(x), y), 1], hypot: [portable.hypot, Math.hypot, 0],
+    power: [(x, y) => portable.power(Math.abs(x), y), (x, y) => Math.pow(Math.abs(x), y), 1],
+    // (hypot is the plain square root of the sum of squares, within 2 ulp of the engine's scaled
+    // one; scaledHypot is the engine's, bit for bit)
+    hypot: [portable.hypot, Math.hypot, 2], scaledHypot: [portable.scaledHypot, Math.hypot, 0],
     cbrt: [portable.cbrt, Math.cbrt, 2], cosh: [(x) => portable.cosh(x / 3), (x) => Math.cosh(x / 3), 2],
   };
   const [xs, ys] = sampleInputs(20000);
@@ -56,13 +59,13 @@ test("the portable maths is accurate", () => {
   }
 });
 
-const GOLDEN = "c48a0d4edaea0155";
+const GOLDEN = "8e6eb142159b160b";
 
 function hashOfAllResults(): string {
   const [xs, ys] = sampleInputs(20000);
   const functions = [portable.sin, portable.cos, portable.tan, (x: number, y: number) => portable.atan2(y, x), (x: number) => portable.acos(x / 1000),
     (x: number) => portable.exp(x / 3), (x: number) => portable.log(Math.abs(x)), (x: number, y: number) => portable.power(Math.abs(x), y),
-    portable.cbrt, (x: number) => portable.cosh(x / 3), portable.tanh, portable.hypot];
+    portable.cbrt, (x: number) => portable.cosh(x / 3), portable.tanh, portable.hypot, portable.scaledHypot];
   const results = new Float64Array(xs.length * functions.length);
   functions.forEach((f, j) => xs.forEach((x, i) => { results[j * xs.length + i] = f(x, ys[i]); }));
   return createHash("sha256").update(new Uint8Array(results.buffer)).digest("hex").slice(0, 16);

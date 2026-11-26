@@ -210,7 +210,7 @@ export function drawEdge(scene: Scene, d: Diagram, e: Edge, degree: Map<string, 
   const lineHalfWidth = halfWidth(e.style, theme.line);
   for (const p of curve.pts) scene.bounds.include(p.x, p.y, lineHalfWidth + theme.line.stroke);
   const inkHalfWidth = ["plain", "dash", "dot"].includes(e.style.line) ? theme.line.stroke / 2 : lineHalfWidth + theme.line.stroke / 2;
-  if (e.style.line !== "none") scene.addObstacleCurve(curve, inkHalfWidth);
+  if (e.style.line !== "none") scene.addObstacleCurve(curve, inkHalfWidth, true);
 
   if (!e.label && !e.momentum) return;
   const middle = curve.at(curve.length / 2);
@@ -220,7 +220,7 @@ export function drawEdge(scene: Scene, d: Diagram, e: Edge, degree: Map<string, 
   // (a leg whose end already names its particle is not labelled twice)
   const legName = [from, to].find((v) => degree.get(v.id) === 1 && v.label)?.label;
   const labelColor = e.labelColor ? scene.resolveColor(e.labelColor) : color;
-  if (e.label && e.label !== legName) scene.requestLabel(e.label, edgeLabelSpots(curve, labelSide), labelClearance, labelColor, 1, false, e.style.cls ? `feynjs-${e.style.cls}` : undefined, e.particle);
+  if (e.label && e.label !== legName) scene.requestLabel(e.label, edgeLabelSpots(curve, labelSide), labelClearance, labelColor, 1, false, e.style.cls ? `feynjs-${e.style.cls}` : undefined, e.particle, true);
   if (e.momentum) {
     // (away from the label; `momentum'` on the label's side; with `edge labels: left`, as TikZ
     // puts them: momentum= on the left of travel, momentum'= on the right)
