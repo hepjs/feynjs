@@ -104,11 +104,14 @@ export function snapToGrid(d: Diagram, step: number, lineLength: number, rowOver
       const n = sorted.length;
       // (on the isometric grid a fork stays forward: its lines take n of the forward lattice ways,
       // -60, 0 and +60 degrees (mirrored for lines going back), the run of them nearest the way the
-      // parent arrived, or both diagonals where it arrived level)
+      // parent arrived; where it arrived level, one runs on level and the other turns away from
+      // the middle, so the two halves of a diagram mirror each other (both diagonals only on the
+      // middle line itself)
       if (iso && n <= 3) {
         const base = side === forward ? 0 : Math.PI, flip = side === forward ? 1 : -1;
         const ways = [-1, 0, 1].map((k) => base + flip * k * unit);
-        const towards = arrived !== undefined && side === forward ? Math.round(arrived / unit) : 0;
+        const out = Math.sign(from.y - middleY);
+        const towards = arrived !== undefined && side === forward ? Math.round(arrived / unit) || out : 0;
         const pick = n === 3 ? ways : n === 2 ? (towards > 0 ? [ways[1], ways[2]] : towards < 0 ? [ways[0], ways[1]] : [ways[0], ways[2]]) : [base];
         sorted.forEach((v, i) => spread.set(v, pick[i]));
         continue;

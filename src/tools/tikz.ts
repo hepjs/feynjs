@@ -49,7 +49,9 @@ function tikzLineStyle(e: Edge, theme: Theme, look: Look): string {
     case "dash": key = charged === undefined ? "scalar" : `${charged}charged scalar`; break;
     case "dot": key = "ghost"; break;
     case "double": key = "double"; break;
-    case "triple": key = `double, double distance=${look.pt(theme.line.tripleSeparation * 2)}`; break;
+    // (three lines, as the page draws a proton: the outer two as a wide double line, the middle
+    // one drawn over it)
+    case "triple": key = `double, double distance=${look.pt(theme.line.tripleSeparation * 2)}, postaction={draw}`; break;
     case "none": key = "draw=none"; break;
     default: key = "plain";
   }

@@ -55,24 +55,38 @@ exits with status 1 when it finds an error, so it can guard a build.
 
 ## explain
 
-The diagram in plain English: what comes in and goes out, each interaction in time order, loops,
-hadrons and marked couplings. Every SVG feynjs draws carries it in its `<desc>`, so screen readers
-read it, and on this site the download menu has *Copy description*, for alt text.
+The diagram in plain English, as a physicist would summarise it, for alt text: a summary first
+(what kind of picture it is and what it shows), then the details, as guidance on accessible
+figures asks ([ACM DIS 2023](https://dis.acm.org/2023/creating-accessible-figures-and-tables/)).
+Every SVG feynjs draws carries the summary as its accessible name (`aria-label`) and the details
+in its `<desc>`, so a screen reader announces the one and reads the other on request; on this
+site the download menu has *Copy description*.
 
 ```js
 feynjs.explain(`
-  p p > gluino gluino
-  gluino > q q neutralino2
-  neutralino2 > Z neutralino1
+  p p > t tbar
+  t > b W+(> e+ nu)
+  tbar > bbar W-(> q qbar)
 `);
 ```
 
-> Two protons come in; four quarks, two Z bosons and two lightest neutralinos go out. The two
-> protons collide, producing two gluinos. Each gluino decays into two quarks and a second
-> neutralino. Each second neutralino decays into a lightest neutralino and a Z boson.
+> Feynman diagram of a proton–proton collision producing a top-quark pair. A proton–proton
+> collision produces a top-quark pair, each top quark decaying into a bottom quark and a W boson,
+> with one W boson decaying leptonically, to a positron and a neutrino, and the other hadronically.
+> The final state is a bottom-quark pair, a positron, a quark pair and a neutrino.
 
-A loop is told as one step ("...making a Higgs boson through a loop of three top quarks"), and the
-same decay told twice is told once, for each.
+The summary names the picture and the process in words, never in the source's symbols, which a
+screen reader would spell out ("e minus e plus dash greater than..."); a diagram with loops says
+so ("One-loop Feynman diagram of two gluons to a Higgs boson"). In the SVG, the details end with
+how the drawing reads: "Time runs from left to right." Line styles and colours are not described,
+but what they stand for, the particles, is.
+
+A production followed by decays is one sentence: a particle and its antiparticle are a pair,
+decays that happen alike are told once ("each"), and a W or Z that decays differently on two
+branches is told by its mode (leptonically, hadronically, invisibly). Any other diagram, with a
+loop, an exchange or radiation, is told step by step: what comes in and goes out, then each
+interaction in time order, a loop as one step ("...making a Higgs boson through a loop of three top
+quarks"). Hadrons and marked couplings follow.
 
 ## describe
 
@@ -109,8 +123,8 @@ feynjs.describe(`
 }
 ```
 
-Use it to index a collection of diagrams by process, or to write alt text. Every diagram's
-`aria-label` already comes from it.
+Use it to index a collection of diagrams by process. For alt text, use [explain](#explain): every
+diagram's `aria-label` and `<desc>` come from it.
 
 ## measure
 

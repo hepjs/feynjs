@@ -125,7 +125,7 @@ larger, so the colour reads. See [coupling labels](lines.md#coupling-labels).
 ### Nuclei
 
 `nucleus=Pb` draws a nucleus as its protons (brick red) and neutrons (slate) packed together,
-every nucleon the same size, so a nucleus grows as A to the third. Name it by symbol (`Pb`, `Au`,
+every nucleon the same size, so a nucleus grows as the cube root of A. Name it by symbol (`Pb`, `Au`,
 `Xe`, `O`...), as an isotope (`208Pb`), or give any numbers with `A=` and `Z=`. The nucleons sit
 in a ball of the nucleus's genuine radius, seen in 3D, each edged in a dark shade of its own
 colour; `nucleon edges: ink` edges them in ink, `nucleon edges: none` not at all.

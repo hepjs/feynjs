@@ -73,6 +73,12 @@ to call again after adding content. `feynjs.run({ download: true })` also gives 
 download icon, offering it as SVG or PNG. If a source has a mistake, the element shows the message and
 the source instead, in a `pre.feynjs-error`.
 
+`run` draws every diagram before it returns. On a page with many diagrams, `feynjs.run({ progressive:
+true })` draws them without holding up the page: those on screen first, a few at a time with the
+browser free to scroll and respond between them, and the rest as they come within two screens of view
+(and all of them before the page is printed). The script draws a page this way when it draws it by
+itself, with no `run` call.
+
 ### With another Markdown renderer
 
 Most Markdown renderers turn a fenced block into `<pre><code class="language-feynman">`. Swap
