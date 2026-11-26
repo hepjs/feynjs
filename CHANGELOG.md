@@ -3,7 +3,7 @@
 All notable changes, newest first. Versions follow [semantic versioning](https://semver.org): a
 layout that moves is a change, recorded here.
 
-## 0.10.2 — unreleased
+## 0.10.2 — 2026-11-26
 
 - **Every drawing is written into one frame.** A diagram, a nuclear reaction, a decay chain, a
   lattice and an event view now share one `<svg>` wrapper, so each carries the same things: its
