@@ -13,8 +13,9 @@ From a shell, `feynjs render diagram.feyn > diagram.svg` writes the SVG; its lin
 `currentColor`, which most viewers draw in black.
 
 **From a page.** `feynjs.run({ download: true })` puts a quiet download icon in the corner of
-each diagram (it shows when you point at the diagram). It offers the diagram as SVG, as PNG or as
-TikZ-Feynman code (a complete `.tex` document); the pictures are standalone. The PNG is drawn at three times the size, with the page's label font embedded so
+each diagram (it shows when you point at the diagram). It offers the diagram as SVG, as PNG or TIFF (at three
+times its size, the resolution recorded, as some journals ask figures), or as TikZ-Feynman code (a
+complete `.tex` document); the pictures are standalone. The PNG is drawn at three times the size, with the page's label font embedded so
 it keeps the TeX face. Every diagram on this site has one.
 
 **TikZ-Feynman.** `toTikz` writes the same layout as TikZ-Feynman code, with every vertex

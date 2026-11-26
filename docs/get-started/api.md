@@ -102,7 +102,7 @@ Takes every `render` option, plus:
 |---|---|---|
 | `querySelector` | `".feynman:not([data-processed])"` | which elements hold source |
 | `root` | `document` | where to look |
-| `download` | `false` | a quiet download icon on each diagram, offering it as SVG, PNG or TikZ |
+| `download` | `false` | a quiet download icon on each diagram, offering it as SVG, PNG, TIFF or TikZ |
 | `tooltips` | `false` | a card with a particle's properties when the pointer rests on its label |
 
 Each element drawn gets `data-processed` and the class `feynjs-rendered`, so calling `run` again

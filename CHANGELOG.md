@@ -13,8 +13,9 @@ layout that moves is a change, recorded here.
   a renderer of their own; they now draw into the same scene as a diagram, and `colours: bw`
   greys them too. The views are drawn without first laying the diagram out, so the event view
   no longer fails on a `note:` line (it leaves notes out). No diagram's drawing changes.
-- **The download menu offers TikZ-Feynman code,** a complete `.tex` document with every vertex
-  placed, beside SVG and PNG. **The script-tag file draws diagrams and no more:** `feynjs.min.js`
+- **The download menu offers TIFF and TikZ-Feynman code** beside SVG and PNG: the TIFF at three
+  times the diagram's size with its resolution recorded, as some journals ask figures, and a
+  complete `.tex` document with every vertex placed. **The script-tag file draws diagrams and no more:** `feynjs.min.js`
   no longer carries the tools only programs use (`check`, `describe`, `measure`, `toSource`), which
   saves it 9 KB (2.5 KB compressed); `toTikz` stays, for the menu. npm's `"feynjs"` still has
   everything, so a program sees no change; a page that wants the other tools loads

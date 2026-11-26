@@ -70,7 +70,7 @@ Put the source in any element with the class `feynman` and call `feynjs.run()`:
 
 `run` replaces each matching element's text with its diagram and marks it as done, so it is safe
 to call again after adding content. `feynjs.run({ download: true })` also gives each diagram a
-download icon, offering it as SVG, PNG or TikZ. If a source has a mistake, the element shows the message and
+download icon, offering it as SVG, PNG, TIFF or TikZ. If a source has a mistake, the element shows the message and
 the source instead, in a `pre.feynjs-error`.
 
 `run` draws every diagram before it returns. On a page with many diagrams, `feynjs.run({ progressive:

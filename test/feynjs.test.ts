@@ -1,4 +1,5 @@
 import { test } from "node:test";
+import { encodeTiff } from "../src/download.ts";
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
 import { parse } from "../src/parse/parse.ts";
@@ -887,4 +888,19 @@ test("a diagram given as data draws as its source does; the hand-over format is 
   // (a file written for a newer hand-over format is flagged)
   assert.ok(check(`% feynjs-interchange ${INTERCHANGE_VERSION + 1}\na -- [photon] b`).some((f) => f.rule === "interchange-version"));
   assert.ok(!check(source).some((f) => f.rule === "interchange-version"));
+});
+
+test("a TIFF download is a well-formed baseline TIFF: RGB, uncompressed, size and resolution recorded, composed on white", () => {
+  const rgba = new Uint8ClampedArray([255, 0, 0, 255, 0, 255, 0, 255, 0, 0, 255, 255, 255, 255, 255, 128, 0, 0, 0, 255, 10, 20, 30, 255]); // 3 by 2
+  const t = encodeTiff(3, 2, rgba, 288), v = new DataView(t.buffer);
+  assert.equal(String.fromCharCode(t[0], t[1]), "II"); assert.equal(v.getUint16(2, true), 42);
+  const ifd = v.getUint32(4, true), n = v.getUint16(ifd, true), tags: Record<number, number> = {};
+  for (let k = 0; k < n; k++) { const at = ifd + 2 + 12 * k, type = v.getUint16(at + 2, true); tags[v.getUint16(at, true)] = type === 3 && v.getUint32(at + 4, true) === 1 ? v.getUint16(at + 8, true) : v.getUint32(at + 8, true); }
+  assert.equal(n, 13); assert.equal(tags[256], 3); assert.equal(tags[257], 2); assert.equal(tags[259], 1); assert.equal(tags[262], 2); assert.equal(tags[277], 3);
+  assert.equal(tags[279], 18); assert.equal(t.length, tags[273] + 18);
+  assert.equal(v.getUint32(tags[282], true) / v.getUint32(tags[282] + 4, true), 288);
+  assert.deepEqual([...t.subarray(tags[273], tags[273] + 6)], [255, 0, 0, 0, 255, 0]);
+  // (a half-transparent white pixel composed on white stays white; the last pixel keeps its colour)
+  assert.deepEqual([...t.subarray(tags[273] + 9, tags[273] + 12)], [255, 255, 255]);
+  assert.deepEqual([...t.subarray(tags[273] + 15, tags[273] + 18)], [10, 20, 30]);
 });
