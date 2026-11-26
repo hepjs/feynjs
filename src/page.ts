@@ -70,7 +70,7 @@ function draw(source: string, options: RenderOptions): string {
   } else {
     const theme = themeWith(options.theme);
     const svgs = panels.map((p, i) => renderDiagram(parse(p.source), { ...options, idPrefix: `${options.idPrefix ?? "feyn"}p${i}` }));
-    svg = composePanels(svgs, panels.map((p) => p.caption), theme, options.panelsPerRow ?? (panels.some((p) => p.joiner) ? panels.length : 3), panels.map((p) => p.joiner));
+    svg = composePanels(svgs, panels.map((p) => p.caption), theme, options.panelsPerRow ?? (panels.some((p) => p.joiner || p.step) ? panels.length : 3), panels.map((p) => p.joiner), panels.map((p) => p.step), panels.map((p) => p.stepInputs));
   }
   return options.standalone ? makeStandalone(svg, options.background ?? "#ffffff") : svg;
 }

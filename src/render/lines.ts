@@ -54,15 +54,24 @@ function jetCone(c: Curve, look: LineLook, o: { from?: number; scale?: number; s
   const halfWidth = coneHalfWidth(c.length - from, look, scale);
   const left = c.offset(c.length, -halfWidth), right = c.offset(c.length, halfWidth);
   const bulge = { x: end.x + end.tx * halfWidth * MOUTH_BULGE, y: end.y + end.ty * halfWidth * MOUTH_BULGE };
-  const cone = `M${fmt(start.x)} ${fmt(start.y)}L${fmt(left.x)} ${fmt(left.y)}Q${fmt(bulge.x)} ${fmt(bulge.y)} ${fmt(right.x)} ${fmt(right.y)}Z`;
+  // (a jet drawn on its own ends in an open mouth: an ellipse, its far half the cone's end, drawn
+  // as true arcs so it stays smooth; in a diagram, one gentle curve)
+  const minor = halfWidth * MOUTH_DEPTH, deg = (portable.atan2(-end.tx, end.ty) * 180) / Math.PI;
+  const far = { x: end.x + end.tx * minor, y: end.y + end.ty * minor };
+  const sweep = (far.x - left.x) * (right.y - far.y) - (far.y - left.y) * (right.x - far.x) > 0 ? 1 : 0;
+  const arc = `A${fmt(halfWidth)} ${fmt(minor)} ${fmt(deg)} 0 ${sweep} ${fmt(right.x)} ${fmt(right.y)}`;
+  const cone = look.jetMouth
+    ? `M${fmt(start.x)} ${fmt(start.y)}L${fmt(left.x)} ${fmt(left.y)}${arc}Z`
+    : `M${fmt(start.x)} ${fmt(start.y)}L${fmt(left.x)} ${fmt(left.y)}Q${fmt(bulge.x)} ${fmt(bulge.y)} ${fmt(right.x)} ${fmt(right.y)}Z`;
+  const mouth = look.jetMouth ? `<ellipse class="feynjs-jet-mouth" cx="${fmt(end.x)}" cy="${fmt(end.y)}" rx="${fmt(halfWidth)}" ry="${fmt(minor)}" transform="rotate(${fmt(deg)} ${fmt(end.x)} ${fmt(end.y)})" fill="${look.jetColor}" fill-opacity="${fmt(shade * 0.5)}"${o.rim ? ` stroke="${look.jetColor}" stroke-width="${fmt(look.trackWidth)}"` : ""}/>` : "";
   // the gradient runs along the jet; its id is built from what it draws, so equal ids mean equal gradients
   // (and its colour: two cones alike but for their colour must not share one gradient)
-  const id = `feynjs-jet-${[start.x, start.y, end.x, end.y, shade * 100].map((n) => Math.round(n)).join("_")}${look.jetColor.replace(/[^0-9a-z]/gi, "").slice(0, 12)}`.replace(/-(?=\d)/g, "m");
+  const id = `feynjs-jet-${[start.x, start.y, end.x, end.y, shade * 100].map((n) => Math.round(n)).join("_")}${look.jetColor.replace(/[^0-9a-z]/gi, "").slice(0, 12)}${look.jetMouth ? "m" : ""}`.replace(/-(?=\d)/g, "m");
   const gradient = `<linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="${fmt(start.x)}" y1="${fmt(start.y)}" x2="${fmt(bulge.x)}" y2="${fmt(bulge.y)}">`
-    + `<stop class="feynjs-jet-stop" offset="0" stop-color="${look.jetColor}" stop-opacity="${fmt(shade)}"/>`
-    + `<stop class="feynjs-jet-stop" offset="1" stop-color="${look.jetColor}" stop-opacity="${fmt(shade * look.jetFade)}"/></linearGradient>`;
+    + `<stop class="feynjs-jet-stop" offset="0" stop-color="${look.jetColor}" stop-opacity="${fmt(shade * (look.jetMouth ? MOUTH_SHADE : 1))}"/>`
+    + `<stop class="feynjs-jet-stop" offset="1" stop-color="${look.jetColor}" stop-opacity="${fmt(shade * (look.jetMouth ? MOUTH_SHADE * MOUTH_FADE / 0.5 : look.jetFade))}"/></linearGradient>`;
   const rim = o.rim ? `<path class="feynjs-jet-rim" d="${cone}" fill="none" stroke="${look.jetColor}" stroke-width="${fmt(look.trackWidth)}" stroke-linejoin="round"${o.rim === "dashed" ? ` stroke-dasharray="3 2.5"` : ""}/>` : "";
-  return `${gradient}<path class="feynjs-jet" d="${cone}" fill="url(#${id})" stroke="none"/>${o.tracks ? jetTracks(c, from, halfWidth, o.tracks, look) : ""}${rim}`;
+  return `${gradient}<path class="feynjs-jet" d="${cone}" fill="url(#${id})" stroke="none"/>${o.tracks ? jetTracks(c, from, halfWidth, o.tracks, look) : ""}${rim}${mouth}`;
 }
 
 /**
@@ -81,11 +90,56 @@ function jetTracks(c: Curve, from: number, half: number, count: number, look: Li
   return `<path class="feynjs-jet-tracks" d="${d}" fill="none" stroke="currentColor" stroke-opacity="0.3" stroke-width="${fmt(look.trackWidth * 0.7)}" stroke-linecap="round"/>`;
 }
 
+/** How far a decay's two tracks run together before bending apart, as a share of the way out: a Υ's stem. */
+const UPSILON_STEM = 0.5;
+
 /** A B hadron's decay vertex and flight (blue), and a D's (teal): the tagger's two kinds of displaced vertex. */
 const B_COLOUR = "#2f74c0", D_COLOUR = "#00a099";
 
 /** A jet inside a detector object, or the object itself, where a note may point: its kind (bjet), middle and decay vertices. */
-export interface ObjectPart { kind: string; middle: Pt; B?: Pt; D?: Pt }
+export interface ObjectPart { kind: string; middle: Pt; B?: Pt; D?: Pt; d0?: Pt; z0?: Pt }
+
+/** How steeply depth (into the page) is drawn, degrees above level: an isometric view's slant. */
+const DEPTH_SLANT = 35;
+
+/** The impact parameters' colour: a magenta, apart from the jet's blue, the decays' blue and teal, and the notes' red. */
+export const IMPACT_COLOUR = "#c0509a";
+
+/**
+ * A jet's impact parameters, as flavour-tagging figures draw them: the beam (dashed, level) through
+ * where the jet starts, `P`; z0 along it from `P`, and d0 from there up into the page, how far
+ * one of the jet's tracks, traced back, misses `P`. `c` runs from the vertex out; `beamReach`
+ * is how far the beam runs either side.
+ */
+export function impactParameters(c: Curve, object: string | undefined, look: LineLook, beamReach: number): { svg: string; labels: { tex: string; at: Pt; direction: Pt }[]; d0: Pt; z0: Pt; segments: [Pt, Pt][] } {
+  const P = c.at(0), w = look.trackWidth;
+  const stroke = (pts: Pt[], o: { dash?: string; width?: number; colour?: string } = {}) =>
+    `<path d="${pathFrom(pts)}" fill="none" stroke="${o.colour ?? IMPACT_COLOUR}" stroke-width="${fmt(o.width ?? w)}" stroke-linecap="round"${o.dash ? ` stroke-dasharray="${o.dash}"` : ""}/>`;
+  // (a short two-headed arrow between two points)
+  const span = (a: Pt, b: Pt) => {
+    const dx = b.x - a.x, dy = b.y - a.y, n = portable.hypot(dx, dy) || 1, ux = dx / n, uy = dy / n, h = w * 3.2, s = w * 1.8;
+    const head = (p: Pt, sx: number, sy: number) => `M${fmt(p.x + sx * h - uy * s)} ${fmt(p.y + sy * h + ux * s)}L${fmt(p.x)} ${fmt(p.y)}L${fmt(p.x + sx * h + uy * s)} ${fmt(p.y + sy * h - ux * s)}`;
+    return stroke([a, b], { width: w * 0.9 }) + `<path d="${head(a, ux, uy)}${head(b, -ux, -uy)}" fill="none" stroke="${IMPACT_COLOUR}" stroke-width="${fmt(w * 0.9)}" stroke-linecap="round" stroke-linejoin="round"/>`;
+  };
+  let svg = `<path class="feynjs-beam" d="M${fmt(P.x - beamReach)} ${fmt(P.y)}H${fmt(P.x + beamReach)}" fill="none" stroke="currentColor" stroke-opacity="0.35" stroke-width="${fmt(w * 1.2)}" stroke-dasharray="5 4"/>`;
+  const labels: { tex: string; at: Pt; direction: Pt }[] = [];
+  let d0: Pt = P, z0: Pt = P;
+  const segments: [Pt, Pt][] = [];
+  // (z0 along the beam from P, d0 up from there into the page, drawn slanting as depth is in an
+  // isometric view)
+  const z = beamReach * 0.42, depth = beamReach * 0.3, slant = (DEPTH_SLANT * Math.PI) / 180;
+  // (to the right of P: notes usually sit to the left, and the jet leans right, over them)
+  const Q = { x: P.x + z, y: P.y }, A = { x: Q.x + depth * portable.cos(slant), y: Q.y - depth * portable.sin(slant) };
+  const below = w * 5;
+  // (the track is one of the jet's own: only the two distances are drawn, z0 along the beam and d0 into the page)
+  svg += span({ x: P.x, y: P.y + below }, { x: Q.x, y: Q.y + below }) + span(Q, A);
+  labels.push({ tex: "z_0", at: { x: (P.x + Q.x) / 2, y: P.y + below }, direction: { x: 0, y: 1 } });
+  labels.push({ tex: "d_0", at: { x: (Q.x + A.x) / 2, y: (Q.y + A.y) / 2 }, direction: { x: -portable.sin(slant), y: -portable.cos(slant) } });
+  segments.push([{ x: P.x, y: P.y + below }, { x: Q.x, y: Q.y + below }], [Q, A]);
+  d0 = { x: (Q.x + A.x) / 2, y: (Q.y + A.y) / 2 };
+  z0 = { x: (P.x + Q.x) / 2, y: P.y + below };
+  return { svg, labels, d0, z0, segments };
+}
 
 /** Where a b-jet's B and D hadrons decay, or a c-jet's D: along `c`, from the vertex out. */
 export function flavourVertices(c: Curve, object: string | undefined, look: LineLook, scale = 1): { B?: Pt; D?: Pt } {
@@ -105,6 +159,12 @@ export function coneReach(c: Curve, style: EdgeStyle, look: LineLook): Pt[] {
 
 /** How far a cone's mouth bulges past its end, as a share of its half-width: one smooth curve. */
 const MOUTH_BULGE = 0.6;
+/** How much of its colour a lone jet keeps out to its mouth: a solid cone, not a fading spray. */
+const MOUTH_FADE = 0.3;
+/** How solid a lone jet is where it starts: lighter than a jet in a diagram, so the cone stays see-through. */
+const MOUTH_SHADE = 0.5;
+/** How deep a lone jet's open mouth looks, as a share of its width: the ellipse a cone seen from the side ends in. */
+const MOUTH_DEPTH = 0.3;
 
 /** How far a jet cone of the given length opens either side of its line, px. */
 function coneHalfWidth(length: number, look: LineLook, scale = 1): number {
@@ -124,14 +184,24 @@ function detectorObject(c: Curve, style: EdgeStyle, look: LineLook, sw: number, 
   const track = (s0: number, spread: number, half: number, o: { width?: number; dash?: string; s1?: number } = {}) =>
     line([c.offset(s0, 0), c.offset(o.s1 ?? L, spread * half)], { width: o.width ?? tw, dash: o.dash });
   // (a heavy-flavour decay vertex: an open ring, its border coloured by the hadron, a B blue, a D teal)
-  const ring = (p: Pt, hadron: "B" | "D", r = tw * 2.5) => `<circle class="feynjs-sv-${hadron === "B" ? "b" : "c"}" cx="${fmt(p.x)}" cy="${fmt(p.y)}" r="${fmt(r)}" fill="var(--feynjs-bg, #fff)" stroke="${hadron === "B" ? B_COLOUR : D_COLOUR}" stroke-width="${fmt(tw)}"/>`;
-  const flight = (a: Pt, b: Pt, hadron: "B" | "D") => line([a, b], { width: tw, dash: "2 1.8", colour: hadron === "B" ? B_COLOUR : D_COLOUR });
+  const ring = (p: Pt, hadron: "B" | "D", r = tw * 2.5) => `<circle class="feynjs-sv-${hadron === "B" ? "b" : "c"}" cx="${fmt(p.x)}" cy="${fmt(p.y)}" r="${fmt(r)}" fill="var(--feynjs-bg, #fff)" stroke="${hadron === "B" ? B_COLOUR : D_COLOUR}" stroke-width="${fmt(tw * 1.3)}"/>`;
+  const flight = (a: Pt, b: Pt, hadron: "B" | "D") => line([a, b], { width: tw * 1.6, dash: "2.6 2.2", colour: hadron === "B" ? B_COLOUR : D_COLOUR });
+  // (two charged tracks of opposite charge from a vertex `v` to `e1` and `e2`: both leave along
+  // the line between them, then bend apart, each its own way, a Υ)
+  const pair = (v: Pt, e1: Pt, e2: Pt, colour: string) => {
+    const mid = { x: (e1.x + e2.x) / 2, y: (e1.y + e2.y) / 2 };
+    const ctrl = { x: v.x + (mid.x - v.x) * UPSILON_STEM, y: v.y + (mid.y - v.y) * UPSILON_STEM };
+    return [e1, e2].map((e) => `<path d="M${fmt(v.x)} ${fmt(v.y)}Q${fmt(ctrl.x)} ${fmt(ctrl.y)} ${fmt(e.x)} ${fmt(e.y)}" fill="none" stroke="${colour}" stroke-width="${fmt(tw * 1.6)}" stroke-linecap="round"/>`).join("");
+  };
   // (a b- or c-jet, at any size: its cone and tracks, the B's flight and decay then the D's, or the D's alone)
-  const heavy = (j: Curve, object: "btag" | "ctag", scale: number, tracks: number, r = tw * 2.5) => {
+  const heavy = (j: Curve, object: "btag" | "ctag", scale: number, tracks: number, r = tw * 2.5, colour?: string) => {
     const J = j.length, half = coneHalfWidth(J, look, scale), v = flavourVertices(j, object, look, scale), D = v.D!;
-    let out = jetCone(j, look, { scale, tracks, rim: "solid" });
-    out += v.B ? flight(j.at(0), v.B, "B") + flight(v.B, D, "D") + line([v.B, j.offset(J * 0.97, -0.3 * half)], { width: tw, colour: B_COLOUR }) : flight(j.at(0), D, "D");
-    out += (v.B ? [0.55, 0.85] : [0.5, 0.82]).map((k) => line([D, j.offset(J * 0.97, k * half)], { width: tw, colour: D_COLOUR })).join("");
+    let out = jetCone(j, colour ? { ...look, jetColor: colour } : look, { scale, tracks, rim: "solid" });
+    // (what each decays to: two charged tracks of opposite charge, a vertex's least, leaving together
+    // and bending apart in the field, a Υ: at the B, beside the D it makes flying on (B → D π π);
+    // at the D, its kaon and pion (D → K π))
+    out += v.B ? flight(j.at(0), v.B, "B") + flight(v.B, D, "D") + pair(v.B, j.offset(J * 0.97, -0.8 * half), j.offset(J * 0.97, -0.15 * half), B_COLOUR) : flight(j.at(0), D, "D");
+    out += pair(D, j.offset(J * 0.97, (v.B ? 0.3 : 0.1) * half), j.offset(J * 0.97, 0.9 * half), D_COLOUR);
     return out + (v.B ? ring(v.B, "B", r) : "") + ring(D, "D", r);
   };
   const dot = (p: Pt, r: number, fill = "currentColor") => `<circle cx="${fmt(p.x)}" cy="${fmt(p.y)}" r="${fmt(r)}" fill="${fill}" stroke="currentColor" stroke-width="${fmt(tw)}"/>`;
@@ -169,11 +239,11 @@ function detectorObject(c: Curve, style: EdgeStyle, look: LineLook, sw: number, 
       }
       const cone = (k: number) => jetCone(sub, look, { scale: k });
       const k = many ? 0.75 : 1;
-      if (item.kind === "jet") { parts?.push({ kind: "lightjet", middle: sub.at(sub.length * 0.6) }); return jetCone(sub, look, { scale: k, tracks: 3, rim: "solid" }); }
+      if (item.kind === "jet") { parts?.push({ kind: "lightjet", middle: sub.at(sub.length * 0.6) }); return jetCone(sub, { ...look, jetColor: look.lightJetColor }, { scale: k, tracks: 3, rim: "solid" }); }
       if (item.kind === "bjet" || item.kind === "cjet") {
         const object = item.kind === "bjet" ? "btag" : "ctag";
         parts?.push({ kind: item.kind, middle: sub.at(sub.length * 0.6), ...flavourVertices(sub, object, look, Math.max(k, 1.1)) });
-        return heavy(sub, object, Math.max(k, 1.1), 3, tw * 1.9);
+        return heavy(sub, object, Math.max(k, 1.1), 3, tw * 1.9, object === "btag" ? look.bJetColor : look.cJetColor);
       }
       if (item.kind === "photon") return line([sub.at(0), sub.at(sub.length)], { width: tw, dash: "3 2" });
       if (item.kind === "neutrino") return line([sub.at(0), sub.at(sub.length)], { width: tw * 1.2, dash: `0 ${fmt(look.dotGap)}` });

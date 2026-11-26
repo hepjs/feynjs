@@ -235,3 +235,23 @@ test("notes point at objects by name, inside a diagram, and at a b-jet's B and D
   assert.doesNotThrow(() => render("i -- a\na -- [largejet 2j] b\nb -- f1\nb -- f2\nnote: largejet \"inside\""));
   assert.throws(() => render("p p > Z H\nH > b b~\nnote: D \"none here\""), /B or D vertex/);
 });
+
+test("impact parameters: a track traced back to the beam, z0 along it and d0 into the page; notes reach them", () => {
+  const svg = render("a [circle=b] -- [bjet, no label, impact] f\nnote: d0 \"impact parameter\"\nnote: z0 \"along the beam\"");
+  assert.match(svg, /feynjs-beam/);
+  // (no track of its own, and no line up to the vertex: the beam, z0 and d0 alone)
+  assert.doesNotMatch(svg, /feynjs-impact-track/);
+  assert.doesNotMatch(svg, /stroke-dasharray="2.5 2"/);
+});
+
+test("panels: a step box between panels, and a fan-out into the panels after it, read as one flow", () => {
+  const src = "--- jet\na -- [jet] f\n---[step: flavour tagging]\n---[into: Classify into] b-jet\na -- [bjet] f\n--- c-jet\na -- [cjet] f";
+  const svg = render(src);
+  assert.match(svg, /class="feynjs-step"/);
+  assert.match(svg, /Classify into/);
+  assert.match(svg, /aria-label="Jet, then flavour tagging, classify into b-jet and c-jet\."/);
+  // (the step is no panel of its own: check and the other tools see the three diagrams)
+  assert.deepEqual(check(src).filter((f) => f.severity === "error"), []);
+  // (a step without a fan-out: an arrow in, the box, an arrow out)
+  assert.match(render("--- before\na -- [jet] f\n---[step: cut]\n--- after\na -- [bjet] f"), /class="feynjs-step"/);
+});

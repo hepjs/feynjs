@@ -13,7 +13,7 @@ import type { LabelSpot, Scene } from "./scene.ts";
 import * as portable from "../geometry/portable-math.ts";
 
 /** A labelled circle's radius, px: one size whatever it holds (a longer label is set smaller). */
-const CIRCLE_RADIUS = 6;
+const CIRCLE_RADIUS = 9;
 
 /** Radius a vertex shape covers; lines stop at this distance from its centre. */
 /** How far what is drawn at `v` reaches toward (dx, dy): its radius, or an oval's rim that way. */
@@ -30,7 +30,7 @@ export function vertexRadius(v: Vertex, look: VertexLook): number {
   if (v.shape === "smallhatched") return look.smallBlob * 1.6;
   if (v.shape === "slashed") return look.crossedDot * 0.7;
   if (v.shape === "crossed") return look.crossedDot;
-  if (v.shape === "circle") return CIRCLE_RADIUS;
+  if (v.shape === "circle") return CIRCLE_RADIUS * (v.dotScale ?? 1);
   return 0;
 }
 
@@ -75,15 +75,15 @@ export function drawVertexShape(scene: Scene, v: Vertex): void {
     case "circle": {
       // a circle with a label inside, as papers mark where a jet starts (its flavour: b, c, l);
       // its rim fine and in the jets' colour; `color=` colours the rim and the label
-      const radius = CIRCLE_RADIUS;
+      const radius = CIRCLE_RADIUS * (v.dotScale ?? 1);
       let inner = "";
       if (v.circleLabel) {
-        const box = layoutLabel(v.circleLabel, scene.theme.fontSize * 0.6, scene.theme.wordLabelScale);
+        const box = layoutLabel(v.circleLabel, scene.theme.fontSize * 0.85 * (v.dotScale ?? 1), scene.theme.wordLabelScale);
         const k = Math.min(1, (radius * 1.5) / Math.max(box.width, 0.01));
         const lx = p.x - (box.width * k) / 2, ly = p.y + ((box.ascent - box.descent) * k) / 2;
         inner = `<g transform="translate(${fmt(lx)} ${fmt(ly)})${k < 1 ? ` scale(${fmt(k)})` : ""}" fill="${color ?? "currentColor"}">${box.svg}</g>`;
       }
-      svg = `<g class="feynjs-circle"><circle class="feynjs-bg" ${at} r="${fmt(radius)}" fill="#fff" stroke="${color ?? scene.theme.line.jetColor}" stroke-width="${fmt(scene.theme.line.stroke * 0.6)}"/>${inner}</g>`;
+      svg = `<g class="feynjs-circle"><circle class="feynjs-bg" ${at} r="${fmt(radius)}" fill="#fff" stroke="${color ?? scene.resolveColor(v.rim) ?? scene.theme.line.jetColor}" stroke-width="${fmt(scene.theme.line.stroke * 0.7)}"/>${inner}</g>`;
       break;
     }
     case "insertion": svg = `<path d="${crossPath(p, look.insertion)}" fill="none" ${outline}${colorAttr}/>`; break;

@@ -157,6 +157,24 @@ panels make one figure, so they sit in one row and are not lettered.
 | `---[otimes]` | ⊗ |
 | `---[+]`, `---[=]`, `---[to]` | +, =, → (a sum of diagrams, an identity) |
 | `---[cut]` | a dashed cut line: an amplitude beside its conjugate |
+| `---[step: words]`, on a line of its own | a step: a tall box of words, an arrow in from the panel before and out to the next |
+| `---[step: words \| one, two]` | the step with labelled arrows into it, one for each, the words flat above each arrow |
+| `---[into: words]` | after a step: a bar over this panel and those after it in the row, the words on it, an arrow down to each |
+
+A step and a fan-out make one figure, its flow said in words for a screen reader ("A jet, then
+flavour tagging, classify into b-jet, c-jet and light jet."):
+
+```feynman
+--- jet
+a [circle=j] -- [jet, color=#8a919c, no label, impact] f
+---[step: Jet flavour-tagging algorithms]
+---[into: Classify into] b-jet
+a [circle=b] -- [bjet, no label] f
+--- c-jet
+a [circle=c] -- [cjet, no label] f
+--- light jet
+a [circle=l] -- [lightjet, no label] f
+```
 
 ```feynman
 i1 [g] -- a

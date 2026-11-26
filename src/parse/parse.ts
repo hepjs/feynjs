@@ -334,6 +334,7 @@ export function parse(source: string): Diagram {
         else if (o.key === "no label") autoLabel = "";
         else if (o.key === "pulse") e.pulse = "";
         else if (o.key === "lifetime") e.lifetime = "";
+        else if (o.key === "impact") style.impact = true;
         // (an object with contents, [largejet 2j 1e], or written in words, is the object's style;
         // an object's name on its own, [largejet], is a particle's, and labels the line as one)
         else if (!lookupParticle(o.key) && readObject(o.key)) {

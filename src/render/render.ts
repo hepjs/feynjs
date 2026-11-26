@@ -12,7 +12,7 @@ import type { Theme, ThemeOverrides } from "../theme.ts";
 import { applyDiagramDirectives, bowParallelEdges, inheritStylesFromExternalParticles, oneArrowIntoBlob } from "./edge-styles.ts";
 import { explainParsed, summaryParsed } from "../tools/explain.ts";
 import { drawColourFlow } from "./colour-flow.ts";
-import { drawEdge } from "./edges.ts";
+import { LONE_JET_SCALE, drawEdge } from "./edges.ts";
 import { drawNotes } from "./notes.ts";
 import { drawHadronGroup } from "./hadrons.ts";
 import { layoutWithForces } from "../engines/forces/layout.ts";
@@ -194,7 +194,7 @@ function orientDiagram(d: Diagram, rowOverRank: number): void {
   // (a jet on its own from a flavour circle, a [circle=b] -- [bjet] f: standing up, leaning
   // right a little, as flavour-tagging figures draw one)
   const [only] = d.edges;
-  if (d.edges.length === 1 && d.vertices.size === 2 && only.style.object && d.vertices.get(only.from)?.shape === "circle") {
+  if (loneJet(d)) {
     const a = d.vertices.get(only.from)!, b = d.vertices.get(only.to)!;
     turnAbout(d, a, LONE_JET_LEAN - portable.atan2((b.y - a.y) * rowOverRank, b.x - a.x), rowOverRank);
   }
@@ -206,6 +206,15 @@ function orientDiagram(d: Diagram, rowOverRank: number): void {
     for (const e of d.edges) if (e.angles) e.angles = { ...e.angles, out: e.angles.out === undefined ? undefined : e.angles.out + degrees, in: e.angles.in === undefined ? undefined : e.angles.in + degrees };
   }
 }
+
+/** A jet on its own from a flavour circle, the whole drawing (`a [circle=b] -- [bjet] f`, or a plain `[jet]`). */
+export function loneJet(d: Diagram): boolean {
+  const [only] = d.edges;
+  return d.edges.length === 1 && d.vertices.size === 2 && only.style.line === "jet" && d.vertices.get(only.from)?.shape === "circle";
+}
+
+/** How much longer a lone jet is drawn than a jet in a diagram. */
+const LONE_JET_LENGTH = 1.6 * LONE_JET_SCALE;
 
 /** A lone jet's direction, from its circle (radians, y down): 12° right of straight up. */
 const LONE_JET_LEAN = (-78 * Math.PI) / 180;
@@ -228,13 +237,15 @@ function stretchObjectLegs(d: Diagram, stretch: number): void {
   const degree = new Map<string, number>();
   for (const e of d.edges) for (const id of [e.from, e.to]) degree.set(id, (degree.get(id) ?? 0) + 1);
   for (const e of d.edges) {
-    if (e.style.line !== "jet" || !e.style.object) continue;
+    if (e.style.line !== "jet" || (!e.style.object && !loneJet(d))) continue;
     const [inner, outer] = degree.get(e.to) === 1 ? [e.from, e.to] : degree.get(e.from) === 1 ? [e.to, e.from] : [];
     if (!inner || !outer) continue;
     const a = d.vertices.get(inner)!, b = d.vertices.get(outer)!;
     if (b.fixed) continue;
-    b.x = a.x + (b.x - a.x) * stretch;
-    b.y = a.y + (b.y - a.y) * stretch;
+    // (a lone jet, the whole drawing, longer still: it is the picture)
+    const k = loneJet(d) ? stretch * LONE_JET_LENGTH : stretch;
+    b.x = a.x + (b.x - a.x) * k;
+    b.y = a.y + (b.y - a.y) * k;
   }
 }
 

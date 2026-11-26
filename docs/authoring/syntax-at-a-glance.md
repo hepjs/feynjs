@@ -70,6 +70,7 @@ The whole syntax on one page. [How it works](index.md) builds a diagram up a par
 | `out=-45, in=180` (and `looseness=1.5`) | the line leaves at one angle and arrives from another, in degrees counter-clockwise from the right, as in TikZ |
 | `no arrow`, `no label`, `overlay` | drop the arrow, drop the label, a straight line over a wave |
 | `length=1.5` (or `length=2cm`) | the line that much longer than usual (or that long): the force layout and the grid honour it |
+| `impact` | on a jet: its impact parameters, the beam through where it starts, `z0` along the beam and `d0` into the page |
 | `lifetime` (or `lifetime={c\tau}`) | a particle that lives a while: a band under the line, clear where it is made and 30% of its colour where it decays; with a value, a brace beside it carrying that label |
 | `heavy`, `dashed`, `dotted`, `double`, `jet` (after a style) | thicker, dashed, dotted, drawn twice, a jet cone round it |
 | `ellipsis` | three dots where a leg would be |

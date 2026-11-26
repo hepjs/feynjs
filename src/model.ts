@@ -23,6 +23,8 @@ export interface EdgeStyle {
    * a hadronic tau, a semi-visible, emerging or displaced jet, a lepton-jet, or missing energy.
    */
   object?: JetObject;
+  /** a jet's impact parameters drawn (`[bjet, impact]`): the beam through where it starts, z0 along it and d0 into the page */
+  impact?: boolean;
   /** a line that is not drawn but still holds the layout together (`[invisible]`) */
   guide?: boolean;
   /** words that change how an object is drawn (`[displaced track]`) */

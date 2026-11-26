@@ -37,7 +37,7 @@ const SIDES: Record<string, Pt> = { above: { x: 0, y: -1 }, below: { x: 0, y: 1 
 
 /** One note: `target "text" [side]`, the target a point or a line `a--b`, the text in quotes or braces. */
 function drawNote(scene: Scene, d: Diagram, written: string, index: number): void {
-  const m = /^\s*([\w']+(?:\.[BD]\d*)?(?:\s*--\s*[\w']+)?)\s+(?:"([^"]*)"|\{(.*)\})\s*(above|below|left|right)?\s*$/.exec(written);
+  const m = /^\s*([\w']+(?:\.(?:B|D|d0|z0)\d*)?(?:\s*--\s*[\w']+)?)\s+(?:"([^"]*)"|\{(.*)\})\s*(above|below|left|right)?\s*$/.exec(written);
   if (!m) throw new FeynError(`write a note as: note: a "words" (a point), or note: a--b "words" below (a line)`);
   const { point, reach } = targetOf(scene, d, m[1].replace(/\s+/g, ""));
   placeNote(scene, point, reach, m[2] ?? m[3] ?? "", m[4], index);
@@ -51,7 +51,8 @@ function placeNote(scene: Scene, point: Pt, reach: number, words: string, side: 
   const away = { x: point.x - scene.core.x, y: point.y - scene.core.y }, n = portable.hypot(away.x, away.y);
   const prefer = side ? SIDES[side] : n > 1 ? { x: away.x / n, y: away.y / n } : { x: 0, y: -1 };
   const turn = (v: Pt, deg: number) => { const t = (deg * Math.PI) / 180; return { x: v.x * portable.cos(t) - v.y * portable.sin(t), y: v.x * portable.sin(t) + v.y * portable.cos(t) }; };
-  const far = scene.theme.unitX * 0.75;
+  // (close enough to read as the thing's own words, far enough for the arrow to show)
+  const far = scene.theme.unitX * 0.5;
   const spots = [0, 25, -25, 50, -50, 80, -80].flatMap((deg) => [1, 1.35, 1.7].map((k) => ({ spot: { anchor: point, direction: turn(prefer, deg) }, clearance: reach + far * k })));
   // (the words in the diagram's own colour, the arrow in the note colour, a red clear of the blue jets)
   const box = scene.placeNow(tex, spots, undefined, "feynjs-note", point);
@@ -62,9 +63,9 @@ function placeNote(scene: Scene, point: Pt, reach: number, words: string, side: 
 function targetOf(scene: Scene, d: Diagram, target: string): { point: Pt; reach: number } {
   // (inside a detector object: a b-jet's B or D decay vertex, B, or that of the jet ending at f, f.B)
   // (a number picks one of several, in the order drawn: B2, bjet2, inside a large jet as well)
-  const part = /^(?:([\w']+)\.)?([BD])(\d*)$/.exec(target);
+  const part = /^(?:([\w']+)\.)?(B|D|d0|z0)(\d*)$/.exec(target);
   if (part && !d.vertices.has(target)) {
-    const which = part[2] as "B" | "D", found = scene.objectParts.filter((p) => p[which] && (!part[1] || p.edge.from === part[1] || p.edge.to === part[1]))[Number(part[3] || 1) - 1];
+    const which = part[2] as "B" | "D" | "d0" | "z0", found = scene.objectParts.filter((p) => p[which] && (!part[1] || p.edge.from === part[1] || p.edge.to === part[1]))[Number(part[3] || 1) - 1];
     if (found) return { point: found[which]!, reach: scene.theme.line.trackWidth * 3 };
   }
   // (a detector object by its name, a leg, a line inside the diagram, or a jet inside an object: bjet, bjet2, largejet)

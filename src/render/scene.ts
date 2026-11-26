@@ -69,7 +69,7 @@ export class Scene {
   /** the path each line follows, vertex to vertex, for whatever is drawn along it later */
   edgeCurves = new Map<Edge, Curve>();
   /** every detector object and every jet inside one, in drawing order: its kind, middle and decay vertices (B, D), for notes */
-  objectParts: { edge: Edge; kind: string; middle: Pt; B?: Pt; D?: Pt }[] = [];
+  objectParts: { edge: Edge; kind: string; middle: Pt; B?: Pt; D?: Pt; d0?: Pt; z0?: Pt }[] = [];
   /** legs whose ends are covered by a hadron ellipse: their labels go beside the line instead */
   legsInsideHadrons = new Set<string>();
   /** middle of the diagram, px */

@@ -6,6 +6,8 @@ import * as portable from "./geometry/portable-math.ts";
 
 /** How lines are drawn, in px. */
 export interface LineLook {
+  /** (set while drawing, not a theme value) a jet drawn on its own: its cone ends in an open mouth, an ellipse */
+  jetMouth?: boolean;
   /** stroke width of ordinary lines */
   stroke: number;
   /** stroke width of `heavy` lines */
@@ -42,6 +44,10 @@ export interface LineLook {
   jetMaxHalfWidth: number;
   /** colour of the jet cone */
   jetColor: string;
+  /** each flavour of jet in a colour of its own: a b-jet blue, a c-jet green, a light jet orange */
+  bJetColor: string;
+  cJetColor: string;
+  lightJetColor: string;
   /** colour of a large-R or top jet's own cone, round the jets it holds (a neutral grey, so they read as jets) */
   largeJetColor: string;
   /** how solid the cone is where it leaves the vertex, 0 to 1 */
@@ -329,7 +335,7 @@ export const defaultTheme: Theme = {
     dash: 6, dashGap: 4, dotGap: 3.6,
     doubleSeparation: 3.2, tripleSeparation: 3.6,
     arrowLength: 9.5, arrowWidth: 7.5,
-    jetHalfAngle: 11, jetMaxHalfWidth: 13, jetColor: "#3f90da", largeJetColor: "#8a919c", jetShade: 0.6, jetFade: 0.2,
+    jetHalfAngle: 11, jetMaxHalfWidth: 13, jetColor: "#3f90da", largeJetColor: "#8a919c", bJetColor: "#3f90da", cJetColor: "#23a46d", lightJetColor: "#e07b39", jetShade: 0.6, jetFade: 0.2,
     largeJetScale: 2.4, narrowJetScale: 0.8, trackWidth: 0.9, objectLegStretch: 1.6,
   },
   vertex: { dot: 3.6, couplingDot: 4.6, crossedDot: 6.5, blob: 11, smallBlob: 4.6, insertion: 4.5, nucleusUnit: 7, proton: "#b8493b", neutron: "#5d6b85", nucleonEdge: "#2b2b2b", protonEdge: "#4f1f19", neutronEdge: "#252c3a", blobFill: "rgba(100, 120, 150, 0.2)", smallBlobFill: "#9aa1ab", hatchSpacing: 2.8 },

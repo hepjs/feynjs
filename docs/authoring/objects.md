@@ -274,6 +274,11 @@ a [circle=l] -- [lightjet, no label] f
 a [circle=b] -- [bjet, no label] f
 ```
 
+`impact` on a jet draws its impact parameters, as a flavour tagger sees them: the beam (dashed,
+level) through where the jet starts, `z0` along the beam and `d0` up from there into the page,
+slanting as depth does in an isometric view: how far a track, traced back, misses the vertex. `a [circle=b] -- [bjet, no label, impact] f`. Notes reach them
+(`note: d0 "impact parameter"`).
+
 Notes point inside an object: `note: B "B meson"` and `note: D "D meson"` at a b-jet's decay
 vertices (`f.B` for the jet ending at `f`), and `note: bjet "tagged"` at an object by its name, a leg
 or a line inside the diagram.

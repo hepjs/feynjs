@@ -34,6 +34,19 @@ layout that moves is a change, recorded here.
   jets, in the jet colour. A jet's `color=` colours a large jet's cone as before.
 - **Fixed: two jet cones alike but for their colour shared one gradient**, so on a page with both,
   one drew in the other's colour.
+- **New: impact parameters.** `impact` on a jet draws the beam through where it starts,
+  `z0` along the beam and `d0` into the page (slanting, as depth is
+  drawn isometrically). Notes reach `d0` and `z0`.
+- **New: steps and fan-outs between panels.** `---[step: words]` draws a tall box of words with
+  arrows in and out; `---[into: words]` a bar from it over the panels after it, an arrow down to
+  each. The figure's flow is said in one sentence for a screen reader.
+- **Each flavour of jet has its own colour:** b-jets blue, c-jets green, light jets orange
+  (`line.bJetColor`, `cJetColor`, `lightJetColor`), inside a large-R jet too; a flavour circle's
+  rim takes its jet's colour. The B and D flights and their tracks are drawn heavier.
+- **A jet drawn on its own** opens 14° either side, ends in an open elliptical mouth (only there:
+  jets in a diagram keep one smooth curve), is drawn longer, and its flavour circle is larger.
+- **Labelled arrows into a step:** `---[step: words | one, two]`.
+- **A lone plain `[jet]` from a circle** stands up and opens as a named jet does.
 - **Note arrows are red** (they were blue, close to the jets' colour); the words stay in the ink.
 - **What a large-R jet holds starts near its apex**: a W, Z, Higgs or top decays almost where it
   is made, so its jets run the jet's length.
