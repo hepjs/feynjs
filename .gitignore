@@ -14,5 +14,7 @@ docs/javascripts/feynjs.min.js
 
 # the paper is kept in its own (private) repository, in this folder
 paper/
+# Physica Scripta manuscript (IOP template, figures and build files)
+TeX/
 python/src/feynjs/static/feynjs.min.js
 python/dist/
