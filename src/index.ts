@@ -29,7 +29,7 @@ export type { Description } from "./tools/describe.ts";
 export type { Finding } from "./tools/check.ts";
 export type { TikzOptions } from "./tools/tikz.ts";
 export type { RenderOptions } from "./render/render.ts";
-export type { Theme, ThemeOverrides, LineLook, VertexLook, LayoutRules } from "./theme.ts";
+export type { Theme, ThemeOverrides, LineLook, VertexLook } from "./theme.ts";
 export type { Particle } from "./particles/registry.ts";
 export type { Diagram, Edge, EdgeStyle, Vertex } from "./model.ts";
 

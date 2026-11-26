@@ -59,7 +59,7 @@ The whole syntax on one page. [How it works](index.md) builds a diagram up a par
 | `double`, `heavy`, `proton`, `jet` | two strokes, a thick line, three lines, a cone |
 | `large jet`, `tau jet`, `semi-visible jet`, `emerging jet`, `displaced jet`, `lepton jet`, `missing energy` | [detector objects](objects.md) |
 | `susy`, `susy fermion`, `susy gluon` | SUSY-coloured lines |
-| `hidden` | not drawn (layout v1 still spaces for it; v2 ignores it) |
+| `hidden` | not drawn (the layout ignores it) |
 | `invisible` | not drawn, but holds the layout together in both engines |
 | a particle name: `e-`, `W+`, `gluino`, ... | style, arrow and label together ([all names](particles.md)) |
 | `label=...`, `label'=...` | label: on the side feynjs picks, or on the right of the line's direction (TikZ's `edge label'`) |
@@ -123,7 +123,7 @@ Contents: `j` jet, `b` b-tagged jet (with its secondary vertex), `e` electron, `
 | `recoil` (or `recoil=down`, `right`, `30`) | on a nucleus: recoiling, moved on inside rings bunched ahead and spread behind (the Doppler picture); away from what hits it unless a way is given |
 | `pulse`, `excited` (or `pulse=low`, `medium`, `high`, a number, a colour) | on a nucleus: excited, a still warm glow and faint rings round it, amber toward a near-white yellow with more energy (a star, `nucleus=Xe*`, gives it too) |
 | `emits=gamma` | on a nucleus: a short photon radiating out of it, away from what hits it |
-| `nucleus=Pb` (or `208Pb`, `Au`, `O`...; or `nucleus, A=16, Z=8`; `N=` for its neutrons) | a nucleus drawn as its A protons and neutrons packed in a disc, Z of them brick red, the rest slate, every nucleon one size, so as wide as A to the third |
+| `nucleus=Pb` (or `208Pb`, `Au`, `O`...; or `nucleus, A=16, Z=8`; `N=` for its neutrons) | a nucleus drawn as its A protons and neutrons packed in a disc, Z of them brick red, the rest slate, every nucleon one size, so as wide as the cube root of A |
 | `label=...` | a coupling label |
 | `[photon, radiation]` (on a line) | given off as radiation: the line it leaves runs on straight into the collision (a gluon off an incoming quark is radiation already) |
 | `rim=black`, `size=1.5` (on a dot) | a rim of another colour; a larger or smaller dot |
@@ -152,7 +152,6 @@ Contents: `j` jet, `b` b-tagged jet (with its secondary vertex), `e` electron, `
 | `layout: default` | the force layout (also `v2`) |
 | `layout: manual` | points given `a at (x, y)` stay exactly there, TikZ-Feynman style; the forces place the rest |
 | `layout: grid` (with `grid: 45` for coarser) | lines run level (or upright); only where two or more leave a point the same way do they part on 22.5 degree diagonals (45 with `grid: 45`) |
-| `layout: v1` | the older rule-based engine |
 | `grid: iso` | with the grid layout, an isometric (triangular) lattice: lines at 0, 60 and 120 degrees, forks forward at plus and minus 60 degrees, the background drawn to match |
 | `grid forks: diagonal` | with the grid layout, the final states of a last decay part symmetrically about level, a grid step apart, to the final plane (by default a last decay into two different particles turns a right angle: one level to the final plane, the other straight up or down, away from the middle) |
 | `view: kinematic` (with `projection: transverse` or `longitudinal`) | draw the event as a detector sees it: t-channel spectators forward and backward, what the collision makes central and spread round in azimuth, decay products near their parent; move a leg with `eta=`, `phi=` (degrees), `deta=`, `dphi=` |

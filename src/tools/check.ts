@@ -140,7 +140,7 @@ const SWITCHES = new Set(["horizontal", "horizontal'", "vertical", "vertical'", 
   "show intermediates", "lattice", "wilson loop", "plaquette", "link", "polyakov loop", "site", "boundary", "axes",
   "background", "debug", "final plane", "colour flow", "nucleon edges", "charge colour", "colours", "colors", "reveal",
   "edge labels", "chain", "modes", "signal"]);
-const LAYOUTS = new Set(["default", "v1", "v2", "manual", "grid"]);
+const LAYOUTS = new Set(["default", "v2", "manual", "grid"]);
 
 /** Switches feynjs does not know, and so passes over (`node distance: 2`), and layouts it does not have. */
 function switchFindings(d: Diagram): Finding[] {
@@ -150,7 +150,8 @@ function switchFindings(d: Diagram): Finding[] {
   }
   const layout = d.directives.layout?.trim().toLowerCase();
   if (layout && TIKZ_LAYOUTS.has(layout)) findings.push({ severity: "info", rule: "tikz-layout", message: `TikZ-Feynman's ${layout} is drawn by feynjs's own force layout` });
-  else if (layout && !LAYOUTS.has(layout)) findings.push({ severity: "warning", rule: "unknown-layout", message: `there is no layout "${layout}": the default is used (feynjs has default, manual, grid and v1)` });
+  else if (layout === "v1") findings.push({ severity: "warning", rule: "layout-v1", message: `the older rule engine (layout: v1) is gone: the diagram is drawn with the default layout` });
+  else if (layout && !LAYOUTS.has(layout)) findings.push({ severity: "warning", rule: "unknown-layout", message: `there is no layout "${layout}": the default is used (feynjs has default, manual and grid)` });
   return findings;
 }
 

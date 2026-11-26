@@ -56,7 +56,7 @@ See [Styling](index.md) for how to use them, and the colours the site's styleshe
 | `hadronBraceColor` | `"#c0392b"` | colour of a hadron brace (a page's stylesheet can override it through .feynjs-brace) |
 | `hadronEllipseAspect` | `0.45` | width of a hadron ellipse relative to its height |
 | `couplingLabelScale` | `0.82` | size of coupling labels beside vertices, relative to particle labels |
-| `engine` | `"v2"` | which layout engine: the rule-based one (v1) or the balance of forces (v2) |
+| `engine` | `"v2"` | which layout engine: the balance of forces (`"v2"`), `"grid"`, or `"manual"` |
 | `susyColor` | `"#c0392b"` | colour of supersymmetric particles |
 | `size` | `1` |  |
 
@@ -269,65 +269,3 @@ A loop keeps its shape: a half circle over a line, or a regular polygon, upright
 | `forces.loop` | `20` | how strongly a loop keeps its shape: an arc a half circle over a straight stretch, any other a regular polygon |
 | `forces.loopLeg` | `1` | a leg into a loop's corner, as a share of an ordinary leg's length |
 | `forces.loopUpright` | `6` | how firmly a loop stands upright: a box's sides level and upright, a triangle with one side upright |
-
-## Layout v1 rules: `layout`
-
-The older rule-based layout (`layout: v1`). Lengths are in ranks (across) and rows (down). Which rule uses each setting is listed in [Layout rules](https://github.com/hepjs/feynjs/blob/main/INTERNALS.md#layout-rules).
-
-| Setting | Default | What it controls |
-|---|---|---|
-| `layout.legSpread` | `1.25` | vertical gap between two external legs sharing a vertex |
-| `layout.rowGap` | `1` | minimum vertical gap between unrelated vertices in one column |
-| `layout.legBesideVertexGap` | `0.6` | gap between a leg and an unrelated vertex in one column, as a fraction of rowGap |
-| `layout.tChannelGap` | `1.5` | vertical length of a same-column (t-channel) propagator |
-| `layout.legLength` | `0.8` | length of an external leg relative to a propagator |
-| `layout.vertexInertia` | `40` | how much harder a vertex is to push aside than a leg, when a column is crowded |
-| `layout.railWeight` | `20` | how strongly the vertices of one fermion line stay level with each other |
-| `layout.spineWeight` | `3` | how strongly a vertex lines up with the propagators it sits on, relative to its legs |
-| `layout.branchAngle` | `27` | half-angle, in degrees, at which particles produced as a pair leave their vertex |
-| `layout.chainTurn` | `16` | degrees a decay chain turns towards the midline at each vertex, making it an arc |
-| `layout.chainFloor` | `-4` | the lowest angle, in degrees, a cascade may bend back towards the middle at its end |
-| `layout.fermionBendOut` | `22` | degrees a final-state fermion that radiates a boson turns outward |
-| `layout.levelEmissionSpread` | `16` | degrees between several bosons radiated level from one fermion line |
-| `layout.levelTolerance` | `4` | a line within this many degrees of level counts as level |
-| `layout.recoilAngle` | `12` | degrees a level line turns upward when it emits a particle, which leaves downward |
-| `layout.singleEmissionAngle` | `40` | angle, in degrees from the chain, of a single particle emitted by a decay chain |
-| `layout.emissionFan` | `[82,45]` | steepest and shallowest angle when a chain vertex emits several particles |
-| `layout.beamAngle` | `52` | angle, in degrees from horizontal, of the two beams entering a collision blob |
-| `layout.beamLength` | `0.7` | length of those beams, in ranks |
-| `layout.markedLineAngle` | `28` | angle, in degrees from level, at which a line that carries marks leaves its vertex |
-| `layout.markLineStretch` | `0.7` | a line carrying marks is this much longer for each mark on it (a mixing line with two crosses) |
-| `layout.busyVertexStretch` | `0.25` | each line beyond three at a vertex makes the lines leaving it this much longer |
-| `layout.earlyEmissionShortfall` | `0.5` | an early emission in a cascade stops this many leg lengths short of the last particles |
-| `layout.earlyEmissionMaxStretch` | `2.5` | the most an early emission is lengthened |
-| `layout.stageShrink` | `0.82` | each decay stage is drawn this much shorter than the last |
-| `layout.shortestStage` | `0.6` | stages never get shorter than this fraction of the first |
-| `layout.shrinkFromDepth` | `3` | number of stages from which a cascade counts as deep |
-| `layout.scatteredLegReach` | `1.3` | the longest the outgoing half of a scattered line is drawn, in ranks |
-| `layout.fusionAdvance` | `0.5` | how far behind two scattering lines their exchanged particles meet, in ranks |
-| `layout.fusionResonanceLength` | `0.6` | length of the particle a fusion produces, in ranks |
-| `layout.beamForkAngle` | `45` | half-angle, in degrees, of the fork where two beams meet, and of a simple 2 -> 2 final state |
-| `layout.decayForkAngle` | `20` | half-angle of the fork of a later decay |
-| `layout.radiationAt` | `0.4` | where radiation leaves an incoming leg, as a fraction of the leg |
-| `layout.radiationRise` | `1.05` | how far radiation climbs away from the leg, in rows |
-| `layout.radiationOvershoot` | `0.4` | how far past the hard vertex radiation ends, in ranks |
-| `layout.emissionDrop` | `1.3` | least drop, in rows, from a beam to a particle it emits that meets the other beam's |
-| `layout.exchangeLegLean` | `0.6` | how far, in rows, a particle leaving an exchanged line leans away from it |
-| `layout.scatterDeflection` | `0.3` | how far, in rows, a scattered line leans away from the particle it exchanges |
-| `layout.heldBackFraction` | `0.5` | how much of the beam's own lean a line keeps when it carries on into a decay |
-| `layout.markMargin` | `0.25` | clear space, in rows, a blob keeps from lines and vertices that are not its own |
-| `layout.lineMargin` | `0.3` | clear space, in rows, an external leg keeps from lines that are not its own |
-| `layout.convergenceTolerance` | `4` | degrees a final-state particle may head in towards an outgoing beam beside it |
-| `layout.hadronGap` | `0.9` | least distance, in rows, between the legs of two different hadrons |
-| `layout.hadronDiagramWidth` | `3.2` | least width, in ranks, of a diagram drawn between hadrons |
-| `layout.hadronEmissionLead` | `0.6` | how far, in leg lengths, a W is given off before the vertex where it decays into a hadron |
-| `layout.minEmissionAngle` | `32` | smallest angle, in degrees, at which an emitted branch leaves a scattering line |
-| `layout.forkAnglePerExtraLine` | `14` | each line beyond two opens a fork this many degrees wider |
-| `layout.maxForkAngle` | `62` | the widest a fork ever opens, in degrees either side |
-| `layout.minLineAngle` | `18` | smallest angle, in degrees, between two lines leaving the same vertex |
-| `layout.loopMinRadius` | `0.8` | smallest radius of a loop drawn over a line, in ranks: room for its labels |
-| `layout.loopEmissionAngle` | `40` | angle, in degrees below the line, at which a particle leaves the top of a loop |
-| `layout.boxMinWidth` | `1.6` | smallest width of a box drawn on a line, in ranks |
-| `layout.boxMinHeight` | `2.1` | height of a box drawn on a line, in rows |
-| `layout.spectatorGap` | `1.3` | distance, in rows, between a spectator line and the process beside it |
-| `layout.mirrorTopBottom` | `true` | make the diagram symmetric about its midline when its structure allows |

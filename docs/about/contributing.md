@@ -42,7 +42,7 @@ make a difference.
 |---|---|
 | change how the source is read | `src/parse/parse.ts`, `src/parse/chains.ts` |
 | add or rename particles | `src/particles/registry.ts` |
-| change where things go | `src/engines/rules/layout.ts` (v1) or `src/engines/forces/forces.ts` (v2) |
+| change where things go | `src/engines/forces/forces.ts` |
 | change how things look | `src/render/`, `src/theme.ts` |
 | change labels | `src/label/label.ts` |
 | change `check`, `describe`, `toTikz` | `src/tools/` |

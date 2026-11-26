@@ -88,12 +88,12 @@ One line in the source picks the engine. Leave it out and you get the force layo
 | `layout: default` (or `v2`) | the [force layout](#the-force-layout) | any diagram; nothing to set |
 | `layout: grid` | the force layout, then every line put on a [grid](#the-grid) | schematic drawings, with lines level or upright |
 | `layout: manual` | your own positions, the force layout for the rest ([by hand](#placing-points-by-hand)) | a figure you want point by point, as in TikZ-Feynman |
-| `layout: v1` | the older [rule engine](#the-rule-engine-v1) | diagrams first drawn with it |
 
 The syntax doesn't choose the layout: a process line is turned into ordinary edges first, so both
 notations go through the same engine. In a block of panels each panel takes its own `layout:`
 line, as above. To use one engine for every diagram, set it in the theme:
-`render(source, { theme: { engine: "grid" } })` (`"v2"`, `"grid"`, `"manual"` or `"v1"`).
+`render(source, { theme: { engine: "grid" } })` (`"v2"`, `"grid"` or `"manual"`). The older rule engine, `layout: v1`, is gone: a diagram that
+asks for it is drawn with the default, and [check](checks.md) says so.
 
 ## The force layout
 
@@ -334,67 +334,13 @@ l -- h2 [H]
 A pin holds in the default layout too, so one or two pins are also the heaviest way to
 [steer](#steering-it) a diagram. `layout: manual` says in the source that the placement is yours.
 
-## The rule engine (v1)
-
-`layout: v1` places vertices in columns by time, then settles their heights with a list of
-named rules: forks open at set angles, cascades arc, loops sit over their lines. It is fast and
-predictable, and kept as it was. Every rule is listed in [Layout rules](https://github.com/hepjs/feynjs/blob/main/INTERNALS.md#layout-rules).
-
-```feynman
---- layout: default
-in: q1 q2
-out: q3 h1 h2 q4
-q1 [q] -- a -- q3 [q]
-q2 [q] -- b -- q4 [q]
-a -- [boson, label=V] c
-b -- [boson, label=V] c
-c -- [H] l [dot]
-l -- h1 [H]
-l -- h2 [H]
---- layout: v1
-layout: v1
-in: q1 q2
-out: q3 h1 h2 q4
-q1 [q] -- a -- q3 [q]
-q2 [q] -- b -- q4 [q]
-a -- [boson, label=V] c
-b -- [boson, label=V] c
-c -- [H] l [dot]
-l -- h1 [H]
-l -- h2 [H]
-```
-
-```text
---- layout: default
-in: q1 q2
-out: q3 h1 h2 q4
-q1 [q] -- a -- q3 [q]
-q2 [q] -- b -- q4 [q]
-a -- [boson, label=V] c
-b -- [boson, label=V] c
-c -- [H] l [dot]
-l -- h1 [H]
-l -- h2 [H]
---- layout: v1
-layout: v1
-in: q1 q2
-out: q3 h1 h2 q4
-q1 [q] -- a -- q3 [q]
-q2 [q] -- b -- q4 [q]
-a -- [boson, label=V] c
-b -- [boson, label=V] c
-c -- [H] l [dot]
-l -- h1 [H]
-l -- h2 [H]
-```
-
 ## The final plane
 
 By default every boson decays along its own heading, the two branches of a decay mirror each
 other about their parent's line, and two of the same particle from one decay are one length.
 `final plane: on` lays the decays out as a tree instead: every final state on one vertical
 plane, every decay forking about level, the branches of a decay given equal room. It works with
-the force layout, the grid and manual placement; v1 ignores it. In a diagram with hadrons the
+the force layout, the grid and manual placement. In a diagram with hadrons the
 hadrons already line up the final states, and the switch changes nothing.
 
 ```feynman
@@ -500,7 +446,7 @@ e2 -- [fermion, label={q}] f3
 The same figures from the ATLAS corpus drawn three ways: the force layout, the grid, and the
 force layout with `final plane: on`. Each source below draws the first panel; add
 `layout: grid` or `final plane: on` for the others. Manual placement needs positions written
-in, so it is shown only above; v1 is frozen and not compared.
+in, so it is shown only above.
 
 ### B physics: B_c to J/psi D_s (BPHY-2018-08 fig_01c)
 
@@ -805,9 +751,7 @@ From lightest touch to heaviest:
    so you can change one for a whole page, or for one diagram:
 
 ```js
-// v1: narrower forks
-feynjs.render(source, { theme: { layout: { branchAngle: 22 } } });
-// v2: longer propagators
+// longer propagators
 feynjs.render(source, { theme: { forces: { lineLength: 1.2 } } });
 ```
 
@@ -861,8 +805,7 @@ with how much. Every SVG carries the same in each mark's `data-why` attribute, a
 
 Use it to find which rule to [steer](#steering-it) or [tune](../setup/theme.md). A diagram with
 `debug: on` takes longer to draw, a tenth of a second or so, so take it out once the layout is
-right. The [rule engine (v1)](#the-rule-engine-v1) is not measured: its
-lines are numbered and their lengths and directions given, without reasons.
+right.
 
 ## Measuring a layout
 

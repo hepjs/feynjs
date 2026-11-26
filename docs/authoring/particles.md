@@ -536,7 +536,7 @@ Each row of the tables below is one line between two points, `a` and `b`, beside
 Write a **style** (`fermion`, `gluon`, ...) for a bare line, or a **particle** (`e-`, `W+`,
 `gluino`, ...) for a line that comes with its arrow and label, and add **options** after either.
 The [Lines and particles](lines.md) guide explains them, and the
-[Particles](#all-particles) reference lists all 105 names.
+[Particles](#all-particles) reference lists all 212 names.
 
 ### Generic styles
 
@@ -568,7 +568,7 @@ The line styles of TikZ-Feynman, under the same names.
 | **And more**: three dots | <div class="feynman">a -- [ellipsis] b</div> | `a -- [ellipsis] b` |
 
 Two more are not drawn: `invisible` still holds its two points together in the layout, while
-`hidden` is left out of it (only the older v1 engine makes room for it).
+`hidden` is left out of it.
 
 ### Modifiers
 

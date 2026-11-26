@@ -14,7 +14,6 @@ source text ──parse──▶ Diagram ──layout──▶ positions ──r
 | `src/parse/` | Text to a `Diagram`: vertices, lines, options; the process syntax (`p p > t t~`), loops (`{t}`) and production modes (`ggF`, `VBF`) | `parse.ts`, `chains.ts` |
 | `src/particles/` | Names to line styles, labels and properties (`e-`, `W+`, `gluino`, `t~`) | `registry.ts` |
 | `src/engines/forces/` | The default layout: forces balanced by a solver; the grid engine snaps its result | `layout.ts`, `forces.ts` |
-| `src/engines/rules/` | The older rule-based layout (v1), frozen | `layout.ts` |
 | `src/render/` | Positions to SVG: lines, vertices, labels, hadrons, nuclei, colour flow, notes | `render.ts` |
 | `src/views/` | Other ways to see a diagram: the kinematic (event) view, the lattice view | `kinematic.ts` |
 | `src/label/` | The TeX-subset label renderer | `label.ts` |

@@ -7,8 +7,6 @@ import { layoutLabel } from "../src/label/label.ts";
 import { layoutDiagram } from "../src/render/render.ts";
 import { defaultTheme } from "../src/theme.ts";
 const place = (d: Parameters<typeof layoutDiagram>[0]) => layoutDiagram(d, defaultTheme);
-// (layout v1's own rules, tested on v1 itself now that v2 is the default)
-const placeV1 = (d: Parameters<typeof layoutDiagram>[0]) => layoutDiagram(d, { ...defaultTheme, engine: "v1" });
 import { Curve } from "../src/geometry/curve.ts";
 import { eventDirections } from "../src/views/kinematic.ts";
 
@@ -30,16 +28,6 @@ test("reports unknown styles with a line number", () => {
   assert.throws(() => parse("a -- b\nb -- [wobbly] c"), /line 2: unknown line style or particle "wobbly"/);
 });
 
-test("t-channel propagator is vertical, s-channel horizontal", () => {
-  const t = parse("i1 -- a -- f1\ni2 -- b -- f2\na -- [photon] b");
-  placeV1(t);
-  assert.equal(t.vertices.get("a")!.x, t.vertices.get("b")!.x);
-  assert.ok(t.vertices.get("a")!.y < t.vertices.get("b")!.y);
-  const s = parse("i1 -- a -- i2\na -- [photon] b\nf1 -- b -- f2");
-  placeV1(s);
-  assert.ok(Math.abs(s.vertices.get("a")!.y - s.vertices.get("b")!.y) < 1e-6);
-  assert.ok(s.vertices.get("a")!.x < s.vertices.get("b")!.x);
-});
 
 test("antiparticle arrows run against the direction of travel", () => {
   const svgIn = render("i1 [e+] -- a -- f1 [e+]");
@@ -111,42 +99,8 @@ test("manual positions override the automatic layout", () => {
   assert.deepEqual([a.x, a.y, f1.x, f1.y], [2, -1, 5, -3]); // y is up in the source, down on screen
 });
 
-test("a mark on a line does not bend it, and the line is a little longer to carry it", () => {
-  const plain = parse("i1 -- a -- i2\na -- [photon] b\nb -- f1\nb -- f2");
-  const marked = parse("i1 -- a -- i2\na -- [photon] m [empty dot, label=\\epsilon] -- [photon] b\nb -- f1\nb -- f2");
-  placeV1(plain); placeV1(marked);
-  const at = (d: typeof plain, id: string) => d.vertices.get(id)!;
-  assert.ok(at(marked, "b").x > at(plain, "b").x, "the line is longer by the room the mark needs");
-  const a = at(marked, "a"), b = at(marked, "b"), m = at(marked, "m");
-  assert.ok(Math.abs((m.y - a.y) * (b.x - a.x) - (b.y - a.y) * (m.x - a.x)) < 1e-6, "the mark sits on the straight line between its ends");
-  assert.ok(Math.abs(b.y - a.y) > 0.2, "a line that carries a mark leaves the horizontal");
-  assert.ok(Math.abs(at(marked, "m").x - (at(marked, "a").x + at(marked, "b").x) / 2) < 1e-6);
-});
 
-test("a fermion line stays level through its vertices, emitting inward", () => {
-  // t-channel with a particle radiated from the lower line after the exchange
-  const d = parse("in: i1 i2\ni1 -- [fermion] a -- [fermion] f1\ni2 -- [fermion] b -- [fermion] c -- [fermion] f2\na -- [photon] b\nc -- [scalar] s\ns -- f3\ns -- f4");
-  placeV1(d);
-  const v = (id: string) => d.vertices.get(id)!;
-  assert.ok(Math.abs(v("b").y - v("c").y) < 0.2, "the lower line carries on almost level from b to c (held back, not deflected as far as its partner)");
-  assert.ok(v("s").y < v("c").y && v("s").y > v("a").y, "what it emits stays between the two lines");
-});
 
-test("loops, radiation and exchanged lines are told apart", () => {
-  const column = (source: string, ...ids: string[]) => {
-    const d = parse(source); placeV1(d);
-    return ids.map((id) => Math.round(d.vertices.get(id)!.x * 100) / 100);
-  };
-  // a triangle loop is not an exchange: its far corner is to the right
-  const [a, c] = column("i1 [g] -- a\ni2 [g] -- b\na -- [fermion] c -- [fermion] b -- [fermion] a\nc -- [H] f1", "a", "c");
-  assert.ok(c > a);
-  // a quark exchanged between two gluons is one vertical line, emitting to the right
-  const [top, middle, bottom] = column("i1 [g] -- a\ni2 [g] -- b\nf1 -- [fermion] b -- [fermion] m -- [fermion] a -- [fermion] f2\nm -- [H] f3", "a", "m", "b");
-  assert.ok(top === middle && middle === bottom);
-  // radiation off an incoming quark sits on the leg, before the annihilation
-  const [emitter, hard] = column("i1 [q] -- g1 -- a -- i2 [qbar]\ng1 -- f0 [g]\na -- [Z'] b\nb -- f1 [chi]\nb -- f2 [chibar]", "g1", "a");
-  assert.ok(emitter < hard);
-});
 
 test("describe reports the process, propagators and loops", async () => {
   const { describe } = await import("../src/tools/describe.ts");
@@ -177,28 +131,6 @@ test("TikZ export places every vertex and names every line", async () => {
   assert.ok(tex.includes("photon") && tex.includes("fermion") && tex.includes("\\diagram*"));
 });
 
-test("no two lines leave a vertex closer than the minimum angle", () => {
-  for (const f of readdirSync("examples").filter((x: string) => x.endsWith(".feyn") && x !== "panels.feyn")) {
-    const d = parse(readFileSync(`examples/${f}`, "utf8"));
-    placeV1(d);
-    const ratio = defaultTheme.unitY / defaultTheme.unitX;
-    const degree = new Map<string, number>();
-    for (const e of d.edges) for (const id of [e.from, e.to]) degree.set(id, (degree.get(id) ?? 0) + 1);
-    for (const v of d.vertices.values()) {
-      const ends = d.edges.filter((e) => e.from !== e.to && !e.bend && (e.from === v.id || e.to === v.id))
-        .map((e) => d.vertices.get(e.from === v.id ? e.to : e.from)!);
-      const legs = ends.filter((n) => degree.get(n.id) === 1);
-      for (const leg of legs) {
-        for (const other of ends) {
-          if (other === leg) continue;
-          const a = Math.atan2((leg.y - v.y) * ratio, leg.x - v.x), b = Math.atan2((other.y - v.y) * ratio, other.x - v.x);
-          const gap = Math.abs(((a - b + 3 * Math.PI) % (2 * Math.PI)) - Math.PI) * 180 / Math.PI;
-          assert.ok(gap > defaultTheme.layout.minLineAngle - 1, `${f}: ${leg.id} is ${gap.toFixed(0)} degrees from ${other.id} at ${v.id}`);
-        }
-      }
-    }
-  }
-});
 
 test("blobs keep clear of legs that are not their own", () => {
   const d = parse("i1 [p] -- pp [blob] -- i2 [p]\npp -- [gluino] d1\npp -- [gluino] d2\nd1 [small blob] -- f1 [q]\nd1 -- f2 [q]\nd1 -- f3 [neutralino]\nd2 [small blob] -- f4 [neutralino]\nd2 -- f5 [q]\nd2 -- f6 [q]");
@@ -407,7 +339,9 @@ test("misspelt particles get a suggestion, and svgs carry an accessible label", 
   assert.throws(() => parse("a -- [gluonn] b"), /did you mean "gluon"/);
   assert.throws(() => parse("a -- [neutralno] b"), /did you mean "neutralino/);
   const svg = render("i1 [e-] -- a -- f1 [e-]\na -- [gamma] f2");
-  assert.match(svg, /aria-label="Feynman diagram: [^"<>]+"/, "label text must not contain raw < or >");
+  assert.match(svg, /aria-label="Feynman diagram of [^"<>]+"/, "label text must not contain raw < or >");
+  // (the description, which aria-describedby points at)
+  assert.match(svg, /aria-describedby="([\w-]+)"[^>]*>(<title>[^<]*<\/title>)?<desc id="\1">An electron comes in; an electron and a photon go out\. The electron emits a photon\./);
 });
 
 test("standalone svg sets its own colours", () => {
@@ -482,10 +416,21 @@ test("charge colour: charged lines take the colour of their charge's sign, neutr
 test("explain: a diagram in plain English, also in every SVG's <desc>", async () => {
   const { explain } = await import("../src/index.ts");
   const s = "i1 [e-] -- a -- i2 [e+]\na -- [Z] b\nf1 [mu-] -- b -- f2 [mu+]";
-  assert.equal(explain(s), "An electron and a positron come in; a muon and an antimuon go out. The electron and the positron meet, making a Z boson. The Z boson decays into a muon and an antimuon.");
+  // a summary first (what kind of picture, what it shows, in words), then the details
+  assert.equal(explain(s), "Feynman diagram of an electron and a positron annihilating into a muon pair, through a Z boson. An electron and a positron annihilate into a Z boson, which decays into a muon pair. The final state is a muon pair.");
+  // a production and its decays, as a physicist summarises them: pairs, "each", a W by its mode
+  assert.equal(explain("p p > t tbar\nt > b W+(> e+ nu)\ntbar > bbar W-(> q qbar)"),
+    "Feynman diagram of a proton–proton collision producing a top-quark pair. A proton–proton collision produces a top-quark pair, each top quark decaying into a bottom quark and a W boson, with one W boson decaying leptonically, to a positron and a neutrino, and the other hadronically. The final state is a bottom-quark pair, a positron, a quark pair and a neutrino.");
+  assert.match(explain("p p > t tbar\nt > b W+(> q qbar)\ntbar > bbar W-(> q qbar)"), /with each W boson decaying hadronically\. The final state is/);
+  assert.match(explain("g g > H > Z Z\nZ > e+ e-\nZ > mu+ mu-"), /Two gluons fuse into a Higgs boson, which decays into a Z-boson pair, with one Z boson decaying into an electron pair, and the other into a muon pair\./);
+  assert.match(explain("p p > gluino gluino\ngluino > q q neutralino2\nneutralino2 > Z neutralino1"), /each gluino decaying into a quark pair and a second neutralino/);
+  // anything else, interaction by interaction
   assert.match(explain("i1 [g] -- a\ni2 [g] -- b\na -- [fermion] c -- [fermion] b -- [fermion, label=t] a\nc -- [H] f1"), /through a loop of three top quarks/);
-  assert.match(explain("p p > gluino gluino\ngluino > q q neutralino2\nneutralino2 > Z neutralino1"), /Each gluino decays into two quarks and a second neutralino/);
-  assert.match(render(s), /<desc>An electron and a positron come in/);
+  assert.match(explain("i1 [g] -- a\ni2 [g] -- b\na -- [fermion] c -- [fermion] b -- [fermion, label=t] a\nc -- [H] f1"), /^One-loop Feynman diagram of two gluons to a Higgs boson\. /);
+  // the SVG: the summary is its accessible name, the details (and how it reads) its description
+  assert.match(render(s), /aria-label="Feynman diagram of an electron and a positron annihilating into a muon pair, through a Z boson"/);
+  assert.match(render(s), /<desc id="[\w-]+">An electron and a positron annihilate into a Z boson, which decays into a muon pair\. The final state is a muon pair\. Time runs from left to right\.<\/desc>/);
+  assert.doesNotMatch(render(`vertical: a to b\n${s}`), /Time runs from left to right/);
 });
 
 test("optical size: a smaller diagram is smaller, with relatively heavier lines", () => {
@@ -511,18 +456,20 @@ test("every force and every force setting belongs to exactly one family", async 
 });
 
 test("fermions are drawn by mass, not by name: a heavy neutral lepton's lepton leaves as a top's b does", () => {
-  const top = render("in: i1 i2\nout: b1 l nu\ni1 [g] -- a\ni2 [g] -- a\na -- [plain, label=t] t1\nt1 -- b1 [b]\nt1 -- [W] w\nw -- l [l+]\nw -- nu [nu]", { theme: { engine: "v2" } });
-  const heavy = render("in: i1 i2\nout: b1 l nu\ni1 [g] -- a\ni2 [g] -- a\na -- [plain, label=N] t1\nt1 -- b1 [l-]\nt1 -- [W] w\nw -- l [l+]\nw -- nu [nu]", { theme: { engine: "v2" } });
-  const light = render("in: i1 i2\nout: b1 l nu\ni1 [g] -- a\ni2 [g] -- a\na -- [plain, label=\\nu] t1\nt1 -- b1 [l-]\nt1 -- [W] w\nw -- l [l+]\nw -- nu [nu]", { theme: { engine: "v2" } });
+  const top = render("in: i1 i2\nout: b1 l nu\ni1 [g] -- a\ni2 [g] -- a\na -- [plain, label=t] t1\nt1 -- b1 [b]\nt1 -- [W] w\nw -- l [l+]\nw -- nu [nu]", { theme: { engine: "v2" }, model: true });
+  const heavy = render("in: i1 i2\nout: b1 l nu\ni1 [g] -- a\ni2 [g] -- a\na -- [plain, label=N] t1\nt1 -- b1 [l-]\nt1 -- [W] w\nw -- l [l+]\nw -- nu [nu]", { theme: { engine: "v2" }, model: true });
+  const light = render("in: i1 i2\nout: b1 l nu\ni1 [g] -- a\ni2 [g] -- a\na -- [plain, label=\\nu] t1\nt1 -- b1 [l-]\nt1 -- [W] w\nw -- l [l+]\nw -- nu [nu]", { theme: { engine: "v2" }, model: true });
   const points = (svg: string) => JSON.parse(svg.match(/<metadata class="feynjs-model">([\s\S]*?)<\/metadata>/)![1].replace(/&quot;/g, '"')).vertices.map((v: { x: number; y: number }) => [v.x, v.y]);
-  // (the top and the heavy N alike: the same shape; a light neutrino's line otherwise)
-  assert.deepEqual(points(heavy), points(top));
-  assert.notDeepEqual(points(light), points(top));
+  // (the top and the heavy N alike: the same shape, to within what their different labels'
+  // sizes move (under a pixel); a light neutrino's line otherwise, by many pixels)
+  const apart = (a: number[][], b: number[][]) => Math.max(...a.map((p, i) => Math.hypot(p[0] - b[i][0], p[1] - b[i][1])));
+  assert.ok(apart(points(heavy), points(top)) < 1, `heavy N against top: ${apart(points(heavy), points(top))} px`);
+  assert.ok(apart(points(light), points(top)) > 5, `light against top: ${apart(points(light), points(top))} px`);
 });
 
 test("debug: on draws a grid, every point's name, and why each line lies where it does", () => {
   const src = readFileSync("validation/atlas/SUSY-2013-15/fig_002a.feyn", "utf8");
-  const svg = render(`debug: on\n${src}`), plain = render(src);
+  const svg = render(`debug: on\n${src}`, { model: true }), plain = render(src, { model: true });
   assert.ok(svg.includes('class="feynjs-grid"') && !plain.includes('class="feynjs-grid"'), "a grid behind the drawing");
   // (every line numbered, its reasons measured: the stop's top is held by spacing, among others)
   const why = [...svg.matchAll(/data-why="([^"]*)"/g)].map((m) => m[1]);
@@ -882,7 +829,7 @@ test("notes: words in free space with a hand-drawn arrow to a point, a line or a
 });
 
 test("every part of a drawing is named: lines by their ends, drawn points by name, and the diagram as data", () => {
-  const svg = render("i1 [e-] -- a -- i2 [e+]\na -- [photon] b [dot]\nb -- f1 [mu-]\nb -- f2 [mu+]\nb -- [photon] f2");
+  const svg = render("i1 [e-] -- a -- i2 [e+]\na -- [photon] b [dot]\nb -- f1 [mu-]\nb -- f2 [mu+]\nb -- [photon] f2", { model: true });
   assert.match(svg, /data-edge="i1--a" data-from="i1" data-to="a" data-particle="e-"/);
   assert.match(svg, /data-vertex="b"/);
   // (a second line between the same points is told apart)

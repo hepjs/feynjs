@@ -190,14 +190,15 @@ A line `name: value` sets something for the whole diagram (or panel).
 | `scale: 1.5` | the whole diagram 1.5 times larger, as a zoom |
 | `size: small` | an optical size: `small`, `tiny`, `large` or any number (1 is normal); see [Styling](../setup/index.md#size) |
 | `title: ...` | a title, shown as a tooltip and read by screen readers |
-| `layout: v1` | lay out with the older rule engine instead of the force engine ([Engines](engines.md#the-rule-engine-v1)) |
 | `colour flow: on` | draw the colour lines beside quarks and gluons ([Colour flow](colour-flow.md)) |
 | `charge colour: on` | colour charged lines by the sign of their charge ([Styling](../setup/index.md#colour-by-charge)) |
 | `reveal: 2` | draw the first two steps in time as usual and the rest faint and grey ([Step by step](#step-by-step)) |
 | `meson:`, `baryon:`, `hadron:` | group legs into a hadron ([Hadrons](vertices.md#hadrons)) |
 
-Every diagram already carries a description for screen readers, built from its process:
-`aria-label="Feynman diagram: e- e+ -> mu- mu+"`. `title:` adds a title of your own as well.
+Every diagram already carries a summary and a description for screen readers, written from its
+process (see [explain](checks.md#explain)):
+`aria-label="Feynman diagram of an electron and a positron annihilating into a muon pair, through a photon"`.
+`title:` adds a title of your own as well.
 
 ### Step by step
 

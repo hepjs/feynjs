@@ -70,7 +70,7 @@ export interface VertexLook {
   smallBlob: number;
   /** half the size of the cross of an insertion (a mass or mixing insertion on a line) */
   insertion: number;
-  /** a nucleon's size, in px (each 0.5 of it across): a nucleus grows as A to the third; protons and neutrons are these colours */
+  /** a nucleon's size, in px (each 0.5 of it across): a nucleus grows as the cube root of A; protons and neutrons are these colours */
   nucleusUnit: number;
   proton: string;
   neutron: string;
@@ -106,119 +106,6 @@ export interface ColourFlowLook {
   anti: string[];
 }
 
-/** The rules of the automatic layout. Lengths are in ranks (x) and rows (y). */
-export interface LayoutRules {
-  /** vertical gap between two external legs sharing a vertex */
-  legSpread: number;
-  /** minimum vertical gap between unrelated vertices in one column */
-  rowGap: number;
-  /** gap between a leg and an unrelated vertex in one column, as a fraction of rowGap */
-  legBesideVertexGap: number;
-  /** vertical length of a same-column (t-channel) propagator */
-  tChannelGap: number;
-  /** length of an external leg relative to a propagator */
-  legLength: number;
-  /** how much harder a vertex is to push aside than a leg, when a column is crowded */
-  vertexInertia: number;
-  /** how strongly the vertices of one fermion line stay level with each other */
-  railWeight: number;
-  /** how strongly a vertex lines up with the propagators it sits on, relative to its legs */
-  spineWeight: number;
-  /** half-angle, in degrees, at which particles produced as a pair leave their vertex */
-  branchAngle: number;
-  /** degrees a decay chain turns towards the midline at each vertex, making it an arc */
-  chainTurn: number;
-  /** a line within this many degrees of level counts as level */
-  levelTolerance: number;
-  /** degrees a level line turns upward when it emits a particle, which leaves downward */
-  recoilAngle: number;
-  /** the lowest angle, in degrees, a cascade may bend back towards the middle at its end */
-  chainFloor: number;
-  /** degrees a final-state fermion that radiates a boson turns outward */
-  fermionBendOut: number;
-  /** degrees between several bosons radiated level from one fermion line */
-  levelEmissionSpread: number;
-  /** angle, in degrees from the chain, of a single particle emitted by a decay chain */
-  singleEmissionAngle: number;
-  /** steepest and shallowest angle when a chain vertex emits several particles */
-  emissionFan: [number, number];
-  /** angle, in degrees from horizontal, of the two beams entering a collision blob */
-  beamAngle: number;
-  /** length of those beams, in ranks */
-  beamLength: number;
-  /** angle, in degrees from level, at which a line that carries marks leaves its vertex */
-  markedLineAngle: number;
-  /** a line carrying marks is this much longer for each mark on it (a mixing line with two crosses) */
-  markLineStretch: number;
-  /** each line beyond three at a vertex makes the lines leaving it this much longer */
-  busyVertexStretch: number;
-  /** an early emission in a cascade stops this many leg lengths short of the last particles */
-  earlyEmissionShortfall: number;
-  /** the most an early emission is lengthened */
-  earlyEmissionMaxStretch: number;
-  /** each decay stage is drawn this much shorter than the last */
-  stageShrink: number;
-  /** stages never get shorter than this fraction of the first */
-  shortestStage: number;
-  /** the longest the outgoing half of a scattered line is drawn, in ranks */
-  scatteredLegReach: number;
-  /** how far behind two scattering lines their exchanged particles meet, in ranks */
-  fusionAdvance: number;
-  /** length of the particle a fusion produces, in ranks */
-  fusionResonanceLength: number;
-  /** half-angle, in degrees, of the fork where two beams meet, and of a simple 2 -> 2 final state */
-  beamForkAngle: number;
-  /** half-angle of the fork of a later decay */
-  decayForkAngle: number;
-  /** number of stages from which a cascade counts as deep */
-  shrinkFromDepth: number;
-  /** where radiation leaves an incoming leg, as a fraction of the leg */
-  radiationAt: number;
-  /** how far radiation climbs away from the leg, in rows */
-  radiationRise: number;
-  /** how far past the hard vertex radiation ends, in ranks */
-  radiationOvershoot: number;
-  /** least drop, in rows, from a beam to a particle it emits that meets the other beam's */
-  emissionDrop: number;
-  /** how far, in rows, a particle leaving an exchanged line leans away from it */
-  exchangeLegLean: number;
-  /** how much of the beam's own lean a line keeps when it carries on into a decay */
-  heldBackFraction: number;
-  /** how far, in rows, a scattered line leans away from the particle it exchanges */
-  scatterDeflection: number;
-  /** smallest angle, in degrees, at which an emitted branch leaves a scattering line */
-  minEmissionAngle: number;
-  /** each line beyond two opens a fork this many degrees wider */
-  forkAnglePerExtraLine: number;
-  /** the widest a fork ever opens, in degrees either side */
-  maxForkAngle: number;
-  /** smallest angle, in degrees, between two lines leaving the same vertex */
-  minLineAngle: number;
-  /** clear space, in rows, a blob keeps from lines and vertices that are not its own */
-  markMargin: number;
-  /** clear space, in rows, an external leg keeps from lines that are not its own */
-  lineMargin: number;
-  /** degrees a final-state particle may head in towards an outgoing beam beside it */
-  convergenceTolerance: number;
-  /** how far, in leg lengths, a W is given off before the vertex where it decays into a hadron */
-  hadronEmissionLead: number;
-  /** least width, in ranks, of a diagram drawn between hadrons */
-  hadronDiagramWidth: number;
-  /** least distance, in rows, between the legs of two different hadrons */
-  hadronGap: number;
-  /** smallest radius of a loop drawn over a line, in ranks: room for its labels */
-  loopMinRadius: number;
-  /** angle, in degrees below the line, at which a particle leaves the top of a loop */
-  loopEmissionAngle: number;
-  /** smallest width of a box drawn on a line, in ranks */
-  boxMinWidth: number;
-  /** height of a box drawn on a line, in rows */
-  boxMinHeight: number;
-  /** distance, in rows, between a spectator line and the process beside it */
-  spectatorGap: number;
-  /** make the diagram symmetric about its midline when its structure allows */
-  mirrorTopBottom: boolean;
-}
 
 /**
  * Layout v2: the weights of the few forces it balances. Lengths are in propagator lengths.
@@ -251,12 +138,6 @@ export interface ForceRules {
   decayOpening: number;
   /** how strongly lines point the way time runs, left to right, in a short diagram */
   timeFlow: number;
-  /** the most steps in time (incoming legs to outgoing) a diagram has and still counts as short */
-  shortDiagram: number;
-  /** how the time-flow pull shrinks for each step beyond a short diagram */
-  flowFade: number;
-  /** the weakest the time-flow pull gets, in the longest diagrams */
-  longFlow: number;
   /** penalty for a line running backwards in time */
   timeOrder: number;
   /** how strongly a loop keeps its shape: an arc a half circle over a straight stretch, any other a regular polygon */
@@ -281,10 +162,8 @@ export interface ForceRules {
   blobBeamLength: number;
   /** how much of the time-flow pull a beam into a blob feels */
   blobBeamFlow: number;
-  /** the least space between two mesons' ellipses, in line lengths */
+  /** the least space between two hadrons' ellipses, in line lengths */
   mesonGap: number;
-  /** the least space between two hadrons when either is a baryon, in line lengths */
-  baryonGap: number;
   /** the spacing between the ends of one hadron's quark legs, in line lengths */
   hadronSpacing: number;
   /** how strongly two outgoing legs from different vertices are kept from heading toward each other */
@@ -329,8 +208,6 @@ export interface ForceRules {
   forwardFork: number;
   /** how much shorter each generation of decay is drawn than the one before */
   stageShrink: number;
-  /** the shortest a deep decay's lines get, relative to the first stage */
-  smallestStage: number;
   /** the shortest a deep decay's outgoing legs get, relative to the first stage */
   smallestLegStage: number;
   /** how strongly light lines keep to the outside: heavy (SUSY) innermost, then bosons, fermions outermost */
@@ -397,10 +274,9 @@ export interface Theme {
   line: LineLook;
   vertex: VertexLook;
   colourFlow: ColourFlowLook;
-  layout: LayoutRules;
   /** which layout engine: the balance of forces (v2, the default), manual (placed points stay,
-   * the forces place the rest), grid (lines on 22.5 or 45 degree directions), or the older rules (v1) */
-  engine: "v1" | "v2" | "manual" | "grid";
+   * the forces place the rest), or grid (lines on 22.5 or 45 degree directions) */
+  engine: "v2" | "manual" | "grid";
   forces: ForceRules;
   /** named colours usable as `color=name` */
   colors: Record<string, string>;
@@ -458,16 +334,7 @@ export const defaultTheme: Theme = {
   colourFlow: { gap: 3.4, width: 2.6, opacity: 0.6, arrowLength: 7, arrowWidth: 6.2, turn: 14, palette: ["#e0241b", "#1f9e4a", "#2f6fdf"], anti: ["#00a7c4", "#c8379f", "#f0b000"] },
   engine: "v2",
   // fitted to the hand-placed reference diagrams by scripts/fit/tune.ts (2026-11-22)
-  forces: { lineLength: 1, legLength: 1.0, length: 20, legGive: 1, alignFinalStates: 1, alignStretch: 1.6, alignSteepest: 60, alignLevel: 20, alignGap: 0.35, evenAngles: 1, timeFlow: 2, shortDiagram: 3, flowFade: 1, longFlow: 0.3, timeOrder: 50, maxLean: 43, clearance: 20, margin: 0.3, vertexPad: 0.08, minAngle: 25, uprightExchange: 0.6, beamsScatter: 40, scatterAngle: 10, mirror: 2, passThroughEvenness: 0.3, beams: 4, finalPlane: 2, planeFirst: 0, stageShrink: 0.7, smallestStage: 0.45, smallestLegStage: 0.7, lightOutside: 200, heavyCarriesOn: 20, heavyTurn: 12, wideLean: 60, lightFermionLean: 45, offShellFlow: 0.4, emittedFlow: 0.4, givenOffFlow: 0, givenOffLength: 0.75, givenOffTurn: 40, givenOffSide: 6, beamsMirror: 30, susyOpening: 50, susyProductLength: 0.8, susyProductHold: 4, restLevel: 100, equalProducts: 3, deeperFlow: 8, forwardFork: 25, heavyFlow: 22, depthEase: 0.5, noConverging: 20, hadron: 20, hadronSpacing: 0.6, mesonGap: 0.25, baryonGap: 0.35, rail: 40, blobBeamLength: 0.75, blobBeamFlow: 0.2, convergeReach: 1.8, convergeLeeway: 4, settle: 0.8, loop: 20, loopLeg: 1, loopUpright: 6, pairTogether: 20, pairOpening: 16, decayOpening: 40 },
-  layout: {
-    legSpread: 1.25, rowGap: 1.0, legBesideVertexGap: 0.6, tChannelGap: 1.5, legLength: 0.8, vertexInertia: 40, railWeight: 20, spineWeight: 3,
-    branchAngle: 27, chainTurn: 16, chainFloor: -4, fermionBendOut: 22, levelEmissionSpread: 16, levelTolerance: 4, recoilAngle: 12, singleEmissionAngle: 40, emissionFan: [82, 45], beamAngle: 52, beamLength: 0.7, markedLineAngle: 28, markLineStretch: 0.7, busyVertexStretch: 0.25, earlyEmissionShortfall: 0.5, earlyEmissionMaxStretch: 2.5, stageShrink: 0.82, shortestStage: 0.6, shrinkFromDepth: 3, scatteredLegReach: 1.3, fusionAdvance: 0.5, fusionResonanceLength: 0.6, beamForkAngle: 45, decayForkAngle: 20,
-    radiationAt: 0.4, radiationRise: 1.05, radiationOvershoot: 0.4,
-    emissionDrop: 1.3, exchangeLegLean: 0.6, scatterDeflection: 0.3, heldBackFraction: 0.5,
-    markMargin: 0.25, lineMargin: 0.3, convergenceTolerance: 4, hadronGap: 0.9, hadronDiagramWidth: 3.2, hadronEmissionLead: 0.6, minEmissionAngle: 32, forkAnglePerExtraLine: 14, maxForkAngle: 62, minLineAngle: 18, loopMinRadius: 0.8, loopEmissionAngle: 40, boxMinWidth: 1.6, boxMinHeight: 2.1,
-    spectatorGap: 1.3,
-    mirrorTopBottom: true,
-  },
+  forces: { lineLength: 1, legLength: 1.0, length: 20, legGive: 1, alignFinalStates: 1, alignStretch: 1.6, alignSteepest: 60, alignLevel: 20, alignGap: 0.35, evenAngles: 1, timeFlow: 2, timeOrder: 50, maxLean: 43, clearance: 20, margin: 0.3, vertexPad: 0.08, minAngle: 25, uprightExchange: 0.6, beamsScatter: 40, scatterAngle: 10, mirror: 2, passThroughEvenness: 0.3, beams: 4, finalPlane: 2, planeFirst: 0, stageShrink: 0.7, smallestLegStage: 0.7, lightOutside: 200, heavyCarriesOn: 20, heavyTurn: 12, wideLean: 60, lightFermionLean: 45, offShellFlow: 0.4, emittedFlow: 0.4, givenOffFlow: 0, givenOffLength: 0.75, givenOffTurn: 40, givenOffSide: 6, beamsMirror: 30, susyOpening: 50, susyProductLength: 0.8, susyProductHold: 4, restLevel: 100, equalProducts: 3, deeperFlow: 8, forwardFork: 25, heavyFlow: 22, depthEase: 0.5, noConverging: 20, hadron: 20, hadronSpacing: 0.6, mesonGap: 0.25, rail: 40, blobBeamLength: 0.75, blobBeamFlow: 0.2, convergeReach: 1.8, convergeLeeway: 4, settle: 0.8, loop: 20, loopLeg: 1, loopUpright: 6, pairTogether: 20, pairOpening: 16, decayOpening: 40 },
   // The Petroff accessible colour cycle (2021), the scheme now recommended for HEP figures
   // and shipped in mplhep: distinguishable under colour-vision deficiency and in greyscale.
   // green, pink, teal and gold are not in that cycle; they are chosen to sit beside it.

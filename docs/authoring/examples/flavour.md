@@ -59,7 +59,6 @@ it decays.
 -   **b → sγ penguin, B̄⁰ → K̄\*⁰γ**
 
     ```feynman
-    layout: v1
     in: b d1
     out: y s d2
     d2 [\bar{d}] -- [fermion] d1 [\bar{d}]
@@ -72,7 +71,6 @@ it decays.
 
     ````markdown
     ```feynman
-    layout: v1
     in: b d1
     out: y s d2
     d2 [\bar{d}] -- [fermion] d1 [\bar{d}]
@@ -92,8 +90,7 @@ it decays.
     B0bar > K*0bar gamma
     ```
 
-    The photon leaves the W in the loop, and the d̄ is a spectator. This one is drawn with the
-    older layout engine, `layout: v1`, which sends the photon up clear of the loop.
+    The photon leaves the W in the loop, and the d̄ is a spectator.
 
 -   **π⁺ → μ⁺ν<sub>μ</sub>**
 

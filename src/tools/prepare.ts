@@ -1,4 +1,4 @@
-import { assignRoles } from "../engines/rules/roles.ts";
+import { assignRoles } from "../engines/roles.ts";
 import type { Diagram, Edge } from "../model.ts";
 import { parse } from "../parse/parse.ts";
 import { inheritStylesFromExternalParticles } from "../render/edge-styles.ts";
