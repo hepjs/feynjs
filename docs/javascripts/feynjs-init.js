@@ -26,15 +26,15 @@
     // tagged by its step, so it can be drawn one step at a time)
     // (the two-engines row keeps its source, to draw it again as it moves between the engines)
     document.querySelectorAll(".feynjs-row--morph div.feynman:not([data-processed]), .feynjs-layouts div.feynman:not([data-processed])").forEach(function (el) { el.dataset.source = el.textContent; });
-    feynjs.run({ querySelector: ".feynjs-row--steps div.feynman:not([data-processed])", levels: true });
+    feynjs.run({ querySelector: ".feynjs-row--steps div.feynman:not([data-processed])", levels: true, model: true });
     feynjs.run({ querySelector: ".feynjs-row div.feynman:not([data-processed])" });
     stepByStep();
     twoEngines();
     water();
     // (the tour's small figures without download buttons)
-    feynjs.run({ querySelector: ".feynjs-tour div.feynman:not([data-processed])" });
+    feynjs.run({ querySelector: ".feynjs-tour div.feynman:not([data-processed])", model: true });
     feynjs.run({ querySelector: ".feynjs-layouts div.feynman:not([data-processed])" });
-    feynjs.run({ querySelector: "div.feynman:not([data-processed])", download: true });
+    feynjs.run({ querySelector: "div.feynman:not([data-processed])", download: true, model: true });
     explain();
     layouts();
   };
@@ -98,7 +98,7 @@
         var text = document.createElement("textarea"); text.innerHTML = m[1];
         return JSON.parse(text.value);
       };
-      var ends = [feynjs.render(source, { idPrefix: "morph0" }), feynjs.render("layout: grid\n" + source, { idPrefix: "morph1" })];
+      var ends = [feynjs.render(source, { idPrefix: "morph0", model: true }), feynjs.render("layout: grid\n" + source, { idPrefix: "morph1", model: true })];
       var at = ends.map(function (svg) { return model(svg).vertices.map(function (v) { return { id: v.id, at: v.at }; }); });
       // (one frame for both ends and everything between, so the drawing keeps its scale as it moves)
       var boxes = ends.map(function (svg) { return /viewBox="([^"]+)"/.exec(svg)[1].split(/\s+/).map(Number); });
@@ -139,7 +139,7 @@
           var u = Math.max(0, Math.min(1, (seconds - turn[k]) / EACH)), e = u === 0 ? 0 : snap(u);
           return v.id + " at (" + (a[0] + (b[0] - a[0]) * e).toFixed(3) + ", " + (a[1] + (b[1] - a[1]) * e).toFixed(3) + ")";
         });
-        return feynjs.render("layout: manual\n" + source + "\n" + pins.join("\n"), { idPrefix: "morph" });
+        return feynjs.render("layout: manual\n" + source + "\n" + pins.join("\n"), { idPrefix: "morph", model: true });
       };
       var state = 0, running = null, timer = null;
       var label = document.createElement("div");
@@ -190,12 +190,14 @@
       }
     });
   };
-  // the home page's banner: rings from the js, one every few seconds, growing slowly and evenly
-  // outward and fading, so a few are always on their way, evenly spaced. Paused while the banner is
-  // out of view or the page is hidden; still for readers who ask for less motion.
+  // the home page's banner: rings from the js, the first few close together, then fewer, growing
+  // slowly and evenly outward; each fades as it nears the banner's far corner and is dropped there,
+  // so only the handful still in sight are ever drawn. Paused while the banner is out of view or
+  // the page is hidden; still for readers who ask for less motion.
   // (All the rings are drawn on one canvas, the size of the banner: one small bitmap however many
-  // rings are out and however wide they grow, and nothing for the page to lay out again each frame.
-  // Where each ring is comes from the clock alone, so a pause picks up just where it left off.)
+  // rings are out, and nothing for the page to lay out again each frame. Where each ring is comes
+  // from the clock alone, so a pause picks up just where it left off. The rings start once the
+  // page's own diagrams are drawn, so the first seconds are not spent waiting on them.)
   var water = function () {
     document.querySelectorAll(".feynjs-splash:not([data-water])").forEach(function (splash) {
       splash.setAttribute("data-water", "");
@@ -210,41 +212,61 @@
       layer.setAttribute("aria-hidden", "true");
       layer.appendChild(canvas);
       splash.insertBefore(layer, splash.firstChild);
-      var EVERY = 0.9, SECONDS = 18, FROM = 0.6 * 16, OPACITY = 0.35, LINE = 1.25;
-      var w = 0, h = 0, cx = 0, cy = 0, dpr = 1, colour = "#c0392b";
-      // (the banner's size and where the js is in it, measured only when either changes)
+      // (the first FIRST rings EVERY seconds apart, then each gap SLOWER seconds longer, up to LATEST;
+      // a ring takes SECONDS to reach the banner's far corner, fading over the last FADE of the way)
+      var EVERY = 0.9, FIRST = 3, SLOWER = 0.6, LATEST = 3.2, SECONDS = 14, FADE = 0.45;
+      var FROM = 0.3 * 16, OPACITY = 0.35, LINE = 1.25;
+      var w = 0, h = 0, cx = 0, cy = 0, dpr = 1, reach = 1, colour = "#c0392b";
+      // (the banner's size and where the js is in it; the canvas is sized again only when its size
+      // in pixels changes, since sizing it clears it)
       var measure = function () {
         var b = splash.getBoundingClientRect(), s = source.getBoundingClientRect();
         w = b.width; h = b.height; cx = s.left - b.left; cy = s.top - b.top;
+        reach = Math.max(Math.hypot(cx, cy), Math.hypot(w - cx, cy), Math.hypot(cx, h - cy), Math.hypot(w - cx, h - cy), 1);
         dpr = Math.min(window.devicePixelRatio || 1, 2);
-        canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
+        var pw = Math.round(w * dpr), ph = Math.round(h * dpr);
+        if (canvas.width !== pw || canvas.height !== ph) { canvas.width = pw; canvas.height = ph; }
       };
       var tint = function () { colour = getComputedStyle(layer).color || colour; };
-      var clock = 0, last = 0, frame = 0, running = false;
+      // (when the k-th ring is born, from the clock's start: a fixed schedule, so the clock alone
+      // says which rings are out)
+      var born = [0];
+      var birth = function (k) {
+        while (born.length <= k) {
+          var n = born.length, gap = n < FIRST ? EVERY : Math.min(EVERY + SLOWER * (n - FIRST + 1), LATEST);
+          born.push(born[n - 1] + gap);
+        }
+        return born[k];
+      };
+      var oldest = 0, clock = 0, last = 0, frame = 0, running = false;
       var draw = function (now) {
         frame = 0;
         if (!running) return;
-        clock += Math.min((now - (last || now)) / 1000, 0.1); last = now;
-        var to = Math.max(w, h) * 2.2;
+        clock += Math.min((now - (last || now)) / 1000, 0.25); last = now;
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         ctx.clearRect(0, 0, w, h);
         ctx.strokeStyle = colour; ctx.lineWidth = LINE;
-        // (each ring born at k * EVERY seconds on the clock; those still growing are drawn)
-        for (var k = Math.floor(clock / EVERY); k >= 0; k--) {
-          var age = (clock - k * EVERY) / SECONDS;
-          if (age >= 1) break;
-          var r = (FROM + (to - FROM) * age) / 2 - LINE / 2;
+        // (a ring past the far corner is out of sight for good: dropped, never looked at again)
+        while (clock - birth(oldest) >= SECONDS) oldest++;
+        for (var k = oldest; birth(k) <= clock; k++) {
+          var age = (clock - birth(k)) / SECONDS;
+          var r = FROM / 2 + (reach - FROM / 2) * age - LINE / 2;
           if (r <= 0) continue;
-          ctx.globalAlpha = OPACITY * (1 - age);
+          var fade = age < 1 - FADE ? 1 : (1 - age) / FADE;
+          ctx.globalAlpha = OPACITY * fade * fade;
           ctx.beginPath(); ctx.arc(cx, cy, r, 0, 2 * Math.PI); ctx.stroke();
         }
         frame = requestAnimationFrame(draw);
       };
       var start = function () {
-        if (running) return;
+        if (running || !ready) return;
         running = true; last = 0; tint();
         if (!frame) frame = requestAnimationFrame(draw);
       };
+      // (the rings wait until the page's diagrams are drawn: the main thread is free then)
+      var ready = false;
+      var whenFree = window.requestIdleCallback ? window.requestIdleCallback.bind(window) : function (f) { return setTimeout(f, 400); };
+      whenFree(function () { ready = true; if (!document.hidden && inView) start(); }, { timeout: 1500 });
       var stop = function () { running = false; if (frame) cancelAnimationFrame(frame); frame = 0; };
       measure();
       if ("ResizeObserver" in window) {
@@ -254,8 +276,12 @@
       // (the colour follows the light and dark schemes)
       new MutationObserver(tint).observe(document.body, { attributes: true, attributeFilter: ["data-md-color-scheme"] });
       splash.classList.add("feynjs-water-on");
+      // (the page's own rings, there for readers without the js, are taken out: they grow by their
+      // width and height, which lays the page out again every frame)
+      source.querySelectorAll("span").forEach(function (ring) { ring.remove(); });
+      var inView = true;
       if ("IntersectionObserver" in window) {
-        new IntersectionObserver(function (seen) { if (seen[0].isIntersecting && !document.hidden) start(); else stop(); }, { threshold: 0.1 }).observe(splash);
+        new IntersectionObserver(function (seen) { inView = seen[0].isIntersecting; if (inView && !document.hidden) start(); else stop(); }, { threshold: 0.1 }).observe(splash);
       } else start();
       document.addEventListener("visibilitychange", function () { if (document.hidden || !splash.isConnected) stop(); else start(); });
     });
@@ -531,7 +557,7 @@
         var text = document.createElement("textarea"); text.innerHTML = m[1];
         return JSON.parse(text.value);
       };
-      var ends = ENDS.map(function (e, k) { return feynjs.render(e.line + "\n" + source, { idPrefix: "lay" + k }); });
+      var ends = ENDS.map(function (e, k) { return feynjs.render(e.line + "\n" + source, { idPrefix: "lay" + k, model: true }); });
       var at = ends.map(function (svg) { var byId = {}; model(svg).vertices.forEach(function (v) { byId[v.id] = v.at; }); return byId; });
       var ids = Object.keys(at[0]);
       var boxes = ends.map(function (svg) { return /viewBox="([^"]+)"/.exec(svg)[1].split(/\s+/).map(Number); });
@@ -563,7 +589,7 @@
           var u = Math.max(0, Math.min(1, (seconds - (SWEEP * (a[0] - left)) / across) / EACH)), e = ease(u);
           return id + " at (" + (a[0] + (b[0] - a[0]) * e).toFixed(3) + ", " + (a[1] + (b[1] - a[1]) * e).toFixed(3) + ")";
         });
-        return feynjs.render("layout: manual\n" + source + "\n" + pins.join("\n"), { idPrefix: "lay" });
+        return feynjs.render("layout: manual\n" + source + "\n" + pins.join("\n"), { idPrefix: "lay", model: true });
       };
       // the buttons, and the switch line in the source
       var bar = document.createElement("div");
