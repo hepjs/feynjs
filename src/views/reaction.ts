@@ -6,9 +6,14 @@ import { FeynError } from "../model.ts";
 import type { Diagram, Edge, EdgeStyle, Vertex } from "../model.ts";
 import { drawLine } from "../render/lines.ts";
 import { lookupParticle } from "../particles/registry.ts";
-import { elementSymbol, isotopeLabel, nucleusRadius } from "../render/nucleus.ts";
+import { elementSymbol, isotopeLabel, nucleusRadius, nucleusSvg, recoilRings, recoilSvg, recoiledTo } from "../render/nucleus.ts";
 import type { Theme } from "../theme.ts";
-import { Canvas, along, scaled, unitAt } from "./canvas.ts";
+import { Scene } from "../render/scene.ts";
+import { drawViewNotes } from "../render/notes.ts";
+import { energyColour, energyGlow, energyLevel } from "../render/vertices.ts";
+import { diagramModel, svgDocument } from "../render/svg.ts";
+import { explainParsed } from "../tools/explain.ts";
+import type { RenderOptions } from "../render/render.ts";
 import { drawDecayChain } from "./chain.ts";
 import * as portable from "../geometry/portable-math.ts";
 
@@ -30,36 +35,36 @@ import * as portable from "../geometry/portable-math.ts";
  * outer side; every arrow is the same length, the legs on each side the same angle apart, and
  * the arrows only as long as neighbours, and their names, need to clear each other.
  */
-export function drawReaction(d: Diagram, theme: Theme, idPrefix = "feyn"): string {
-  if (d.decayChain) return drawDecayChain(d, d.decayChain, theme, idPrefix);
+export function drawReaction(d: Diagram, theme: Theme, idPrefix = "feyn", options: RenderOptions = {}): { svg: string; scene: Scene } {
+  if (d.decayChain) return drawDecayChain(d, d.decayChain, theme, idPrefix, options);
   const { incoming, outgoing } = reactionLegs(d, theme);
   if (incoming.length === 0 || outgoing.length === 0) throw new FeynError(`the reaction view draws a process with something coming in and something made, such as "2H 3H > 4He n"`);
   const look = sizesFor(theme);
-  const canvas = new Canvas(theme);
-  if (isElastic(incoming, outgoing)) drawRecoil(canvas, d, incoming, outgoing, look);
-  else if (isDeexcitation(incoming, outgoing)) drawDeexcitation(canvas, incoming[0], outgoing, look);
+  const scene = new Scene(d, theme, idPrefix);
+  if (isElastic(incoming, outgoing)) drawRecoil(scene, d, incoming, outgoing, look);
+  else if (isDeexcitation(incoming, outgoing)) drawDeexcitation(scene, incoming[0], outgoing, look);
   else {
     // (a photon breaking a nucleus up reaches into it, and the fragments fly out of it; anything
     // else meets in a burst)
     const target = incoming.length === 2 && incoming.some((l) => l.nucleus) && incoming.some((l) => !l.nucleus && l.line === "wave") ? incoming.find((l) => l.nucleus)! : undefined;
     const middle = target ? target.radius : Math.max(theme.unitX * 0.27, Math.max(0, ...[...incoming, ...outgoing].map((leg) => leg.radius)) * 0.8);
-    const centre = target ? canvas.nucleus({ x: 0, y: 0 }, target.nucleus!.A, target.nucleus!.Z, target.radius, target.names) : canvas.target(["burst"], { x: 0, y: 0 }, middle * 0.8);
-    if (!target) canvas.parts.push(burstSvg(middle, theme.line.stroke));
-    canvas.grow(-middle, -middle); canvas.grow(middle, middle);
+    const centre = target ? nucleusAt(scene, { x: 0, y: 0 }, target.nucleus!.A, target.nucleus!.Z, target.radius, target.names) : scene.target(["burst"], { x: 0, y: 0 }, middle * 0.8);
+    if (!target) scene.edges.push(burstSvg(middle, theme.line.stroke));
+    scene.bounds.include(-middle, -middle); scene.bounds.include(middle, middle);
     // (a photon among what is made comes out of the heaviest nucleus made, as it does: that nucleus
     // gives it off, not the burst)
     const emitter = [...outgoing].filter((l) => l.nucleus).sort((a, b) => b.radius - a.radius)[0];
     const photons = emitter ? outgoing.filter((l) => !l.nucleus && l.line === "wave") : [];
     const made = outgoing.filter((l) => !photons.includes(l));
     const sides: [Leg[], boolean][] = target ? [[incoming.filter((l) => l !== target), true], [made, false]] : [[incoming, true], [made, false]];
-    const placed = fanLegs(canvas, sides, middle, centre, look, !!target);
-    if (emitter && photons.length) radiate(canvas, placed.get(emitter)!, emitter.radius, photons, look);
+    const placed = fanLegs(scene, sides, middle, centre, look, !!target);
+    if (emitter && photons.length) radiate(scene, placed.get(emitter)!, emitter.radius, photons, look);
     if (target) {
       const box = layoutLabel(target.label, look.size, 1);
-      canvas.text(box, -box.width / 2, target.radius + look.labelGap + box.ascent);
+      textAt(scene, box, -box.width / 2, target.radius + look.labelGap + box.ascent);
     }
   }
-  return canvas.svg(d, "feynjs-reaction", `a reaction: ${incoming.length} in, ${outgoing.length} out`, { x: 0, y: 0 }, !isElastic(incoming, outgoing), idPrefix);
+  return { svg: viewSvg(scene, d, "feynjs-reaction", `a reaction: ${incoming.length} in, ${outgoing.length} out`, { x: 0, y: 0 }, !isElastic(incoming, outgoing), options), scene };
 }
 
 /** The sizes every reaction picture shares: its names' size, the gaps, a line's length and an arrow's width. */
@@ -104,7 +109,7 @@ function isElastic(incoming: Leg[], outgoing: Leg[]): boolean {
  * arrow a gap from the middle (or, for a photon breaking a nucleus up, reaching into it), then a
  * gap, then what it carries, named on its outer side.
  */
-function fanLegs(canvas: Canvas, sides: [Leg[], boolean][], middle: number, centre: number, look: Sizes, intoNucleus: boolean): Map<Leg, { at: Pt; u: Pt; id: number }> {
+function fanLegs(scene: Scene, sides: [Leg[], boolean][], middle: number, centre: number, look: Sizes, intoNucleus: boolean): Map<Leg, { at: Pt; u: Pt; id: number }> {
   const placed = new Map<Leg, { at: Pt; u: Pt; id: number }>();
   const counts = sides.map(([legs]) => legs.length);
   const step = Math.min(44, 136 / Math.max(1, ...counts.map((n) => n - 1)));
@@ -119,14 +124,14 @@ function fanLegs(canvas: Canvas, sides: [Leg[], boolean][], middle: number, cent
     const near = into && intoNucleus ? scaled(u, middle * 0.7) : scaled(u, middle + look.gap);
     const [from, to] = into ? [far, near] : [near, far];
     const { centre: at, box } = legPlace(leg, u, length, geometry);
-    const id = leg.nucleus ? canvas.nucleus(at, leg.nucleus.A, leg.nucleus.Z, leg.radius, leg.names) : canvas.target(leg.names, far, 3);
+    const id = leg.nucleus ? nucleusAt(scene, at, leg.nucleus.A, leg.nucleus.Z, leg.radius, leg.names) : scene.target(leg.names, far, 3);
     placed.set(leg, { at, u, id });
     const svg = `<g class="feynjs-reaction-arrow" data-line="${leg.line}">${arrowLine(from, to, leg.line, look.stroke, look.theme)}</g>`;
-    if (into && intoNucleus) over.push(svg); else canvas.parts.push(svg);
-    canvas.line(from, to, [id, centre]);
-    canvas.text(boxes.get(leg.label)!, box.x, box.baseline);
+    if (into && intoNucleus) over.push(svg); else scene.edges.push(svg);
+    lineAt(scene, from, to, [id, centre]);
+    textAt(scene, boxes.get(leg.label)!, box.x, box.baseline);
   }));
-  canvas.parts.push(...over);
+  scene.edges.push(...over);
   return placed;
 }
 
@@ -135,16 +140,16 @@ function fanLegs(canvas: Canvas, sides: [Leg[], boolean][], middle: number, cent
  * from the middle (turned off the nucleus's own way out, up for one above the middle and down for
  * one below), ending in its name.
  */
-function radiate(canvas: Canvas, from: { at: Pt; u: Pt; id: number }, R: number, photons: Leg[], look: Sizes): void {
+function radiate(scene: Scene, from: { at: Pt; u: Pt; id: number }, R: number, photons: Leg[], look: Sizes): void {
   const side = from.u.y <= 0 ? 1 : -1;
   photons.forEach((leg, k) => {
     const turn = (side * (40 + 30 * k) * Math.PI) / 180;
     // (turned on the page: up, anticlockwise, for a positive turn, y running down)
     const w = { x: from.u.x * portable.cos(turn) + from.u.y * portable.sin(turn), y: -from.u.x * portable.sin(turn) + from.u.y * portable.cos(turn) };
     const start = along(from.at, w, R * 0.6), end = along(from.at, w, R + look.length * 0.8);
-    canvas.parts.push(`<g class="feynjs-reaction-arrow" data-line="wave">${arrowLine(start, end, "wave", look.stroke, look.theme)}</g>`);
-    canvas.line(start, end, [canvas.target(leg.names, end, 3), from.id]);
-    canvas.textToward(leg.label, look.size, end, w, look.labelGap);
+    scene.edges.push(`<g class="feynjs-reaction-arrow" data-line="wave">${arrowLine(start, end, "wave", look.stroke, look.theme)}</g>`);
+    lineAt(scene, start, end, [scene.target(leg.names, end, 3), from.id]);
+    textToward(scene, leg.label, look.size, end, w, look.labelGap);
   });
 }
 
@@ -155,13 +160,13 @@ function isDeexcitation(incoming: Leg[], outgoing: Leg[]): boolean {
 }
 
 /** An excited nucleus decaying: the nucleus, glowing, named under it, and its photons radiating out of it. */
-function drawDeexcitation(canvas: Canvas, nucleus: Leg, outgoing: Leg[], look: Sizes): void {
+function drawDeexcitation(scene: Scene, nucleus: Leg, outgoing: Leg[], look: Sizes): void {
   const at = { x: 0, y: 0 }, R = nucleus.radius;
-  canvas.glow(at, R, "");
-  const id = canvas.nucleus(at, nucleus.nucleus!.A, nucleus.nucleus!.Z, R, [...nucleus.names, ...outgoing.filter((l) => l.nucleus).flatMap((l) => l.names)]);
+  glowAt(scene, at, R, "");
+  const id = nucleusAt(scene, at, nucleus.nucleus!.A, nucleus.nucleus!.Z, R, [...nucleus.names, ...outgoing.filter((l) => l.nucleus).flatMap((l) => l.names)]);
   const photons = outgoing.filter((l) => !l.nucleus);
-  radiate(canvas, { at, u: unitAt(photons.length > 1 ? 20 : 5), id }, R, photons, look);
-  canvas.textToward(nucleus.label, look.size, { x: 0, y: R * 1.3 + 4 }, { x: 0, y: 1 }, look.labelGap);
+  radiate(scene, { at, u: unitAt(photons.length > 1 ? 20 : 5), id }, R, photons, look);
+  textToward(scene, nucleus.label, look.size, { x: 0, y: R * 1.3 + 4 }, { x: 0, y: 1 }, look.labelGap);
 }
 
 /**
@@ -170,13 +175,13 @@ function drawDeexcitation(canvas: Canvas, nucleus: Leg, outgoing: Leg[], look: S
  * on a short thick arrow. With `signal: on`, what a detector sees too: a few photons of scintillation
  * light (wavy) and the electrons of ionisation (small dots).
  */
-function drawRecoil(canvas: Canvas, d: Diagram, incoming: Leg[], outgoing: Leg[], look: Sizes): void {
+function drawRecoil(scene: Scene, d: Diagram, incoming: Leg[], outgoing: Leg[], look: Sizes): void {
   const target = [...incoming].filter((l) => l.nucleus).sort((a, b) => b.radius - a.radius)[0];
   const projectile = incoming.find((l) => l !== target)!, leaving = outgoing.find((l) => l.key === projectile.key) ?? outgoing[0];
   const R = target.radius, theme = look.theme;
   // (the nucleus recoils down and to the right, as momentum has it, ringed as a moving source is)
   const recoil = unitAt(-40);
-  const centre = canvas.recoiling({ x: 0, y: 0 }, recoil, target.nucleus!.A, target.nucleus!.Z, R, [...target.names, ...outgoing.filter((l) => l.key === target.key).flatMap((l) => l.names)]);
+  const centre = recoilingAt(scene, { x: 0, y: 0 }, recoil, target.nucleus!.A, target.nucleus!.Z, R, [...target.names, ...outgoing.filter((l) => l.key === target.key).flatMap((l) => l.names)]);
   const boxes = new Map([projectile, leaving].map((leg) => [leg.label, layoutLabel(leg.label, look.size, 1)]));
   const geometry: Geometry = { start: R + look.gap, gap: look.gap, labelGap: look.labelGap, boxes };
   const length = look.length * 1.1;
@@ -185,29 +190,29 @@ function drawRecoil(canvas: Canvas, d: Diagram, incoming: Leg[], outgoing: Leg[]
     const u = unitAt(degrees), near = scaled(u, R + look.gap), far = scaled(u, R + look.gap + length);
     const [from, to] = into ? [far, near] : [near, far];
     const { centre: at, box } = legPlace(leg, u, length, geometry);
-    const id = leg.nucleus ? canvas.nucleus(at, leg.nucleus.A, leg.nucleus.Z, leg.radius, leg.names) : canvas.target(leg.names, far, 3);
-    canvas.parts.push(`<g class="feynjs-reaction-arrow" data-line="${leg.line}">${arrowLine(from, to, leg.line, look.stroke, theme)}</g>`);
-    canvas.line(from, to, [id, centre]);
-    canvas.text(boxes.get(leg.label)!, box.x, box.baseline);
+    const id = leg.nucleus ? nucleusAt(scene, at, leg.nucleus.A, leg.nucleus.Z, leg.radius, leg.names) : scene.target(leg.names, far, 3);
+    scene.edges.push(`<g class="feynjs-reaction-arrow" data-line="${leg.line}">${arrowLine(from, to, leg.line, look.stroke, theme)}</g>`);
+    lineAt(scene, from, to, [id, centre]);
+    textAt(scene, boxes.get(leg.label)!, box.x, box.baseline);
   }
   // (named under where it went)
   const moved = along({ x: 0, y: 0 }, recoil, R * 0.64);
-  canvas.textToward(target.label, look.size, along(moved, { x: 0, y: 1 }, R), { x: 0, y: 1 }, look.labelGap);
+  textToward(scene, target.label, look.size, along(moved, { x: 0, y: 1 }, R), { x: 0, y: 1 }, look.labelGap);
   if (!/^(on|yes|true)$/i.test((d.directives.signal ?? "").trim())) return;
   // (scintillation: three small photons up and to the left; ionisation: three electrons down and to the left)
   const small = look.length * 0.42;
   // (clear of the streaks behind the recoil)
   for (const degrees of [100, 125, 150]) {
     const u = unitAt(degrees), a = scaled(u, R * 1.6 + look.gap), b = scaled(u, R * 1.6 + look.gap + small);
-    canvas.parts.push(`<g class="feynjs-signal" data-line="wave">${arrowLine(a, b, "wave", look.stroke * 0.8, { ...theme, line: { ...theme.line, waveAmplitude: theme.line.waveAmplitude * 0.6, waveLength: theme.line.waveLength * 0.6 } })}</g>`);
-    canvas.line(a, b);
+    scene.edges.push(`<g class="feynjs-signal" data-line="wave">${arrowLine(a, b, "wave", look.stroke * 0.8, { ...theme, line: { ...theme.line, waveAmplitude: theme.line.waveAmplitude * 0.6, waveLength: theme.line.waveLength * 0.6 } })}</g>`);
+    lineAt(scene, a, b);
   }
-  canvas.target(["light", "scintillation"], scaled(unitAt(125), R * 1.6 + look.gap + small), 3);
+  scene.target(["light", "scintillation"], scaled(unitAt(125), R * 1.6 + look.gap + small), 3);
   const dots = [200, 216, 232].map((degrees) => scaled(unitAt(degrees), R * 1.35 + look.gap + small * 0.5));
-  canvas.parts.push(`<g class="feynjs-signal" data-mark="electron" fill="currentColor">${dots.map((p) => `<circle cx="${fmt(p.x)}" cy="${fmt(p.y)}" r="${fmt(look.stroke * 1.5)}"/>`).join("")}</g>`);
-  dots.forEach((p) => canvas.grow(p.x - 2, p.y + 2));
-  canvas.target(["charge", "ionisation", "ionization"], dots[1], 3);
-  canvas.textToward("e^-", look.size * 0.8, dots[0], { x: -1, y: 0 }, look.labelGap);
+  scene.edges.push(`<g class="feynjs-signal" data-mark="electron" fill="currentColor">${dots.map((p) => `<circle cx="${fmt(p.x)}" cy="${fmt(p.y)}" r="${fmt(look.stroke * 1.5)}"/>`).join("")}</g>`);
+  dots.forEach((p) => scene.bounds.include(p.x - 2, p.y + 2));
+  scene.target(["charge", "ionisation", "ionization"], dots[1], 3);
+  textToward(scene, "e^-", look.size * 0.8, dots[0], { x: -1, y: 0 }, look.labelGap);
 }
 
 /** The sizes a leg's place is worked out from: where its arrow starts, the gaps, and each name's box. */
@@ -316,3 +321,78 @@ function burstSvg(radius: number, stroke: number): string {
     + `<path d="${star(radius * 0.52, 11, 4, 0.56, 0.45)}" fill="${BURST.inner}" stroke="none"/>`
     + `<circle cx="0" cy="0" r="${fmt(radius * 0.22)}" fill="${BURST.core}"/></g>`;
 }
+
+// ---- what the nuclear views put into the scene, and the frame round it
+
+const nucleonColours = (theme: Theme) => { const v = theme.vertex; return { proton: v.proton, neutron: v.neutron, edge: v.nucleonEdge, protonEdge: v.protonEdge, neutronEdge: v.neutronEdge }; };
+
+/** A nucleus at `p`, its nucleons in the theme's colours; known by `names` to notes. Returns its id. */
+export function nucleusAt(scene: Scene, p: Pt, A: number, Z: number, radius: number, names: string[]): number {
+  scene.edges.push(nucleusSvg(p, A, Z, scene.theme.vertex.nucleusUnit, nucleonColours(scene.theme)));
+  scene.bounds.include(p.x - radius, p.y - radius); scene.bounds.include(p.x + radius, p.y + radius);
+  scene.addObstaclePoint(p, radius);
+  return scene.target([...names, `${A}/${Z}`], p, radius);
+}
+
+/** A nucleus hit at `p`, recoiling toward `dir`: drawn moved on, inside the rings of its motion (see recoilSvg); known to notes where it is drawn. Returns its id. */
+function recoilingAt(scene: Scene, p: Pt, dir: Pt, A: number, Z: number, radius: number, names: string[]): number {
+  const colours = nucleonColours(scene.theme), unit = scene.theme.vertex.nucleusUnit;
+  scene.edges.push(recoilSvg(p, dir, radius, (at) => nucleusSvg(at, A, Z, unit, colours), scene.theme.line.stroke));
+  const moved = recoiledTo(p, dir, radius);
+  for (const q of [p, moved]) { scene.bounds.include(q.x - radius, q.y - radius); scene.bounds.include(q.x + radius, q.y + radius); scene.addObstaclePoint(q, radius); }
+  for (const ring of recoilRings(moved, dir, radius)) { scene.bounds.include(ring.c.x - ring.r, ring.c.y - ring.r); scene.bounds.include(ring.c.x + ring.r, ring.c.y + ring.r); }
+  return scene.target([...names, `${A}/${Z}`, "recoil"], moved, radius);
+}
+
+/** A nucleus's energy round `p`, behind everything: a still glow and faint rings (see energyGlow). */
+function glowAt(scene: Scene, p: Pt, radius: number, written: string): void {
+  const { svg, reach } = energyGlow(p, radius, energyColour(written), energyLevel(written), scene.theme.line.stroke);
+  scene.edges.unshift(svg);
+  scene.bounds.include(p.x - reach, p.y - reach); scene.bounds.include(p.x + reach, p.y + reach);
+}
+
+/** An arrow (or any line) drawn already, from `a` to `b`: kept clear by notes, and pointed at between the two it joins. */
+export function lineAt(scene: Scene, a: Pt, b: Pt, ends?: [number, number]): void {
+  scene.addObstacleCurve(Curve.line(a, b), scene.theme.line.stroke);
+  scene.bounds.include(a.x, a.y); scene.bounds.include(b.x, b.y);
+  if (ends) scene.target([], { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }, 2, ends);
+}
+
+/** A label set at `x`, its baseline at `baseline`. */
+function textAt(scene: Scene, box: LabelBox, x: number, baseline: number): void {
+  scene.labels.push(`<g transform="translate(${fmt(x)} ${fmt(baseline)})" fill="currentColor">${box.svg}</g>`);
+  scene.addLabelBox({ left: x, top: baseline - box.ascent, right: x + box.width, bottom: baseline + box.descent });
+  scene.bounds.include(x, baseline - box.ascent); scene.bounds.include(x + box.width, baseline + box.descent);
+}
+
+/** A label beside `p`, set off toward `u` by its own half size and `gap`, so it clears what it names. */
+export function textToward(scene: Scene, tex: string, size: number, p: Pt, u: Pt, gap: number): void {
+  const box = layoutLabel(tex, size, 1);
+  const x = p.x + u.x * (gap + box.width / 2) - box.width / 2;
+  const baseline = p.y + u.y * (gap + (box.ascent + box.descent) / 2) + (box.ascent - box.descent) / 2;
+  textAt(scene, box, x, baseline);
+}
+
+/**
+ * The finished view: its notes (`note:` lines) placed where it leaves room, clear of every nucleus,
+ * line and label, then the frame round all of it (as wide either side of x = 0 with `even`), with
+ * the name, description, title and data a diagram's frame carries.
+ */
+export function viewSvg(scene: Scene, d: Diagram, cls: string, label: string, middle: Pt, even: boolean, options: RenderOptions): string {
+  if (d.directives.note) { scene.core = middle; drawViewNotes(scene, d.directives.note, (target) => scene.findTarget(target)); }
+  const b = scene.bounds, theme = scene.theme;
+  if (!Number.isFinite(b.left)) b.include(0, 0);
+  const across = Math.max(-b.left, b.right), [left, right] = even ? [-across, across] : [b.left, b.right];
+  const pad = theme.padding;
+  const description = (() => { try { return explainParsed(d); } catch { return ""; } })();
+  return svgDocument({ cls, label, title: d.directives.title, description, model: options.model ? diagramModel(d, scene) : "", box: { left: left - pad, top: b.top - pad, width: right - left + 2 * pad, height: b.bottom - b.top + 2 * pad }, scale: theme.drawingScale, idPrefix: scene.idPrefix, theme, body: scene.edges.join("") + scene.labels.join("") });
+}
+
+/** The way out from the middle at `degrees` (anticlockwise from the right; y runs down). */
+export function unitAt(degrees: number): Pt {
+  const a = (degrees * Math.PI) / 180;
+  return { x: portable.cos(a), y: -portable.sin(a) };
+}
+
+export const scaled = (u: Pt, r: number): Pt => ({ x: u.x * r, y: u.y * r });
+export const along = (p: Pt, u: Pt, r: number): Pt => ({ x: p.x + u.x * r, y: p.y + u.y * r });

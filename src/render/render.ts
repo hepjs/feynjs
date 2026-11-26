@@ -1,23 +1,18 @@
 import { greyscaleSvg } from "./greyscale.ts";
-import { nucleusRadius } from "./nucleus.ts";
-import { bagRadius } from "./bag.ts";
 import { drawKinematic } from "../views/kinematic.ts";
 import { drawLattice } from "../views/lattice.ts";
 import { drawReaction } from "../views/reaction.ts";
 import { snapToGrid } from "../engines/forces/grid.ts";
 import { fmt } from "../geometry/curve.ts";
-import { layout } from "../engines/rules/layout.ts";
-import { assignRoles } from "../engines/rules/roles.ts";
+import { assignRoles } from "../engines/roles.ts";
 import { FeynError } from "../model.ts";
-import type { Diagram, Edge, Vertex } from "../model.ts";
+import type { Diagram, Edge } from "../model.ts";
 import { sizedTheme, sizeFromSwitch, themeWith } from "../theme.ts";
 import type { Theme, ThemeOverrides } from "../theme.ts";
 import { applyDiagramDirectives, bowParallelEdges, inheritStylesFromExternalParticles, oneArrowIntoBlob } from "./edge-styles.ts";
-import { describeParsed } from "../tools/describe.ts";
-import { explainParsed } from "../tools/explain.ts";
+import { explainParsed, summaryParsed } from "../tools/explain.ts";
 import { drawColourFlow } from "./colour-flow.ts";
 import { drawEdge } from "./edges.ts";
-import { particleOfEdge } from "../particles/identify.ts";
 import { drawNotes } from "./notes.ts";
 import { drawHadronGroup } from "./hadrons.ts";
 import { layoutWithForces } from "../engines/forces/layout.ts";
@@ -28,6 +23,8 @@ import type { DebugInfo } from "./debug.ts";
 import type { Sizes } from "../engines/forces/structure.ts";
 import { layoutLabel } from "../label/label.ts";
 import { Scene } from "./scene.ts";
+import { diagramModel, MATH_AXIS_EM, svgDocument } from "./svg.ts";
+export { MATH_AXIS_EM } from "./svg.ts";
 import { drawVertexShape, labelCoupling, labelExternalLeg, vertexRadius } from "./vertices.ts";
 import * as portable from "../geometry/portable-math.ts";
 import { TIKZ_LAYOUTS } from "../parse/tikz-layouts.ts";
@@ -56,12 +53,13 @@ export interface RenderOptions {
   reveal?: number;
   /** a particle's properties when the pointer rests on its label: a plain title in the SVG, and a card on a page drawn by run() (off by default) */
   tooltips?: boolean;
+  /**
+   * Write the whole diagram as data into the SVG (`<metadata class="feynjs-model">`): every point
+   * with where it is drawn, every line with its ends and particle (off by default: it is a quarter
+   * to a third of the SVG's bytes, and only pages that script the drawing read it)
+   */
+  model?: boolean;
 }
-
-const escapeText = (s: string) => s.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-
-/** Height of the math axis above the baseline, in em (TeX's \\fontdimen22 of Computer Modern). */
-export const MATH_AXIS_EM = 0.25;
 
 function assembleSvg(scene: Scene, title: string | undefined, ariaLabel: string, scale: number, description: string, grid = 0, origin = { x: 0, y: 0 }, iso = false, inlineAt?: number, model = "", gridArea?: { left: number; top: number; right: number; bottom: number }): string {
   const b = scene.bounds, pad = scene.theme.padding;
@@ -71,7 +69,7 @@ function assembleSvg(scene: Scene, title: string | undefined, ariaLabel: string,
   // lowered that far below the baseline, less the axis)
   // (sized to the text around it, in em: its labels a little smaller than the text)
   const em = 0.62 / scene.theme.fontSize;
-  const inline = inlineAt === undefined ? "" : ` style="vertical-align: ${fmt(-(b.bottom + pad - inlineAt) * em + MATH_AXIS_EM)}em"`;
+  const inline = inlineAt === undefined ? undefined : { em, align: -(b.bottom + pad - inlineAt) * em + MATH_AXIS_EM };
   // (a faint grid behind the drawing, `background: grid`: lines every `grid` px, through the
   // layout's own origin, so the points of a grid layout sit on its crossings; in the drawing's
   // own colour, thinned, so it stays faint on dark pages as on light)
@@ -100,48 +98,21 @@ function assembleSvg(scene: Scene, title: string | undefined, ariaLabel: string,
   const hatching = (scene.usesHatching
     ? `<defs><pattern id="${scene.idPrefix}-hatch" width="${fmt(scene.theme.vertex.hatchSpacing)}" height="${fmt(scene.theme.vertex.hatchSpacing)}" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0V${fmt(scene.theme.vertex.hatchSpacing)}" stroke="currentColor" stroke-width="0.9"/></pattern></defs>`
     : "");
-  return `<svg xmlns="http://www.w3.org/2000/svg" class="feynjs" role="img" aria-label="${escapeText(ariaLabel)}" viewBox="${fmt(b.left - pad)} ${fmt(b.top - pad)} ${fmt(width)} ${fmt(height)}" width="${inline ? `${fmt(width * em)}em` : fmt(width * scale)}" height="${inline ? `${fmt(height * em)}em` : fmt(height * scale)}" font-family="${scene.theme.fontFamily}"${inline}>`
-    + (title ? `<title>${escapeText(title)}</title>` : "") + (description ? `<desc>${escapeText(description)}</desc>` : "") + (model ? `<metadata class="feynjs-model">${escapeText(model)}</metadata>` : "") + hatching + gridLines
-    + `<g class="feynjs-edges">${scene.edges.join("")}</g>`
-    + `<g class="feynjs-vertices">${scene.vertices.join("")}</g>`
-    + (scene.over.length ? `<g class="feynjs-over">${scene.over.join("")}</g>` : "")
-    + `<g class="feynjs-labels">${scene.labels.join("")}</g></svg>`;
+  return svgDocument({ label: ariaLabel, title, description, model, box: { left: b.left - pad, top: b.top - pad, width, height }, scale, inline, idPrefix: scene.idPrefix, theme: scene.theme,
+    body: hatching + gridLines
+      + `<g class="feynjs-edges">${scene.edges.join("")}</g>`
+      + `<g class="feynjs-vertices">${scene.vertices.join("")}</g>`
+      + (scene.over.length ? `<g class="feynjs-over">${scene.over.join("")}</g>` : "")
+      + `<g class="feynjs-labels">${scene.labels.join("")}</g>` });
 }
 
-/**
- * The diagram as data, written into the SVG (`<metadata class="feynjs-model">`): every point by
- * its name, where it is drawn and where `at (x, y)` would put it, and every line by its name,
- * ends and particle. The names are the ones the drawing's groups carry (`data-vertex`,
- * `data-edge`), so a program, or a model reading the SVG, can refer to any part and change the
- * source by name.
- */
-function diagramModel(d: Diagram, scene: Scene): string {
-  const { unitX, unitY } = scene.theme;
-  const round = (n: number) => Math.round(n * 100) / 100;
-  const vertices = [...d.vertices.values()].map((v) => {
-    const p = scene.position(v);
-    return { id: v.id, ...(v.role ? { role: v.role } : {}), x: round(p.x), y: round(p.y), at: [round(p.x / unitX), round(-p.y / unitY) || 0],
-      ...(v.label ? { label: v.label } : {}), ...(v.particle ? { particle: v.particle } : {}), ...(v.shape && v.shape !== "none" ? { shape: v.shape } : {}) };
-  });
-  const edges = d.edges.map((e) => {
-    const particle = particleOfEdge(d, e);
-    return { id: scene.edgeIds.get(e), from: e.from, to: e.to, ...(particle ? { particle } : {}), line: e.style.line, ...(e.style.object ? { object: e.style.object } : {}), ...(e.label ? { label: e.label } : {}) };
-  });
-  return JSON.stringify({ feynjs: 1, unit: { x: unitX, y: unitY }, vertices, edges });
-}
-
-/** How far, in px, the mark drawn at a vertex reaches from its centre. */
-function markRadiusPx(v: Vertex, theme: Theme): number {
-  const look = theme.vertex;
-  switch (v.shape) {
-    case "blob": case "hatched": return look.blob;
-    case "smallblob": return look.smallBlob;
-    case "crossed": return look.crossedDot;
-    case "bag": return bagRadius(v.bag?.quarks ?? []);
-    case "nucleus": return nucleusRadius(v.nucleus?.A ?? 1, look.nucleusUnit);
-    case "dot": case "empty": case "square": return (v.dotScale ?? 1) * (v.coupling || v.color ? look.couplingDot : look.dot);
-    default: return 0;
-  }
+/** Decide which legs enter and leave, and settle each line's style: what a view that draws without the layout needs. */
+export function prepareDiagram(d: Diagram): void {
+  assignRoles(d);
+  inheritStylesFromExternalParticles(d);
+  applyDiagramDirectives(d);
+  oneArrowIntoBlob(d);
+  bowParallelEdges(d);
 }
 
 /**
@@ -150,19 +121,14 @@ function markRadiusPx(v: Vertex, theme: Theme): number {
  * decay chains and radiation), so styles are resolved first.
  */
 export function layoutDiagram(d: Diagram, theme: Theme, debug?: DebugInfo): void {
-  assignRoles(d);
-  inheritStylesFromExternalParticles(d);
-  applyDiagramDirectives(d);
-  oneArrowIntoBlob(d);
-  bowParallelEdges(d);
+  prepareDiagram(d);
   // the engines: `default` (the forces, v2), `manual` (points given `at (x,y)` stay put, the
   // forces place the rest), `grid` (the forces, then every line on a direction of the grid);
-  // `v1` (the older rules) and `v2` are kept as names; TikZ-Feynman's layouts (`layout: spring
-  // layout`, from a pasted picture) are drawn by the default
+  // `v2` is kept as a name, and `v1` (the older rule engine, now gone) and TikZ-Feynman's
+  // layouts (`layout: spring layout`, from a pasted picture) are drawn by the default
   const asked = (d.directives.layout ?? "").trim().toLowerCase();
-  const engine = (["v1", "v2", "manual", "grid"].includes(asked) ? asked : asked === "default" || TIKZ_LAYOUTS.has(asked) ? "v2" : theme.engine) as Theme["engine"];
-  if (engine === "v1") layout(d, theme.layout, theme.unitY / theme.unitX, (v) => markRadiusPx(v, theme) / theme.unitY);
-  else {
+  const engine = (["v2", "manual", "grid"].includes(asked) ? asked : asked === "default" || asked === "v1" || TIKZ_LAYOUTS.has(asked) ? "v2" : theme.engine) as Theme["engine"];
+  {
     // (`final plane: on`: the final states end on one plane first, whatever else wants them
     // elsewhere, each last decay forking about level)
     // (not in a hadron diagram: its hadrons' columns are its final plane already)
@@ -306,17 +272,29 @@ export function drawDiagram(d: Diagram, options: RenderOptions = {}): { svg: str
   const edges = (d.directives["nucleon edges"] ?? "").trim().toLowerCase();
   const theme = edges === "none" ? { ...thinned, vertex: { ...thinned.vertex, protonEdge: "none", neutronEdge: "none" } }
     : edges === "ink" ? { ...thinned, vertex: { ...thinned.vertex, protonEdge: thinned.vertex.nucleonEdge, neutronEdge: thinned.vertex.nucleonEdge } } : thinned;
-  // (the lattice view draws space-time cut into sites and links, not the diagram)
-  if (/^lattice$/i.test((d.directives.view ?? "").trim())) return { svg: drawLattice(d, theme), scene: new Scene(d, theme, options.idPrefix ?? "feyn") };
-  // (the reaction view draws a nuclear reaction as textbooks do, nuclei bursting, a decay chain
-  // step by step: a nuclear process is drawn so unless `view: diagram` asks for its diagram)
-  const asked = (d.directives.view ?? "").trim().toLowerCase();
-  if (asked === "reaction" || (d.nuclear && !asked)) return { svg: drawReaction(d, theme, options.idPrefix ?? "feyn"), scene: new Scene(d, theme, options.idPrefix ?? "feyn") };
+  const idPrefix = options.idPrefix ?? "feyn";
+  // (the black-and-white scheme: every colour the drawing uses, made grey)
+  const scheme = (d.directives.colours ?? d.directives.colors ?? theme.colourScheme).trim().toLowerCase();
+  const finish = (svg: string, scene: Scene) => ({ svg: scheme === "bw" ? greyscaleSvg(svg) : svg, scene });
+  // (the views draw something other than the diagram, and without laying it out: space-time cut
+  // into sites and links (lattice); a nuclear reaction as textbooks draw it, nuclei bursting, or a
+  // decay chain step by step (reaction, which is how a nuclear process is drawn unless `view:
+  // diagram` asks for its diagram); the event as a detector sees it (kinematic))
+  const view = (d.directives.view ?? "").trim().toLowerCase();
+  if (view === "lattice") { const scene = new Scene(d, theme, idPrefix); return finish(drawLattice(d, theme, scene, options), scene); }
+  if (view === "reaction" || (d.nuclear && !view)) { const drawn = drawReaction(d, theme, idPrefix, options); return finish(drawn.svg, drawn.scene); }
+  if (view === "kinematic") {
+    prepareDiagram(d);
+    const yes = (key: string) => /^(on|yes|true)$/i.test((d.directives[key] ?? "").trim()), no = (key: string) => /^(off|no|false)$/i.test((d.directives[key] ?? "").trim());
+    const scene = new Scene(d, theme, idPrefix);
+    const svg = drawKinematic(d, theme, /^long/i.test((d.directives.projection ?? "").trim()) ? "longitudinal" : "transverse", { reconstruct: !no("reconstruct"), intermediates: yes("show intermediate") || yes("show intermediates"), rotate: d.directives.rotate !== undefined && Number.isFinite(Number(d.directives.rotate)) ? Number(d.directives.rotate) : 30 }, scene, options);
+    return finish(svg, scene);
+  }
   // (`debug: on`: a faint grid, each point's name, and why each line lies where it does)
   const debug: DebugInfo | undefined = /^(on|yes|true)$/i.test((d.directives.debug ?? "").trim()) ? { engine: "", steps: [] } : undefined;
   layoutDiagram(d, theme, debug);
 
-  const scene = new Scene(d, theme, options.idPrefix ?? "feyn");
+  const scene = new Scene(d, theme, idPrefix);
   for (const [e, ids] of smallestLoops(d)) {
     const pts = ids.map((id) => scene.position(d.vertices.get(id)!));
     scene.loopMiddle.set(e, { x: pts.reduce((s, p) => s + p.x, 0) / pts.length, y: pts.reduce((s, p) => s + p.y, 0) / pts.length });
@@ -329,7 +307,7 @@ export function drawDiagram(d: Diagram, options: RenderOptions = {}): { svg: str
   const level = options.levels || reveal !== undefined ? stepsInTime(d) : undefined;
   scene.reveal = reveal;
   scene.tooltips = options.tooltips ?? false;
-  scene.chargeColour = /^(on|yes|true)$/i.test(d.directives["charge colour"] ?? d.directives["charge color"] ?? "");
+  scene.chargeColour = /^(on|yes|true)$/i.test(d.directives["charge colour"] ?? "");
   // a pulsing point pulses the lines that meet there too
   // (not a nucleus's: there `pulse` is its energy, a glow of its own)
   const pulseOf = (id: string) => { const v = d.vertices.get(id); return v?.shape === "nucleus" ? undefined : v?.pulse; };
@@ -342,7 +320,7 @@ export function drawDiagram(d: Diagram, options: RenderOptions = {}): { svg: str
     if (step !== undefined) for (let k = start; k < list.length; k++) list[k] = `<g data-level="${step}"${scene.aheadAttributes(step)}>${list[k]}</g>`;
     scene.level = undefined;
   };
-  const colourFlow = (d.directives["colour flow"] ?? d.directives["color flow"] ?? "").trim().toLowerCase();
+  const colourFlow = (d.directives["colour flow"] ?? "").trim().toLowerCase();
   scene.colourOnly = colourFlow === "only";
   // (every line a name of its own, from its ends)
   const seen = new Map<string, number>();
@@ -392,7 +370,11 @@ export function drawDiagram(d: Diagram, options: RenderOptions = {}): { svg: str
   const drawnArea = { left: scene.bounds.left, top: scene.bounds.top, right: scene.bounds.right, bottom: scene.bounds.bottom };
   if (debug) drawDebug(scene, d, debug);
   if (warnings.length) drawWarning(scene, warnings);
-  const label = `Feynman diagram: ${describeParsed(d).process}`;
+  // (the accessible name: a summary in words; the description: the details, then how the
+  // drawing reads, time left to right unless the diagram is turned upright)
+  const label = summaryParsed(d);
+  const upright = ["vertical", "vertical'"].some((key) => d.directives[key] !== undefined);
+  const description = `${explainParsed(d)}${upright ? "" : " Time runs from left to right."}`;
   // (the background grid: asked for, or with the grid layout; at half a line length)
   const background = (d.directives.background ?? (debug || /^grid$/i.test((d.directives.layout ?? "").trim()) ? "grid" : "")).trim().toLowerCase();
   const gridStep = background === "grid" ? (theme.forces.lineLength * theme.unitX) / 2 : 0;
@@ -409,14 +391,8 @@ export function drawDiagram(d: Diagram, options: RenderOptions = {}): { svg: str
   const inlineId = d.directives.inline?.trim().replace(/^\((.*)\)$/, "$1");
   const inlineVertex = inlineId ? d.vertices.get(inlineId) : undefined;
   if (inlineId && !inlineVertex) throw new FeynError(`inline: names a point of the diagram, such as "inline: a"`);
-  const svg = assembleSvg(scene, d.directives.title, label, (Number(d.directives.scale) || 1) * theme.drawingScale, explainParsed(d), gridStep, origin, /^iso/i.test((d.directives.grid ?? "").trim()), inlineVertex && scene.position(inlineVertex).y, diagramModel(d, scene), debug ? drawnArea : undefined);
-  // (the black-and-white scheme: every colour the drawing uses, made grey)
-  // (the kinematic view draws the event instead of the diagram)
-  const view = (d.directives.view ?? "").trim().toLowerCase();
-  const yes = (key: string) => /^(on|yes|true)$/i.test((d.directives[key] ?? "").trim()), no = (key: string) => /^(off|no|false)$/i.test((d.directives[key] ?? "").trim());
-  const shown = view === "kinematic" ? drawKinematic(d, theme, /^long/i.test((d.directives.projection ?? "").trim()) ? "longitudinal" : "transverse", { reconstruct: !no("reconstruct"), intermediates: yes("show intermediate") || yes("show intermediates"), rotate: d.directives.rotate !== undefined && Number.isFinite(Number(d.directives.rotate)) ? Number(d.directives.rotate) : 30 }) : svg;
-  const scheme = (d.directives.colours ?? d.directives.colors ?? theme.colourScheme).trim().toLowerCase();
-  return { svg: scheme === "bw" ? greyscaleSvg(shown) : shown, scene };
+  const svg = assembleSvg(scene, d.directives.title, label, (Number(d.directives.scale) || 1) * theme.drawingScale, description, gridStep, origin, /^iso/i.test((d.directives.grid ?? "").trim()), inlineVertex && scene.position(inlineVertex).y, options.model ? diagramModel(d, scene) : "", debug ? drawnArea : undefined);
+  return finish(svg, scene);
 }
 
 /**

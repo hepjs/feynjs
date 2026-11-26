@@ -1,4 +1,5 @@
 import { fmt } from "../geometry/curve.ts";
+import { svgDocument } from "./svg.ts";
 import type { Theme } from "../theme.ts";
 
 /** One diagram of several that are drawn side by side, with the caption shown under it. */
@@ -69,5 +70,5 @@ export function composePanels(svgs: string[], captions: string[], theme: Theme, 
     y += rowHeight + captionHeight + gap / 2;
   }
   const height = y - gap / 2;
-  return `<svg xmlns="http://www.w3.org/2000/svg" class="feynjs feynjs-panels" role="group" viewBox="0 0 ${fmt(totalWidth)} ${fmt(height)}" width="${fmt(totalWidth)}" height="${fmt(height)}" font-family="${theme.fontFamily}">${parts.join("")}</svg>`;
+  return svgDocument({ cls: "feynjs-panels", role: "group", box: { left: 0, top: 0, width: totalWidth, height }, scale: 1, idPrefix: "feynjs-panels", theme, body: parts.join("") });
 }

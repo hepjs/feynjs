@@ -54,8 +54,8 @@ from `a` to `b`; an antiparticle's name (`e+`, `t~`) turns it round. To draw an 
 `b` for an antiparticle, write the line from `b` to `a`, as the MadGraph plugin does.
 
 **Names.** A point's name is letters, digits, `_` and `'`. Names carry over to the drawing: the
-SVG names every point and line by them (`data-vertex`, `data-edge`) and holds the diagram as data
-in `<metadata class="feynjs-model">`, so a program can find in the picture any part it handed
+SVG names every point and line by them (`data-vertex`, `data-edge`) and, drawn with `{ model: true }`,
+holds the diagram as data in `<metadata class="feynjs-model">`, so a program can find in the picture any part it handed
 over. The MadGraph plugin names legs by MadGraph's own numbers (`i1`, `f3`), inner points `v1`,
 `v2`, and the points of a decay it joins on with a prefix (`d1_`, and `d1_d1_` for a decay within
 it).

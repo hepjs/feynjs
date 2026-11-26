@@ -58,9 +58,10 @@ exits with status 1 when it finds an error, so it can guard a build.
 The diagram in plain English, as a physicist would summarise it, for alt text: a summary first
 (what kind of picture it is and what it shows), then the details, as guidance on accessible
 figures asks ([ACM DIS 2023](https://dis.acm.org/2023/creating-accessible-figures-and-tables/)).
-Every SVG feynjs draws carries the summary as its accessible name (`aria-label`) and the details
-in its `<desc>`, so a screen reader announces the one and reads the other on request; on this
-site the download menu has *Copy description*.
+Every SVG feynjs draws, a view as much as a diagram, carries the summary as its accessible name
+(`aria-label`) and the details in its `<desc>`, which `aria-describedby` points at, so a screen
+reader announces the one and reads the other on request; on this site the download menu has
+*Copy description*.
 
 ```js
 feynjs.explain(`

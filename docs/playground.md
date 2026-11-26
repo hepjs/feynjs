@@ -31,7 +31,7 @@ is changed in the source.
 ## Every part has a name
 
 Each line's group in the SVG carries `data-edge="a--b"` with its ends and particle, each drawn
-point `data-vertex="b"`, and the whole diagram is written as data in
+point `data-vertex="b"`, and the playground asks for the whole diagram as data too (`render(source, { model: true })`), in
 `<metadata class="feynjs-model">`: every point with where it is drawn, every line with its
 ends and particle. The panel under the playground shows it. A program, or a language model,
 asked to "make the line from `b` to `f1` dashed" finds the part by name and changes the source,

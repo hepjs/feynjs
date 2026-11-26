@@ -1,4 +1,8 @@
 import { Curve, fmt } from "../geometry/curve.ts";
+import type { RenderOptions } from "../render/render.ts";
+import type { Scene } from "../render/scene.ts";
+import { diagramModel, svgDocument } from "../render/svg.ts";
+import { explainParsed } from "../tools/explain.ts";
 import { layoutLabel } from "../label/label.ts";
 import type { Diagram, EdgeStyle } from "../model.ts";
 import { drawLine } from "../render/lines.ts";
@@ -105,7 +109,7 @@ export function reconstructedAs(name: string | undefined): EdgeStyle | undefined
 }
 
 /** Draw the kinematic view: `transverse` looks along the beam, `longitudinal` across it. */
-export function drawKinematic(d: Diagram, theme: Theme, projection: "transverse" | "longitudinal", options: { reconstruct?: boolean; intermediates?: boolean; rotate?: number } = {}): string {
+export function drawKinematic(d: Diagram, theme: Theme, projection: "transverse" | "longitudinal", options: { reconstruct?: boolean; intermediates?: boolean; rotate?: number } = {}, scene?: Scene, frame: RenderOptions = {}): string {
   const nodes = new Map<string, Direction>();
   const dirs = eventDirections(d, nodes, options.rotate ?? 30);
   const reconstruct = options.reconstruct ?? true;
@@ -243,7 +247,8 @@ export function drawKinematic(d: Diagram, theme: Theme, projection: "transverse"
     label(v.coupling ?? v.label ?? e.label, end, ux, uy);
   }
   for (const placeOne of pending) placeOne();
-  const pad = theme.padding, w = x1 - x0 + 2 * pad, h = y1 - y0 + 2 * pad, scale = theme.drawingScale;
-  return `<svg xmlns="http://www.w3.org/2000/svg" class="feynjs feynjs-kinematic" role="img" aria-label="event view, ${projection}" viewBox="${fmt(x0 - pad)} ${fmt(y0 - pad)} ${fmt(w)} ${fmt(h)}" width="${fmt(w * scale)}" height="${fmt(h * scale)}" font-family="${theme.fontFamily}">`
-    + `<g class="feynjs-edges">${parts.join("")}</g><g class="feynjs-labels">${labels.join("")}</g></svg>`;
+  const pad = theme.padding;
+  const description = (() => { try { return explainParsed(d); } catch { return ""; } })();
+  return svgDocument({ cls: "feynjs-kinematic", label: `event view, ${projection}`, title: d.directives.title, description, model: frame.model && scene ? diagramModel(d, scene) : "", box: { left: x0 - pad, top: y0 - pad, width: x1 - x0 + 2 * pad, height: y1 - y0 + 2 * pad }, scale: theme.drawingScale, idPrefix: scene?.idPrefix ?? "feyn", theme,
+    body: `<g class="feynjs-edges">${parts.join("")}</g><g class="feynjs-labels">${labels.join("")}</g>` });
 }

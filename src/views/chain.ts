@@ -3,8 +3,9 @@ import type { ChainNucleus, DecayStep, Diagram } from "../model.ts";
 import { lookupParticle } from "../particles/registry.ts";
 import { nucleusRadius } from "../render/nucleus.ts";
 import type { Theme } from "../theme.ts";
-import { Canvas, along, unitAt } from "./canvas.ts";
-import { arrowLine, sizesFor } from "./reaction.ts";
+import { Scene } from "../render/scene.ts";
+import type { RenderOptions } from "../render/render.ts";
+import { along, arrowLine, lineAt, nucleusAt, sizesFor, textToward, unitAt, viewSvg } from "./reaction.ts";
 
 /**
  * A decay chain, as textbooks draw one: each nucleus in turn, joined by arrows of one length, and
@@ -16,8 +17,8 @@ import { arrowLine, sizesFor } from "./reaction.ts";
  *   chain: straight     left to right (the default)
  *   chain: curve        along a gentle arc, so a long chain fits
  */
-export function drawDecayChain(d: Diagram, steps: DecayStep[], theme: Theme, idPrefix = "feyn"): string {
-  const look = sizesFor(theme), canvas = new Canvas(theme), unit = theme.vertex.nucleusUnit;
+export function drawDecayChain(d: Diagram, steps: DecayStep[], theme: Theme, idPrefix = "feyn", options: RenderOptions = {}): { svg: string; scene: Scene } {
+  const look = sizesFor(theme), scene = new Scene(d, theme, idPrefix), unit = theme.vertex.nucleusUnit;
   const curved = /^(curve|curved|arc)$/i.test((d.directives.chain ?? "").trim());
   const modes = !/^(off|no|false)$/i.test((d.directives.modes ?? "").trim());
   const nuclei: ChainNucleus[] = [steps[0].parent, ...steps.map((s) => s.daughter)];
@@ -28,22 +29,22 @@ export function drawDecayChain(d: Diagram, steps: DecayStep[], theme: Theme, idP
   const heading = (k: number) => (turn * (steps.length - 1)) / 2 - turn * k;
   const centres: Pt[] = [{ x: 0, y: 0 }];
   steps.forEach((_, k) => centres.push(along(centres[k], unitAt(heading(k)), radius[k] + look.gap + length + look.gap + radius[k + 1])));
-  const ids = nuclei.map((n, k) => canvas.nucleus(centres[k], n.A, n.Z, radius[k], [n.name, n.label]));
+  const ids = nuclei.map((n, k) => nucleusAt(scene, centres[k], n.A, n.Z, radius[k], [n.name, n.label]));
 
   // each nucleus named on the left of the way the chain runs (above, when it runs straight)
   nuclei.forEach((n, k) => {
     const h = k === 0 ? heading(0) : k === steps.length ? heading(k - 1) : (heading(k - 1) + heading(k)) / 2;
-    canvas.textToward(n.label, look.size, along(centres[k], unitAt(h + 90), radius[k]), unitAt(h + 90), look.labelGap);
+    textToward(scene, n.label, look.size, along(centres[k], unitAt(h + 90), radius[k]), unitAt(h + 90), look.labelGap);
   });
   steps.forEach((step, k) => {
     const u = unitAt(heading(k)), left = unitAt(heading(k) + 90);
     const from = along(centres[k], u, radius[k] + look.gap), to = along(centres[k + 1], u, -(radius[k + 1] + look.gap));
-    canvas.parts.push(`<g class="feynjs-chain-arrow" data-line="plain">${arrowLine(from, to, "plain", look.stroke, theme)}</g>`);
-    canvas.line(from, to, [ids[k], ids[k + 1]]);
+    scene.edges.push(`<g class="feynjs-chain-arrow" data-line="plain">${arrowLine(from, to, "plain", look.stroke, theme)}</g>`);
+    lineAt(scene, from, to, [ids[k], ids[k + 1]]);
     const middle = { x: (from.x + to.x) / 2, y: (from.y + to.y) / 2 };
     // (its mode above it, where it can be told from what is given off)
     const mode = modeOf(step);
-    if (modes && mode) canvas.textToward(mode, look.size * 0.85, middle, left, look.labelGap * 0.8);
+    if (modes && mode) textToward(scene, mode, look.size * 0.85, middle, left, look.labelGap * 0.8);
     // what it gives off, fanned forward and down from the arrow's middle, each on a short arrow
     const small = length * 0.42, n = step.given.length, spread = 40;
     step.given.forEach((given, j) => {
@@ -51,22 +52,22 @@ export function drawDecayChain(d: Diagram, steps: DecayStep[], theme: Theme, idP
       const w = unitAt(degrees), start = along(middle, w, look.stroke), end = along(start, w, small);
       const line = given.particle ? lookupParticle(given.particle)?.style.line : "plain";
       const kind = line === "wave" || line === "coil" || line === "dash" ? line : "plain";
-      canvas.parts.push(`<g class="feynjs-chain-given" data-line="${kind}">${arrowLine(start, end, kind, look.stroke * 0.8, theme)}</g>`);
+      scene.edges.push(`<g class="feynjs-chain-given" data-line="${kind}">${arrowLine(start, end, kind, look.stroke * 0.8, theme)}</g>`);
       const names = [...(given.particle ? [given.particle] : []), ...(given.nucleus ? [given.nucleus.name] : []), given.label];
       if (given.nucleus) {
         const r = nucleusRadius(given.nucleus.A, unit), at = along(end, w, look.gap * 0.6 + r);
-        const id = canvas.nucleus(at, given.nucleus.A, given.nucleus.Z, r, names);
-        canvas.line(start, end, [ids[k], id]);
-        canvas.textToward(given.label, look.size * 0.8, along(at, w, r), w, look.labelGap * 0.7);
+        const id = nucleusAt(scene, at, given.nucleus.A, given.nucleus.Z, r, names);
+        lineAt(scene, start, end, [ids[k], id]);
+        textToward(scene, given.label, look.size * 0.8, along(at, w, r), w, look.labelGap * 0.7);
       } else {
-        const id = canvas.target(names, end, 3);
-        canvas.line(start, end, [ids[k], id]);
-        canvas.textToward(given.label, look.size * 0.8, end, w, look.labelGap * 0.7);
+        const id = scene.target(names, end, 3);
+        lineAt(scene, start, end, [ids[k], id]);
+        textToward(scene, given.label, look.size * 0.8, end, w, look.labelGap * 0.7);
       }
     });
   });
   const middle = centres.reduce((s, p) => ({ x: s.x + p.x / centres.length, y: s.y + p.y / centres.length }), { x: 0, y: 0 });
-  return canvas.svg(d, "feynjs-chain", `a decay chain of ${steps.length} steps`, middle, false, idPrefix);
+  return { svg: viewSvg(scene, d, "feynjs-chain", `a decay chain of ${steps.length} steps`, middle, false, options), scene };
 }
 
 /**

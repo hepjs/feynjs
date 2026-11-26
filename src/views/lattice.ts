@@ -1,4 +1,7 @@
 import { fmt } from "../geometry/curve.ts";
+import type { RenderOptions } from "../render/render.ts";
+import type { Scene } from "../render/scene.ts";
+import { diagramModel, svgDocument } from "../render/svg.ts";
 import type { Pt } from "../geometry/curve.ts";
 import { layoutLabel } from "../label/label.ts";
 import { FeynError } from "../model.ts";
@@ -21,7 +24,7 @@ import * as portable from "../geometry/portable-math.ts";
  *
  * Any of them takes `[label=...]`, and `[color=...]`; there may be as many of each as wanted.
  */
-export function drawLattice(d: Diagram, theme: Theme): string {
+export function drawLattice(d: Diagram, theme: Theme, scene: Scene, options: RenderOptions = {}): string {
   const dirs = d.directives;
   const [nx, nt] = latticeSize(dirs.lattice);
   const a = theme.unitX * 0.42, stroke = theme.line.stroke;
@@ -122,9 +125,9 @@ export function drawLattice(d: Diagram, theme: Theme): string {
     label("t", at2, 0, -1, theme.fontSize * 0.85);
   }
 
-  const pad = theme.padding, w = x1 - x0 + 2 * pad, h = y1 - y0 + 2 * pad, scale = theme.drawingScale;
-  return `<svg xmlns="http://www.w3.org/2000/svg" class="feynjs feynjs-lattice" role="img" aria-label="a lattice, ${nx} by ${nt} sites" viewBox="${fmt(x0 - pad)} ${fmt(y0 - pad)} ${fmt(w)} ${fmt(h)}" width="${fmt(w * scale)}" height="${fmt(h * scale)}" font-family="${theme.fontFamily}">`
-    + `${parts.join("")}<g fill="none">${over.join("")}</g>${labels.join("")}</svg>`;
+  const pad = theme.padding;
+  return svgDocument({ cls: "feynjs-lattice", label: `a lattice, ${nx} by ${nt} sites`, title: d.directives.title, model: options.model ? diagramModel(d, scene) : "", box: { left: x0 - pad, top: y0 - pad, width: x1 - x0 + 2 * pad, height: y1 - y0 + 2 * pad }, scale: theme.drawingScale, idPrefix: scene.idPrefix, theme,
+    body: `${parts.join("")}<g fill="none">${over.join("")}</g>${labels.join("")}` });
 }
 
 const pt = (p: Pt) => `${fmt(p.x)} ${fmt(p.y)}`;
