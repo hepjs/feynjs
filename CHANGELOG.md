@@ -3,6 +3,13 @@
 All notable changes, newest first. Versions follow [semantic versioning](https://semver.org): a
 layout that moves is a change, recorded here.
 
+## 0.10.3 — unreleased
+
+- **On a jet, `color=` colours the cone.** A jet's cone and rim take the colour; the line and its
+  label stay in the ink, as the rest of the diagram's lines do. Before, the colour went to the line
+  and the cone stayed `line.jetColor`. Every jet kind follows the rule (large-R, b, tau, displaced,
+  semi-visible, lepton and top jets).
+
 ## 0.10.2 — 2026-11-26
 
 - **Every drawing is written into one frame.** A diagram, a nuclear reaction, a decay chain, a

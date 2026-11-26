@@ -269,5 +269,6 @@ f4 [b, cone]          a b quark that becomes a jet
 ## Tuning
 
 `line.largeJetScale`, `line.narrowJetScale`, `line.trackWidth` and `line.objectLegStretch` in the
-[theme](../setup/theme.md#lines-line) set the sizes; `line.jetColor` the colour of every cone.
+[theme](../setup/theme.md#lines-line) set the sizes; `line.jetColor` the colour of every cone. On one
+jet, `color=` colours its cone and rim (`v -- [jet, color=teal] f1`); the line and its label stay in the ink.
 Hover over an object's label to see what it is.

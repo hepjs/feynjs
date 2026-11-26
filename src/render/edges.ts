@@ -193,7 +193,9 @@ export function drawEdge(scene: Scene, d: Diagram, e: Edge, degree: Map<string, 
   // (named, with its ends and its particle, so a program or a reader of the SVG can find it)
   const particle = particleOfEdge(d, e);
   const names = ` data-edge="${attr(scene.edgeIds.get(e) ?? `${e.from}--${e.to}`)}" data-from="${attr(e.from)}" data-to="${attr(e.to)}"${particle ? ` data-particle="${attr(particle)}"` : ""}${e.style.object ? ` data-object="${attr(e.style.object)}"` : ""}`;
-  (into(from) || into(to) ? scene.over : scene.edges).push(`<g${cssClass}${names}${color ? ` color="${color}"` : ""}>${drawLine(drawn, e.style, theme.line)}</g>`);
+  // (on a jet the colour is the cone's: the line stays in the ink, and the cone and its rim take it)
+  const jet = e.style.line === "jet" && color;
+  (into(from) || into(to) ? scene.over : scene.edges).push(`<g${cssClass}${names}${color && !jet ? ` color="${color}"` : ""}>${drawLine(drawn, e.style, jet ? { ...theme.line, jetColor: color } : theme.line)}</g>`);
   // a long-lived particle's band (and brace, on the side away from its label)
   if (e.lifetime !== undefined) {
     const side = labelSideOf(scene, e, curve.at(curve.length / 2));
@@ -219,7 +221,7 @@ export function drawEdge(scene: Scene, d: Diagram, e: Edge, degree: Map<string, 
   // (a label is coloured like its line, and a SUSY line's label shares its class for styling)
   // (a leg whose end already names its particle is not labelled twice)
   const legName = [from, to].find((v) => degree.get(v.id) === 1 && v.label)?.label;
-  const labelColor = e.labelColor ? scene.resolveColor(e.labelColor) : color;
+  const labelColor = e.labelColor ? scene.resolveColor(e.labelColor) : jet ? undefined : color;
   if (e.label && e.label !== legName) scene.requestLabel(e.label, edgeLabelSpots(curve, labelSide), labelClearance, labelColor, 1, false, e.style.cls ? `feynjs-${e.style.cls}` : undefined, e.particle, true);
   if (e.momentum) {
     // (away from the label; `momentum'` on the label's side; with `edge labels: left`, as TikZ

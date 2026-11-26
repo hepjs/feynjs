@@ -904,3 +904,11 @@ test("a TIFF download is a well-formed baseline TIFF: RGB, uncompressed, size an
   assert.deepEqual([...t.subarray(tags[273] + 9, tags[273] + 12)], [255, 255, 255]);
   assert.deepEqual([...t.subarray(tags[273] + 15, tags[273] + 18)], [10, 20, 30]);
 });
+
+test("on a jet, color= colours the cone and its rim, and the line and label stay in the ink", () => {
+  const svg = render("in: i1 i2\nout: f1 f2\ni1 [q] -- a\ni2 [qbar] -- a\na -- [large R jet, color=red, label=j] f1\na -- [fermion, color=red] f2", { idPrefix: "jc" });
+  const jet = /<g[^>]*data-edge="a--f1"[^>]*>[\s\S]*?<\/g>/.exec(svg)![0];
+  assert.ok(/stop-color="#e0241b"/.test(jet) && /feynjs-jet-rim[^>]*stroke="#e0241b"/.test(jet), "the cone and rim take the colour");
+  assert.ok(!/^<g[^>]*color=/.test(jet), "the jet's line keeps the ink");
+  assert.match(svg, /<g[^>]*data-edge="a--f2"[^>]*color="#e0241b"/, "an ordinary line still takes the colour itself");
+});
