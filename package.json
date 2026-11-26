@@ -32,6 +32,7 @@
     "url": "https://github.com/hepjs/feynjs/issues"
   },
   "type": "module",
+  "sideEffects": false,
   "main": "dist/feynjs.mjs",
   "module": "dist/feynjs.mjs",
   "browser": "dist/feynjs.min.js",

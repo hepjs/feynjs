@@ -13,7 +13,11 @@ e- e+ > Z > mu- mu+
 import { render, run, check, describe, measure, toTikz, registerParticle } from "feynjs";
 ```
 
-With the script tag, the same functions are on the global `feynjs`. TypeScript types ship with the
+With the script tag, `render`, `run`, `explain`, `toTikz` and the particle and theme functions are
+on the global `feynjs`. The other tools, `check`, `describe`, `measure` and `toSource`, which only
+programs use, are left out of `feynjs.min.js` so a page that draws diagrams does not load them. A
+page that wants them loads `dist/feynjs-full.min.js` instead: the same global with those too.
+From npm, `"feynjs"` has everything. TypeScript types ship with the
 package: `RenderOptions`, `Theme`, `ThemeOverrides`, `Particle`, `Description`, `Finding`,
 `Quality`, `TikzOptions`, `Diagram`.
 
@@ -34,7 +38,7 @@ package: `RenderOptions`, `Theme`, `ThemeOverrides`, `Particle`, `Description`, 
     ```sh
     git clone https://github.com/hepjs/feynjs.git && cd feynjs
     npm install
-    npm run build      # dist/feynjs.mjs (ES module) and dist/feynjs.min.js (script tag)
+    npm run build      # dist/feynjs.mjs (ES module), dist/feynjs.min.js (script tag), feynjs-full and feynjs-tikz
     ```
 
 ### From JavaScript
@@ -98,7 +102,7 @@ Takes every `render` option, plus:
 |---|---|---|
 | `querySelector` | `".feynman:not([data-processed])"` | which elements hold source |
 | `root` | `document` | where to look |
-| `download` | `false` | a quiet download icon on each diagram, offering it as SVG or PNG |
+| `download` | `false` | a quiet download icon on each diagram, offering it as SVG, PNG or TikZ |
 | `tooltips` | `false` | a card with a particle's properties when the pointer rests on its label |
 
 Each element drawn gets `data-processed` and the class `feynjs-rendered`, so calling `run` again
@@ -141,7 +145,8 @@ measure(source: string, theme?: ThemeOverrides): Quality
 explain(source: string): string
 ```
 
-The diagram in plain English, as every SVG carries in its `<desc>`. See
+The diagram in plain English, for alt text: a summary, then the details. Every SVG carries the
+summary as its `aria-label` and the details in its `<desc>` (`aria-describedby` points at it). See
 [Checking diagrams](../authoring/checks.md#explain).
 
 ### parse
@@ -169,7 +174,7 @@ reading the SVG) can find any of them and change the source by name:
 |---|---|
 | `<g data-edge="a--b" data-from="a" data-to="b" data-particle="W+">` | a line, named by its ends (`a--b#2` for a second line between the same points), with its particle when it has one |
 | `<g data-vertex="b">` | the mark drawn at a point (a dot, blob, cross, nucleus and so on) |
-| `<metadata class="feynjs-model">` | the whole diagram as JSON |
+| `<metadata class="feynjs-model">` | the whole diagram as JSON, with `render(source, { model: true })` |
 
 The JSON lists every point and every line:
 
@@ -279,7 +284,7 @@ and `line` holds it.
 ## For programs and AI tools
 
 Every SVG feynjs draws names its parts: each line is a `<g data-edge="a--b">`, each point's mark a
-`<g data-vertex="b">`, and `<metadata class="feynjs-model">` holds the whole diagram as JSON. A
+`<g data-vertex="b">`, and with `{ model: true }` `<metadata class="feynjs-model">` holds the whole diagram as JSON. A
 page script, a test or a language model can find any part and change the source by name. See
 [the drawing's parts, by name](#the-drawings-parts-by-name).
 

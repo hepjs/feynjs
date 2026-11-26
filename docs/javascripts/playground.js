@@ -9,6 +9,19 @@
 // names are what a program, or a language model, reads to refer to a part of the diagram.
 (function () {
   "use strict";
+  // (toTikz is on the page's feynjs; should a build without it be in use, the full file beside it,
+  // feynjs-full.min.js, is fetched the first time TikZ is asked for and takes the global over)
+  let tools = null;
+  const loadTools = () => tools || (tools = new Promise((resolve, reject) => {
+    if (window.feynjs && typeof window.feynjs.toTikz === "function") return resolve(window.feynjs);
+    const main = [...document.scripts].find((s) => /feynjs(\.min)?\.js(\?|$)/.test(s.src));
+    if (!main) return reject(new Error("the TikZ tools could not be found beside feynjs"));
+    const tag = document.createElement("script");
+    tag.src = main.src.replace(/feynjs(\.min)?\.js/, "feynjs-full.min.js");
+    tag.onload = () => (typeof window.feynjs?.toTikz === "function" ? resolve(window.feynjs) : reject(new Error("the TikZ tools did not load")));
+    tag.onerror = () => { tools = null; reject(new Error("the TikZ tools could not be loaded")); };
+    document.head.appendChild(tag);
+  }));
 
   // (grouped as the menus show them; every one drawn by this site's own diagrams)
   const GROUPS = {
@@ -184,7 +197,7 @@
         decorate();
       } else {
         try {
-          drawing.innerHTML = feynjs.render(src, { idPrefix: "pg" });
+          drawing.innerHTML = feynjs.render(src, { idPrefix: "pg", model: true });
           // (while points are being moved or drawn, the frame holds still, so a point stays where
           // it was put; else the drawing fits the pane)
           if (frozen) hold(); else fit();
@@ -615,7 +628,7 @@
         };
         img.src = url;
       } else if (what === "tikz") {
-        try { tikz.querySelector("code").textContent = feynjs.toTikz(source.value); tikz.hidden = false; tikz.open = true; }
+        try { tikz.querySelector("code").textContent = (await loadTools()).toTikz(source.value); tikz.hidden = false; tikz.open = true; }
         catch (err) { say(String(err.message || err), true); }
       }
     });

@@ -3,6 +3,80 @@
 All notable changes, newest first. Versions follow [semantic versioning](https://semver.org): a
 layout that moves is a change, recorded here.
 
+## 0.10.2 — unreleased
+
+- **Every drawing is written into one frame.** A diagram, a nuclear reaction, a decay chain, a
+  lattice and an event view now share one `<svg>` wrapper, so each carries the same things: its
+  summary as its accessible name, its description in `<desc>`, which a new `aria-describedby`
+  points at (a screen reader finds it without being told), its `title:`, and the diagram as data
+  with `model: true`. The views carried none of those before, ignored `title:`, and were drawn in
+  a renderer of their own; they now draw into the same scene as a diagram, and `colours: bw`
+  greys them too. The views are drawn without first laying the diagram out, so the event view
+  no longer fails on a `note:` line (it leaves notes out). No diagram's drawing changes.
+- **The download menu offers TikZ-Feynman code,** a complete `.tex` document with every vertex
+  placed, beside SVG and PNG. **The script-tag file draws diagrams and no more:** `feynjs.min.js`
+  no longer carries the tools only programs use (`check`, `describe`, `measure`, `toSource`), which
+  saves it 9 KB (2.5 KB compressed); `toTikz` stays, for the menu. npm's `"feynjs"` still has
+  everything, so a program sees no change; a page that wants the other tools loads
+  `feynjs-full.min.js` instead, the same global with those too. The older rule engine, `layout: v1`, is
+  gone with its `theme.layout` settings: a diagram that asks for it is drawn with the default
+  layout, and `check` says so. Five weights of the default layout that moved nothing
+  (`shortDiagram`, `flowFade`, `longFlow`, `baryonGap`, `smallestStage`) are gone too.
+- **Importing feynjs no longer draws the page.** The script-tag files still draw every diagram once
+  the page has loaded, as before; a program that imports `"feynjs"` draws when it calls `run()` or
+  `render()`, and nothing happens on import. With that, the package declares it has no side
+  effects, so a bundler keeps only what a program uses. **A nucleus is drawn as a sunflower:** its
+  nucleons a golden angle apart at radii growing as the square root of their number, found in one
+  pass instead of packed and pushed apart, so a decay chain of heavy nuclei draws in a few
+  milliseconds where it took about a second. The nuclear examples in the docs look a little
+  different.
+- **A line's label stays on its own side:** a place across another particle's line from its own
+  is taken only when nothing better is free, so the label is not read as the other line's (the
+  t̄ of a t t̄ H diagram no longer sits over the Higgs line). No point moves; 4 of the 922
+  diagrams in the docs, examples, tests and validation set draw a label differently.
+- **The default layout settles faster, and a little differently.** It takes about a quarter less
+  time on the 922 diagrams of the docs, examples, tests and validation set (−28% in all, the
+  slowest −38%), and 95 of the 382 approved layouts move: 84 by less than 0.15 of a line, 11 more
+  (re-approved after a side-by-side review). The box of ATL-PHYS-PUB-2016-009 fig 1(l), which
+  had settled lopsided, is now square. What changed:
+  - the solver measures each slope one step forward instead of both ways (half the work), and
+    stops at a change of 3e-6 instead of 1e-6;
+  - the commonest terms (line length, time flow, the final plane) give their gradient by
+    formula; labels' clearance terms no longer list every inner point;
+  - a large diagram finds which clearance terms can matter from a grid of where things are,
+    instead of asking every pair (exact: the layout is the same to the last bit);
+  - a settled layout with a fault (lines crossing, a line turning back, a stub, points on top of
+    each other, listed legs out of order, a loop out of shape, a hadron's lines out of step)
+    settles again from two fixed starts and keeps the one with fewer faults (up to 40 points:
+    above that a diagram keeps its first settle, so a very large one is not settled three times);
+  - a very weak pull toward the listed order (else the order of names) settles arrangements
+    the other forces hold almost equal the same way every time.
+  - a box (a loop of four) settled more than 10 degrees off square settles once more with its
+    loops held to regular polygons; a square box never pays for it.
+  The same source now always draws
+  the same SVG (a lifetime band's gradient was numbered across drawings), a nucleus is packed
+  once for each size, and the plain-English description finds particles by an index
+  (up to 38 times faster on the largest diagrams). `measure()` no longer scores views that do
+  not draw the layout (reaction, lattice, kinematic), where a nucleus's nucleons counted as
+  crowded points and stubs. The fdlibm notice is kept in the built files.
+- **An SVG no longer carries the diagram as JSON unless asked:** `<metadata class="feynjs-model">`
+  is written only with `render(source, { model: true })` (or `run({ model: true })`). It was a
+  quarter to a third of every SVG's bytes, and only pages that script the drawing read it; the
+  docs site and the playground ask for it. The drawing itself, and its `data-edge` and
+  `data-vertex` names, are unchanged.
+- **A page of many diagrams no longer freezes while they are drawn.** Drawing a page by itself,
+  the script now draws the diagrams on screen first, a few at a time (turns of about 8 ms) with
+  the browser free to paint, scroll and respond between them, and the rest as they come within two
+  screens of view; everything is drawn before the page is printed. Before, every diagram was drawn
+  in one go: a page of 382 froze Chrome for 2.1 s on a laptop, and for about ten times that on a
+  slow phone. The same is `run({ progressive: true })`; `run()` alone still draws everything before
+  it returns.
+- **A proton line exported to TikZ-Feynman has its three lines,** as on the page; it had two.
+- **On the isometric grid, the two halves of a diagram mirror each other:** a decay arriving level
+  sends one product on level and the other 60° away from the middle (both diagonals only on the
+  middle line). Before, the second W of a tt̄ pair could take another shape when the first had
+  taken its place. No approved layout moves.
+
 ## 0.10.1 — 2026-11-25
 
 - **A Python package, `pip install feynjs`:** the script, bundled; a Sphinx extension

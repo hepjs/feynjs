@@ -1,12 +1,12 @@
 /**
  * A small download button on a drawn diagram: a quiet icon in its corner that offers the
- * diagram as an SVG file or a PNG image. Both are standalone (black on white), whatever the
- * page's theme. The PNG is drawn at three times the diagram's size with the label font
+ * diagram as an SVG file, a PNG image or TikZ-Feynman code (a complete .tex document, every
+ * vertex placed). The pictures are standalone (black on white), whatever the page's theme. The PNG is drawn at three times the diagram's size with the label font
  * embedded, so it keeps the TeX face; the SVG names the font, as every feynjs SVG does.
  *
  * Browser only. Used by `run({ download: true })`.
  */
-export function addDownloadButton(figure: HTMLElement, standaloneSvg: () => string, name: string, description?: string): void {
+export function addDownloadButton(figure: HTMLElement, standaloneSvg: () => string, name: string, description?: string, tikz?: () => string): void {
   addStylesOnce();
   const button = document.createElement("button");
   button.type = "button";
@@ -31,6 +31,7 @@ export function addDownloadButton(figure: HTMLElement, standaloneSvg: () => stri
   };
   item("SVG", async () => saveFile(new Blob([standaloneSvg()], { type: "image/svg+xml" }), `${name}.svg`));
   item("PNG", async () => saveFile(await toPng(standaloneSvg()), `${name}.png`));
+  if (tikz) item("TikZ", async () => saveFile(new Blob([tikz()], { type: "application/x-tex" }), `${name}.tex`));
   if (description) item("Copy description", async () => { await navigator.clipboard?.writeText(description); });
 
   const close = () => { menu.hidden = true; button.setAttribute("aria-expanded", "false"); document.removeEventListener("click", outside); };
