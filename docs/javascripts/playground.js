@@ -34,7 +34,7 @@
       "Top pair, decayed": "p p > t tbar\nt > b W+(> e+ nu)\ntbar > bbar W-(> q qbar)",
       "Single top, tW": "in: i1 i2\nout: f2 f1\ni1 [g] -- a\ni2 [b] -- b -- [fermion, label=t] a\nb -- [boson] f1 [W-]\na -- f2 [t]",
       "Colour flow": "colour flow: on\nd dbar > g > t tbar\nt > b W+\ntbar > bbar W-",
-      "Boosted top, as the detector sees it": "p p > t tbar\nt > bjet W+(> LRJ)\ntbar > bbar W-(> e- nu~)"
+      "Boosted top, as the detector sees it": "p p > t tbar\nt > bjet W+(> largejet)\ntbar > bbar W-(> e- nu~)"
     },
     "SUSY": {
       "Gluino pair": "p p > gluino gluino\ngluino > q q neutralino2\nneutralino2 > Z neutralino1",
@@ -455,10 +455,10 @@
     filler.innerHTML = `<div class="pg-filler-title">Inside this large-R jet</div><div class="pg-filler-list">${FILLINGS.map(([name, text]) => `<button type="button" data-fill="${text}">${name}<code>${text || "—"}</code></button>`).join("")}</div><form class="pg-filler-own"><input type="text" placeholder="your own: 1b W(2j)" aria-label="contents"><button type="submit">Set</button></form>`;
     root.appendChild(filler);
     let filling = null;
-    // (every large-R jet written in the source, in order: in a line's brackets, [LRJ 1b], or in a
-    // process, LRJ(1b W(2j)))
+    // (every large-R jet written in the source, in order: in a line's brackets, [largejet 1b], or in a
+    // process, largejet(1b W(2j)); its older names too, LRJ)
     function jetsInSource(src) {
-      const found = [], re = /\b(LRJ|large[ -]r jet|fat jet)\b/gi;
+      const found = [], re = /\b(largejet|LRJ|large[ -]r jet|fat jet)\b/gi;
       let m;
       while ((m = re.exec(src))) {
         const word = m[0];
@@ -489,7 +489,7 @@
       if (!filling) return;
       const jets = jetsInSource(source.value), jet = jets[filling.k] ?? (jets.length === 1 ? jets[0] : undefined);
       filler.hidden = true;
-      if (!jet) return say("Can't find this large-R jet in the source: write its contents as [LRJ 1b W(2j)] or LRJ(1b W(2j)).", true);
+      if (!jet) return say("Can't find this large-R jet in the source: write its contents as [largejet 1b W(2j)] or largejet(1b W(2j)).", true);
       change(source.value.slice(0, jet.from) + jet.write(inside.trim()) + source.value.slice(jet.to), inside ? `The large-R jet now holds ${inside}.` : "The large-R jet is empty.");
       filling = null;
     }
@@ -501,7 +501,8 @@
     // (switches at the start of a line; inside [ ] the line styles, particles, objects and
     // options; in a process, particles and objects; in edges, the diagram's own point names)
     const SWITCH_WORDS = ["layout", "grid", "background", "colour flow", "charge colour", "colours", "size", "scale", "view", "projection", "rotate", "show intermediate", "reconstruct", "in", "out", "hadron", "meson", "baryon", "note", "title", "arrows", "dots", "final plane", "debug", "lattice", "boundary", "wilson loop", "plaquette", "link", "polyakov loop", "site", "axes", "every fermion", "every photon", "every gluon", "every scalar", "horizontal", "vertical", "inline", "reveal"];
-    const OBJECT_WORDS = ["LRJ", "SRJ", "SVJ", "EMG", "TRK", "TAU", "MET", "LJ", "BJ", "DT", "DL", "PR", "J", "bjet"];
+    // (objects are particles by name, largejet, bjet: only the adjective is a word of its own)
+    const OBJECT_WORDS = ["displaced"];
     const OPTION_WORDS = ["label=", "label'=", "momentum=", "momentum'=", "reversed momentum=", "insertion=", "with arrow=", "with reversed arrow=", "bend=", "half left", "half right", "quarter left", "quarter right", "out=", "in=", "looseness=", "color=", "no label", "no arrow", "dot", "empty dot", "crossed dot", "square dot", "blob", "small blob", "hatched blob", "nucleus=", "cone", "jet", "pulse", "lifetime", "radiation", "brace", "cap", "particle="];
     const vocabulary = (kind) => {
       const lib = window.feynjs;

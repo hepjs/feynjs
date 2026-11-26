@@ -3,7 +3,9 @@ import type { Pt } from "../geometry/curve.ts";
 import type { Diagram, Edge, Vertex } from "../model.ts";
 import { particleOfEdge } from "../particles/identify.ts";
 import { drawLifetime } from "./lifetime.ts";
-import { drawLine, halfWidth } from "./lines.ts";
+import { coneReach, drawLine, flavourVertices, halfWidth } from "./lines.ts";
+import type { ObjectPart } from "./lines.ts";
+import { OBJECTS } from "../particles/objects.ts";
 import type { LabelSpot, Scene } from "./scene.ts";
 import { crossPath, reachToward, vertexRadius } from "./vertices.ts";
 import * as portable from "../geometry/portable-math.ts";
@@ -175,7 +177,8 @@ export function drawEdge(scene: Scene, d: Diagram, e: Edge, degree: Map<string, 
   // (a photon, a mediator, any boson meeting a nucleus reaches a third of the way into it, drawn
   // over its nucleons, so it reads as acting on it, not touching it)
   const into = (v: typeof from) => v.shape === "nucleus" && ["wave", "coil", "dash", "dot"].includes(e.style.line);
-  const reach = (v: typeof from, tx: number, ty: number) => (into(v) ? vertexRadius(v, theme.vertex) * 0.7 : reachToward(v, theme.vertex, tx, ty));
+  // (a jet starts at the middle of a flavour circle, under it, as from the point it marks)
+  const reach = (v: typeof from, tx: number, ty: number) => (into(v) ? vertexRadius(v, theme.vertex) * 0.7 : v.shape === "circle" && e.style.line === "jet" ? 0 : reachToward(v, theme.vertex, tx, ty));
   const curve = full.slice(reach(from, leaving.tx, leaving.ty), full.length - reach(to, -arriving.tx, -arriving.ty));
   // a leg marked as ending in a jet (`f1 [q, jet]`) gets a jet cone round its line
   if ((from.jetCone || to.jetCone) && !e.style.jetCone) e.style = { ...e.style, jetCone: true };
@@ -195,7 +198,22 @@ export function drawEdge(scene: Scene, d: Diagram, e: Edge, degree: Map<string, 
   const names = ` data-edge="${attr(scene.edgeIds.get(e) ?? `${e.from}--${e.to}`)}" data-from="${attr(e.from)}" data-to="${attr(e.to)}"${particle ? ` data-particle="${attr(particle)}"` : ""}${e.style.object ? ` data-object="${attr(e.style.object)}"` : ""}`;
   // (on a jet the colour is the cone's: the line stays in the ink, and the cone and its rim take it)
   const jet = e.style.line === "jet" && color;
-  (into(from) || into(to) ? scene.over : scene.edges).push(`<g${cssClass}${names}${color && !jet ? ` color="${color}"` : ""}>${drawLine(drawn, e.style, jet ? { ...theme.line, jetColor: color } : theme.line)}</g>`);
+  // (a jet on its own from a flavour circle, the whole drawing, opens wider)
+  // (a large-R or top jet keeps its angle, wide already, and only grows to it)
+  const lone = d.edges.length === 1 && !!e.style.object && (from.shape === "circle" || to.shape === "circle");
+  const wide = e.style.object === "large" || e.style.object === "top";
+  const look = { ...theme.line, ...(jet ? { jetColor: color, largeJetColor: color } : {}), ...(lone ? { ...(wide ? {} : { jetHalfAngle: 20 }), jetMaxHalfWidth: theme.line.jetMaxHalfWidth * 2.4 } : {}) };
+  const inner: ObjectPart[] = [];
+  // (a jet or other detector object lies under every line, as papers draw one)
+  (into(from) || into(to) ? scene.over : e.style.line === "jet" ? scene.under : scene.edges).push(`<g${cssClass}${names}${color && !jet ? ` color="${color}"` : ""}>${drawLine(drawn, e.style, look, inner)}</g>`);
+  // (what is inside an object, for notes to point at: the object, then each jet inside it, with its
+  // middle and a b- or c-jet's decay vertices)
+  if (e.style.line === "jet" && e.style.object) {
+    const kind = OBJECTS.find((o) => o.object === e.style.object)?.name ?? "jet";
+    scene.objectParts.push({ edge: e, kind, middle: drawn.at(drawn.length * 0.6), ...(e.style.contents?.length ? {} : flavourVertices(drawn, e.style.object, look)) }, ...inner.map((p) => ({ edge: e, ...p })));
+  }
+  // (the drawing holds the whole cone, however wide it opens)
+  if (e.style.line === "jet") for (const p of coneReach(drawn, e.style, look)) scene.bounds.include(p.x, p.y, 1.5);
   // a long-lived particle's band (and brace, on the side away from its label)
   if (e.lifetime !== undefined) {
     const side = labelSideOf(scene, e, curve.at(curve.length / 2));

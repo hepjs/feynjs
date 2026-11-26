@@ -423,7 +423,7 @@ smaller, as in SUSY papers.
 ### Notes
 
 `note:` sets a few words in free space and draws an arrow to what they describe, as if by hand:
-a gently curving pen stroke with an open arrowhead, in crayon blue, the words in the diagram's own colour. Point it at a point
+a gently curving pen stroke with an open arrowhead, in red, the words in the diagram's own colour. Point it at a point
 (`note: c "VVH coupling"`), at a line between two points (`note: a--b "long-lived"`), or at a
 particle by name (`note: H "..."`, its final state first). A side, `above`, `below`, `left` or
 `right`, says where the words go; otherwise they go where there is room, away from the middle of

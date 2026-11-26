@@ -45,6 +45,8 @@ const escapeXml = (text: string) => text.replace(/&/g, "&amp;").replace(/</g, "&
 /** Everything drawn so far, the space it takes up, and what later steps need to know. */
 export class Scene {
   edges: string[] = [];
+  /** detector objects (jets and the like), drawn under every line */
+  under: string[] = [];
   /** each line's name in the drawing, `a--b` (`a--b#2` for a second line between the same points) */
   edgeIds = new Map<Edge, string>();
   vertices: string[] = [];
@@ -66,6 +68,8 @@ export class Scene {
   legDirection = new Map<string, Pt>();
   /** the path each line follows, vertex to vertex, for whatever is drawn along it later */
   edgeCurves = new Map<Edge, Curve>();
+  /** every detector object and every jet inside one, in drawing order: its kind, middle and decay vertices (B, D), for notes */
+  objectParts: { edge: Edge; kind: string; middle: Pt; B?: Pt; D?: Pt }[] = [];
   /** legs whose ends are covered by a hadron ellipse: their labels go beside the line instead */
   legsInsideHadrons = new Set<string>();
   /** middle of the diagram, px */

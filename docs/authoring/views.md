@@ -204,7 +204,7 @@ faint, with their products starting from their ends.
 Tag and probe in top pairs, the way large-R jets are calibrated: the leptonic top tags the event
 (a muon, missing energy, a b-jet), and the hadronic top is the probe. The diagram draws every
 particle. The views draw the probe as the detector sees it, one large-R jet holding its b and the
-two quarks of its W (`[LRJ 1b W(2j)]`, see
+two quarks of its W (`[largejet 1b W(2j)]`, see
 [Inside a large-R jet](objects.md#inside-a-large-r-jet)).
 
 ```feynman
@@ -233,7 +233,7 @@ i1 [g] -- a
 i2 [g] -- a
 a -- [g] c
 c -- [t] t1
-c -- [LRJ 1b W(2j)] J [label={\text{large-}R\text{ jet (probe)}}]
+c -- [largejet 1b W(2j), no label] J [label={\text{large-}R\text{ jet (probe)}}]
 t1 -- [W+] w1
 t1 -- b1 [b, label={b\text{-jet (tag)}}]
 w1 -- l1 [mu+, label={\mu^+\,\text{(tag)}}]
@@ -248,7 +248,7 @@ i1 [g] -- a
 i2 [g] -- a
 a -- [g] c
 c -- [t] t1
-c -- [LRJ 1b W(2j)] J [label={\text{large-}R\text{ jet (probe)}}]
+c -- [largejet 1b W(2j), no label] J [label={\text{large-}R\text{ jet (probe)}}]
 t1 -- [W+] w1
 t1 -- b1 [b, label={b\text{-jet (tag)}}]
 w1 -- l1 [mu+, label={\mu^+\,\text{(tag)}}]
@@ -264,7 +264,7 @@ i1 [g] -- a
 i2 [g] -- a
 a -- [g] c
 c -- [t] t1
-c -- [LRJ 1b W(2j)] J [label={\text{large-}R\text{ jet (probe)}}]
+c -- [largejet 1b W(2j), no label] J [label={\text{large-}R\text{ jet (probe)}}]
 t1 -- [W+] w1
 t1 -- b1 [b, label={b\text{-jet (tag)}}]
 w1 -- l1 [mu+, label={\mu^+\,\text{(tag)}}]

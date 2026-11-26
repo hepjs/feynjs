@@ -4,12 +4,13 @@ import { FeynError } from "../model.ts";
 import type { Diagram } from "../model.ts";
 import type { Rectangle, Scene } from "./scene.ts";
 import { vertexRadius } from "./vertices.ts";
+import { objectNamed } from "../particles/objects.ts";
 import * as portable from "../geometry/portable-math.ts";
 
 /**
  * Notes (`note: c "Higgs self-coupling"`, `note: a--b "long-lived" below`): a few words set in
  * free space near a point or a line, with an arrow drawn to it as if by hand, a smooth, gently
- * curving stroke in crayon blue ending in an open arrowhead. Placed after every other label, where
+ * curving stroke in red ending in an open arrowhead. Placed after every other label, where
  * the diagram leaves room, away from its middle unless a side is given.
  */
 export function drawNotes(scene: Scene, d: Diagram): void {
@@ -36,7 +37,7 @@ const SIDES: Record<string, Pt> = { above: { x: 0, y: -1 }, below: { x: 0, y: 1 
 
 /** One note: `target "text" [side]`, the target a point or a line `a--b`, the text in quotes or braces. */
 function drawNote(scene: Scene, d: Diagram, written: string, index: number): void {
-  const m = /^\s*([\w']+(?:\s*--\s*[\w']+)?)\s+(?:"([^"]*)"|\{(.*)\})\s*(above|below|left|right)?\s*$/.exec(written);
+  const m = /^\s*([\w']+(?:\.[BD]\d*)?(?:\s*--\s*[\w']+)?)\s+(?:"([^"]*)"|\{(.*)\})\s*(above|below|left|right)?\s*$/.exec(written);
   if (!m) throw new FeynError(`write a note as: note: a "words" (a point), or note: a--b "words" below (a line)`);
   const { point, reach } = targetOf(scene, d, m[1].replace(/\s+/g, ""));
   placeNote(scene, point, reach, m[2] ?? m[3] ?? "", m[4], index);
@@ -52,13 +53,26 @@ function placeNote(scene: Scene, point: Pt, reach: number, words: string, side: 
   const turn = (v: Pt, deg: number) => { const t = (deg * Math.PI) / 180; return { x: v.x * portable.cos(t) - v.y * portable.sin(t), y: v.x * portable.sin(t) + v.y * portable.cos(t) }; };
   const far = scene.theme.unitX * 0.75;
   const spots = [0, 25, -25, 50, -50, 80, -80].flatMap((deg) => [1, 1.35, 1.7].map((k) => ({ spot: { anchor: point, direction: turn(prefer, deg) }, clearance: reach + far * k })));
-  // (the words in the diagram's own colour, the arrow in the note colour, a crayon blue)
+  // (the words in the diagram's own colour, the arrow in the note colour, a red clear of the blue jets)
   const box = scene.placeNow(tex, spots, undefined, "feynjs-note", point);
   drawHandArrow(scene, fromBox(box, point), point, reach + 3, scene.theme.noteColor, index);
 }
 
 /** Where a note points: a point (and how far its mark reaches), or the middle of a line between two. */
 function targetOf(scene: Scene, d: Diagram, target: string): { point: Pt; reach: number } {
+  // (inside a detector object: a b-jet's B or D decay vertex, B, or that of the jet ending at f, f.B)
+  // (a number picks one of several, in the order drawn: B2, bjet2, inside a large jet as well)
+  const part = /^(?:([\w']+)\.)?([BD])(\d*)$/.exec(target);
+  if (part && !d.vertices.has(target)) {
+    const which = part[2] as "B" | "D", found = scene.objectParts.filter((p) => p[which] && (!part[1] || p.edge.from === part[1] || p.edge.to === part[1]))[Number(part[3] || 1) - 1];
+    if (found) return { point: found[which]!, reach: scene.theme.line.trackWidth * 3 };
+  }
+  // (a detector object by its name, a leg, a line inside the diagram, or a jet inside an object: bjet, bjet2, largejet)
+  const named = /^([A-Za-z]+?)(\d*)$/.exec(target), object = named ? objectNamed(named[1]) : undefined;
+  if (named && object && !d.vertices.has(target)) {
+    const found = scene.objectParts.filter((p) => p.kind === object.name)[Number(named[2] || 1) - 1];
+    if (found) return { point: found.middle, reach: scene.theme.line.jetMaxHalfWidth * 0.4 };
+  }
   const [a, b] = target.split("--");
   const va = d.vertices.get(a), vb = b ? d.vertices.get(b) : undefined;
   // (or a particle by name, H or W+: the middle of its line, the first that carries it)
@@ -68,7 +82,7 @@ function targetOf(scene: Scene, d: Diagram, target: string): { point: Pt; reach:
     const curve = named ? scene.edgeCurves.get(named) : undefined;
     if (curve) { const p = curve.at(curve.length / 2); return { point: { x: p.x, y: p.y }, reach: scene.theme.line.waveAmplitude }; }
   }
-  if (!va || (b && !vb)) throw new FeynError(`a note points at a point (such as c), a line between two (a--b) or a particle by name (H): no "${target}"`);
+  if (!va || (b && !vb)) throw new FeynError(`a note points at a point (such as c), a line between two (a--b), a particle or object by name (H, bjet), or a b-jet's B or D vertex (B, f.D): no "${target}"`);
   if (!vb) return { point: scene.position(va), reach: vertexRadius(va, scene.theme.vertex) };
   const e = d.edges.find((x) => (x.from === a && x.to === b) || (x.from === b && x.to === a));
   const curve = e ? scene.edgeCurves.get(e) : undefined;

@@ -139,3 +139,99 @@ test("check warns of a name a process does not know", () => {
   // (edges name their labels freely: no warning)
   assert.equal(check("a [in] -- b [Y, out]").filter((f) => f.rule === "unknown-particle").length, 0);
 });
+
+test("detector objects have one name each, the same on a leg, on a line and in a process", () => {
+  const names: [string, string][] = [["lightjet", "jet"], ["bjet", "btag"], ["cjet", "ctag"], ["taujet", "tau"], ["largejet", "large"], ["topjet", "top"],
+    ["semivisiblejet", "semivisible"], ["emergingjet", "emerging"], ["displacedjet", "displaced"], ["leptonjet", "leptonjet"], ["met", "met"],
+    ["track", "track"], ["disappearingtrack", "disappearing"], ["displacedlepton", "displacedlepton"], ["hscp", "heavycharged"], ["remnant", "remnant"]];
+  for (const [name, object] of names) {
+    assert.equal(lookupParticle(name)?.style.object, object, name);
+    assert.equal(parse(`a -- [${name}] b`).edges[0].style.object, object, `${name} on a line`);
+    assert.match(render(`p p > Zp > ${name} ${name}`), /feynjs-jet|<path/, `${name} in a process`);
+    assert.deepEqual(check(`p p > Zp > ${name} j`).filter((f) => f.rule === "renamed-object"), [], name);
+  }
+  // (in any case)
+  assert.equal(lookupParticle("largeJet")?.style.object, "large");
+  assert.equal(parse("a -- [semiVisibleJet] b").edges[0].style.object, "semivisible");
+  // (J is a large-R jet everywhere now: on a line as on a leg)
+  assert.equal(parse("a -- [J] b").edges[0].style.object, "large");
+  assert.equal(parse("a -- b [J]").vertices.get("b")?.particle, "J");
+  // (contents after the name, as words or in parentheses)
+  assert.deepEqual(parse("a -- [largejet 2j 1e] b").edges[0].style.contents, [{ kind: "jet", count: 2 }, { kind: "electron", count: 1 }]);
+  assert.deepEqual(parse("a -- [largejet(2j, 1e)] b").edges[0].style.contents, [{ kind: "jet", count: 2 }, { kind: "electron", count: 1 }]);
+});
+
+test("older object names still draw, and check gives the name to write", () => {
+  for (const [old, now] of [["LRJ", "largejet"], ["tauh", "taujet"], ["SVJ", "semivisiblejet"], ["EMG", "emergingjet"], ["Jt", "topjet"], ["dislep", "displacedlepton"], ["J", "largejet"]]) {
+    assert.equal(parse(`a -- [${old}] b`).edges[0].style.object, lookupParticle(now)?.style.object, old);
+    const found = check(`i [p] -- a\na -- [${old}] f [e-]`).find((f) => f.rule === "renamed-object");
+    assert.match(found?.message ?? "", new RegExp(`"${now}"`), old);
+  }
+  for (const [old, now] of [["b jet", "bjet"], ["DIS J", "displacedjet"], ["large R jet 2j", "largejet"]]) {
+    assert.match(check(`i [p] -- a\na -- [${old}] f [e-]`).find((f) => f.rule === "renamed-object")?.message ?? "", new RegExp(`"${now}"`), old);
+  }
+  assert.match(check("p p > Zp > LRJ(2j) SVJ").map((f) => f.message).join("\n"), /"largejet"[\s\S]*"semivisiblejet"/);
+  // (old diagrams draw as they did: an old word on a line is unlabelled, as before)
+  assert.equal(parse("a -- [LRJ 2j] b").edges[0].label, undefined);
+  // (a line style is not an old name: [jet] is the cone style)
+  assert.deepEqual(check("i [p] -- a\na -- [jet] f [j]").filter((f) => f.rule === "renamed-object"), []);
+});
+
+test("an object in a process takes a label line, is named in the description, and check finds no unlabelled leg", () => {
+  const src = "p p > t tbar\nt > bjet W+(> largejet)\ntbar > bbar W-(> e- nu~)";
+  const relabelled = render(`label: largejet = \\text{large-}R\\text{ jet}\n${src}`);
+  assert.notEqual(render(src), relabelled);
+  assert.match(relabelled, /large-/);
+  // (an old name in the label line labels the object too)
+  assert.notEqual(render("p p > Zp > largejet largejet"), render("label: LRJ = X\np p > Zp > largejet largejet"));
+  assert.match(render(src), /a large-R jet/);
+  assert.deepEqual(check(src), []);
+  // (with contents, the leg is still named and labelled)
+  assert.equal(parse("p p > Zp > largejet(1b W(2j)) j").vertices.get([...parse("p p > Zp > largejet(1b W(2j)) j").vertices.keys()].find((k) => k.startsWith("out"))!)?.particle, "largejet");
+});
+
+test("natural names: proton, neutrino, antineutrino", () => {
+  assert.equal(label("proton"), "p");
+  assert.equal(label("neutrino"), "\\nu");
+  assert.equal(label("antineutrino"), "\\bar\\nu");
+  assert.deepEqual(check("proton proton > W+ > e+ neutrino").filter((f) => f.rule === "unknown-particle"), []);
+});
+
+test("a c-jet draws its secondary vertex nearer the collision than a b-jet does", () => {
+  const b = render("a -- [bjet] f"), c = render("a -- [cjet] f");
+  assert.notEqual(b, c);
+  assert.match(c, /data-object="ctag"/);
+});
+
+test("a circle with a label inside marks where a jet starts; b- and c-jets show their decay vertices", () => {
+  const d = parse("a [circle=b] -- [bjet, no label] f");
+  assert.equal(d.vertices.get("a")?.shape, "circle");
+  assert.equal(d.vertices.get("a")?.circleLabel, "b");
+  const svg = render("a [circle=b] -- [bjet, no label] f");
+  assert.match(svg, /class="feynjs-circle"/);
+  // (a b-jet: the B's vertex and the D's; a c-jet: the D's alone; both with the jet's faint tracks)
+  assert.match(svg, /feynjs-sv-b[\s\S]*feynjs-sv-c/);
+  const c = render("a -- [cjet] f");
+  assert.doesNotMatch(c, /feynjs-sv-b/);
+  assert.match(c, /feynjs-sv-c/);
+  assert.match(render("a -- [lightjet] f"), /feynjs-jet-tracks/);
+  // (a track is unlabelled)
+  assert.equal(parse("a -- [track] f").edges[0].label, undefined);
+});
+
+test("rotate: turns a drawing; a lone jet from a flavour circle stands up, leaning right", async () => {
+  const { layoutDiagram } = await import("../src/render/render.ts");
+  const { defaultTheme } = await import("../src/theme.ts");
+  const at = (src: string) => { const d = parse(src); layoutDiagram(d, defaultTheme); const a = d.vertices.get("a")!, f = d.vertices.get("f")!; return (Math.atan2(-(f.y - a.y) * (defaultTheme.unitY / defaultTheme.unitX), f.x - a.x) * 180) / Math.PI; };
+  assert.ok(Math.abs(at("a [circle=b] -- [bjet] f") - 78) < 0.5, "12° right of straight up");
+  assert.ok(Math.abs(at("rotate: 30\na [circle=b] -- [bjet] f") - 108) < 0.5, "turned counterclockwise");
+  const flat = at("a -- [bjet] f"), turned = at("rotate: 15\na -- [bjet] f");
+  assert.ok(Math.abs(turned - flat - 15) < 0.5);
+});
+
+test("notes point at objects by name, inside a diagram, and at a b-jet's B and D vertices", () => {
+  assert.doesNotThrow(() => render("a [circle=b] -- [bjet, no label] f\nnote: B \"B meson\"\nnote: D \"D meson\"\nnote: f.B \"the same B\""));
+  assert.doesNotThrow(() => render("p p > Z H\nH > bjet bjet\nnote: bjet \"b-tagged\""));
+  assert.doesNotThrow(() => render("i -- a\na -- [largejet 2j] b\nb -- f1\nb -- f2\nnote: largejet \"inside\""));
+  assert.throws(() => render("p p > Z H\nH > b b~\nnote: D \"none here\""), /B or D vertex/);
+});

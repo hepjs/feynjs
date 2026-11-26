@@ -34,11 +34,11 @@ export interface EdgeStyle {
 /** One thing drawn inside a detector object: a jet, a lepton..., or a particle and what it decays to. */
 export interface ObjectContent { kind: string; count: number; contents?: ObjectContent[] }
 
-export type JetObject = "jet" | "large" | "top" | "btag" | "tau" | "semivisible" | "emerging" | "displaced" | "leptonjet" | "met"
+export type JetObject = "jet" | "large" | "top" | "btag" | "ctag" | "tau" | "semivisible" | "emerging" | "displaced" | "leptonjet" | "met"
   | "disappearing" | "displacedlepton" | "heavycharged" | "track" | "remnant";
 
 export type VertexShape =
-  | "none" | "dot" | "empty" | "square" | "crossed" | "blob" | "smallblob" | "hatched" | "smallhatched" | "slashed" | "insertion" | "nucleus" | "bag";
+  | "none" | "dot" | "empty" | "square" | "crossed" | "blob" | "smallblob" | "hatched" | "smallhatched" | "slashed" | "insertion" | "nucleus" | "bag" | "circle";
 
 export interface Vertex {
   id: string;
@@ -68,6 +68,8 @@ export interface Vertex {
   emits?: string;
   /** a hadron drawn as a bag of its valence quarks (`[bag=proton]`, `[bag=c cbar u dbar]`), turning slowly with `motion` */
   bag?: { quarks: { flavour: string; anti: boolean; group?: number }[]; motion?: boolean; molecule?: boolean };
+  /** what is written inside a circle drawn at the point (`[circle=b]`): where a jet starts, its flavour */
+  circleLabel?: string;
   /** particle key given on the vertex, used to style the attached edge */
   particle?: string;
   /** a leg that ends in a jet: its line gets a jet cone (`f1 [q, jet]`) */

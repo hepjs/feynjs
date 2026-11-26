@@ -1,7 +1,7 @@
 import { FeynError } from "../model.ts";
 import type { ChainNucleus, DecayStep } from "../model.ts";
-import { lookupParticle, particleNames } from "../particles/registry.ts";
-import { parseObject } from "../particles/objects.ts";
+import { lookupParticle } from "../particles/registry.ts";
+import { parseObject, readObject } from "../particles/objects.ts";
 import { ELEMENTS, elementSymbol, isotopeLabel, nucleonCount } from "../render/nucleus.ts";
 
 /**
@@ -94,10 +94,12 @@ export function expandChains(source: string, found: { nuclear?: boolean; decayCh
   // or a leg out of the diagram
   const emit = (from: string, item: Item, seen: string[]): void => {
     const rule: Rule | undefined = item.decay ? { products: item.decay } : seen.includes(item.name) ? undefined : nextDecay(item.name);
-    // (a detector object, LRJ or SVJ, is drawn as one: the leg takes the object's style; a name
-    // that is a particle as written, tau, stays the particle)
+    // (a detector object with contents, largejet(2j), is drawn as one: the line takes the object's
+    // style and contents, the leg its name, for its label; a name that is a particle as written,
+    // tau, stays the particle; an object on its own, largejet, is a particle like any other)
     if (!rule && item.nucleus) { out.push(`${from} -- [ion] ${fresh("out")} [${nucleusOptions(item.nucleus)}, out]`); return; }
-    if (!rule && !particleNames().includes(item.name) && parseObject(item.name)) { out.push(`${from} -- [${item.name}] ${fresh("out")} [out]`); return; }
+    const object = !rule && !lookupParticle(item.name) ? readObject(item.name) : undefined;
+    if (object) { out.push(`${from} -- [${item.name}] ${fresh("out")} [${object.name}, out]`); return; }
     if (!rule) { out.push(`${from} -- ${fresh("out")} [${item.name}, out]`); return; }
     if (rule.loop) {
       const corners = drawLoop(rule.loop, 1 + rule.products.length, process!.line);
@@ -436,7 +438,7 @@ function splitSegments(text: string, line: number): Item[][] {
       if (text[k] !== "(" || k === start || opensDecay(k)) return text.slice(start, k);
       const open = k;
       k = closingBracket(text, open, line) + 1;
-      if (/\s/.test(text.slice(open, k)) && !parseObject(text.slice(start, k)) && !nucleonCount(text.slice(open + 1, k - 1))) throw new FeynError(`write a decay as "${text.slice(start, open)}(> products)", or an object's contents as "LRJ(2j)"`, line);
+      if (/\s/.test(text.slice(open, k)) && !parseObject(text.slice(start, k)) && !nucleonCount(text.slice(open + 1, k - 1))) throw new FeynError(`write a decay as "${text.slice(start, open)}(> products)", or an object's contents as "largejet(2j)"`, line);
     }
   };
   const readItems = (inside: boolean): Item[] => {

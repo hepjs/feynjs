@@ -86,7 +86,7 @@ MadGraph's Standard Model names work as they are. Where feynjs has a name of its
 Every name is in [All particles](../authoring/particles.md).
 
 MadGraph's MSSM names (`go`, `n1`, `x1+`, `ul`, `t1`, `el-`, `sve`, `h2`, ...) work too: the full table is in [All particles](../authoring/particles.md#madgraphs-mssm-names). They are matched only as written: `dl` is the left down squark, and the displaced lepton is
-`dislep` (or `DL`). A name feynjs doesn't know is still drawn, as a plain line with the name as its
+`displacedlepton`. A name feynjs doesn't know is still drawn, as a plain line with the name as its
 label, and [`check`](../get-started/api.md#check) warns of it.
 
 ## What feynjs takes
@@ -119,6 +119,6 @@ These are feynjs's own, not MadGraph's:
   the second the second way.
 - **Loops in braces**, `g g > {t} > H`, in the process or in a decay.
 - **Production modes**, `ggF > H`, `VBF > H`, `VBS > W+ W+`.
-- **Detector objects** as particles, `bjet`, `LRJ`, `MET`.
+- **Detector objects** as particles, `bjet`, `largejet`, `met`.
 
 All four are in [Write processes, as in MadGraph](../authoring/processes.md).

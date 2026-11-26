@@ -1,6 +1,6 @@
 import { asMolecule, quarksOf } from "../render/bag.ts";
 import { elementSymbol, nucleusFrom, uprightElement } from "../render/nucleus.ts";
-import { OBJECT_NAMES, parseObject } from "../particles/objects.ts";
+import { objectNamed, objectWords, readObject } from "../particles/objects.ts";
 import { expandChains } from "./chains.ts";
 import { lengthInLines } from "./lengths.ts";
 import { FeynError } from "../model.ts";
@@ -201,6 +201,7 @@ export function parse(source: string): Diagram {
         else if (o.key === "cone") v.coneMark = true;
         else if (o.key === "pulse") v.pulse = "";
         else if (o.key === "nucleus") { v.shape = "nucleus"; v.nucleus = { ...(v.nucleus ?? {}) }; }
+        else if (o.key === "circle") v.shape = "circle";
         else if (o.key === "recoil") v.recoil = "";
         // (an excited nucleus: its glow, as `pulse` alone gives it)
         else if (o.key === "excited") v.pulse = "";
@@ -232,6 +233,8 @@ export function parse(source: string): Diagram {
       else if (o.key === "pulse" || o.key === "excited") v.pulse = o.value;
       else if (o.key === "recoil") v.recoil = o.value;
       else if (o.key === "emits") v.emits = o.value;
+      // (a circle with a label inside it: where a jet starts, its flavour, [circle=b])
+      else if (o.key === "circle") { v.shape = "circle"; v.circleLabel = stripMath(o.value); }
       else if (o.key === "nucleus") {
         const n = nucleusFrom(o.value);
         if (!n) throw new FeynError(`unknown nucleus "${o.value}": write a symbol such as Pb, Au or 208Pb, or give A= and Z=`, line);
@@ -331,11 +334,19 @@ export function parse(source: string): Diagram {
         else if (o.key === "no label") autoLabel = "";
         else if (o.key === "pulse") e.pulse = "";
         else if (o.key === "lifetime") e.lifetime = "";
-        else if (parseObject(o.key)) { style = { ...style, ...parseObject(o.key)! }; e.styled = true; }
+        // (an object with contents, [largejet 2j 1e], or written in words, is the object's style;
+        // an object's name on its own, [largejet], is a particle's, and labels the line as one)
+        else if (!lookupParticle(o.key) && readObject(o.key)) {
+          const object = readObject(o.key)!;
+          style = { ...style, ...object.style };
+          e.styled = true;
+          // (written by its name, [largejet 2j], it is labelled as the name alone is; old words, [LRJ 2j], drew unlabelled)
+          if (autoLabel === undefined && o.key.trim().toLowerCase().startsWith(object.name)) autoLabel = lookupParticle(object.name)?.label;
+        }
         else {
           const p = lookupParticle(o.key);
           if (!p) {
-            const guess = closestName(o.key, [...Object.keys(STYLES), ...particleNames(), ...Object.keys(BENDS), ...Object.keys(SHAPES), ...OBJECT_NAMES.flatMap((n) => [n.short, ...n.names])]);
+            const guess = closestName(o.key, [...Object.keys(STYLES), ...particleNames(), ...Object.keys(BENDS), ...Object.keys(SHAPES), ...objectWords()]);
             throw new FeynError(`unknown line style or particle "${o.key}"${guess ? ` (did you mean "${guess}"?)` : ""}`, line);
           }
           style = { ...style, ...p.style, arrow: p.anti ? (-p.style.arrow as 0 | 1 | -1) : p.style.arrow };
@@ -531,13 +542,17 @@ function sideOf(text: string, line: number): { x: number; y: number } {
 }
 
 /** Give a particle's lines and legs a label of their own, where they carry its usual one. */
-function relabelParticles(vertices: Map<string, Vertex>, edges: Edge[], relabel: Map<string, string>): void {
+function relabelParticles(vertices: Map<string, Vertex>, edges: Edge[], given: Map<string, string>): void {
+  // (an object by any of its names: label: LRJ = ... labels largejet, and lrj)
+  const named = (name: string) => objectNamed(name)?.name ?? name;
+  const relabel = new Map([...given].map(([name, text]) => [named(name), text]));
+  const textFor = (name: string) => relabel.get(name) ?? relabel.get(named(name));
   for (const e of edges) {
-    const text = e.particle && relabel.get(e.particle);
+    const text = e.particle && textFor(e.particle);
     if (text && e.label === lookupParticle(e.particle!)?.label) e.label = text;
   }
   for (const v of vertices.values()) {
-    const text = v.particle && relabel.get(v.particle);
+    const text = v.particle && textFor(v.particle);
     if (text) v.label = text;
   }
 }

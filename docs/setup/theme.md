@@ -81,12 +81,13 @@ Sizes in px.
 | `line.tripleSeparation` | `3.6` | distance between neighbouring strokes of a proton's three lines |
 | `line.arrowLength` | `9.5` | length of a fermion arrowhead |
 | `line.arrowWidth` | `7.5` | width of a fermion arrowhead |
-| `line.jetHalfAngle` | `9` | half opening angle of a jet cone, degrees |
-| `line.jetMaxHalfWidth` | `11` | widest a jet cone gets either side of its axis, px |
+| `line.jetHalfAngle` | `11` | half opening angle of a jet cone, degrees |
+| `line.jetMaxHalfWidth` | `13` | widest a jet cone gets either side of its axis, px |
 | `line.jetColor` | `"#3f90da"` | colour of the jet cone |
 | `line.jetShade` | `0.6` | how solid the cone is where it leaves the vertex, 0 to 1 |
 | `line.jetFade` | `0.2` | how much of that shade is left at the far end (1 = no fade) |
-| `line.largeJetScale` | `2` | a large-R jet's cone, as a multiple of an ordinary jet's |
+| `line.largeJetColor` | `#8a919c` | a large-R or top jet's own cone, round the jets it holds (grey, so they read as jets) |
+| `line.largeJetScale` | `2.4` | a large-R jet's cone, as a multiple of an ordinary jet's |
 | `line.narrowJetScale` | `0.8` | a hadronic tau's or a lepton-jet's cone, as a multiple of an ordinary jet's |
 | `line.trackWidth` | `0.9` | stroke width of the tracks drawn inside detector objects |
 | `line.objectLegStretch` | `1.6` | a leg ending in a detector object (other than a plain jet) is drawn this many times longer, to show what is inside |

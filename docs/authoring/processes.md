@@ -272,19 +272,19 @@ and not the antitop.
 ## Detector objects in a process
 
 Detector objects are particle names like any other, so they go straight into a process: `bjet`,
-`j`, `LRJ` (a large-R jet), `MET` and the rest of [Detector objects](objects.md). Write the
+`bjet`, `largejet`, `met` and the rest of [Detector objects](objects.md). Write the
 object where the particle would be, or as what a particle decays to:
 
 ```feynman
 p p > t tbar
-t > bjet W+(> LRJ)
+t > bjet W+(> largejet)
 tbar > bbar W-(> e- nu~)
 ```
 
 ````markdown
 ```feynman
 p p > t tbar
-t > bjet W+(> LRJ)
+t > bjet W+(> largejet)
 tbar > bbar W-(> e- nu~)
 ```
 ````

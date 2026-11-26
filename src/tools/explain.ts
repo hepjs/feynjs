@@ -1,5 +1,6 @@
 import type { Diagram, Edge } from "../model.ts";
 import { particleOfEdge, quarkFromLabel } from "../particles/identify.ts";
+import { OBJECTS } from "../particles/objects.ts";
 import { PROPERTIES, propertiesOf } from "../particles/properties.ts";
 import { lookupParticle, registry } from "../particles/registry.ts";
 import { isExternal, kindOfLine, linesByVertex, readDiagram } from "./prepare.ts";
@@ -407,7 +408,9 @@ function loopGroups(d: Diagram): Map<string, string> {
 /** What a line is, in words: its particle's name, else its label, else the kind of line. */
 function nameOf(d: Diagram, e: Edge, fermions?: Map<Edge, Name>): Name {
   const label = e.label ?? [e.from, e.to].map((id) => d.vertices.get(id)!).find((v) => v.role && v.label)?.label;
-  const particle = particleOfEdge(d, e) ?? quarkFromLabel(e.label) ?? particleWithLabel(label);
+  // (a detector object drawn as a line's style, [largejet 2j], is named as the object)
+  const object = e.style.object && OBJECTS.find((o) => o.object === e.style.object)?.name;
+  const particle = particleOfEdge(d, e) ?? quarkFromLabel(e.label) ?? object ?? particleWithLabel(label);
   const named = propertiesOf(particle)?.name;
   if (!named && fermions?.has(e)) return fermions.get(e)!;
   if (named) return { singular: named, plural: plural(named) };

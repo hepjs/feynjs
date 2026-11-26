@@ -189,10 +189,10 @@ The final states a detector sees, drawn as it sees them: large-R jets with what 
 ````markdown
 ```feynman
 i1 [p] -- pp [blob] -- i2 [p]
-pp -- [LRJ 1b W(2j)] j1 [J]
+pp -- [largejet 1b W(2j)] j1
 pp -- [Z'] z
-z -- [SVJ] f1 [\text{SVJ}]
-z -- [EMG] f2 [\text{EJ}]
+z -- [semivisiblejet] f1
+z -- [emergingjet] f2
 ```
 ````
 
@@ -201,10 +201,10 @@ z -- [EMG] f2 [\text{EJ}]
 
 ```feynman
 i1 [p] -- pp [blob] -- i2 [p]
-pp -- [LRJ 1b W(2j)] j1 [J]
+pp -- [largejet 1b W(2j)] j1
 pp -- [Z'] z
-z -- [SVJ] f1 [\text{SVJ}]
-z -- [EMG] f2 [\text{EJ}]
+z -- [semivisiblejet] f1
+z -- [emergingjet] f2
 ```
 
 </div>

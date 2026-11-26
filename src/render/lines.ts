@@ -48,21 +48,63 @@ function parallelPoints(c: Curve, off: number): Pt[] {
  * fades as it opens, so it reads as a spray of particles around one direction. The cone
  * starts `from` px along the line and opens at `scale` times an ordinary jet's angle.
  */
-function jetCone(c: Curve, look: LineLook, o: { from?: number; scale?: number; shade?: number; rim?: "solid" | "dashed" } = {}): string {
+function jetCone(c: Curve, look: LineLook, o: { from?: number; scale?: number; shade?: number; rim?: "solid" | "dashed"; tracks?: number } = {}): string {
   const from = o.from ?? 0, scale = o.scale ?? 1, shade = o.shade ?? look.jetShade;
   const start = c.at(from), end = c.at(c.length);
   const halfWidth = coneHalfWidth(c.length - from, look, scale);
   const left = c.offset(c.length, -halfWidth), right = c.offset(c.length, halfWidth);
-  const bulge = { x: end.x + end.tx * halfWidth * 0.6, y: end.y + end.ty * halfWidth * 0.6 };
+  const bulge = { x: end.x + end.tx * halfWidth * MOUTH_BULGE, y: end.y + end.ty * halfWidth * MOUTH_BULGE };
   const cone = `M${fmt(start.x)} ${fmt(start.y)}L${fmt(left.x)} ${fmt(left.y)}Q${fmt(bulge.x)} ${fmt(bulge.y)} ${fmt(right.x)} ${fmt(right.y)}Z`;
   // the gradient runs along the jet; its id is built from what it draws, so equal ids mean equal gradients
-  const id = `feynjs-jet-${[start.x, start.y, end.x, end.y, shade * 100].map((n) => Math.round(n)).join("_")}`.replace(/-(?=\d)/g, "m");
+  // (and its colour: two cones alike but for their colour must not share one gradient)
+  const id = `feynjs-jet-${[start.x, start.y, end.x, end.y, shade * 100].map((n) => Math.round(n)).join("_")}${look.jetColor.replace(/[^0-9a-z]/gi, "").slice(0, 12)}`.replace(/-(?=\d)/g, "m");
   const gradient = `<linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="${fmt(start.x)}" y1="${fmt(start.y)}" x2="${fmt(bulge.x)}" y2="${fmt(bulge.y)}">`
     + `<stop class="feynjs-jet-stop" offset="0" stop-color="${look.jetColor}" stop-opacity="${fmt(shade)}"/>`
     + `<stop class="feynjs-jet-stop" offset="1" stop-color="${look.jetColor}" stop-opacity="${fmt(shade * look.jetFade)}"/></linearGradient>`;
   const rim = o.rim ? `<path class="feynjs-jet-rim" d="${cone}" fill="none" stroke="${look.jetColor}" stroke-width="${fmt(look.trackWidth)}" stroke-linejoin="round"${o.rim === "dashed" ? ` stroke-dasharray="3 2.5"` : ""}/>` : "";
-  return `${gradient}<path class="feynjs-jet" d="${cone}" fill="url(#${id})" stroke="none"/>${rim}`;
+  return `${gradient}<path class="feynjs-jet" d="${cone}" fill="url(#${id})" stroke="none"/>${o.tracks ? jetTracks(c, from, halfWidth, o.tracks, look) : ""}${rim}`;
 }
+
+/**
+ * The rest of a jet: faint grey tracks fanning out from where the cone starts, each bent a little,
+ * under the lines that matter. Their spread and bend are fixed, so a jet draws the same each time.
+ */
+function jetTracks(c: Curve, from: number, half: number, count: number, look: LineLook): string {
+  const SPREAD = [-0.78, 0.62, -0.32, 0.18, 0.86, -0.58, 0.4, -0.08], BEND = [0.42, -0.38, 0.34, -0.44, -0.36, 0.3, -0.4, -0.34];
+  const start = c.at(from);
+  let d = "";
+  for (let k = 0; k < Math.min(count, SPREAD.length); k++) {
+    // (the bend kept inside the cone: a track leaves the apex no wider than the cone opens)
+    const mid = c.offset(from + (c.length - from) * 0.5, Math.max(-0.45, Math.min(0.45, SPREAD[k] * 0.5 + BEND[k])) * half), end = c.offset(c.length * 0.97, SPREAD[k] * half);
+    d += `M${fmt(start.x)} ${fmt(start.y)}Q${fmt(mid.x)} ${fmt(mid.y)} ${fmt(end.x)} ${fmt(end.y)}`;
+  }
+  return `<path class="feynjs-jet-tracks" d="${d}" fill="none" stroke="currentColor" stroke-opacity="0.3" stroke-width="${fmt(look.trackWidth * 0.7)}" stroke-linecap="round"/>`;
+}
+
+/** A B hadron's decay vertex and flight (blue), and a D's (teal): the tagger's two kinds of displaced vertex. */
+const B_COLOUR = "#2f74c0", D_COLOUR = "#00a099";
+
+/** A jet inside a detector object, or the object itself, where a note may point: its kind (bjet), middle and decay vertices. */
+export interface ObjectPart { kind: string; middle: Pt; B?: Pt; D?: Pt }
+
+/** Where a b-jet's B and D hadrons decay, or a c-jet's D: along `c`, from the vertex out. */
+export function flavourVertices(c: Curve, object: string | undefined, look: LineLook, scale = 1): { B?: Pt; D?: Pt } {
+  const L = c.length, half = coneHalfWidth(L, look, scale);
+  if (object === "btag") return { B: c.offset(L * 0.36, half * 0.14), D: c.offset(L * 0.6, half * 0.34) };
+  if (object === "ctag") return { D: c.offset(L * 0.4, half * 0.18) };
+  return {};
+}
+
+/** Where a detector object's cone reaches, for the drawing's bounds: its mouth's two corners and its bulge. */
+export function coneReach(c: Curve, style: EdgeStyle, look: LineLook): Pt[] {
+  const o = style.object;
+  const scale = o === "large" ? look.largeJetScale : o === "top" ? look.largeJetScale * 1.1 : o === "semivisible" || o === "emerging" ? 1.9 : o === "displaced" ? 1.5 : o === "tau" || o === "leptonjet" ? look.narrowJetScale : 1;
+  const half = coneHalfWidth(c.length, look, scale), end = c.at(c.length);
+  return [c.offset(c.length, -half), c.offset(c.length, half), { x: end.x + end.tx * half * MOUTH_BULGE, y: end.y + end.ty * half * MOUTH_BULGE }];
+}
+
+/** How far a cone's mouth bulges past its end, as a share of its half-width: one smooth curve. */
+const MOUTH_BULGE = 0.6;
 
 /** How far a jet cone of the given length opens either side of its line, px. */
 function coneHalfWidth(length: number, look: LineLook, scale = 1): number {
@@ -74,13 +116,24 @@ function coneHalfWidth(length: number, look: LineLook, scale = 1): number {
  * out to the end of the leg. Tracks are thin lines; what is not seen (a dark quark, invisible
  * dark hadrons, missing energy) is dashed or dotted.
  */
-function detectorObject(c: Curve, style: EdgeStyle, look: LineLook, sw: number): string {
+function detectorObject(c: Curve, style: EdgeStyle, look: LineLook, sw: number, parts?: ObjectPart[]): string {
   const L = c.length, tw = look.trackWidth;
   const line = (pts: Pt[], o: { width?: number; dash?: string; colour?: string } = {}) =>
     `<path d="${pathFrom(pts)}" fill="none" stroke="${o.colour ?? "currentColor"}" stroke-width="${fmt(o.width ?? sw)}" stroke-linecap="round"${o.dash ? ` stroke-dasharray="${o.dash}"` : ""}/>`;
   // a straight track from s0 along the line, ending `spread` of the cone's half-width to one side
   const track = (s0: number, spread: number, half: number, o: { width?: number; dash?: string; s1?: number } = {}) =>
     line([c.offset(s0, 0), c.offset(o.s1 ?? L, spread * half)], { width: o.width ?? tw, dash: o.dash });
+  // (a heavy-flavour decay vertex: an open ring, its border coloured by the hadron, a B blue, a D teal)
+  const ring = (p: Pt, hadron: "B" | "D", r = tw * 2.5) => `<circle class="feynjs-sv-${hadron === "B" ? "b" : "c"}" cx="${fmt(p.x)}" cy="${fmt(p.y)}" r="${fmt(r)}" fill="var(--feynjs-bg, #fff)" stroke="${hadron === "B" ? B_COLOUR : D_COLOUR}" stroke-width="${fmt(tw)}"/>`;
+  const flight = (a: Pt, b: Pt, hadron: "B" | "D") => line([a, b], { width: tw, dash: "2 1.8", colour: hadron === "B" ? B_COLOUR : D_COLOUR });
+  // (a b- or c-jet, at any size: its cone and tracks, the B's flight and decay then the D's, or the D's alone)
+  const heavy = (j: Curve, object: "btag" | "ctag", scale: number, tracks: number, r = tw * 2.5) => {
+    const J = j.length, half = coneHalfWidth(J, look, scale), v = flavourVertices(j, object, look, scale), D = v.D!;
+    let out = jetCone(j, look, { scale, tracks, rim: "solid" });
+    out += v.B ? flight(j.at(0), v.B, "B") + flight(v.B, D, "D") + line([v.B, j.offset(J * 0.97, -0.3 * half)], { width: tw, colour: B_COLOUR }) : flight(j.at(0), D, "D");
+    out += (v.B ? [0.55, 0.85] : [0.5, 0.82]).map((k) => line([D, j.offset(J * 0.97, k * half)], { width: tw, colour: D_COLOUR })).join("");
+    return out + (v.B ? ring(v.B, "B", r) : "") + ring(D, "D", r);
+  };
   const dot = (p: Pt, r: number, fill = "currentColor") => `<circle cx="${fmt(p.x)}" cy="${fmt(p.y)}" r="${fmt(r)}" fill="${fill}" stroke="currentColor" stroke-width="${fmt(tw)}"/>`;
   // (displaced: the object begins at a displaced vertex, after a dotted flight)
   if (style.adjectives?.includes("displaced") && style.object !== "displaced" && style.object !== "displacedlepton") {
@@ -95,35 +148,39 @@ function detectorObject(c: Curve, style: EdgeStyle, look: LineLook, sw: number):
   if (style.contents?.length && style.object !== "met" && style.object !== "track") {
     const wide = style.object === "large" || style.object === "top";
     const scale = wide ? look.largeJetScale * (style.object === "top" ? 1.1 : 1) : 1.5;
-    const half = coneHalfWidth(L, look, scale), split = L * 0.32;
+    // (a W, Z, Higgs or top decays almost where it is made: what it holds starts near the apex)
+    const half = coneHalfWidth(L, look, scale), split = L * 0.12;
     type Item = { kind: string; contents?: ObjectContent[] };
     const flat = (list: ObjectContent[]): Item[] => list.flatMap(({ kind, count, contents }) => Array.from({ length: count }, () => ({ kind, contents })));
     const smallWave = { ...look, waveAmplitude: look.waveAmplitude * 0.55, waveLength: look.waveLength * 0.6 };
     const drawItem = (sub: Curve, item: Item, room: number, many: boolean): string => {
       const ends = line([sub.at(0), sub.at(sub.length)]);
       if (item.contents?.length) {
-        const knee = sub.at(sub.length * 0.45);
+        // (what it decays to starts early and fans wide, so b-jets inside are big enough to read)
+        const knee = sub.at(sub.length * 0.1);
         const kids = flat(item.contents);
         let out = drawLine(Curve.line(sub.at(0), knee), { line: "wave", arrow: 0 }, smallWave);
         kids.forEach((kid, i) => {
           // (toward the middle of the cone rather than out past its edge)
           const off = kids.length === 1 ? 0 : -1 + (2 * i) / (kids.length - 1);
-          out += drawItem(Curve.line(knee, sub.offset(sub.length, off * room)), kid, room * 0.4, true);
+          out += drawItem(Curve.line(knee, sub.offset(sub.length, off * room * 1.6)), kid, room * 0.4, true);
         });
         return out;
       }
       const cone = (k: number) => jetCone(sub, look, { scale: k });
-      if (item.kind === "jet") return cone(many ? 0.55 : 0.8) + ends;
-      if (item.kind === "bjet") {
-        const sv = sub.at(sub.length * 0.45);
-        return cone(many ? 0.55 : 0.8) + ends + dot(sv, tw * 2.6, "var(--feynjs-bg, #fff)");
+      const k = many ? 0.75 : 1;
+      if (item.kind === "jet") { parts?.push({ kind: "lightjet", middle: sub.at(sub.length * 0.6) }); return jetCone(sub, look, { scale: k, tracks: 3, rim: "solid" }); }
+      if (item.kind === "bjet" || item.kind === "cjet") {
+        const object = item.kind === "bjet" ? "btag" : "ctag";
+        parts?.push({ kind: item.kind, middle: sub.at(sub.length * 0.6), ...flavourVertices(sub, object, look, Math.max(k, 1.1)) });
+        return heavy(sub, object, Math.max(k, 1.1), 3, tw * 1.9);
       }
       if (item.kind === "photon") return line([sub.at(0), sub.at(sub.length)], { width: tw, dash: "3 2" });
       if (item.kind === "neutrino") return line([sub.at(0), sub.at(sub.length)], { width: tw * 1.2, dash: `0 ${fmt(look.dotGap)}` });
       return line([sub.at(0), sub.at(sub.length)], { width: tw * 1.4 });
     };
     const items = flat(style.contents);
-    let out = jetCone(c, look, { scale, shade: look.jetShade * 0.55, rim: wide ? "solid" : undefined }) + line([c.at(0), c.at(split)]);
+    let out = jetCone(c, wide ? { ...look, jetColor: look.largeJetColor } : look, { scale, shade: look.jetShade * 0.55, rim: wide ? "solid" : undefined }) + line([c.at(0), c.at(split)]);
     items.forEach((item, k) => {
       const side = items.length === 1 ? 0 : -0.7 + (1.4 * k) / (items.length - 1);
       // (what a W inside decays to keeps within the cone: its fan narrows toward the cone's edge)
@@ -152,30 +209,29 @@ function detectorObject(c: Curve, style: EdgeStyle, look: LineLook, sw: number):
     }
     case "large": {
       // a wide cone; the particle inside splits into two subjets, each a jet of its own
-      const half = coneHalfWidth(L, look, look.largeJetScale), split = L * 0.42;
-      let out = jetCone(c, look, { scale: look.largeJetScale, shade: look.jetShade * 0.55, rim: "solid" }) + line([c.at(0), c.at(split)]);
+      const half = coneHalfWidth(L, look, look.largeJetScale), split = L * 0.18;
+      let out = jetCone(c, { ...look, jetColor: look.largeJetColor }, { scale: look.largeJetScale, shade: look.jetShade * 0.55, rim: "solid", tracks: 7 }) + line([c.at(0), c.at(split)], { width: tw });
       for (const side of [-0.55, 0.55]) {
         const sub = Curve.line(c.at(split), c.offset(L, side * half));
-        out += jetCone(sub, look, { scale: 0.8 }) + line([sub.at(0), sub.at(sub.length)]);
+        out += jetCone(sub, look, { scale: 0.8, tracks: 4 });
       }
       return out;
     }
     case "top": {
       // a top-tagged large-R jet: the top splits into three subjets (b and the W's two quarks)
-      const half = coneHalfWidth(L, look, look.largeJetScale * 1.1), split = L * 0.38;
-      let out = jetCone(c, look, { scale: look.largeJetScale * 1.1, shade: look.jetShade * 0.55, rim: "solid" }) + line([c.at(0), c.at(split)]);
+      const half = coneHalfWidth(L, look, look.largeJetScale * 1.1), split = L * 0.18;
+      let out = jetCone(c, { ...look, jetColor: look.largeJetColor }, { scale: look.largeJetScale * 1.1, shade: look.jetShade * 0.55, rim: "solid", tracks: 7 }) + line([c.at(0), c.at(split)], { width: tw });
       for (const side of [-0.62, 0, 0.62]) {
         const sub = Curve.line(c.at(split), c.offset(L, side * half));
-        out += jetCone(sub, look, { scale: 0.65 }) + line([sub.at(0), sub.at(sub.length)]);
+        out += jetCone(sub, look, { scale: 0.65, tracks: 3 });
       }
       return out;
     }
-    case "btag": {
-      // a b-jet: a jet with a secondary vertex a little way in, its two tracks leaving it
-      const half = coneHalfWidth(L, look), sv = c.offset(L * 0.45, half * 0.12);
-      return jetCone(c, look) + line(c.straight ? [c.pts[0], c.pts[c.pts.length - 1]] : c.pts)
-        + [0.45, 0.75].map((k) => line([sv, c.offset(L * 0.95, k * half)], { width: tw })).join("") + dot(sv, tw * 2.6, "var(--feynjs-bg, #fff)");
-    }
+    // a b-jet: the B hadron flies (dashed) to a secondary vertex and decays, a track leaving it;
+    // the D it makes flies on to a tertiary vertex and decays to two more tracks; a c-jet: the D
+    // flies to one displaced vertex, two tracks leaving it
+    case "btag": return heavy(c, "btag", 1, 5);
+    case "ctag": return heavy(c, "ctag", 1, 5);
     case "disappearing": {
       // a track that stops: the charged particle decays to something too soft to see
       const end = L * 0.62, p = c.at(end), w = look.arrowWidth * 0.6;
@@ -224,7 +280,7 @@ function detectorObject(c: Curve, style: EdgeStyle, look: LineLook, sw: number):
     case "displaced": {
       // a long-lived particle's flight (dotted) to a displaced vertex, where a jet begins
       const at = L * 0.3;
-      return line([c.at(0), c.at(at)], { width: sw, dash: `0 ${fmt(look.dotGap)}` }) + jetCone(c, look, { from: at, scale: 1.5 }) + line([c.at(at), c.at(L)]) + dot(c.at(at), sw * 1.4, "var(--feynjs-bg, #fff)");
+      return line([c.at(0), c.at(at)], { width: sw, dash: `0 ${fmt(look.dotGap)}` }) + jetCone(c, look, { from: at, scale: 1.5, tracks: 6, rim: "solid" }) + dot(c.at(at), sw * 1.4, "var(--feynjs-bg, #fff)");
     }
     case "met": {
       // missing energy: a dotted arrow out of the diagram
@@ -233,7 +289,8 @@ function detectorObject(c: Curve, style: EdgeStyle, look: LineLook, sw: number):
       return line([c.at(0), back], { dash: `0 ${fmt(look.dotGap)}`, width: sw * 1.4 }) + `<path d="${head}" fill="currentColor"/>`;
     }
     default:
-      return jetCone(c, look) + line(c.straight ? [c.pts[0], c.pts[c.pts.length - 1]] : c.pts);
+      // (the cone and its tracks are the jet: no line through it)
+      return jetCone(c, look, { tracks: 6, rim: "solid" });
   }
 }
 
@@ -249,7 +306,7 @@ function arrowHead(c: Curve, s: number, dir: 1 | -1, look: LineLook): string {
 }
 
 /** SVG for one propagator along curve `c`. */
-export function drawLine(c: Curve, style: EdgeStyle, look: LineLook): string {
+export function drawLine(c: Curve, style: EdgeStyle, look: LineLook, parts?: ObjectPart[]): string {
   if (style.line === "none") return "";
   // drawn twice, side by side (the arrow once, in the middle): a graviton, a double dashed line
   if (style.doubled) {
@@ -283,7 +340,7 @@ export function drawLine(c: Curve, style: EdgeStyle, look: LineLook): string {
       solid(centre(), { dash: `0 ${fmt(c.length / n)}`, width: sw * 1.5 });
       break;
     }
-    case "jet": out.push(detectorObject(c, style, look, sw)); break;
+    case "jet": out.push(detectorObject(c, style, look, sw, parts)); break;
     case "ellipsis": {
       // three dots toward the far end, where the leg would reach
       for (const f of [0.6, 0.74, 0.88]) { const p = c.at(c.length * f); out.push(`<circle cx="${fmt(p.x)}" cy="${fmt(p.y)}" r="${fmt(sw * 0.95)}" fill="currentColor"/>`); }

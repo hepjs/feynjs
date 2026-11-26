@@ -5,6 +5,45 @@ layout that moves is a change, recorded here.
 
 ## 0.10.3 — unreleased
 
+- **Detector objects have one name each.** `lightjet`, `bjet`, `cjet`, `taujet`, `largejet`,
+  `topjet`, `semivisiblejet`, `emergingjet`, `displacedjet`, `leptonjet`, `met`, `track`,
+  `disappearingtrack`, `displacedlepton`, `hscp` and `remnant`, in any case (`largeJet`). The same
+  name works on a leg, on a line and in a process, holds contents (`largejet(2j 1e)`,
+  `[largejet 2j 1e]`), and labels what it names as a particle's name does. Before, an object had a
+  particle name (`J`, `tauh`, `svj`) and separate object words (`LRJ`, `SVJ`, `large jet`), and
+  `J` meant a large-R jet on a leg but an ordinary jet on a line. The older names still draw, as
+  they did, and `check` warns of each (`"LRJ" is now written "largejet"`). On a line, `J` is now a
+  large-R jet, as on a leg.
+- **An object in a process is named.** `W+(> largejet)` and `largejet(2j)` give the leg the
+  object's name, so a `label:` line relabels it (it did nothing before), the description says
+  "a large-R jet" (it said "a jet"), and `check` no longer warns of an unlabelled leg.
+- **New: `cjet`**, a jet with its secondary vertex nearer the collision than a b-jet's, and
+  `lightjet`.
+- **New names: `proton`, `neutrino`, `antineutrino`** for `p`, `nu`, `nubar`.
+- **Jets look like jets.** A jet is its cone, with no line through it: the cone holds the faint,
+  curving grey tracks of its particles (a large-R or top jet's subjets are cones of their own).
+  A b-jet shows the B hadron's flight to its decay vertex (a blue ring) and the D's on to its own
+  (a teal ring), each with its tracks; a c-jet shows the D's alone. The rings are larger than the
+  old secondary vertex, so they read at a glance. A `track` is drawn unlabelled.
+- **New: `circle=`** on a point draws a circle with a label inside, as flavour-tagging figures
+  mark where a jet starts: `a [circle=b] -- [bjet, no label] f`. A jet drawn alone from one stands
+  up, leaning 12° right, and opens wider; it starts at the circle's middle.
+- **New: `rotate:` turns any drawing** by so many degrees, counterclockwise, its labels upright
+  (it turned only the kinematic view before).
+- **A large-R or top jet's own cone is grey** (`line.largeJetColor`), so the jets it holds read as
+  jets, in the jet colour. A jet's `color=` colours a large jet's cone as before.
+- **Fixed: two jet cones alike but for their colour shared one gradient**, so on a page with both,
+  one drew in the other's colour.
+- **Note arrows are red** (they were blue, close to the jets' colour); the words stay in the ink.
+- **What a large-R jet holds starts near its apex**: a W, Z, Higgs or top decays almost where it
+  is made, so its jets run the jet's length.
+- **Notes point at detector objects**: by name (`note: bjet "tagged"`, a leg or a line inside the
+  diagram), and at a b-jet's B and D vertices (`note: B "B meson"`, `note: f.D ...`).
+- **Jets are a little wider** (11° either side, not 9°), and large-R jets 2.4 times that (they
+  were twice); jets inside a large-R jet open as an ordinary jet does, b- and c-jets a little wider,
+  each a whole b- or c-jet with its decay vertices. Each ordinary jet has a fine rim of the jet colour, and the
+  decay vertices are fine rings.
+
 - **On a jet, `color=` colours the cone.** A jet's cone and rim take the colour; the line and its
   label stay in the ink, as the rest of the diagram's lines do. Before, the colour went to the line
   and the cone stayed `line.jetColor`. Every jet kind follows the rule (large-R, b, tau, displaced,

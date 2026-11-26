@@ -57,7 +57,7 @@ The whole syntax on one page. [How it works](index.md) builds a diagram up a par
 | `scalar` (`dashed`), `charged scalar`, `anti charged scalar` | dashed lines |
 | `ghost` (`dotted`) | a dotted line |
 | `double`, `heavy`, `proton`, `jet` | two strokes, a thick line, three lines, a cone |
-| `large jet`, `tau jet`, `semi-visible jet`, `emerging jet`, `displaced jet`, `lepton jet`, `missing energy` | [detector objects](objects.md) |
+| `largejet`, `bjet`, `taujet`, `semivisiblejet`, `emergingjet`, `displacedjet`, `leptonjet`, `met`, ... | [detector objects](objects.md) |
 | `susy`, `susy fermion`, `susy gluon` | SUSY-coloured lines |
 | `hidden` | not drawn (the layout ignores it) |
 | `invisible` | not drawn, but holds the layout together in both engines |
@@ -79,35 +79,22 @@ The whole syntax on one page. [How it works](index.md) builds a diagram up a par
 
 ## Detector objects
 
-Written like a line style: adjectives, then the object, then what is drawn inside it as counts
-(`2j 1e`). Long and short names are the same; short names are written as shown.
+One name each, in any case, the same on a leg, on a line and in a process; what is drawn inside
+follows as counts (`2j 1e`).
 
 ```
-v -- [large R jet 2j 1e] f1      a large-R jet holding two jets and an electron
-v -- [LRJ 2j 1e] f1              the same
-v -- [LRJ(2j, 1e)] f1            the same
-v -- [displaced jet] f2          (or [DIS J])
-v -- [DIS track] f3
+v -- [largejet 2j 1e] f1         a large-R jet holding two jets and an electron
+v -- [largejet(2j, 1e)] f1       the same
+p p > Zp > largejet(2j) met      in a process
+v -- [displaced track] f3
 ```
 
-| Object | Short |
-|---|---|
-| jet, small R jet | `J`, `SRJ` |
-| large R jet | `LRJ` |
-| track | `TRK` |
-| semi-visible jet | `SVJ` |
-| emerging jet | `EMG` |
-| tau jet | `TAU` |
-| missing energy | `MET` |
-| lepton jet | `LJ` |
-| top jet | `TOP` |
-| b jet | `BJ` |
-| disappearing track | `DT` |
-| displaced lepton, dislep | `DL` (as written: `dl` is MadGraph's left down squark) |
-| proton remnant (a proton that broke up, p*) | `PR` |
+`lightjet`, `bjet`, `cjet`, `taujet`, `largejet`, `topjet`, `semivisiblejet`, `emergingjet`,
+`displacedjet`, `leptonjet`, `met`, `track`, `disappearingtrack`, `displacedlepton`, `hscp`, `remnant`.
+Older names (`J`, `LRJ`, `SVJ`, `tauh`, `b jet`...) still draw; `check` gives the name to write.
 
-Adjective: `displaced` (`DIS`): the object starts at a displaced vertex after a dotted flight.
-Contents: `j` jet, `b` b-tagged jet (with its secondary vertex), `e` electron, `mu` muon, `l` lepton, `tau`, `g` or `y` photon, `q` quark, `nu` neutrino (dotted). A particle that decays inside an object is written with what it decays to in parentheses: `[LRJ 1b W(2j)]` a hadronically decaying top, `[LRJ 1b W(1mu 1nu)]` a semileptonic one (also `Z(...)`, `H(...)`, `t(...)`).
+Adjective: `displaced`: the object starts at a displaced vertex after a dotted flight.
+Contents: `j` jet, `b` b-tagged jet (with its secondary vertex), `e` electron, `mu` muon, `l` lepton, `tau`, `g` or `y` photon, `q` quark, `nu` neutrino (dotted). A particle that decays inside an object is written with what it decays to in parentheses: `[largejet 1b W(2j)]` a hadronically decaying top, `[largejet 1b W(1mu 1nu)]` a semileptonic one (also `Z(...)`, `H(...)`, `t(...)`).
 
 ## Vertex options
 
@@ -119,6 +106,7 @@ Contents: `j` jet, `b` b-tagged jet (with its secondary vertex), `e` electron, `
 | `jet` | this leg ends in a jet (a cone round its line) |
 | `cone` | this leg is a jet, marked by a small cone in a column at the right, as many papers mark it |
 | `insertion` | a cross on the line |
+| `circle=b` | a circle with a label inside: where a jet starts, its flavour (`b`, `c`, `l`) |
 | `bag=proton` (or `pi+`, `J/psi`, `Zc`, `Pc`...; or its quarks, `uud`, `c cbar u dbar`), with `motion` to let its flux tubes breathe, `molecule` to draw a pentaquark as a baryon beside a meson (or write the parts with a plus, `uud + c cbar`) | a hadron with its valence quarks, each a dot in its colour charge (red, green, blue; antiquarks in anticolours, so the whole is colourless), bound by colour flux tubes as lattice QCD shows them: straight for a meson, a Y-junction for a baryon, linked junctions for tetra- and pentaquarks |
 | `recoil` (or `recoil=down`, `right`, `30`) | on a nucleus: recoiling, moved on inside rings bunched ahead and spread behind (the Doppler picture); away from what hits it unless a way is given |
 | `pulse`, `excited` (or `pulse=low`, `medium`, `high`, a number, a colour) | on a nucleus: excited, a still warm glow and faint rings round it, amber toward a near-white yellow with more energy (a star, `nucleus=Xe*`, gives it too) |
@@ -138,7 +126,7 @@ Contents: `j` jet, `b` b-tagged jet (with its secondary vertex), `e` electron, `
 |---|---|
 | `in: a b`, `out: c d` | incoming and outgoing legs, in order top to bottom |
 | `horizontal: a to b`, `vertical: a to b` | turn the whole diagram so `b` sits level right of `a`, or straight below it; `horizontal': a to b` (primed) mirrors it too |
-| `note: c "words"`, `note: a--b "words" below`, `note: H {TeX}` | words in free space with a hand-drawn arrow to a point, a line, or a particle by name; as many as wanted; the arrow's colour `noteColor` in the theme (crayon blue) |
+| `note: c "words"`, `note: a--b "words" below`, `note: H {TeX}` | words in free space with a hand-drawn arrow to a point, a line, a particle or object by name (`bjet`), or a b-jet's `B` or `D` vertex (`f.B`); as many as wanted; the arrow's colour `noteColor` in the theme (red, clear of the blue jets) |
 | `inline: a` | in a line of text, sit point `a` on the text's baseline (for a diagram inside an equation) |
 | `every photon: color=blue`, `every fermion: heavy`, `every dot: size=1.5`, `every edge: ...`, `every vertex: ...` | defaults for every line or point of a kind (by its style or particle word, or what it is drawn as); its own settings still win |
 | `label: particle = text` | draw that particle with a label of your own, everywhere it appears |
@@ -155,7 +143,8 @@ Contents: `j` jet, `b` b-tagged jet (with its secondary vertex), `e` electron, `
 | `grid: iso` | with the grid layout, an isometric (triangular) lattice: lines at 0, 60 and 120 degrees, forks forward at plus and minus 60 degrees, the background drawn to match |
 | `grid forks: diagonal` | with the grid layout, the final states of a last decay part symmetrically about level, a grid step apart, to the final plane (by default a last decay into two different particles turns a right angle: one level to the final plane, the other straight up or down, away from the middle) |
 | `view: kinematic` (with `projection: transverse` or `longitudinal`) | draw the event as a detector sees it: t-channel spectators forward and backward, what the collision makes central and spread round in azimuth, decay products near their parent; move a leg with `eta=`, `phi=` (degrees), `deta=`, `dphi=` |
-| `rotate: 30` | in the kinematic view, turn the event by this many degrees: in azimuth in the transverse view, about the collision point in the longitudinal view (the beam and the detector stay put); 30 by default |
+| `rotate: 15` | turn the drawing by this many degrees, counterclockwise, its labels upright (a lone jet from a `circle=` point leans 12° right of straight up to begin with) |
+| `rotate: 30` (kinematic view) | turn the event by this many degrees: in azimuth in the transverse view, about the collision point in the longitudinal view (the beam and the detector stay put); 30 by default |
 | `reconstruct: off` | in the kinematic view, draw final states as particles rather than as the objects they are reconstructed as (jets, tracks, missing energy) |
 | `show intermediate: true` | in the kinematic view, draw the particles that decay on (tops, W bosons), their products starting from their ends |
 | `view: reaction` | how a nuclear process is drawn (the default for one): the nuclei coming in on the left, each with an arrow into a burst, and what it makes fanned out on the right; a photon breaking a nucleus up, an elastic scattering (the nucleus recoiling) and an excited nucleus each in a picture of its own; a decay chain step by step; every nucleus at its true size |

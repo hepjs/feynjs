@@ -1,6 +1,7 @@
 import type { EdgeStyle } from "../model.ts";
 import type { ParticleProperties } from "./properties.ts";
 import { hadronNamed, namedHadrons } from "./hadrons.ts";
+import { OBJECTS, objectNamed } from "./objects.ts";
 
 export interface Particle {
   style: EdgeStyle;
@@ -45,19 +46,6 @@ export const STYLES: Record<string, EdgeStyle> = {
   "jet": { line: "jet", arrow: 0 },
   // three dots where a leg would be: "and more" (h -> l l + X)
   "ellipsis": { line: "ellipsis", arrow: 0 },
-  // detector objects at the end of a leg (semi-Feynman diagrams)
-  "large jet": { line: "jet", arrow: 0, object: "large" },
-  "tau jet": { line: "jet", arrow: 0, object: "tau" },
-  "semi-visible jet": { line: "jet", arrow: 0, object: "semivisible" },
-  "emerging jet": { line: "jet", arrow: 0, object: "emerging" },
-  "displaced jet": { line: "jet", arrow: 0, object: "displaced" },
-  "lepton jet": { line: "jet", arrow: 0, object: "leptonjet" },
-  "missing energy": { line: "jet", arrow: 0, object: "met" },
-  "top jet": { line: "jet", arrow: 0, object: "top" },
-  "b jet": { line: "jet", arrow: 0, object: "btag" },
-  "disappearing track": { line: "jet", arrow: 0, object: "disappearing" },
-  "displaced lepton": { line: "jet", arrow: 0, object: "displacedlepton" },
-  "heavy charged": { line: "jet", arrow: 0, object: "heavycharged" },
   // takes part in the layout but is not drawn: use it to hold two vertices together or apart
   "hidden": { line: "none", arrow: 0 },
   "invisible": { line: "none", arrow: 0, guide: true },
@@ -77,22 +65,10 @@ const P: Record<string, Particle> = {
   // quarks
   "q": f("q"), "qbar": f("\\bar q", true), "q'": f("q'"), "qbar'": f("\\bar q'", true),
   "j": { style: { line: "jet", arrow: 0 }, label: "j" },
-  "bjet": { style: { line: "jet", arrow: 0, object: "btag" }, label: "b" },
   // what is left of a proton that breaks up
   "p*": { style: { line: "triple", arrow: 0 }, label: "p^*" }, "X": { style: { line: "jet", arrow: 0 }, label: "X" },
-  // detector objects: a large-R jet, a hadronic tau, dark-sector jets, a lepton-jet, missing energy
-  "J": { style: { line: "jet", arrow: 0, object: "large" }, label: "J" },
-  "tauh": { style: { line: "jet", arrow: 0, object: "tau" }, label: "\\tau_{\\mathrm{had}}" },
-  "svj": { style: { line: "jet", arrow: 0, object: "semivisible" }, label: "\\text{SVJ}" },
-  "ej": { style: { line: "jet", arrow: 0, object: "emerging" }, label: "\\text{EJ}" },
-  "dj": { style: { line: "jet", arrow: 0, object: "displaced" }, label: "\\text{DJ}" },
-  "ljet": { style: { line: "jet", arrow: 0, object: "leptonjet" }, label: "\\text{LJ}" },
-  "met": { style: { line: "jet", arrow: 0, object: "met" }, label: "E_{\\mathrm{T}}^{\\mathrm{miss}}" },
-  "Jt": { style: { line: "jet", arrow: 0, object: "top" }, label: "J_t" },
-  "dt": { style: { line: "jet", arrow: 0, object: "disappearing" }, label: "\\text{DT}" },
-  // (a displaced lepton: `dl` is MadGraph's left down squark)
-  "dislep": { style: { line: "jet", arrow: 0, object: "displacedlepton" }, label: "\\ell_{\\mathrm{d}}" },
-  "hscp": { style: { line: "jet", arrow: 0, object: "heavycharged" }, label: "\\text{HSCP}" },
+  // detector objects, by their names (largejet, bjet, emergingjet: see objects.ts)
+  ...Object.fromEntries(OBJECTS.map((o) => [o.name, { style: { line: "jet", arrow: 0, object: o.object }, label: o.label } as Particle])),
   // gauge bosons
   "g": { style: { line: "coil", arrow: 0 }, label: "g" },
   "gamma": wave("\\gamma"), "a": wave("\\gamma"),
@@ -172,8 +148,10 @@ const ALIASES: Record<string, string> = {
   "x1+": "chargino1+", "x1-": "chargino1-", "x2+": "chargino2+", "x2-": "chargino2-",
   t1: "stop1", t2: "stop2", b1: "sbottom1", b2: "sbottom2",
   h1: "h", h3: "A", "h+": "H+", "h-": "H-",
-  // (the displaced lepton's short name, on a point as on a line)
-  DL: "dislep",
+  // (natural names)
+  proton: "p", neutrino: "nu", antineutrino: "nubar",
+  // (objects' old names, which check() asks to write anew: J is largejet, tauh taujet, DL displacedlepton...)
+  ...Object.fromEntries(OBJECTS.flatMap((o) => o.old.filter((old) => /^[A-Za-z]+$/.test(old) && old !== "jet").map((old) => [old, o.name]))),
 };
 
 /** Where a name leads: the particle, and what it is filed under for its properties. */
@@ -235,6 +213,10 @@ export function resolveParticle(name: string): ResolvedParticle | undefined {
     const lower = name.toLowerCase(), fits = Object.keys(P).filter((k) => k.toLowerCase() === lower && !HADRON_NAMES.has(k));
     if (fits.length === 1) return { particle: P[fits[0]], key: fits[0] };
   }
+  // (a detector object by any of its names, in any case: largeJet, Svj, lrj)
+  // (one word: an object written in words, b jet, is a line's style, not a particle)
+  const object = /^[A-Za-z]{2,}$/.test(name) ? objectNamed(name) : undefined;
+  if (object && own(P, object.name)) return { particle: P[object.name], key: object.name };
   return undefined;
 }
 

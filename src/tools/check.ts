@@ -4,8 +4,8 @@ import type { Edge } from "../model.ts";
 import { splitPanels } from "../render/panels.ts";
 import { closestName } from "../parse/parse.ts";
 import { nucleonMismatch, nucleusNamed, onlyNucleus } from "../parse/chains.ts";
-import { parseObject } from "../particles/objects.ts";
-import { lookupParticle, particleNames } from "../particles/registry.ts";
+import { parseObject, renamedObject } from "../particles/objects.ts";
+import { STYLES, lookupParticle, particleNames } from "../particles/registry.ts";
 import { isExternal, kindOfLine, linesByVertex, readDiagram } from "./prepare.ts";
 import type { Diagram } from "../model.ts";
 import { unknownCommands } from "../label/label.ts";
@@ -74,7 +74,7 @@ function checkOne(source: string): Finding[] {
     if (error instanceof FeynError) return [{ severity: "error", rule: "syntax", message: error.message }];
     throw error;
   }
-  const findings: Finding[] = [...switchFindings(d), ...labelFindings(d)];
+  const findings: Finding[] = [...switchFindings(d), ...labelFindings(d), ...renamedFindings(source)];
   const lines = linesByVertex(d);
   // with `arrows: none` the arrows are not drawn, so their directions mean nothing
   const noArrows = d.directives.arrows === "none" || d.directives.arrows === "off";
@@ -153,6 +153,27 @@ function switchFindings(d: Diagram): Finding[] {
   else if (layout === "v1") findings.push({ severity: "warning", rule: "layout-v1", message: `the older rule engine (layout: v1) is gone: the diagram is drawn with the default layout` });
   else if (layout && !LAYOUTS.has(layout)) findings.push({ severity: "warning", rule: "unknown-layout", message: `there is no layout "${layout}": the default is used (feynjs has default, manual and grid)` });
   return findings;
+}
+
+/** Detector objects written by an old name (`LRJ`, `tauh`, `b jet`): each once, with the name to write instead. */
+function renamedFindings(source: string): Finding[] {
+  const seen = new Map<string, string>();
+  const look = (text: string) => {
+    const words = text.trim().replace(/\(.*$/, "").split(/\s+/).filter(Boolean);
+    for (let n = Math.min(words.length, 4); n > 0; n--) {
+      const written = words.slice(0, n).join(" "), now = renamedObject(written);
+      if (now) { if (!seen.has(written)) seen.set(written, now); return; }
+    }
+  };
+  for (const raw of source.split(/\r?\n/)) {
+    const line = raw.replace(/%.*$/, "").trim();
+    // (in brackets, each option that is no line style: [LRJ 2j], f1 [J]; in a process, each name: LRJ(2j))
+    for (const m of line.matchAll(/\[([^\]]*)\]/g)) for (const option of m[1].split(",")) if (!option.includes("=") && !(option.trim() in STYLES)) look(option);
+    const relabel = /^label\s*:\s*([^=]+)=/.exec(line);
+    if (relabel) look(relabel[1]);
+    else if (/(^|[^-])>/.test(line) && !/--/.test(line) && !/^[\w -]+:/.test(line)) for (const name of namesInProcess(line.replace(/\[[^\]]*\]/g, " "))) look(name);
+  }
+  return [...seen].map(([written, now]) => ({ severity: "warning" as const, rule: "renamed-object", message: `"${written}" is now written "${now}" (the old name still draws)` }));
 }
 
 /** Labels holding a command feynjs draws as its letters (`\frac{1}{2}` as "frac12"). */

@@ -100,6 +100,7 @@ function assembleSvg(scene: Scene, title: string | undefined, ariaLabel: string,
     : "");
   return svgDocument({ label: ariaLabel, title, description, model, box: { left: b.left - pad, top: b.top - pad, width, height }, scale, inline, idPrefix: scene.idPrefix, theme: scene.theme,
     body: hatching + gridLines
+      + (scene.under.length ? `<g class="feynjs-objects">${scene.under.join("")}</g>` : "")
       + `<g class="feynjs-edges">${scene.edges.join("")}</g>`
       + `<g class="feynjs-vertices">${scene.vertices.join("")}</g>`
       + (scene.over.length ? `<g class="feynjs-over">${scene.over.join("")}</g>` : "")
@@ -190,6 +191,33 @@ function orientDiagram(d: Diagram, rowOverRank: number): void {
     }
     return;
   }
+  // (a jet on its own from a flavour circle, a [circle=b] -- [bjet] f: standing up, leaning
+  // right a little, as flavour-tagging figures draw one)
+  const [only] = d.edges;
+  if (d.edges.length === 1 && d.vertices.size === 2 && only.style.object && d.vertices.get(only.from)?.shape === "circle") {
+    const a = d.vertices.get(only.from)!, b = d.vertices.get(only.to)!;
+    turnAbout(d, a, LONE_JET_LEAN - portable.atan2((b.y - a.y) * rowOverRank, b.x - a.x), rowOverRank);
+  }
+  // (`rotate: 15`: the drawing turned by so many degrees, counterclockwise; its labels stay upright)
+  const degrees = Number(d.directives.rotate);
+  if (d.directives.rotate !== undefined && Number.isFinite(degrees) && degrees !== 0) {
+    const vs = [...d.vertices.values()], centre = { x: vs.reduce((t, v) => t + v.x, 0) / vs.length, y: vs.reduce((t, v) => t + v.y, 0) / vs.length };
+    turnAbout(d, centre, (-degrees * Math.PI) / 180, rowOverRank);
+    for (const e of d.edges) if (e.angles) e.angles = { ...e.angles, out: e.angles.out === undefined ? undefined : e.angles.out + degrees, in: e.angles.in === undefined ? undefined : e.angles.in + degrees };
+  }
+}
+
+/** A lone jet's direction, from its circle (radians, y down): 12° right of straight up. */
+const LONE_JET_LEAN = (-78 * Math.PI) / 180;
+
+/** Turn every point by `turn` radians about `at`, in true proportions (a row is not as long as a rank). */
+function turnAbout(d: Diagram, at: { x: number; y: number }, turn: number, rowOverRank: number): void {
+  const cos = portable.cos(turn), sin = portable.sin(turn), ax = at.x, ay = at.y;
+  for (const v of d.vertices.values()) {
+    const x = v.x - ax, y = (v.y - ay) * rowOverRank;
+    v.x = ax + x * cos - y * sin;
+    v.y = ay + (x * sin + y * cos) / rowOverRank;
+  }
 }
 
 /**
@@ -200,7 +228,7 @@ function stretchObjectLegs(d: Diagram, stretch: number): void {
   const degree = new Map<string, number>();
   for (const e of d.edges) for (const id of [e.from, e.to]) degree.set(id, (degree.get(id) ?? 0) + 1);
   for (const e of d.edges) {
-    if (e.style.line !== "jet" || !e.style.object || e.style.object === "jet") continue;
+    if (e.style.line !== "jet" || !e.style.object) continue;
     const [inner, outer] = degree.get(e.to) === 1 ? [e.from, e.to] : degree.get(e.from) === 1 ? [e.to, e.from] : [];
     if (!inner || !outer) continue;
     const a = d.vertices.get(inner)!, b = d.vertices.get(outer)!;

@@ -1,30 +1,42 @@
 import type { EdgeStyle, JetObject, ObjectContent } from "../model.ts";
 
 /**
- * Detector objects written as words, like a line style: adjectives, then the object, then what
- * is drawn inside it, as counts with short names. Long and short names are the same thing.
+ * Detector objects, each with one name: lowercase, one word, said as people say it (`largejet`,
+ * `bjet`, `emergingjet`), in any case (`largeJet`). The same name is a leg in a process, a
+ * line's style, and holds contents:
  *
- *     v -- [large R jet 2j 1e] f1      a large-R jet holding two jets and an electron
- *     v -- [LRJ 2j 1e] f1              the same
- *     v -- [LRJ(2j, 1e)] f1            the same
- *     v -- [displaced jet] f2          (or [DIS J])
- *     v -- [SVJ] f3, [EMG] f4, [track] f5
+ *     p p > Zp > largejet(2j 1e)       a large-R jet holding two jets and an electron
+ *     v -- [largejet 2j 1e] f1         the same, on a line
+ *     v -- [largejet(2j, 1e)] f1       the same
+ *
+ * `old` are the names it had before: they still draw, and check() says what to write instead.
  */
-export const OBJECT_NAMES: { names: string[]; object: JetObject; short: string }[] = [
-  { names: ["jet", "small r jet", "small-r jet"], object: "jet", short: "J" },
-  { names: ["large r jet", "large-r jet", "large jet", "fat jet"], object: "large", short: "LRJ" },
-  { names: ["small r jet"], object: "jet", short: "SRJ" },
-  { names: ["track"], object: "track", short: "TRK" },
-  { names: ["semi-visible jet", "semivisible jet"], object: "semivisible", short: "SVJ" },
-  { names: ["emerging jet"], object: "emerging", short: "EMG" },
-  { names: ["tau jet", "hadronic tau"], object: "tau", short: "TAU" },
-  { names: ["missing energy"], object: "met", short: "MET" },
-  { names: ["lepton jet", "lepton-jet"], object: "leptonjet", short: "LJ" },
-  { names: ["top jet"], object: "top", short: "TOP" },
-  { names: ["b jet", "b-jet"], object: "btag", short: "BJ" },
-  { names: ["disappearing track"], object: "disappearing", short: "DT" },
-  { names: ["displaced lepton", "dislep"], object: "displacedlepton", short: "DL" },
-  { names: ["proton remnant", "dissociated proton", "broken proton"], object: "remnant", short: "PR" },
+export interface DetectorObject {
+  name: string;
+  object: JetObject;
+  /** the leg's label, as a particle's */
+  label: string;
+  old: string[];
+}
+
+export const OBJECTS: DetectorObject[] = [
+  { name: "lightjet", object: "jet", label: "j", old: ["jet", "small r jet", "small-r jet", "SRJ"] },
+  { name: "bjet", object: "btag", label: "b", old: ["b jet", "b-jet", "BJ"] },
+  { name: "cjet", object: "ctag", label: "c", old: [] },
+  { name: "taujet", object: "tau", label: "\\tau_{\\mathrm{had}}", old: ["tauh", "tau jet", "hadronic tau", "TAU"] },
+  { name: "largejet", object: "large", label: "J", old: ["J", "LRJ", "large r jet", "large-r jet", "large jet", "fat jet"] },
+  { name: "topjet", object: "top", label: "J_t", old: ["Jt", "top jet", "TOP"] },
+  { name: "emergingjet", object: "emerging", label: "\\text{EJ}", old: ["ej", "emerging jet", "EMG"] },
+  { name: "semivisiblejet", object: "semivisible", label: "\\text{SVJ}", old: ["svj", "semi-visible jet", "semivisible jet", "SVJ"] },
+  { name: "displacedjet", object: "displaced", label: "\\text{DJ}", old: ["dj", "displaced jet", "DIS J"] },
+  { name: "leptonjet", object: "leptonjet", label: "\\text{LJ}", old: ["ljet", "lepton jet", "lepton-jet", "LJ"] },
+  { name: "met", object: "met", label: "E_{\\mathrm{T}}^{\\mathrm{miss}}", old: ["missing energy", "MET"] },
+  // (a track goes unlabelled, as papers draw one)
+  { name: "track", object: "track", label: "", old: ["TRK"] },
+  { name: "disappearingtrack", object: "disappearing", label: "\\text{DT}", old: ["dt", "disappearing track", "DT"] },
+  { name: "displacedlepton", object: "displacedlepton", label: "\\ell_{\\mathrm{d}}", old: ["dislep", "displaced lepton", "DL"] },
+  { name: "hscp", object: "heavycharged", label: "\\text{HSCP}", old: ["heavy charged"] },
+  { name: "remnant", object: "remnant", label: "p^*", old: ["proton remnant", "dissociated proton", "broken proton", "PR"] },
 ];
 
 /** Adjectives, long and short, that change how an object is drawn. */
@@ -34,7 +46,7 @@ export const OBJECT_ADJECTIVES: { names: string[]; adjective: string; short: str
 
 /** What can be drawn inside an object, by its short name in a count (`2j 1e`). */
 export const CONTENT_KINDS: Record<string, string> = {
-  j: "jet", b: "bjet", e: "electron", mu: "muon", l: "lepton", tau: "tau", g: "photon", y: "photon", q: "quark",
+  j: "jet", b: "bjet", c: "cjet", e: "electron", mu: "muon", l: "lepton", tau: "tau", g: "photon", y: "photon", q: "quark",
   nu: "neutrino", v: "neutrino",
 };
 
@@ -73,12 +85,22 @@ function parseContents(list: string[]): ObjectContent[] | undefined {
   return out;
 }
 
-// (short names in any case, lrj or LRJ, except where the word is a particle too: `tau`, `top`,
-// `j` and `dl` (MadGraph's left down squark) stay particles, TAU, TOP, J and DL are the objects;
-// long names in any case)
+// (a name in any case, largeJet; an old short name in any case too, lrj, except where the word is
+// a particle: `tau`, `top`, `j` and `dl` (MadGraph's left down squark) stay particles)
 const PARTICLE_WORDS = new Set(["tau", "top", "j", "dl"]);
-const sameShort = (short: string, word: string) => short === word || (!PARTICLE_WORDS.has(word) && short.toLowerCase() === word.toLowerCase());
-const lookupObject = (word: string) => OBJECT_NAMES.find((o) => sameShort(o.short, word) || o.names.includes(word.toLowerCase()));
+const oldMatches = (old: string, word: string) => old === word || (!PARTICLE_WORDS.has(word) && old.toLowerCase() === word.toLowerCase());
+/** The object a word or words name, by its name or an old one. */
+export function objectNamed(words: string): DetectorObject | undefined {
+  const lower = words.toLowerCase();
+  return OBJECTS.find((o) => o.name === lower) ?? OBJECTS.find((o) => o.old.some((old) => oldMatches(old, words)));
+}
+/** The name to write for an old one (`LRJ` → `largejet`), or undefined if the word is not an old name. */
+export function renamedObject(words: string): string | undefined {
+  const o = OBJECTS.find((x) => x.name !== words.toLowerCase() && x.old.some((old) => oldMatches(old, words)));
+  return o?.name;
+}
+/** Every word that names an object, new and old (for suggestions). */
+export const objectWords = (): string[] => OBJECTS.flatMap((o) => [o.name, ...o.old]);
 const lookupAdjective = (word: string) => OBJECT_ADJECTIVES.find((a) => a.short === word || a.names.includes(word.toLowerCase()));
 
 /**
@@ -86,25 +108,32 @@ const lookupAdjective = (word: string) => OBJECT_ADJECTIVES.find((a) => a.short 
  * the reason) when they start like one but cannot be read.
  */
 export function parseObject(text: string): EdgeStyle | undefined {
-  // (contents may follow the object's name in parentheses, `LRJ(2j, 1e)`, or as words after it)
+  return readObject(text)?.style;
+}
+
+/** An object written as words, and its name (`largejet` for `LRJ 2j`). */
+export function readObject(text: string): { name: string; style: EdgeStyle } | undefined {
+  // (contents may follow the object's name in parentheses, `largejet(2j, 1e)`, or as words after it)
   const all = words(text.trim());
   const named = all.length ? /^([A-Za-z][\w-]*)\((.*)\)$/.exec(all[all.length - 1]) : null;
   const head = named && !CONTENT_GROUPS[named[1]] ? [...all.slice(0, -1), named[1]] : all;
   const contentWords: string[] = named && !CONTENT_GROUPS[named[1]] ? words(named[2]) : [];
-  const words_ = head;
-  // adjectives first, then the longest run of words that names an object, then counts
+  // (the longest run of words that names an object, adjectives and all, DIS J; else adjectives
+  // first, then the object, then counts)
+  const longest = (from: number) => {
+    for (let n = Math.min(head.length, from + 4); n > from; n--) { const found = objectNamed(head.slice(from, n).join(" ")); if (found) return { found, end: n }; }
+    return undefined;
+  };
   const adjectives: string[] = [];
-  let k = 0;
-  while (k < words_.length && lookupAdjective(words_[k])) adjectives.push(lookupAdjective(words_[k])!.adjective), k++;
-  let object: JetObject | undefined, end = k;
-  for (let n = Math.min(words_.length, k + 4); n > k; n--) {
-    const found = lookupObject(words_.slice(k, n).join(" "));
-    if (found) { object = found.object; end = n; break; }
+  let k = 0, hit = longest(0);
+  if (!hit) {
+    while (k < head.length && lookupAdjective(head[k])) adjectives.push(lookupAdjective(head[k])!.adjective), k++;
+    hit = k ? longest(k) : undefined;
   }
-  if (!object) return undefined;
-  const contents = parseContents([...words_.slice(end), ...contentWords]);
+  if (!hit) return undefined;
+  const contents = parseContents([...head.slice(hit.end), ...contentWords]);
   if (!contents) return undefined;
-  // (a displaced jet or lepton has a look of its own)
-  if (adjectives.includes("displaced") && object === "jet") return { line: "jet", arrow: 0, object: "displaced" };
-  return { line: "jet", arrow: 0, object, ...(adjectives.length ? { adjectives } : {}), ...(contents.length ? { contents } : {}) };
+  // (a displaced jet has a look of its own)
+  if (adjectives.includes("displaced") && hit.found.object === "jet") return { name: "displacedjet", style: { line: "jet", arrow: 0, object: "displaced" } };
+  return { name: hit.found.name, style: { line: "jet", arrow: 0, object: hit.found.object, ...(adjectives.length ? { adjectives } : {}), ...(contents.length ? { contents } : {}) } };
 }

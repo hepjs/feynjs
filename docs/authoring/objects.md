@@ -5,7 +5,7 @@ i1 [p] -- pp [blob] -- i2 [p]
 pp -- [Z'] z
 z -- [H] h
 z -- [W] w
-w -- f1 [J]
+w -- f1 [largejet]
 h -- f2 [bjet]
 h -- f3 [bjet]
 pp -- f4 [j]
@@ -16,7 +16,7 @@ i1 [p] -- pp [blob] -- i2 [p]
 pp -- [Z'] z
 z -- [H] h
 z -- [W] w
-w -- f1 [J]
+w -- f1 [largejet]
 h -- f2 [bjet]
 h -- f3 [bjet]
 pp -- f4 [j]
@@ -26,59 +26,66 @@ Searches are often drawn as *semi-Feynman* diagrams: the process as usual, but e
 drawn as what the detector sees. Name a leg after the object, and feynjs draws it at the end of the
 leg, on a leg long enough to show what is inside.
 
-| Name | Style | Drawn as |
-|---|---|---|
-| `j` | `jet` | a jet: a cone of colour around the line |
-| `J` | `large jet` | a large-R jet: a wide cone in which the particle splits into two subjets (a boosted W, Z, Higgs or top) |
-| `tauh` | `tau jet` | a hadronic tau: a narrow cone of three prongs |
-| `svj` | `semi-visible jet` | a semi-visible jet: some tracks seen (solid), some dark hadrons not (dashed), a dashed rim |
-| `ej` | `emerging jet` | an emerging jet: the dark quark unseen (dashed), tracks emerging from displaced vertices |
-| `dj` | `displaced jet` | a displaced jet: a long-lived particle's flight (dotted) to a displaced vertex where the jet starts |
-| `ljet` | `lepton jet` | a lepton-jet: two collimated leptons in a narrow cone |
-| `met` | `missing energy` | missing transverse momentum: a dotted arrow out of the diagram |
-| `Jt` | `top jet` | a top-tagged large-R jet: three subjets (the b and the W's two quarks) |
-| `bjet` | `b jet` | a b-jet: a jet with a displaced secondary vertex and its tracks |
-| `dt` | `disappearing track` | a disappearing track: a charged track that stops, its soft decay dotted |
-| `dislep` | `displaced lepton` | a displaced lepton: a dotted flight to a displaced vertex, then the lepton (`dl` is MadGraph's left down squark) |
-| `hscp` | `heavy charged` | a heavy stable charged particle (an R-hadron, a long-lived stau): a thick, highly ionising track |
+| Name | Drawn as |
+|---|---|
+| `lightjet` | a jet from a light quark or a gluon: a cone of colour around the line (`j`, MadGraph's jet, is the same) |
+| `bjet` | a b-jet: the B hadron's flight to its decay vertex (blue), then the D's to its own (teal), each with its tracks |
+| `cjet` | a c-jet: the D hadron's flight to one decay vertex (teal) and its tracks |
+| `taujet` | a hadronic tau: a narrow cone of three prongs |
+| `largejet` | a large-R jet: a wide cone in which the particle splits into two subjets (a boosted W, Z, Higgs or top) |
+| `topjet` | a top-tagged large-R jet: three subjets (the b and the W's two quarks) |
+| `semivisiblejet` | a semi-visible jet: some tracks seen (solid), some dark hadrons not (dashed), a dashed rim |
+| `emergingjet` | an emerging jet: the dark quark unseen (dashed), tracks emerging from displaced vertices |
+| `displacedjet` | a displaced jet: a long-lived particle's flight (dotted) to a displaced vertex where the jet starts |
+| `leptonjet` | a lepton-jet: two collimated leptons in a narrow cone |
+| `met` | missing transverse momentum: a dotted arrow out of the diagram |
+| `track` | a charged track: a thin line, unlabelled |
+| `disappearingtrack` | a disappearing track: a charged track that stops, its soft decay dotted |
+| `displacedlepton` | a displaced lepton: a dotted flight to a displaced vertex, then the lepton |
+| `hscp` | a heavy stable charged particle (an R-hadron, a long-lived stau): a thick, highly ionising track |
+| `remnant` | what is left of a proton that breaks up |
 
-Use the name on a leg (`f1 [J]`, which also labels it) or the style on a line
-(`a -- [large jet, label=H\to b\bar b] f1`).
+A name works in any case (`largeJet`), and the same everywhere: on a leg (`f1 [largejet]`), on a
+line (`a -- [largejet] f1`), and in a [process](processes.md#detector-objects-in-a-process)
+(`p p > Zp > largejet largejet`). Like a particle's, it labels what it names; `label=` on the line,
+or a [`label:` line](processes.md), gives it a label of your own.
+
+Older names (`J`, `LRJ`, `tauh`, `SVJ`, `b jet` and the like) still draw, and
+[`check`](../get-started/api.md#check) says what to write instead.
 
 ## Writing an object
 
-On a line, an object is written like a line style: adjectives, then the object, then what is drawn
-inside it, as counts. `[LRJ 2j 1e]` is a large-R jet holding two jets and an electron;
-`[DIS J]` is a displaced jet. Long and short names are the same: `[large R jet 2j 1e]` and
-`[LRJ(2j, 1e)]` draw the same thing. See [Syntax at a glance](syntax-at-a-glance.md#detector-objects)
-for every name.
+An object can hold what it is made of, written as counts after its name: `[largejet 2j 1e]` is a
+large-R jet holding two jets and an electron, and `[largejet(2j, 1e)]` is the same. `displaced`
+before a name moves where it starts (`[displaced track]`). See
+[Syntax at a glance](syntax-at-a-glance.md#detector-objects) for every name.
 
 ```feynman
---- what a large-R jet holds
+--- largejet 2j 1e, and largejet
 i1 [p] -- pp [blob] -- i2 [p]
 pp -- [Z'] z
-z -- [LRJ 2j 1e] f1 [label={\text{LRJ 2j 1e}}]
-z -- [large R jet] f2 [label={\text{large R jet}}]
---- displaced and dark
+z -- [largejet 2j 1e] f1
+z -- [largejet] f2
+--- displacedjet, semivisiblejet, displaced track, emergingjet
 i1 [p] -- pp [blob] -- i2 [p]
-pp -- [DIS J] f1 [label={\text{DIS J}}]
-pp -- [SVJ] f2 [label={\text{SVJ}}]
-pp -- [DIS track] f3 [label={\text{DIS track}}]
-pp -- [EMG] f4 [label={\text{EMG}}]
+pp -- [displacedjet] f1
+pp -- [semivisiblejet] f2
+pp -- [displaced track] f3
+pp -- [emergingjet] f4
 ```
 
 ```text
---- what a large-R jet holds
+--- largejet 2j 1e, and largejet
 i1 [p] -- pp [blob] -- i2 [p]
 pp -- [Z'] z
-z -- [LRJ 2j 1e] f1 [label={\text{LRJ 2j 1e}}]
-z -- [large R jet] f2 [label={\text{large R jet}}]
---- displaced and dark
+z -- [largejet 2j 1e] f1
+z -- [largejet] f2
+--- displacedjet, semivisiblejet, displaced track, emergingjet
 i1 [p] -- pp [blob] -- i2 [p]
-pp -- [DIS J] f1 [label={\text{DIS J}}]
-pp -- [SVJ] f2 [label={\text{SVJ}}]
-pp -- [DIS track] f3 [label={\text{DIS track}}]
-pp -- [EMG] f4 [label={\text{EMG}}]
+pp -- [displacedjet] f1
+pp -- [semivisiblejet] f2
+pp -- [displaced track] f3
+pp -- [emergingjet] f4
 ```
 
 ## Boosted resonances
@@ -86,33 +93,33 @@ pp -- [EMG] f4 [label={\text{EMG}}]
 ```feynman
 i1 [p] -- pp [blob] -- i2 [p]
 pp -- [Z'] z
-z -- f1 [J]
-z -- f2 [J]
+z -- f1 [largejet]
+z -- f2 [largejet]
 ```
 
 ```text
 i1 [p] -- pp [blob] -- i2 [p]
 pp -- [Z'] z
-z -- f1 [J]
-z -- f2 [J]
+z -- f1 [largejet]
+z -- f2 [largejet]
 ```
 
 ### Inside a large-R jet
 
 A large-R jet can hold what it is made of: a b-tagged subjet (with its secondary vertex) and a W
 that decays inside it. Write the particle that decays with what it decays to in parentheses: to
-two jets (`[LRJ 1b W(2j)]`, a hadronic top) or to a muon and a neutrino (`[LRJ 1b W(1mu 1nu)]`,
+two jets (`[largejet 1b W(2j)]`, a hadronic top) or to a muon and a neutrino (`[largejet 1b W(1mu 1nu)]`,
 a semileptonic one). `Z(...)`, `H(...)` and `t(...)` work the same way. The third panel is the
 [kinematic view](views.md) of a top pair, one top of each kind.
 
 ```feynman
---- LRJ 1b W(2j)
+--- largejet 1b W(2j)
 i1 [p] -- pp [blob] -- i2 [p]
-pp -- [LRJ 1b W(2j)] f1 [J]
+pp -- [largejet 1b W(2j)] f1
 pp -- f2 [q]
---- LRJ 1b W(1mu 1nu)
+--- largejet 1b W(1mu 1nu)
 i1 [p] -- pp [blob] -- i2 [p]
-pp -- [LRJ 1b W(1mu 1nu)] f1 [J]
+pp -- [largejet 1b W(1mu 1nu)] f1
 pp -- f2 [q]
 --- both, in the event view
 view: kinematic
@@ -121,16 +128,16 @@ out: f1 f2
 i1 [g] -- a
 i2 [g] -- a
 a -- [g] c
-c -- [LRJ 1b W(2j)] f1 [label={t\to bq\bar q}]
-c -- [LRJ 1b W(1mu 1nu)] f2 [label={t\to b\mu\nu}]
+c -- [largejet 1b W(2j)] f1 [label={t\to bq\bar q}]
+c -- [largejet 1b W(1mu 1nu)] f2 [label={t\to b\mu\nu}]
 ```
 
 ```text
---- LRJ 1b W(2j)
+--- largejet 1b W(2j)
 i1 [p] -- pp [blob] -- i2 [p]
-pp -- [LRJ 1b W(2j)] f1 [J]
+pp -- [largejet 1b W(2j)] f1
 pp -- f2 [q]
---- LRJ 1b W(1mu 1nu)
+--- largejet 1b W(1mu 1nu)
 ...
 --- both, in the event view
 view: kinematic
@@ -139,8 +146,8 @@ out: f1 f2
 i1 [g] -- a
 i2 [g] -- a
 a -- [g] c
-c -- [LRJ 1b W(2j)] f1 [label={t\to bq\bar q}]
-c -- [LRJ 1b W(1mu 1nu)] f2 [label={t\to b\mu\nu}]
+c -- [largejet 1b W(2j)] f1 [label={t\to bq\bar q}]
+c -- [largejet 1b W(1mu 1nu)] f2 [label={t\to b\mu\nu}]
 ```
 
 ## Dark showers
@@ -149,21 +156,21 @@ c -- [LRJ 1b W(1mu 1nu)] f2 [label={t\to b\mu\nu}]
 --- semi-visible jets
 i1 [q] -- a -- i2 [qbar]
 a -- [Z'] b
-b -- f1 [svj]
-b -- f2 [svj]
+b -- f1 [semivisiblejet]
+b -- f2 [semivisiblejet]
 --- emerging jets
 i1 [q] -- a -- i2 [qbar]
 a -- [Z'] b
-b -- f1 [ej]
-b -- f2 [ej]
+b -- f1 [emergingjet]
+b -- f2 [emergingjet]
 ```
 
 ```text
 --- semi-visible jets
 i1 [q] -- a -- i2 [qbar]
 a -- [Z'] b
-b -- f1 [svj]
-b -- f2 [svj]
+b -- f1 [semivisiblejet]
+b -- f2 [semivisiblejet]
 --- emerging jets
 ...
 ```
@@ -174,12 +181,12 @@ b -- f2 [svj]
 --- hadronic taus
 i1 [q] -- a -- i2 [qbar]
 a -- [Z'] b
-b -- f1 [tauh]
-b -- f2 [tauh]
+b -- f1 [taujet]
+b -- f2 [taujet]
 --- a lepton-jet and missing energy
 i1 [q] -- a -- i2 [qbar]
 a -- [Z'] b
-b -- f1 [ljet]
+b -- f1 [leptonjet]
 b -- f2 [met]
 ```
 
@@ -187,8 +194,8 @@ b -- f2 [met]
 --- hadronic taus
 i1 [q] -- a -- i2 [qbar]
 a -- [Z'] b
-b -- f1 [tauh]
-b -- f2 [tauh]
+b -- f1 [taujet]
+b -- f2 [taujet]
 --- a lepton-jet and missing energy
 ...
 ```
@@ -199,11 +206,11 @@ b -- f2 [tauh]
 --- a boosted top and a b-jet
 i1 [p] -- pp [blob] -- i2 [p]
 pp -- [Z'] z
-z -- f1 [Jt]
+z -- f1 [topjet]
 z -- f2 [bjet]
 --- a disappearing track and a heavy charged particle
 i1 [p] -- pp [blob] -- i2 [p]
-pp -- f1 [dt]
+pp -- f1 [disappearingtrack]
 pp -- f2 [hscp]
 ```
 
@@ -211,11 +218,11 @@ pp -- f2 [hscp]
 --- a boosted top and a b-jet
 i1 [p] -- pp [blob] -- i2 [p]
 pp -- [Z'] z
-z -- f1 [Jt]
+z -- f1 [topjet]
 z -- f2 [bjet]
 --- a disappearing track and a heavy charged particle
 i1 [p] -- pp [blob] -- i2 [p]
-pp -- f1 [dt]
+pp -- f1 [disappearingtrack]
 pp -- f2 [hscp]
 ```
 
@@ -227,10 +234,10 @@ i2 [g] -- a
 a -- [H] b
 b -- [S] s1
 b -- [S] s2
-s1 -- f1 [dj]
-s1 -- f2 [dj]
-s2 -- f3 [dj]
-s2 -- f4 [dj]
+s1 -- f1 [displacedjet]
+s1 -- f2 [displacedjet]
+s2 -- f3 [displacedjet]
+s2 -- f4 [displacedjet]
 ```
 
 ```text
@@ -239,10 +246,43 @@ i2 [g] -- a
 a -- [H] b
 b -- [S] s1
 b -- [S] s2
-s1 -- f1 [dj]
-s1 -- f2 [dj]
-s2 -- f3 [dj]
-s2 -- f4 [dj]
+s1 -- f1 [displacedjet]
+s1 -- f2 [displacedjet]
+s2 -- f3 [displacedjet]
+s2 -- f4 [displacedjet]
+```
+
+## A jet's flavour, where it starts
+
+`circle=` on a point draws a circle there with a label inside: the flavour of the jet that starts
+from it, as flavour-tagging figures draw it. A b-jet shows the B hadron's flight to its decay
+vertex (blue) and the D's on to its own (teal); a c-jet the D's alone; every jet the faint tracks
+of the rest of its particles. `color=` on the point colours the circle and its label. A jet drawn on
+its own from a circle stands up, leaning a little right, and opens wider; `rotate: 15` turns any
+drawing by so many degrees, counterclockwise.
+
+```feynman
+--- b
+a [circle=b] -- [bjet, no label] f
+--- c
+a [circle=c] -- [cjet, no label] f
+--- light
+a [circle=l] -- [lightjet, no label] f
+```
+
+```text
+a [circle=b] -- [bjet, no label] f
+```
+
+Notes point inside an object: `note: B "B meson"` and `note: D "D meson"` at a b-jet's decay
+vertices (`f.B` for the jet ending at `f`), and `note: bjet "tagged"` at an object by its name, a leg
+or a line inside the diagram.
+
+```feynman
+a [circle=b] -- [bjet, no label] f
+note: B "B meson" left
+note: D "D meson" right
+note: a "primary vertex" left
 ```
 
 ## Jets marked with a cone

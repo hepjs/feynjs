@@ -408,7 +408,7 @@ them for a particular one: `neutralino1` to `neutralino4`, `chargino1`, `chargin
 
 MadGraph's MSSM names, as its models name them after renaming, draw as the names above do, with
 the labels the [MadGraph plugin](../setup/madgraph.md) gives them. They are matched only as
-written: `dl` is the left down squark, and `DL` the [displaced lepton](objects.md).
+written: `dl` is the left down squark (the displaced lepton is [`displacedlepton`](objects.md)).
 
 ```feynman
 --- go
@@ -473,36 +473,43 @@ a -- [sve] b
 | `vl` | `\nu_\ell` | fermion |
 | `vl~` | `\bar\nu_\ell` | fermion; antiparticle: its arrow runs against the line |
 
-### Other
+### Detector objects
 
 ```feynman
---- J
-a -- [J] b
---- tauh
-a -- [tauh] b
---- svj
-a -- [svj] b
---- ej
-a -- [ej] b
---- dj
-a -- [dj] b
---- ljet
-a -- [ljet] b
+--- largejet
+a -- [largejet] b
+--- taujet
+a -- [taujet] b
+--- semivisiblejet
+a -- [semivisiblejet] b
+--- emergingjet
+a -- [emergingjet] b
+--- displacedjet
+a -- [displacedjet] b
+--- leptonjet
+a -- [leptonjet] b
 ```
 
 | Name | Label | Drawn as |
 |---|---|---|
-| `J` | `J` | jet (cone) |
-| `tauh` | `\tau_{\mathrm{had}}` | jet (cone) |
-| `svj` | `\text{SVJ}` | jet (cone) |
-| `ej` | `\text{EJ}` | jet (cone) |
-| `dj` | `\text{DJ}` | jet (cone) |
-| `ljet` | `\text{LJ}` | jet (cone) |
-| `met` | `E_{\mathrm{T}}^{\mathrm{miss}}` | jet (cone) |
-| `Jt` | `J_t` | jet (cone) |
-| `dt` | `\text{DT}` | jet (cone) |
-| `dislep` | `\ell_{\mathrm{d}}` | jet (cone) |
-| `hscp` | `\text{HSCP}` | jet (cone) |
+| `lightjet` | `j` | jet (cone) |
+| `bjet` | `b` | b-jet (cone, secondary vertex) |
+| `cjet` | `c` | c-jet (cone, secondary vertex) |
+| `taujet` | `\tau_{\mathrm{had}}` | narrow cone, three prongs |
+| `largejet` | `J` | wide cone, two subjets |
+| `topjet` | `J_t` | wide cone, three subjets |
+| `semivisiblejet` | `\text{SVJ}` | semi-visible jet |
+| `emergingjet` | `\text{EJ}` | emerging jet |
+| `displacedjet` | `\text{DJ}` | displaced jet |
+| `leptonjet` | `\text{LJ}` | lepton-jet |
+| `met` | `E_{\mathrm{T}}^{\mathrm{miss}}` | missing energy |
+| `track` | `\text{trk}` | track |
+| `disappearingtrack` | `\text{DT}` | disappearing track |
+| `displacedlepton` | `\ell_{\mathrm{d}}` | displaced lepton |
+| `hscp` | `\text{HSCP}` | heavy charged track |
+| `remnant` | `p^*` | proton remnant |
+
+See [Detector objects](objects.md) for what each holds. Their older names (`J`, `tauh`, `svj`, `LRJ`...) still draw.
 
 ## Every line type
 
