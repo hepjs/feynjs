@@ -193,35 +193,71 @@
   // the home page's banner: rings from the js, one every few seconds, growing slowly and evenly
   // outward and fading, so a few are always on their way, evenly spaced. Paused while the banner is
   // out of view or the page is hidden; still for readers who ask for less motion.
+  // (All the rings are drawn on one canvas, the size of the banner: one small bitmap however many
+  // rings are out and however wide they grow, and nothing for the page to lay out again each frame.
+  // Where each ring is comes from the clock alone, so a pause picks up just where it left off.)
   var water = function () {
     document.querySelectorAll(".feynjs-splash:not([data-water])").forEach(function (splash) {
       splash.setAttribute("data-water", "");
       if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
       var source = splash.querySelector(".feynjs-splash-ripples");
-      if (!source) return;
+      if (!source || !window.requestAnimationFrame) return;
+      var canvas = document.createElement("canvas");
+      var ctx = canvas.getContext && canvas.getContext("2d");
+      if (!ctx) return;
       var layer = document.createElement("div");
       layer.className = "feynjs-water";
       layer.setAttribute("aria-hidden", "true");
+      layer.appendChild(canvas);
       splash.insertBefore(layer, splash.firstChild);
-      var EVERY = 0.9, SECONDS = 18;
-      var ring = function () {
+      var EVERY = 0.9, SECONDS = 18, FROM = 0.6 * 16, OPACITY = 0.35, LINE = 1.25;
+      var w = 0, h = 0, cx = 0, cy = 0, dpr = 1, colour = "#c0392b";
+      // (the banner's size and where the js is in it, measured only when either changes)
+      var measure = function () {
         var b = splash.getBoundingClientRect(), s = source.getBoundingClientRect();
-        var r = document.createElement("span");
-        r.className = "feynjs-water-ring";
-        r.style.left = (s.left - b.left) + "px"; r.style.top = (s.top - b.top) + "px";
-        r.style.setProperty("--to", (Math.max(b.width, b.height) * 2.2) + "px");
-        r.style.animationDuration = SECONDS + "s";
-        r.addEventListener("animationend", function () { r.remove(); });
-        layer.appendChild(r);
+        w = b.width; h = b.height; cx = s.left - b.left; cy = s.top - b.top;
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
       };
-      var timer = null;
-      var start = function () { if (timer) return; ring(); timer = setInterval(ring, EVERY * 1000); };
-      var stop = function () { clearInterval(timer); timer = null; };
+      var tint = function () { colour = getComputedStyle(layer).color || colour; };
+      var clock = 0, last = 0, frame = 0, running = false;
+      var draw = function (now) {
+        frame = 0;
+        if (!running) return;
+        clock += Math.min((now - (last || now)) / 1000, 0.1); last = now;
+        var to = Math.max(w, h) * 2.2;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, w, h);
+        ctx.strokeStyle = colour; ctx.lineWidth = LINE;
+        // (each ring born at k * EVERY seconds on the clock; those still growing are drawn)
+        for (var k = Math.floor(clock / EVERY); k >= 0; k--) {
+          var age = (clock - k * EVERY) / SECONDS;
+          if (age >= 1) break;
+          var r = (FROM + (to - FROM) * age) / 2 - LINE / 2;
+          if (r <= 0) continue;
+          ctx.globalAlpha = OPACITY * (1 - age);
+          ctx.beginPath(); ctx.arc(cx, cy, r, 0, 2 * Math.PI); ctx.stroke();
+        }
+        frame = requestAnimationFrame(draw);
+      };
+      var start = function () {
+        if (running) return;
+        running = true; last = 0; tint();
+        if (!frame) frame = requestAnimationFrame(draw);
+      };
+      var stop = function () { running = false; if (frame) cancelAnimationFrame(frame); frame = 0; };
+      measure();
+      if ("ResizeObserver" in window) {
+        var resized = new ResizeObserver(measure);
+        resized.observe(splash); resized.observe(source.parentNode);
+      } else window.addEventListener("resize", measure);
+      // (the colour follows the light and dark schemes)
+      new MutationObserver(tint).observe(document.body, { attributes: true, attributeFilter: ["data-md-color-scheme"] });
       splash.classList.add("feynjs-water-on");
       if ("IntersectionObserver" in window) {
         new IntersectionObserver(function (seen) { if (seen[0].isIntersecting && !document.hidden) start(); else stop(); }, { threshold: 0.1 }).observe(splash);
       } else start();
-      document.addEventListener("visibilitychange", function () { if (document.hidden) stop(); else if (splash.isConnected) start(); });
+      document.addEventListener("visibilitychange", function () { if (document.hidden || !splash.isConnected) stop(); else start(); });
     });
   };
   // A worked diagram explained line by line (.feynjs-explain: a diagram, then its source with a
