@@ -45,6 +45,13 @@ layout that moves is a change, recorded here.
   rim takes its jet's colour. The B and D flights and their tracks are drawn heavier.
 - **A jet drawn on its own** opens 14° either side, ends in an open elliptical mouth (only there:
   jets in a diagram keep one smooth curve), is drawn longer, and its flavour circle is larger.
+- **New: `converted` on a photon** draws it converting: the photon, a ring where it converts,
+  then the electron and positron as the detector sees them, drawn as the jets are: blue tracks
+  leaving along the photon's way and curling apart, one each way, arrowed and labelled
+  (`h -- [gamma, converted] f2`). The leg is drawn longer to make room, and the description says
+  the photon converts.
+- **A tau jet is purple** (`line.tauJetColor`). Drawn on its own from a circle it shows its
+  charged prongs as grey tracks: one, or three with `3prong` (`[taujet, 3prong]`).
 - **Labelled arrows into a step:** `---[step: words | one, two]`.
 - **A lone plain `[jet]` from a circle** stands up and opens as a named jet does.
 - **Note arrows are red** (they were blue, close to the jets' colour); the words stay in the ink.

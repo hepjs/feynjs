@@ -25,6 +25,10 @@ export interface EdgeStyle {
   object?: JetObject;
   /** a jet's impact parameters drawn (`[bjet, impact]`): the beam through where it starts, z0 along it and d0 into the page */
   impact?: boolean;
+  /** a photon that converts (`[photon, converted]`): the photon, then the e+e- pair it makes */
+  converted?: boolean;
+  /** a hadronic tau's charged tracks, 1 or 3 (`[taujet, 3prong]`) */
+  prongs?: 1 | 3;
   /** a line that is not drawn but still holds the layout together (`[invisible]`) */
   guide?: boolean;
   /** words that change how an object is drawn (`[displaced track]`) */

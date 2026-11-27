@@ -255,3 +255,22 @@ test("panels: a step box between panels, and a fan-out into the panels after it,
   // (a step without a fan-out: an arrow in, the box, an arrow out)
   assert.match(render("--- before\na -- [jet] f\n---[step: cut]\n--- after\na -- [bjet] f"), /class="feynjs-step"/);
 });
+
+test("a converted photon is the photon, then its e+e- pair; a lone electron is a line", () => {
+  const c = render("h -- [gamma, converted] f");
+  assert.match(c, /class="feynjs-conversion"/);
+  // (and the description says so)
+  assert.match(c, /converts? .*electron and a positron/);
+  assert.doesNotMatch(render("h -- [gamma] f"), /feynjs-conversion/);
+  // (no detector drawing for a lone electron or photon: they are lines, as in any diagram)
+  assert.doesNotMatch(render("a [circle=e] -- [e-, no label] f"), /data-object=|feynjs-shower|feynjs-hit/);
+});
+
+test("a tau on its own is a jet, its prongs grey tracks", () => {
+  // (a tau: 1 prong by default, 3 when asked)
+  const one = render("a [circle=\\tau] -- [taujet, no label] f"), three = render("a [circle=\\tau] -- [taujet, 3prong, no label] f");
+  // (a jet, so its prongs are plain grey tracks, no hits, no showers)
+  assert.equal((one.match(/class="feynjs-prong"/g) ?? []).length, 1);
+  assert.equal((three.match(/class="feynjs-prong"/g) ?? []).length, 3);
+  assert.equal(parse("a -- [taujet, 3prong] f").edges[0].style.prongs, 3);
+});

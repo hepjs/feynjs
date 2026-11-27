@@ -31,7 +31,7 @@ leg, on a leg long enough to show what is inside.
 | `lightjet` | a jet from a light quark or a gluon: a cone of colour around the line (`j`, MadGraph's jet, is the same) |
 | `bjet` | a b-jet: the B hadron's flight to its decay vertex (blue), then the D's to its own (teal), each with its tracks |
 | `cjet` | a c-jet: the D hadron's flight to one decay vertex (teal) and its tracks |
-| `taujet` | a hadronic tau: a narrow cone of three prongs |
+| `taujet` | a hadronic tau: a narrow purple cone of three prongs (on its own from a circle, one prong, or three with `3prong`) |
 | `largejet` | a large-R jet: a wide cone in which the particle splits into two subjets (a boosted W, Z, Higgs or top) |
 | `topjet` | a top-tagged large-R jet: three subjets (the b and the W's two quarks) |
 | `semivisiblejet` | a semi-visible jet: some tracks seen (solid), some dark hadrons not (dashed), a dashed rim |
@@ -288,6 +288,26 @@ a [circle=b] -- [bjet, no label] f
 note: B "B meson" left
 note: D "D meson" right
 note: a "primary vertex" left
+```
+
+## A photon that converts
+
+`converted` on a photon draws it converting to an electron-positron pair, as it does in the
+material of a tracker: the photon, a ring where it converts, then the pair as the detector sees
+it, drawn as the jets are: blue tracks leaving along the photon's way and curling apart, one each
+way as opposite charges do in the field. `color=` on the line colours the pair. The leg is drawn
+longer so the pair has room.
+
+```feynman
+i1 [g] -- a
+i2 [g] -- a
+a -- [H] h
+h -- [gamma] f1
+h -- [gamma, converted] f2
+```
+
+```text
+h -- [gamma, converted] f2
 ```
 
 ## Jets marked with a cone

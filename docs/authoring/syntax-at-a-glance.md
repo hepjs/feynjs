@@ -71,6 +71,8 @@ The whole syntax on one page. [How it works](index.md) builds a diagram up a par
 | `no arrow`, `no label`, `overlay` | drop the arrow, drop the label, a straight line over a wave |
 | `length=1.5` (or `length=2cm`) | the line that much longer than usual (or that long): the force layout and the grid honour it |
 | `impact` | on a jet: its impact parameters, the beam through where it starts, `z0` along the beam and `d0` into the page |
+| `converted` | on a photon: it converts, the photon then its e+e- pair |
+| `3prong` | on a `taujet` drawn on its own: three prongs, not one |
 | `lifetime` (or `lifetime={c\tau}`) | a particle that lives a while: a band under the line, clear where it is made and 30% of its colour where it decays; with a value, a brace beside it carrying that label |
 | `heavy`, `dashed`, `dotted`, `double`, `jet` (after a style) | thicker, dashed, dotted, drawn twice, a jet cone round it |
 | `ellipsis` | three dots where a leg would be |

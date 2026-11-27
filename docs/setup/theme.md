@@ -87,6 +87,7 @@ Sizes in px.
 | `line.jetShade` | `0.6` | how solid the cone is where it leaves the vertex, 0 to 1 |
 | `line.jetFade` | `0.2` | how much of that shade is left at the far end (1 = no fade) |
 | `line.bJetColor`, `line.cJetColor`, `line.lightJetColor` | `#3f90da`, `#23a46d`, `#e07b39` | each flavour of jet in its own colour: b-jets blue, c-jets green, light jets orange |
+| `line.tauJetColor` | `#a472ca` | a hadronic tau's cone |
 | `line.largeJetColor` | `#8a919c` | a large-R or top jet's own cone, round the jets it holds (grey, so they read as jets) |
 | `line.largeJetScale` | `2.4` | a large-R jet's cone, as a multiple of an ordinary jet's |
 | `line.narrowJetScale` | `0.8` | a hadronic tau's or a lepton-jet's cone, as a multiple of an ordinary jet's |

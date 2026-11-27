@@ -84,6 +84,9 @@ export function explainParsed(d: Diagram): string {
     if (legs.length) sentences.push(`${capital(listOf(legs, "the"))} ${legs.length > 1 ? "are" : "is"} bound in the ${plainText(h.label)}.`);
   }
   const couplings = [...d.vertices.values()].filter((v) => v.coupling).map((v) => plainText(v.coupling!));
+  // (a photon drawn converting, [gamma, converted], makes its pair)
+  const conversions = d.edges.filter((e) => e.style.converted && e.style.line === "wave").length;
+  if (conversions) sentences.push(conversions > 1 ? `${capital(NUMBERS[conversions] ?? String(conversions))} photons convert, each to an electron and a positron.` : "The outgoing photon converts to an electron and a positron.");
   if (couplings.length) sentences.push(`Couplings marked: ${listOf(couplings.map((c) => ({ singular: c, plural: c })), "")}.`);
   return sentences.join(" ");
 }

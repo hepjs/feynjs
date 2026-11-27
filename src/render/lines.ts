@@ -96,6 +96,22 @@ const UPSILON_STEM = 0.5;
 /** A B hadron's decay vertex and flight (blue), and a D's (teal): the tagger's two kinds of displaced vertex. */
 const B_COLOUR = "#2f74c0", D_COLOUR = "#00a099";
 
+/** What a particle drawn on its own leaves in the detector: by what it is. */
+/**
+ * A hadronic tau, drawn on its own: a jet, as the other jets are (a cone with its open mouth, the
+ * faint tracks of its particles), narrow, its 1 or 3 charged prongs plain grey tracks bending gently
+ * apart. The cone is the jet picture; a detector's signatures are for particles drawn without one.
+ */
+function tauDetector(c: Curve, look: LineLook, prongs: 1 | 3): string {
+  const L = c.length, P = c.at(0), half = coneHalfWidth(L, look, look.narrowJetScale);
+  let svg = jetCone(c, look, { scale: look.narrowJetScale, rim: "solid", tracks: 3 });
+  for (const [k, bow] of (prongs === 3 ? [[-0.6, 0.06], [0, 0], [0.6, -0.06]] : [[0, 0.04]]) as [number, number][]) {
+    const E = c.offset(L * 0.95, k * half), ctrl = { x: (P.x + E.x) / 2 - (E.y - P.y) * bow, y: (P.y + E.y) / 2 + (E.x - P.x) * bow };
+    svg += `<path class="feynjs-prong" d="M${fmt(P.x)} ${fmt(P.y)}Q${fmt(ctrl.x)} ${fmt(ctrl.y)} ${fmt(E.x)} ${fmt(E.y)}" fill="none" stroke="currentColor" stroke-opacity="0.5" stroke-width="${fmt(look.trackWidth * 1.3)}" stroke-linecap="round"/>`;
+  }
+  return svg;
+}
+
 /** A jet inside a detector object, or the object itself, where a note may point: its kind (bjet), middle and decay vertices. */
 export interface ObjectPart { kind: string; middle: Pt; B?: Pt; D?: Pt; d0?: Pt; z0?: Pt }
 
@@ -319,6 +335,8 @@ function detectorObject(c: Curve, style: EdgeStyle, look: LineLook, sw: number, 
       return line(c.straight ? [c.pts[0], c.pts[c.pts.length - 1]] : c.pts, { width: look.heavy * 1.25 });
     }
     case "tau": {
+      // (on its own: a narrow jet with its open mouth, its 1 or 3 prongs grey tracks)
+      if (look.jetMouth) return tauDetector(c, look, style.prongs ?? 1);
       // a narrow cone of three prongs
       const half = coneHalfWidth(L, look, look.narrowJetScale);
       return jetCone(c, look, { scale: look.narrowJetScale }) + [-0.6, 0, 0.6].map((k) => track(L * 0.18, k, half)).join("") + line([c.at(0), c.at(L * 0.18)]);
@@ -386,6 +404,9 @@ export function drawLine(c: Curve, style: EdgeStyle, look: LineLook, parts?: Obj
     const side = (off: number) => drawLine(new Curve(parallelPoints(c, off), c.straight), { ...once, arrow: 0 }, look);
     return side(apart) + side(-apart) + arrowOnly(c, style, look);
   }
+  // a photon that converts (`[photon, converted]`): the photon, then the electron and positron it
+  // makes, apart a little, their arrows as fermion lines have them
+  if (style.converted && style.line === "wave") return converted(c, style, look);
   // a parton that ends in a jet: the cone round its line
   if (style.jetCone && style.line !== "jet") return jetCone(c, look) + drawLine(c, { ...style, jetCone: false }, look);
   const sw = style.heavy ? look.heavy : style.cls === "susy" ? look.susy : look.stroke;
@@ -435,6 +456,35 @@ export function drawLine(c: Curve, style: EdgeStyle, look: LineLook, parts?: Obj
   // arrows at chosen places too (`with arrow=0.3`)
   for (const a of style.arrowsAt ?? []) out.push(arrowHead(c, Math.min(c.length - look.arrowLength / 2, Math.max(look.arrowLength / 2, c.length * a.at)), a.dir, arrowLook));
   return out.join("");
+}
+
+/** Where along a converted photon it converts, a share of its length, and how far apart its pair ends. */
+const CONVERT_AT = 0.45, CONVERT_SPREAD = 0.24;
+
+/** A converted photon's pair: where it converts, and where its electron (`side` 1) and positron (-1) end. */
+export function conversionPair(c: Curve): { vertex: Pt; electron: Pt; positron: Pt } {
+  const L = c.length;
+  return { vertex: c.at(L * CONVERT_AT), electron: c.offset(L, L * CONVERT_SPREAD), positron: c.offset(L, -L * CONVERT_SPREAD) };
+}
+
+function converted(c: Curve, style: EdgeStyle, look: LineLook): string {
+  // (past the conversion it is no longer a Feynman line but what the detector sees, drawn as the
+  // jets are: blue tracks, leaving together along the photon's way and curling apart, one each way
+  // as opposite charges do in the field, a ring where the photon converted)
+  const { vertex: V, electron, positron } = conversionPair(c), L = c.length, sw = look.stroke, tw = look.trackWidth;
+  const colour = style.color ?? look.jetColor;
+  let svg = drawLine(c.slice(0, L * CONVERT_AT), { ...style, converted: false }, look);
+  const ctrl = c.at(L * (CONVERT_AT + (1 - CONVERT_AT) * 0.55));
+  for (const end of [electron, positron]) {
+    const pts: Pt[] = [];
+    for (let k = 0; k <= 16; k++) { const t = k / 16; pts.push({ x: (1 - t) * (1 - t) * V.x + 2 * (1 - t) * t * ctrl.x + t * t * end.x, y: (1 - t) * (1 - t) * V.y + 2 * (1 - t) * t * ctrl.y + t * t * end.y }); }
+    const track = new Curve(pts, false);
+    svg += `<path class="feynjs-conversion-track" d="M${fmt(V.x)} ${fmt(V.y)}Q${fmt(ctrl.x)} ${fmt(ctrl.y)} ${fmt(end.x)} ${fmt(end.y)}" fill="none" stroke="${colour}" stroke-width="${fmt(sw * 1.1)}" stroke-linecap="round"/>`;
+    // (both arrows outward: each is a particle leaving the conversion)
+    svg += `<g fill="${colour}">${arrowHead(track, track.length * 0.62, 1, look).replace('fill="currentColor"', `fill="${colour}"`)}</g>`;
+  }
+  svg += `<circle class="feynjs-conversion-vertex" cx="${fmt(V.x)}" cy="${fmt(V.y)}" r="${fmt(tw * 2.6)}" fill="var(--feynjs-bg, #fff)" stroke="${colour}" stroke-width="${fmt(tw * 1.4)}"/>`;
+  return `<g class="feynjs-conversion">${svg}</g>`;
 }
 
 /** Half-width a line style occupies either side of its axis (for label clearance). */

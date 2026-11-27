@@ -3,7 +3,7 @@ import type { Pt } from "../geometry/curve.ts";
 import type { Diagram, Edge, Vertex } from "../model.ts";
 import { particleOfEdge } from "../particles/identify.ts";
 import { drawLifetime } from "./lifetime.ts";
-import { IMPACT_COLOUR, coneReach, drawLine, flavourVertices, halfWidth, impactParameters } from "./lines.ts";
+import { IMPACT_COLOUR, coneReach, conversionPair, drawLine, flavourVertices, halfWidth, impactParameters } from "./lines.ts";
 import type { ObjectPart } from "./lines.ts";
 import { OBJECTS } from "../particles/objects.ts";
 import type { LabelSpot, Scene } from "./scene.ts";
@@ -206,7 +206,7 @@ export function drawEdge(scene: Scene, d: Diagram, e: Edge, degree: Map<string, 
   const lone = d.edges.length === 1 && e.style.line === "jet" && (from.shape === "circle" || to.shape === "circle");
   const wide = e.style.object === "large" || e.style.object === "top";
   // (each flavour of jet in its own colour, unless the jet is given one)
-  const flavour = e.style.object === "btag" ? theme.line.bJetColor : e.style.object === "ctag" ? theme.line.cJetColor : e.style.object === "jet" ? theme.line.lightJetColor : undefined;
+  const flavour = e.style.object === "tau" ? theme.line.tauJetColor : e.style.object === "btag" ? theme.line.bJetColor : e.style.object === "ctag" ? theme.line.cJetColor : e.style.object === "jet" ? theme.line.lightJetColor : undefined;
   const look = { ...theme.line, ...(flavour && e.style.line === "jet" ? { jetColor: flavour } : {}), ...(jet ? { jetColor: color, largeJetColor: color } : {}), ...(lone ? { ...(wide ? {} : { jetHalfAngle: 14 }), jetMaxHalfWidth: theme.line.jetMaxHalfWidth * 4, jetMouth: true, trackWidth: theme.line.trackWidth * LONE_JET_SCALE, stroke: theme.line.stroke * LONE_JET_SCALE } : {}) };
   // (a flavour circle where the jet starts takes the jet's colour for its rim)
   for (const v of [from, to]) if (v.shape === "circle" && v.rim === undefined && e.style.line === "jet") v.rim = look.jetColor;
@@ -217,6 +217,14 @@ export function drawEdge(scene: Scene, d: Diagram, e: Edge, degree: Map<string, 
   (into(from) || into(to) ? scene.over : e.style.line === "jet" ? scene.under : scene.edges).push(`<g${cssClass}${names}${color && !jet ? ` color="${color}"` : ""}>${drawLine(drawn, e.style, look, inner)}</g>`);
   // (what is inside an object, for notes to point at: the object, then each jet inside it, with its
   // middle and a b- or c-jet's decay vertices)
+  // (a converted photon's pair, labelled at its ends, each outward from where the photon converts)
+  if (e.style.converted && e.style.line === "wave") {
+    const { vertex, electron, positron } = conversionPair(drawn);
+    for (const [tex, at] of [["e^-", electron], ["e^+", positron]] as const) {
+      const dx = at.x - vertex.x, dy = at.y - vertex.y, n = portable.hypot(dx, dy) || 1;
+      scene.addLabel(tex, at, { x: dx / n, y: dy / n }, scene.theme.labelGap * 0.6, undefined, 0.9);
+    }
+  }
   // (a jet's impact parameters: under it, labelled d0 and z0, the labels in their colour)
   let impact: ReturnType<typeof impactParameters> | undefined;
   if (e.style.line === "jet" && e.style.impact) {

@@ -230,14 +230,16 @@ function turnAbout(d: Diagram, at: { x: number; y: number }, turn: number, rowOv
 }
 
 /**
- * A leg that ends in a detector object (a large-R jet, a tau, a dark-sector jet...) is drawn
- * longer, straight out the way it already points, so there is room to show what is inside it.
+ * A leg that ends in a detector object (a large-R jet, a tau, a dark-sector jet...), or in a
+ * photon that converts, is drawn longer, straight out the way it already points, so there is room to show what is inside it.
  */
 function stretchObjectLegs(d: Diagram, stretch: number): void {
   const degree = new Map<string, number>();
   for (const e of d.edges) for (const id of [e.from, e.to]) degree.set(id, (degree.get(id) ?? 0) + 1);
   for (const e of d.edges) {
-    if (e.style.line !== "jet" || (!e.style.object && !loneJet(d))) continue;
+    // (and a converted photon, so its pair has room)
+    const converted = e.style.converted && e.style.line === "wave";
+    if (!converted && (e.style.line !== "jet" || (!e.style.object && !loneJet(d)))) continue;
     const [inner, outer] = degree.get(e.to) === 1 ? [e.from, e.to] : degree.get(e.from) === 1 ? [e.to, e.from] : [];
     if (!inner || !outer) continue;
     const a = d.vertices.get(inner)!, b = d.vertices.get(outer)!;
