@@ -75,9 +75,10 @@ nav = [
 ]
 
 extra_css = ["stylesheets/feynjs.css", "stylesheets/theme.css"]
-# the released library from npm, through jsDelivr: the site shows what users of 0.9 get
+# the site's own build of the library (the docs workflow builds it), so its pages and its script
+# are always of the same commit
 extra_javascript = [
-  "https://cdn.jsdelivr.net/npm/feynjs@0.10/dist/feynjs.min.js",
+  "javascripts/feynjs.min.js",
   "javascripts/feynjs-init.js",
   "javascripts/playground.js",
 ]
