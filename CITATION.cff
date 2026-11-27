@@ -1,8 +1,8 @@
 cff-version: 1.2.0
 message: "If you use feynjs in your work, please cite it as below."
 title: "feynjs: a JavaScript engine for Feynman diagrams"
-version: 0.10.2
-date-released: 2026-11-26
+version: 0.10.3
+date-released: 2026-11-27
 license: MIT
 abstract: >-
   feynjs is a JavaScript engine for Feynman diagrams. A diagram is written as text, in the syntax of

@@ -3,7 +3,7 @@
 All notable changes, newest first. Versions follow [semantic versioning](https://semver.org): a
 layout that moves is a change, recorded here.
 
-## 0.10.3 — unreleased
+## 0.10.3 — 2026-11-27
 
 - **Detector objects have one name each.** `lightjet`, `bjet`, `cjet`, `taujet`, `largejet`,
   `topjet`, `semivisiblejet`, `emergingjet`, `displacedjet`, `leptonjet`, `met`, `track`,
